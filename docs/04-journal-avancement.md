@@ -120,3 +120,34 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 **Prochaine étape**
 - Relecture MCD + RBAC par l'utilisatrice → clôture de la Phase 0.
 - Phase 1 : commencer par la tâche 1.0 (squelette *package-by-feature*), puis 1.1 (dépendances Maven), 1.2 (profils `dev`/`test`), 1.3 (migration Flyway `V1__init.sql`).
+
+---
+
+## [2026-09-08] Phase 0 clôturée — Phase 1 démarrée (socle backend / authentification)
+
+**Fait**
+- Relecture MCD + matrice RBAC : validée par l'utilisatrice. **Phase 0 terminée.**
+- **Squelette backend *package-by-feature*** : `common/error`, `config`, `security`, `user` ; `package-info.java` pour `course`, `enrollment`, `quiz`, `certificate`, `storage`, `ai`.
+- **pom.xml** : ajout `spring-boot-starter-web`, `-validation`, `-data-jpa`, `flyway-core` + `flyway-database-postgresql`, `postgresql`, `jjwt 0.12.6`. Corrigé l'artefact de test (`spring-security-test`).
+- **Config** : `application.yml` + profils `dev`/`test` ; `spring.config.import: optional:file:../.env[.properties]` (lance `mvn` depuis `backend/`) ; `spring.jpa.hibernate.ddl-auto=validate` ; `EducaProperties` (`educa.jwt|cors|storage|ai`).
+- **Migrations Flyway** : `V1__init.sql` (15 tables : users, roles, user_roles, refresh_tokens, courses, chapters, contents, quizzes, questions, answer_options, enrollments, progress, quiz_attempts, attempt_answers, certificates ; CHECK poids 40/60, index partiels 1 contrôle/chapitre & 1 examen/cours) ; `V2__seed_roles.sql` (LEARNER, INSTRUCTOR, ADMIN).
+- **Module `user`** : entités `User`, `Role`, `RefreshToken` ; repos ; `AuthService` (register/login/refresh avec rotation/logout ; refresh token aléatoire, stocké haché SHA-256) ; `UserService` (`/me`) ; `AuthController` (`/api/v1/auth/**`) ; `UserMapper` (manuel) ; DTO en `record`.
+- **Sécurité** : `SecurityConfig` (`proxyBeanMethods=false`, stateless, CORS, points d'entrée JSON 401/403), BCrypt, `JwtService` (HS256, jjwt), `JwtAuthenticationFilter` (identité depuis les claims, pas d'accès base), `AppUserDetailsService`, `CurrentUser`.
+- **Erreurs** : `GlobalExceptionHandler` (`@RestControllerAdvice`) + `ApiError` + hiérarchie `ApiException`.
+- **Vérifs** : `./mvnw compile` → BUILD SUCCESS ; `./mvnw test-compile` → OK. `./mvnw test` : le contexte démarre, câblage OK, **échec attendu** sur la connexion PostgreSQL (mot de passe par défaut `postgres` incorrect — il faut le vrai mot de passe dans `.env`).
+
+**Décisions techniques**
+- **Pas de Lombok** : la génération des accesseurs échouait (Java 25 + Spring Boot 4). Entités écrites avec getters/setters explicites — code lisible et sans magie, adapté à une soutenance.
+- **Mapper manuel** (pas de MapStruct) : moins de dépendances, code explicite.
+- **DTO en `record`** Java.
+- `SecurityConfig` en `@Configuration(proxyBeanMethods = false)` : contourne un échec d'enhancement CGLIB observé au runtime.
+- Refresh token : valeur opaque aléatoire (32 octets hex), stockée **hachée** (SHA-256) ; rotation à chaque `/refresh` ; révocable pour `/logout`.
+
+**Bloquant**
+- **`./mvnw test` échoue tant que le fichier `.env` (racine) ne contient pas le vrai mot de passe PostgreSQL.** À créer : `cp .env.example .env` puis renseigner `POSTGRES_PASSWORD` (et plus tard `ANTHROPIC_API_KEY`).
+
+**Prochaine étape**
+- Créer `.env` avec le mot de passe PostgreSQL → relancer `./mvnw test` (valide le contexte + les migrations).
+- Tâche 1.9 : `DataInitializer` (profil `dev`) — 1 admin / 1 formateur / 1 apprenant de démo.
+- Tâche 1.15 : tests d'auth (register/login/refresh, accès refusé sans rôle).
+- Tâches 1.11–1.14 : init du frontend Angular (structure, login/register, intercepteur, guards, dashboards vides).

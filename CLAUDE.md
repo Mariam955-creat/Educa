@@ -81,8 +81,18 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phase 0 — Cadrage** en cours. Documentation produite ; 6 décisions de cadrage actées (voir `docs/04-journal-avancement.md`, entrée du 2026-09-08). En attente de la relecture finale humaine du MCD et de la matrice RBAC.
-Backend = squelette Spring Boot généré (dépendance `spring-boot-starter-security` uniquement). Frontend vide.
-Git : branche `main` poussée sur `origin` (`https://github.com/Mariam955-creat/Educa.git`), `user.*` en `--local`. 1er commit fait (`chore: cadrage Phase 0`).
-PostgreSQL local : bases `educa` et `educa_test` créées via pgAdmin. **Pas de Docker.**
-Reste avant Phase 1 : **relecture humaine du MCD (`docs/02-conception.md §2`) et de la matrice RBAC (`§5`)**.
+**Phase 0 terminée.** **Phase 1 (socle technique) en cours.**
+Backend : squelette *package-by-feature* en place ; module `user` complet (entités, repos, `AuthService`, `AuthController` `/api/v1/auth/**`), sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2`. `./mvnw compile` OK.
+Modules `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai` : `package-info.java` seulement (Phases 2–4).
+Frontend : vide (tâches 1.11–1.14 à venir).
+Git : `main` sur `origin`, commits au nom de mariam Balde.
+PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
+
+⚠️ **Pour lancer le backend / les tests : créer `.env` à la racine** (`cp .env.example .env`) et renseigner `POSTGRES_PASSWORD`. Sans ça, `./mvnw test` échoue sur l'authentification PostgreSQL.
+
+### Choix techniques figés en Phase 1
+- **Pas de Lombok** — accesseurs explicites dans les entités.
+- **Mapper manuel** (pas de MapStruct).
+- **DTO = `record`** Java.
+- Refresh token opaque aléatoire, stocké haché (SHA-256), rotation à chaque `/refresh`.
+- `SecurityConfig` en `@Configuration(proxyBeanMethods = false)`.

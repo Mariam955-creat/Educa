@@ -32,26 +32,26 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 1 — Socle technique  ·  statut : `à faire`
+## Phase 1 — Socle technique  ·  statut : `en cours`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 1.0 | Établir le squelette *package-by-feature* : packages `common`, `security`, et un module vide par domaine (`user`, `course`, `enrollment`, `quiz`, `certificate`, `storage`, `ai`) ; figer le patron de module (entité/repo/service/controller/dto/mapper) et le choix mapper (manuel vs MapStruct) | `com.educa.backend.*` | à faire | — |
-| 1.1 | Ajouter les dépendances Maven (web, data-jpa, validation, postgresql, flyway, jwt, springdoc) | `backend/pom.xml` | à faire | — |
-| 1.2 | Config `application.yml` par profil : `dev` → PostgreSQL locale `educa` ; `test` → `educa_test` (Flyway rejoué). Datasource, jpa (`ddl-auto: validate`), flyway, jwt, `storage.local.path`, `ai.*` (clé Claude) | `backend/src/main/resources/` | à faire | — |
-| 1.3 | Migration Flyway `V1__init.sql` : `users, roles, user_roles, refresh_tokens, courses, chapters, contents, quizzes, questions, answer_options, enrollments, progress, quiz_attempts, attempt_answers, certificates` | `backend/.../db/migration/` | à faire | — |
-| 1.4 | Entités JPA + repositories pour le périmètre ci-dessus | `com.educa.backend.<domaine>` | à faire | — |
-| 1.5 | Sécurité : `SecurityFilterChain`, `PasswordEncoder` (BCrypt), `JwtService`, `JwtAuthenticationFilter` | `com.educa.backend.security` | à faire | — |
-| 1.6 | Auth : `register`, `login`, `refresh`, `logout`, `GET/PATCH /auth/me` | `com.educa.backend.user.auth` | à faire | — |
-| 1.7 | RBAC : rôles `LEARNER/INSTRUCTOR/ADMIN`, `@PreAuthorize`, méthode utilitaire « propriétaire de la ressource » | `com.educa.backend.security` | à faire | — |
-| 1.8 | Gestion d'erreurs centralisée `@RestControllerAdvice` + format d'erreur homogène | `com.educa.backend.common.error` | à faire | — |
-| 1.9 | Seed de données minimal (rôles, 1 admin, 1 formateur, 1 apprenant) via migration ou `CommandLineRunner` profil dev | `backend/.../db/migration/` ou `config` | à faire | — |
-| 1.10 | Swagger UI (springdoc) accessible en dev | `backend/pom.xml`, config | à faire | — |
+| 1.0 | Squelette *package-by-feature* : `common/error`, `config`, `security`, `user` + `package-info.java` pour `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai`. Patron figé : **mapper manuel** (pas de MapStruct), entités JPA getters/setters explicites (**pas de Lombok** — build Java 25 fragile), DTO en `record` | `com.educa.backend.*` | fait | 2026-09-08 |
+| 1.1 | Dépendances Maven : web, validation, data-jpa, flyway (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6. springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
+| 1.2 | `application.yml` (+ `-dev` / `-test`), `spring.config.import` du `.env` racine, `ddl-auto: validate`, propriétés `educa.*` (`EducaProperties`) | `backend/src/main/resources/` | fait | 2026-09-08 |
+| 1.3 | Migration Flyway `V1__init.sql` (15 tables + contraintes + index partiels quiz) et `V2__seed_roles.sql` | `backend/.../db/migration/` | fait | 2026-09-08 |
+| 1.4 | Entités JPA + repositories — **module `user`** (`User`, `Role`, `RefreshToken` + repos). Autres domaines : Phases 2–3 | `com.educa.backend.user` | en cours | 2026-09-08 |
+| 1.5 | Sécurité : `SecurityConfig` (stateless, CORS, entrypoints JSON 401/403), `PasswordEncoder` BCrypt, `JwtService` (HS256), `JwtAuthenticationFilter`, `AppUserDetailsService`, `CurrentUser` | `com.educa.backend.security` | fait | 2026-09-08 |
+| 1.6 | Auth : `POST /auth/register` (201), `/login`, `/refresh` (rotation), `/logout`, `GET/PATCH /auth/me` | `com.educa.backend.user` | fait | 2026-09-08 |
+| 1.7 | RBAC : `RoleName` `LEARNER/INSTRUCTOR/ADMIN`, `@EnableMethodSecurity`, `CurrentUser.id()`. `@PreAuthorize` + helper « propriétaire » viendront avec les endpoints métier (Phase 2) | `com.educa.backend.security` | en cours | 2026-09-08 |
+| 1.8 | Gestion d'erreurs `@RestControllerAdvice` (`GlobalExceptionHandler`) + `ApiError` homogène + `ApiException`/`ResourceNotFoundException`/`ConflictException` | `com.educa.backend.common.error` | fait | 2026-09-08 |
+| 1.9 | Seed rôles (fait via `V2`). Utilisateurs de démo (admin/formateur/apprenant) : `DataInitializer` profil `dev` — à faire | `backend/.../db/migration/`, `config` | en cours | 2026-09-08 |
+| 1.10 | Swagger UI (springdoc) accessible en dev — en attente d'une version compatible Spring Boot 4 | `backend/pom.xml`, config | à faire | — |
 | 1.11 | Init projet Angular dans `frontend/` (routing, HttpClient, structure `core/feature/shared`) | `frontend/` | à faire | — |
 | 1.12 | Frontend : layout + navigation conditionnée par rôle, pages `login` / `register` | `frontend/src/app/feature/auth` | à faire | — |
 | 1.13 | Frontend : intercepteur HTTP (Bearer + refresh), `AuthGuard`, `RoleGuard`, service `AuthService` | `frontend/src/app/core` | à faire | — |
 | 1.14 | Frontend : dashboards vides par rôle (`/dashboard`, `/instructor`, `/admin`) | `frontend/src/app/feature` | à faire | — |
-| 1.15 | Tests backend : auth (register/login/refresh), accès refusé sans rôle — sur base `educa_test` locale, profil `test` | `backend/src/test/...` | à faire | — |
+| 1.15 | Tests backend : auth (register/login/refresh), accès refusé sans rôle — sur base `educa_test` locale, profil `test`. *(Bloqué : nécessite `.env` avec le mot de passe PostgreSQL.)* | `backend/src/test/...` | à faire | — |
 
 **Livrable démontrable** : un utilisateur s'inscrit, se connecte, voit un dashboard vide correspondant à son rôle.
 
@@ -161,8 +161,8 @@ Dernière mise à jour : 2026-09-08.
 
 | Phase | État | Début | Fin |
 |---|---|---|---|
-| 0 — Cadrage | quasi terminée (reste relecture MCD/RBAC) | 2026-09-08 | — |
-| 1 — Socle technique | à faire | — | — |
+| 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
+| 1 — Socle technique | en cours (backend auth compile ; frontend + tests à faire) | 2026-09-08 | — |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

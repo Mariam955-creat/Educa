@@ -89,7 +89,7 @@ Backend **opérationnel et testé** (`./mvnw test` → **14 tests verts**), API 
 - sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet « est-ce mon cours ? », `CurrentUser.hasRole/optionalId` ;
 - migrations Flyway `V1`+`V2` (aucune nouvelle en Phase 2) ; `DevDataInitializer` seede 3 comptes + un cours de démo publié.
 Modules `quiz` / `certificate` / `ai` : `package-info.java` seulement (Phases 3–4).
-Frontend **Angular 19.2** : `core/auth/` complet, pages login/register, shell + nav par rôle, dashboards placeholder. Phase 2 frontend (espace formateur, catalogue, page cours, progression) : **à faire**.
+Frontend **Angular 19.2** (`npm run build` OK) : `core/auth` + `core/courses` + `core/enrollments` ; `feature/` catalog, course (page cours + inscription + progression), instructor (liste + `course-editor` CRUD + upload), dashboard apprenant branché sur `/enrollments/me`. Reste à valider au navigateur.
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 

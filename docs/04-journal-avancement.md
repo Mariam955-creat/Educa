@@ -235,3 +235,29 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 
 **Prochaine étape**
 - Frontend Phase 2 : espace formateur (CRUD cours/chapitres/contenus + upload), catalogue + page cours (inscription, « marquer terminé »), dashboard apprenant branché sur `GET /enrollments/me`.
+
+---
+
+## [2026-09-08] Phase 2 — Frontend Angular (catalogue, page cours, éditeur formateur, progression)
+
+**Fait**
+- `core/courses/` : `course.models.ts` + `CourseApiService` (catalogue paginé, détail, CRUD cours/chapitres/contenus, `uploadFile` FormData, `downloadFile` en blob).
+- `core/enrollments/` : `EnrollmentApiService` (`enroll`, `myEnrollments`, `completeContent`, `courseProgress`).
+- `feature/catalog` : liste des cours publiés + champ de recherche (`debounceTime`/`distinctUntilChanged`).
+- `feature/course/course-detail` (`/courses/:slug`) : bouton « S'inscrire » si non inscrit ; sinon barre de progression + chapitres/contenus. Contenus masqués tant que non inscrit. Lecture des `TEXT`, ouverture des fichiers via `URL.createObjectURL` (le `GET` blob passe par l'intercepteur → jeton Bearer). Bouton « Marquer comme terminé » par contenu, désactivé si déjà fait ; met à jour `progressPercent` + `completedContentIds`.
+- `feature/instructor/instructor-dashboard` : tableau « mes cours » (chapitres, statut, Éditer / Publier-Dépublier / Supprimer).
+- `feature/instructor/course-editor` (`/instructor/courses/new` et `/instructor/courses/:slug/edit`) : formulaire cours (create → redirige vers l'édition), ajout de chapitres (titre + position), ajout de contenus (select chapitre, type TEXT/VIDEO/DOCUMENT, position, `textBody` si TEXT sinon `<input type=file>` → `addContent` puis `uploadFile`), suppression chapitre/contenu.
+- `feature/dashboard/learner-dashboard` : branché sur `GET /enrollments/me`, cartes cliquables avec barre de % (`completedContents / totalContents`), lien vers le catalogue.
+- `app.routes.ts` : `/catalog`, `/courses/:slug`, `/instructor/courses/new`, `/instructor/courses/:slug/edit` (guards `authGuard` / `roleGuard`). Lien « Catalogue » dans la barre de navigation.
+
+**Corrections**
+- Template `course-detail` : `@else if (course(); as c)` refusé par Angular (`as` seulement sur le `@if` primaire, NG5002) → restructuré avec `@if (course(); as c) { … } @else if (loading()) { … } @else { … }`.
+
+**Vérification** : `npm run build` → succès (chunks lazy pour catalog / course-detail / course-editor / dashboards).
+Reste à valider visuellement dans le navigateur (les endpoints backend correspondants sont déjà testés).
+
+**Bloquant** — aucun.
+
+**Prochaine étape**
+- Validation visuelle Phase 2 (catalogue → inscription → progression ; côté formateur : créer un cours complet).
+- **Phase 3** : évaluation & certification (module `quiz` : contrôles de chapitre + examen final, note pondérée 40/60, génération du certificat PDF).

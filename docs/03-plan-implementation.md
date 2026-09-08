@@ -59,7 +59,7 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 2 — Gestion des formations  ·  statut : `backend fait, frontend à faire`
+## Phase 2 — Gestion des formations  ·  statut : `terminée (build OK, à valider au navigateur)`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
@@ -71,9 +71,9 @@ Dernière mise à jour : 2026-09-08.
 | 2.6 | `enrollments` : `POST /courses/{id}/enroll` (publié uniquement, unicité), `GET /enrollments/me` (avec %) | `com.educa.backend.enrollment` | fait | 2026-09-08 |
 | 2.7 | `progress` : `POST /contents/{id}/complete`, `GET /courses/{id}/progress`, calcul du % (contenus vus / total) | `com.educa.backend.enrollment` | fait | 2026-09-08 |
 | 2.8 | Contrôle d'accès objet : `CourseService.requireOwned` (propriétaire ou ADMIN) ; contenus + fichier visibles seulement si inscrit / propriétaire / ADMIN ; `CurrentUser.hasRole` / `optionalId` | `com.educa.backend.course`, `.security` | fait | 2026-09-08 |
-| 2.9 | Frontend : espace formateur — création cours, éditeur de chapitres/contenus, upload | `frontend/src/app/feature/instructor` | à faire | — |
-| 2.10 | Frontend : catalogue + page cours (lecture chapitres/contenus, bouton s'inscrire, marquer terminé) | `frontend/src/app/feature/catalog`, `.../course` | à faire | — |
-| 2.11 | Frontend : dashboard apprenant — formations en cours + % (branché sur `GET /enrollments/me`) | `frontend/src/app/feature/dashboard` | à faire | — |
+| 2.9 | Frontend : `instructor-dashboard` (liste « mes cours », publier/dépublier/supprimer) + `course-editor` (créer/éditer cours, ajouter chapitres, ajouter contenus TEXT/fichier avec upload). `CourseApiService` + modèles | `frontend/src/app/feature/instructor`, `core/courses` | fait | 2026-09-08 |
+| 2.10 | Frontend : `catalog` (liste publiés + recherche debounce) + `course-detail` (`/courses/:slug` : s'inscrire, contenus masqués si non inscrit, lecture TEXT, ouverture de fichier via blob, « marquer comme terminé », barre de progression) | `frontend/src/app/feature/catalog`, `.../course` | fait | 2026-09-08 |
+| 2.11 | Frontend : `learner-dashboard` branché sur `GET /enrollments/me` (cartes + barres de %) ; `EnrollmentApiService` | `frontend/src/app/feature/dashboard`, `core/enrollments` | fait | 2026-09-08 |
 | 2.12 | Tests backend : `CourseFlowTest` (5 tests) — création + slug, apprenant → 403, catalogue = publiés seulement, inscription + progression + doublon 409, contenus masqués si non inscrit. `./mvnw test` → **14 verts** | `backend/src/test/...` | fait | 2026-09-08 |
 | 2.13 | (S) Recherche/filtrage avancé du catalogue | — | à faire | — |
 
@@ -167,7 +167,7 @@ Dernière mise à jour : 2026-09-08.
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
 | 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
-| 2 — Gestion des formations | backend fait (`course` + `enrollment` + `storage`, 14 tests) ; frontend 2.9–2.11 à faire | 2026-09-08 | — |
+| 2 — Gestion des formations | backend (14 tests) + frontend Angular (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

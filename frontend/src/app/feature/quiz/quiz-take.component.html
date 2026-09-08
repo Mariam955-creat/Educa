@@ -1,0 +1,61 @@
+<section class="page">
+  @let r = result();
+  @let q = quiz();
+
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (error() && !q) {
+    <p class="form-error">{{ error() }}</p>
+    <a class="btn ghost" routerLink="/dashboard">Retour</a>
+  } @else if (r) {
+    <div class="result">
+      <h1>{{ r.passed ? '✅ Réussi' : 'Résultat' }}</h1>
+      <p class="score">Score : <b>{{ r.score }} %</b> &nbsp;({{ r.correctCount }} / {{ r.total }} question(s))</p>
+      @if (isFinalExam()) {
+        <p class="final">
+          Moyenne des contrôles : {{ r.controlsAverage ?? 0 }} %<br />
+          <b>Note finale : {{ r.finalGrade }} %</b>
+        </p>
+        @if (r.certificateId) {
+          <p class="cert">🎓 Certificat délivré. <a routerLink="/certificates">Voir mes certificats</a></p>
+        }
+      }
+      <div class="actions">
+        @if (!isFinalExam()) {
+          <button type="button" class="ghost" (click)="retry()">Recommencer</button>
+        }
+        <button type="button" (click)="backToCourse()">Retour</button>
+      </div>
+    </div>
+  } @else if (q) {
+    <a class="back" routerLink="/dashboard">‹ Retour</a>
+    <h1>{{ q.title }}</h1>
+    <p class="muted">{{ q.questions.length }} question(s) · seuil {{ q.passThreshold }} %</p>
+
+    @for (question of q.questions; track question.id) {
+      <article class="question">
+        <p class="statement">{{ question.position }}. {{ question.statement }}</p>
+        <div class="options">
+          @for (opt of question.options; track opt.id) {
+            <label class="option">
+              <input
+                [type]="question.type === 'MULTIPLE_CHOICE' ? 'checkbox' : 'radio'"
+                [name]="'q' + question.id"
+                [checked]="isChecked(question, opt.id)"
+                (change)="toggle(question, opt.id)"
+              />
+              {{ opt.label }}
+            </label>
+          }
+        </div>
+      </article>
+    }
+
+    @if (error()) {
+      <p class="form-error">{{ error() }}</p>
+    }
+    <button type="button" (click)="submit()" [disabled]="submitting()">
+      {{ submitting() ? 'Envoi…' : 'Terminer et soumettre' }}
+    </button>
+  }
+</section>

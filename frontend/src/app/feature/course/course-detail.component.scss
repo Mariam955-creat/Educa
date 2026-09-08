@@ -141,3 +141,71 @@ button:disabled {
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
 }
+
+.quiz-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--border);
+  font-size: 0.9rem;
+}
+
+.quiz-name {
+  font-weight: 600;
+}
+
+.best {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.btn-sm {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.grade-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  background: var(--surface);
+  margin-top: 1.5rem;
+}
+
+.grade-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.final-exam {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+.locked {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.final-grade {
+  margin: 0.75rem 0 0;
+}
+
+.cert-btn {
+  margin-top: 0.85rem;
+  background: #16a34a;
+}

@@ -1,0 +1,64 @@
+<section class="page">
+  <a class="back" routerLink="/instructor">‹ Mes cours</a>
+
+  @if (quiz(); as q) {
+    <h1>{{ q.title }}</h1>
+    <p class="muted">
+      {{ q.type === 'FINAL_EXAM' ? 'Examen final' : 'Contrôle' }} ·
+      {{ q.questions.length }} question(s) · seuil {{ q.passThreshold }} %
+    </p>
+
+    @if (message()) {
+      <p class="flash">{{ message() }}</p>
+    }
+
+    @for (question of q.questions; track question.id) {
+      <article class="card question">
+        <div class="q-head">
+          <strong>{{ question.position }}. {{ question.statement }}</strong>
+          <button type="button" class="link-danger" (click)="deleteQuestion(question.id)">×</button>
+        </div>
+        <ul>
+          @for (opt of question.options; track opt.id) {
+            <li [class.correct]="opt.correct">{{ opt.label }}</li>
+          }
+        </ul>
+      </article>
+    }
+
+    <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+      <h3>Ajouter une question</h3>
+      <label>Énoncé <textarea formControlName="statement" rows="2"></textarea></label>
+      <div class="row">
+        <label>
+          Type
+          <select formControlName="type">
+            <option value="SINGLE_CHOICE">Choix unique</option>
+            <option value="MULTIPLE_CHOICE">Choix multiple</option>
+            <option value="TRUE_FALSE">Vrai / Faux</option>
+          </select>
+        </label>
+        <label class="narrow">Points <input type="number" formControlName="points" min="1" /></label>
+      </div>
+
+      <div formArrayName="options" class="options">
+        <p class="opt-label">Options (cochez les bonnes réponses)</p>
+        @for (o of options.controls; track $index) {
+          <div class="opt-row" [formGroupName]="$index">
+            <input type="checkbox" formControlName="correct" />
+            <input type="text" formControlName="label" placeholder="Libellé de l'option" />
+            <button type="button" class="link-danger" (click)="removeOption($index)">×</button>
+          </div>
+        }
+        <button type="button" class="ghost" (click)="addOption()">+ Option</button>
+      </div>
+
+      @if (error()) {
+        <p class="form-error">{{ error() }}</p>
+      }
+      <button type="submit">Ajouter la question</button>
+    </form>
+  } @else {
+    <p class="form-error">{{ error() ?? 'Chargement…' }}</p>
+  }
+</section>

@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentType, CourseDetail } from '../../core/courses/course.models';
+import { QuizApiService } from '../../core/quiz/quiz-api.service';
+import { CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-course-editor',
@@ -14,13 +16,33 @@ import { ContentType, CourseDetail } from '../../core/courses/course.models';
 export class CourseEditorComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(CourseApiService);
+  private readonly quizApi = inject(QuizApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   readonly course = signal<CourseDetail | null>(null);
+  readonly quizzes = signal<CourseQuizzes | null>(null);
   readonly isNew = computed(() => this.course() === null);
   readonly message = signal<string | null>(null);
   readonly pickedFile = signal<File | null>(null);
+
+  controlFor(chapterId: number): QuizRef | undefined {
+    return this.quizzes()?.controls.find((q) => q.chapterId === chapterId);
+  }
+
+  createControl(chapterId: number): void {
+    this.quizApi.createControl(chapterId, 'Contrôle de chapitre').subscribe((q) => {
+      void this.router.navigate(['/instructor/quizzes', q.id, 'edit']);
+    });
+  }
+
+  createFinalExam(): void {
+    const c = this.course();
+    if (!c) return;
+    this.quizApi.createFinalExam(c.id, 'Examen final').subscribe((q) => {
+      void this.router.navigate(['/instructor/quizzes', q.id, 'edit']);
+    });
+  }
 
   readonly courseForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(200)]],
@@ -139,6 +161,10 @@ export class CourseEditorComponent implements OnInit {
       if (course.chapters.length > 0 && this.contentForm.controls.chapterId.value === 0) {
         this.contentForm.patchValue({ chapterId: course.chapters[0].id });
       }
+      this.quizApi.courseQuizzes(course.id).subscribe({
+        next: (q) => this.quizzes.set(q),
+        error: () => this.quizzes.set({ controls: [], finalExam: null }),
+      });
     });
   }
 

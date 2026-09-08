@@ -5,6 +5,7 @@
     <nav class="nav">
       <a routerLink="/dashboard" routerLinkActive="active">Tableau de bord</a>
       <a routerLink="/catalog" routerLinkActive="active">Catalogue</a>
+      <a routerLink="/certificates" routerLinkActive="active">Mes certificats</a>
       @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
         <a routerLink="/instructor" routerLinkActive="active">Formateur</a>
       }

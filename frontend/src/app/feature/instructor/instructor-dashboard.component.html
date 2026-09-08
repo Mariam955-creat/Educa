@@ -30,6 +30,7 @@
             </td>
             <td class="actions">
               <a [routerLink]="['/instructor/courses', course.slug, 'edit']">Éditer</a>
+              <a [routerLink]="['/instructor/courses', course.slug, 'results']">Résultats</a>
               <button type="button" (click)="togglePublish(course)">
                 {{ course.published ? 'Dépublier' : 'Publier' }}
               </button>

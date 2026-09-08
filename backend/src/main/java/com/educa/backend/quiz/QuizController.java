@@ -82,4 +82,9 @@ public class QuizController {
     public QuizViewDto view(@PathVariable Long id) {
         return quizService.getViewForCurrentUser(id);
     }
+
+    @GetMapping("/courses/{courseId}/quizzes")
+    public com.educa.backend.quiz.dto.CourseQuizzesDto courseQuizzes(@PathVariable Long courseId) {
+        return quizService.listForCourse(courseId);
+    }
 }

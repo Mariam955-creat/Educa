@@ -1,0 +1,28 @@
+<section class="page">
+  <h1>Mes certificats</h1>
+
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (certificates().length === 0) {
+    <p class="muted">Vous n'avez pas encore obtenu de certificat.</p>
+  } @else {
+    <div class="list">
+      @for (c of certificates(); track c.id) {
+        <article class="cert-card">
+          <div class="cert-main">
+            <h3>{{ c.courseTitle }}</h3>
+            <p class="meta">
+              N° {{ c.serialNumber }} · délivré le {{ c.issuedAt | date: 'longDate' }}
+            </p>
+            <p class="grade">
+              Note finale <b>{{ c.finalGrade }} / 100</b>
+              (contrôles {{ c.controlsAverage }} · examen {{ c.finalExamScore }})
+            </p>
+            <p class="code">Code de vérification : <code>{{ c.verificationCode }}</code></p>
+          </div>
+          <button type="button" (click)="download(c)">Télécharger le PDF</button>
+        </article>
+      }
+    </div>
+  }
+</section>

@@ -1,9 +1,12 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { CertificateApiService } from '../../core/certificates/certificate-api.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentItem, CourseDetail } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
+import { QuizApiService } from '../../core/quiz/quiz-api.service';
+import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-course-detail',
@@ -15,10 +18,14 @@ export class CourseDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(CourseApiService);
   private readonly enrollmentApi = inject(EnrollmentApiService);
+  private readonly quizApi = inject(QuizApiService);
+  private readonly certificateApi = inject(CertificateApiService);
 
   readonly course = signal<CourseDetail | null>(null);
   readonly completedIds = signal<number[]>([]);
   readonly progressPercent = signal(0);
+  readonly quizzes = signal<CourseQuizzes | null>(null);
+  readonly grade = signal<CourseGrade | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly enrolling = signal(false);
@@ -29,8 +36,7 @@ export class CourseDetailComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const slug = this.route.snapshot.paramMap.get('slug')!;
-    this.reload(slug);
+    this.reload(this.route.snapshot.paramMap.get('slug')!);
   }
 
   enroll(): void {
@@ -47,6 +53,7 @@ export class CourseDetailComponent implements OnInit {
     this.enrollmentApi.completeContent(content.id).subscribe((progress) => {
       this.completedIds.set(progress.completedContentIds);
       this.progressPercent.set(progress.progressPercent);
+      this.refreshGrade();
     });
   }
 
@@ -62,6 +69,32 @@ export class CourseDetailComponent implements OnInit {
     });
   }
 
+  controlFor(chapterId: number): QuizRef | undefined {
+    return this.quizzes()?.controls.find((q) => q.chapterId === chapterId);
+  }
+
+  controlBest(quizId: number): number | null {
+    const control = this.grade()?.controls.find((c) => c.quizId === quizId);
+    return control && control.attempts > 0 ? control.bestScore : null;
+  }
+
+  downloadCertificate(): void {
+    const id = this.grade()?.certificateId;
+    if (!id) return;
+    this.certificateApi.download(id).subscribe((blob) => {
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    });
+  }
+
+  private refreshGrade(): void {
+    const c = this.course();
+    if (c?.contentsVisible) {
+      this.quizApi.courseGrade(c.id).subscribe({ next: (g) => this.grade.set(g), error: () => undefined });
+    }
+  }
+
   private reload(slug: string): void {
     this.loading.set(true);
     this.api.detail(slug).subscribe({
@@ -75,8 +108,10 @@ export class CourseDetailComponent implements OnInit {
               this.completedIds.set(p.completedContentIds);
               this.progressPercent.set(p.progressPercent);
             },
-            error: () => undefined, // propriétaire non inscrit : pas de progression
+            error: () => undefined,
           });
+          this.quizApi.courseQuizzes(course.id).subscribe({ next: (q) => this.quizzes.set(q), error: () => undefined });
+          this.refreshGrade();
         }
       },
       error: (err: { status?: number }) => {

@@ -57,6 +57,55 @@
               </button>
             </div>
           }
+
+          @if (controlFor(ch.id); as ctrl) {
+            <div class="quiz-line">
+              <span class="quiz-name">{{ ctrl.title }}</span>
+              @if (controlBest(ctrl.quizId) !== null) {
+                <span class="best">meilleur : {{ controlBest(ctrl.quizId) }} %</span>
+              }
+              <a class="btn-sm" [routerLink]="['/quizzes', ctrl.quizId]">Passer le contrôle</a>
+            </div>
+          }
+        </article>
+      }
+
+      @if (grade(); as g) {
+        <article class="grade-panel">
+          <h2>Évaluation</h2>
+          <p>
+            Progression : <b>{{ g.progressPercent }} %</b>
+            @if (g.controlsAverage !== null) {
+              · Moyenne des contrôles : <b>{{ g.controlsAverage }} %</b>
+            }
+          </p>
+
+          @if (quizzes()?.finalExam; as exam) {
+            <div class="final-exam">
+              <div>
+                <strong>{{ exam.title }}</strong>
+                @if (g.finalExamBestScore !== null) {
+                  <span class="best"> · meilleur : {{ g.finalExamBestScore }} %</span>
+                }
+              </div>
+              @if (g.finalExamUnlocked) {
+                <a class="btn-sm" [routerLink]="['/quizzes', exam.quizId]">Passer l'examen final</a>
+              } @else {
+                <span class="locked">🔒 débloqué à 100 % de progression (contenus + tous les contrôles)</span>
+              }
+            </div>
+
+            @if (g.finalGrade !== null) {
+              <p class="final-grade">
+                Note finale : <b>{{ g.finalGrade }} / 100</b> (seuil {{ g.passThreshold }})
+              </p>
+            }
+            @if (g.certificateId) {
+              <button type="button" class="cert-btn" (click)="downloadCertificate()">
+                🎓 Télécharger le certificat
+              </button>
+            }
+          }
         </article>
       }
     }

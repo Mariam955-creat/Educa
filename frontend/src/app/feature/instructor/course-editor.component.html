@@ -48,8 +48,27 @@
             </li>
           }
         </ul>
+        <div class="quiz-row">
+          @if (controlFor(ch.id); as ctrl) {
+            <span>Contrôle : {{ ctrl.questionCount }} question(s)</span>
+            <a class="ghost" [routerLink]="['/instructor/quizzes', ctrl.quizId, 'edit']">Éditer</a>
+          } @else {
+            <span class="muted">Aucun contrôle</span>
+            <button type="button" class="ghost" (click)="createControl(ch.id)">Créer un contrôle</button>
+          }
+        </div>
       </article>
     }
+
+    <article class="card final">
+      @if (quizzes()?.finalExam; as exam) {
+        <span>Examen final : {{ exam.questionCount }} question(s)</span>
+        <a class="ghost" [routerLink]="['/instructor/quizzes', exam.quizId, 'edit']">Éditer l'examen final</a>
+      } @else {
+        <span class="muted">Aucun examen final</span>
+        <button type="button" class="ghost" (click)="createFinalExam()">Créer l'examen final</button>
+      }
+    </article>
 
     <form class="card sub" [formGroup]="chapterForm" (ngSubmit)="addChapter()">
       <h3>Ajouter un chapitre</h3>

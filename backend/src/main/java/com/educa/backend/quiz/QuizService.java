@@ -169,6 +169,27 @@ public class QuizService {
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz introuvable"));
     }
 
+    /** Liste des quiz d'un cours (contrôles + examen final) pour l'apprenant inscrit ou le propriétaire. */
+    @Transactional(readOnly = true)
+    public com.educa.backend.quiz.dto.CourseQuizzesDto listForCourse(Long courseId) {
+        if (!courseService.isOwnerOrAdmin(courseId)
+                && !enrollmentService.isEnrolled(CurrentUser.id(), courseId)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Vous n'êtes pas inscrit à ce cours");
+        }
+        var controls = quizRepository.findByCourseIdAndTypeOrderByIdAsc(courseId, QuizType.CONTROL).stream()
+                .map(this::toRef)
+                .toList();
+        var finalExam = quizRepository.findByCourseIdAndType(courseId, QuizType.FINAL_EXAM)
+                .map(this::toRef)
+                .orElse(null);
+        return new com.educa.backend.quiz.dto.CourseQuizzesDto(controls, finalExam);
+    }
+
+    private com.educa.backend.quiz.dto.CourseQuizzesDto.QuizRefDto toRef(Quiz quiz) {
+        return new com.educa.backend.quiz.dto.CourseQuizzesDto.QuizRefDto(quiz.getId(), quiz.getChapterId(),
+                quiz.getType().name(), quiz.getTitle(), quiz.getQuestions().size(), quiz.getMaxAttempts());
+    }
+
     public QuizViewDto toView(Quiz quiz, boolean answersVisible) {
         List<QuestionViewDto> questions = quiz.getQuestions().stream()
                 .map(q -> new QuestionViewDto(q.getId(), q.getStatement(), q.getType().name(), q.getPoints(),

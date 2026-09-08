@@ -1,0 +1,48 @@
+{
+  "lang": { "label": "اللغة", "fr": "Français", "en": "English", "ar": "العربية" },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "catalog": "الكتالوج",
+    "certificates": "شهاداتي",
+    "instructor": "المدرّب",
+    "admin": "المشرف",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب"
+  },
+  "common": { "loading": "جارٍ التحميل…" },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "educa — منصة التعلّم الإلكتروني",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "دخول",
+      "submitting": "جارٍ الدخول…",
+      "noAccount": "ليس لديك حساب بعد؟",
+      "create": "إنشاء حساب",
+      "errorCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      "errorServer": "تعذّر الاتصال بالخادم."
+    },
+    "register": {
+      "title": "إنشاء حساب",
+      "subtitle": "سيتم تسجيلك كمتعلّم.",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "language": "اللغة",
+      "submit": "إنشاء حسابي",
+      "submitting": "جارٍ الإنشاء…",
+      "haveAccount": "مسجّل بالفعل؟",
+      "signIn": "تسجيل الدخول"
+    }
+  },
+  "dashboard": {
+    "greeting": "مرحبًا {{name}} 👋",
+    "learnerRole": "فضاء المتعلّم",
+    "browseCatalog": "تصفّح الكتالوج",
+    "myCourses": "دوراتي",
+    "noCourses": "لست مسجّلاً في أي دورة حتى الآن.",
+    "contentsDone": "{{done}} / {{total}} عنصر مكتمل"
+  }
+}

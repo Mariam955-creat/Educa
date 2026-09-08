@@ -1,0 +1,48 @@
+{
+  "lang": { "label": "Langue", "fr": "Français", "en": "English", "ar": "العربية" },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "catalog": "Catalogue",
+    "certificates": "Mes certificats",
+    "instructor": "Formateur",
+    "admin": "Admin",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "Inscription"
+  },
+  "common": { "loading": "Chargement…" },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "educa — plateforme e-learning",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion…",
+      "noAccount": "Pas encore de compte ?",
+      "create": "Créer un compte",
+      "errorCredentials": "Email ou mot de passe incorrect.",
+      "errorServer": "Impossible de se connecter au serveur."
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Vous serez inscrit comme apprenant.",
+      "fullName": "Nom complet",
+      "email": "Email",
+      "password": "Mot de passe",
+      "language": "Langue",
+      "submit": "Créer mon compte",
+      "submitting": "Création…",
+      "haveAccount": "Déjà inscrit ?",
+      "signIn": "Se connecter"
+    }
+  },
+  "dashboard": {
+    "greeting": "Bonjour {{name}} 👋",
+    "learnerRole": "Espace apprenant",
+    "browseCatalog": "Parcourir le catalogue",
+    "myCourses": "Mes formations",
+    "noCourses": "Vous n'êtes inscrit à aucune formation pour l'instant.",
+    "contentsDone": "{{done}} / {{total}} contenu(s) terminé(s)"
+  }
+}

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { Enrollment } from '../../core/courses/course.models';
@@ -7,7 +8,7 @@ import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.serv
 
 @Component({
   selector: 'app-learner-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './learner-dashboard.component.html',
   styleUrl: './dashboard.scss',
 })

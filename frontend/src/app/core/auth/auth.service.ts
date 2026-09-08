@@ -43,6 +43,17 @@ export class AuthService {
       .pipe(tap((res) => this.store(res)));
   }
 
+  updatePreferredLanguage(preferredLanguage: string): Observable<User> {
+    return this.http
+      .patch<User>(`${API_BASE_URL}/auth/me`, { preferredLanguage })
+      .pipe(
+        tap((user) => {
+          this._user.set(user);
+          localStorage.setItem(USER_KEY, JSON.stringify(user));
+        }),
+      );
+  }
+
   logout(): void {
     const token = this.refreshToken;
     if (token) {

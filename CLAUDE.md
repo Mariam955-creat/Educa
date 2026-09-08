@@ -83,13 +83,14 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phases 0 → 3 terminées** (reste 1.10 Swagger). Prochaine : **Phase 4 (multilingue + chatbot IA)**.
-Backend **opérationnel et testé** (`./mvnw test` → **18 tests verts**), API sur **:8081** :
-- modules `user` (auth JWT), `course` (CRUD + catalogue + publication), `enrollment` (inscription + progression %), `storage` (FS local + upload/download multipart), `quiz` (contrôle par chapitre + examen final, correction auto, note pondérée 40/60, déverrouillage à 100 %), `certificate` (génération PDF via openhtmltopdf, n° de série, vérification publique par code) ;
-- sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet, `CurrentUser.hasRole/optionalId` ;
-- migrations Flyway `V1`+`V2` (aucune nouvelle en Phases 2–3) ; `DevDataInitializer` seede 3 comptes + un cours de démo publié avec un contrôle et un examen final.
-Module `ai` : `package-info.java` seulement (Phase 4).
-Frontend **Angular 19.2** (`npm run build` OK) : `core/` auth + courses + enrollments + quiz + certificates ; `feature/` catalog, course (page cours + inscription + progression + évaluation + certificat), quiz (`quiz-take`), instructor (`course-editor` + `quiz-editor` + `course-results`), certificate (`my-certificates` + `verify/:code` public), dashboard. Reste à valider au navigateur.
+**Phases 0 → 4 (MVP) terminées** (reste 1.10 Swagger). Prochaine : **Phase 5 (tests & durcissement)**.
+Backend **opérationnel et testé** (`./mvnw test` → **20 tests verts**), API sur **:8081** :
+- modules `user` (auth JWT), `course` (CRUD + catalogue + publication), `enrollment` (inscription + progression %), `storage` (FS local + upload/download multipart), `quiz` (contrôle + examen final, correction auto, note pondérée 40/60, déverrouillage à 100 %), `certificate` (PDF via openhtmltopdf, n° de série, vérif publique par code), `ai` (chatbot via SDK Anthropic `anthropic-java`, repli `degraded` si clé absente/erreur) ;
+- sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet, `CurrentUser.hasRole/optionalId` ; `GlobalExceptionHandler` (400/401/403/404/409/500 homogènes) ;
+- migrations Flyway `V1`+`V2` (aucune nouvelle depuis) ; `DevDataInitializer` : 3 comptes + cours de démo publié avec contrôle + examen final.
+Frontend **Angular 19.2** (`npm run build` OK) : `core/` auth + courses + enrollments + quiz + certificates + ai + i18n ; `feature/` catalog, course (page cours : contenus + progression + quiz + évaluation + certificat + widget chatbot), quiz (`quiz-take`), instructor (`course-editor` + `quiz-editor` + `course-results`), certificate (`my-certificates` + `verify/:code` public), dashboard.
+**i18n** : `@ngx-translate` v18, `public/i18n/{fr,en,ar}.json`, sélecteur de langue (barre) + RTL arabe + persistance `localStorage`/`PATCH /auth/me`.
+⚠️ Le chatbot renvoie un message de repli tant que `.env` n'a pas de vraie `ANTHROPIC_API_KEY` (`AI_MODEL` défaut `claude-sonnet-5`).
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 

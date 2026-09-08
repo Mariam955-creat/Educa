@@ -32,3 +32,20 @@ body {
 a {
   color: var(--accent);
 }
+
+/* --- Support RTL (arabe) : flexbox/grid se retournent seuls avec dir=rtl ;
+   on ajuste juste l'alignement de texte et quelques marges logiques. --- */
+[dir='rtl'] body {
+  text-align: right;
+}
+
+[dir='rtl'] .topbar .nav {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] ul,
+[dir='rtl'] ol {
+  padding-right: 1.1rem;
+  padding-left: 0;
+}
+

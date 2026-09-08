@@ -107,25 +107,25 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 4 — Multilingue & IA  ·  statut : `à faire`
+## Phase 4 — Multilingue & IA  ·  statut : `terminée (MVP — build/tests OK, à valider au navigateur)`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 4.1 | Frontend : `@ngx-translate` + fichiers `fr/en/ar.json`, sélecteur de langue, persistance (`localStorage` + `PATCH /auth/me`) | `frontend/src/assets/i18n`, `core` | à faire | — |
-| 4.2 | Frontend : bascule `dir=rtl` pour l'arabe, styles logiques CSS, revue des composants directionnels | `frontend/src/styles`, layout | à faire | — |
-| 4.3 | Frontend : polices latin + arabe embarquées | `frontend/src/assets/fonts` | à faire | — |
-| 4.4 | Backend : module IA — interface `AiAssistant`, `LlmAiAssistant`, `DisabledAiAssistant` (repli) | `com.educa.backend.ai` | à faire | — |
-| 4.5 | Backend : `POST /ai/chat` — contexte cours borné, prompt system/user séparés, timeout + `degraded` | `com.educa.backend.ai` | à faire | — |
-| 4.6 | Backend : contrôle d'accès `/ai/chat` (inscription active requise) ; config `ai.enabled`, clé API en env | `com.educa.backend` | à faire | — |
-| 4.7 | Frontend : widget chatbot dans la page cours | `frontend/src/app/feature/course` | à faire | — |
-| 4.8 | Tests backend : repli IA quand `ai.enabled=false` / timeout ; accès refusé si non inscrit | `backend/src/test/...` | à faire | — |
-| 4.9 | (S) Tables `languages`, `course_translations`, `chapter_translations` + fallback langue d'origine | migration `V?__i18n.sql`, `com.educa.backend.course` | à faire | — |
-| 4.10 | (S) Persistance `chat_messages` + `GET /ai/chat/{courseId}/history` | `com.educa.backend.ai` | à faire | — |
-| 4.11 | (S) Génération assistée de quiz par IA | `com.educa.backend.ai`, `quiz` | à faire | — |
-| 4.12 | (C) Recommandation de formations | — | à faire | — |
-| 4.13 | (C) Certificat PDF localisé selon la langue de l'apprenant | `com.educa.backend.certificate` | à faire | — |
+| 4.1 | Frontend : `@ngx-translate/core` v18 + `provideTranslateHttpLoader` ; `public/i18n/{fr,en,ar}.json` ; `LanguageService` (init depuis `user.preferredLanguage` ou `localStorage`) ; sélecteur de langue dans la barre ; persistance `localStorage` + `PATCH /auth/me` (`updatePreferredLanguage`) | `frontend/public/i18n`, `core/i18n` | fait | 2026-09-08 |
+| 4.2 | Frontend : `document.documentElement.dir = rtl` pour l'arabe (+ `lang`) ; overrides `[dir='rtl']` dans `styles.scss` (le reste en flexbox/grid se retourne seul) | `frontend/src/styles`, `LanguageService` | fait | 2026-09-08 |
+| 4.3 | Frontend : police avec fallback arabe (`'Noto Sans Arabic'` dans la stack `body`) | `frontend/src/styles.scss` | fait | 2026-09-08 |
+| 4.4 | Backend : module `ai` — interface `AiAssistant`, `ClaudeAiAssistant` (SDK officiel `com.anthropic:anthropic-java` 2.34), `DisabledAiAssistant` (repli) ; `AiConfig` choisit le bean selon `educa.ai.enabled` + clé présente | `com.educa.backend.ai` | fait | 2026-09-08 |
+| 4.5 | Backend : `POST /ai/chat` — contexte cours borné (`CourseService.aiContext`, `max-context-chars`), system prompt séparé de la question, historique transmis par le client, **toute erreur/timeout → `{reply, degraded:true}`** (jamais d'exception) | `com.educa.backend.ai` | fait | 2026-09-08 |
+| 4.6 | Backend : `AiChatService` exige une inscription active (ou propriétaire/ADMIN) → `403` sinon ; `educa.ai.*` depuis l'env (`ANTHROPIC_API_KEY`, `AI_MODEL` défaut `claude-sonnet-5`, `AI_ENABLED`, `AI_TIMEOUT_MS`) | `com.educa.backend.ai` | fait | 2026-09-08 |
+| 4.7 | Frontend : `CourseChatComponent` (widget « Assistant du cours » sur la page cours, visible si inscrit) ; `AiApiService` ; historique local (7 derniers échanges) | `frontend/src/app/feature/course`, `core/ai` | fait | 2026-09-08 |
+| 4.8 | Tests backend : `AiChatTest` — `403` si non inscrit ; `{degraded:true}` quand `ai.enabled=false` (profil `test`). `./mvnw test` → **20 verts** | `backend/src/test/...` | fait | 2026-09-08 |
+| 4.9 | (S) Tables `languages`, `course_translations`, `chapter_translations` | migration `V?__i18n.sql` | à faire (Should have) | — |
+| 4.10 | (S) Persistance `chat_messages` | `com.educa.backend.ai` | à faire (Should have) | — |
+| 4.11 | (S) Génération assistée de quiz par IA | — | à faire (Should have) | — |
+| 4.12 | (C) Recommandation de formations | — | à faire (Could have) | — |
+| 4.13 | (C) Certificat PDF localisé | — | à faire (Could have) | — |
 
-**Livrable démontrable** : changement de langue (dont RTL arabe) fonctionnel ; le chatbot répond à une question sur un cours, avec repli propre si l'IA est coupée.
+**Livrable démontrable** : ✅ le sélecteur de langue bascule l'interface FR/EN/AR (avec passage en RTL pour l'arabe, préférence persistée). Le widget chatbot sur la page cours envoie la question à `POST /ai/chat` ; sans clé API réelle il renvoie proprement un message de repli (`degraded`), avec une vraie clé il répond dans le périmètre du cours. Reste la validation au navigateur (et une clé Claude réelle pour des réponses live).
 
 ---
 
@@ -169,6 +169,7 @@ Dernière mise à jour : 2026-09-08.
 | 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | backend (14 tests) + frontend Angular (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
 | 3 — Évaluation & certification | backend (18 tests, parcours certificat complet) + frontend (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
+| 4 — Multilingue & IA (MVP) | i18n FR/EN/AR + RTL, chatbot (SDK Anthropic + repli) — backend 20 tests, frontend build OK | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

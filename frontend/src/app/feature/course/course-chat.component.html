@@ -1,0 +1,23 @@
+<section class="chat">
+  <h2>💬 Assistant du cours</h2>
+
+  <div class="messages">
+    @if (turns().length === 0) {
+      <p class="hint">Pose une question sur ce cours — l'assistant répond dans le périmètre du contenu.</p>
+    }
+    @for (turn of turns(); track $index) {
+      <div class="msg" [class.user]="turn.role === 'user'">
+        <span class="who">{{ turn.role === 'user' ? 'Vous' : 'Assistant' }}</span>
+        <p>{{ turn.content }}</p>
+      </div>
+    }
+    @if (pending()) {
+      <div class="msg"><span class="who">Assistant</span><p class="typing">…</p></div>
+    }
+  </div>
+
+  <form (ngSubmit)="send()">
+    <input type="text" [formControl]="input" placeholder="Écrire une question…" [disabled]="pending()" />
+    <button type="submit" [disabled]="!canSend()">Envoyer</button>
+  </form>
+</section>

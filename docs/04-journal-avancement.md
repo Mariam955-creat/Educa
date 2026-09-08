@@ -302,3 +302,40 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Prochaine étape**
 - Validation visuelle Phase 3 (apprenant : contrôle → examen final → certificat ; formateur : créer un quiz).
 - **Phase 4** : multilingue FR/EN/AR (+ RTL) et chatbot pédagogique (API Claude, module `ai`).
+
+---
+
+## [2026-09-08] Phase 4 — Multilingue (FR/EN/AR + RTL) & chatbot IA
+
+**Backend — module `ai`**
+- SDK officiel **`com.anthropic:anthropic-java` 2.34** (consulté via la référence Claude API).
+- `AiAssistant` (interface) ; `ClaudeAiAssistant` (appel `client.messages().create(...)`, `maxTokens=1024`, system prompt + historique + question ; **toute `RuntimeException` → réponse `degraded`**, jamais propagée) ; `DisabledAiAssistant` (repli). `AiConfig` choisit le bean : `ClaudeAiAssistant` si `educa.ai.enabled` **et** clé présente, sinon `DisabledAiAssistant`.
+- `AiChatService` : contrôle d'accès (inscription active ou propriétaire/ADMIN, sinon `403`) ; contexte borné via `CourseService.aiContext(courseId, maxContextChars)` (titre + description + chapitres + contenus TEXT tronqués) ; system prompt = « réponds seulement dans le périmètre du cours, dis quand l'info manque, réponds dans la langue de la question ».
+- `AiController` : `POST /api/v1/ai/chat` `{courseId, message, history?}` → `{reply, degraded}`.
+- `GlobalExceptionHandler` : `HttpMessageNotReadableException` → **400** (au lieu de 500).
+- Config : `AI_MODEL` (défaut `claude-sonnet-5`), `AI_ENABLED`, `ANTHROPIC_API_KEY`, `AI_TIMEOUT_MS`, `AI_MAX_CONTEXT_CHARS` (déjà dans `EducaProperties` / `.env.example`).
+- `AiChatTest` (2 tests) : `403` non inscrit, `{degraded:true}` quand IA désactivée (profil `test`). `./mvnw test` → **20 verts**.
+
+**Frontend — i18n**
+- `@ngx-translate/core` **v18** + `@ngx-translate/http-loader` ; `provideTranslateService({ fallbackLang:'fr', loader: provideTranslateHttpLoader({prefix:'i18n/', suffix:'.json'}) })`.
+- `public/i18n/{fr,en,ar}.json` (nav, boutons communs, pages login/register, dashboard apprenant, libellés de langue).
+- `LanguageService` : `init()` (langue depuis `user.preferredLanguage` → `localStorage` → `fr`) ; `set(lang)` → `translate.use`, `html[lang]` + `html[dir]` (rtl pour `ar`), persistance `localStorage` + `PATCH /auth/me` (`AuthService.updatePreferredLanguage`).
+- `AppComponent` : `lang.init()` au constructeur ; `<select>` de langue dans la barre (authentifié ou non) ; libellés de nav via `| translate`.
+- `login` / `register` / `learner-dashboard` : templates passés au pipe `translate` (messages d'erreur via `TranslateService.instant`).
+- `styles.scss` : overrides `[dir='rtl']` (alignement texte, nav `row-reverse`, listes `padding-right`) — le reste (flexbox/grid + `gap`) se retourne seul.
+
+**Frontend — chatbot**
+- `AiApiService.chat(courseId, message, history)` ; `CourseChatComponent` (widget « 💬 Assistant du cours » injecté dans `course-detail` quand `contentsVisible`) : fil de discussion, saisie, historique local (7 derniers échanges envoyés au backend).
+
+**Vérifications live**
+- `POST /ai/chat` (clé factice) → `200 {degraded:true, reply:"L'assistant est momentanément indisponible…"}` — repli propre.
+- `POST /ai/chat` course inexistant / non inscrit → `403`.
+- `npm run build` (frontend) → OK.
+
+**Bloquant** — aucun. Pour des réponses réelles du chatbot : mettre une vraie `ANTHROPIC_API_KEY` dans `.env` (sinon repli permanent — comportement attendu et testé).
+
+**Reste (Should/Could have, hors MVP)** : tables de traduction du contenu pédagogique (4.9), persistance de l'historique de chat (4.10), génération de quiz par IA (4.11), recommandations (4.12), certificat PDF localisé (4.13).
+
+**Prochaine étape**
+- Validation visuelle Phase 4 (bascule de langue + RTL ; widget chatbot).
+- **Phase 5** : tests & durcissement (parcours critiques bout-en-bout, revue de sécurité RBAC, `/security-review`), puis **Phase 6** (doc finale + jeu de démo + soutenance).

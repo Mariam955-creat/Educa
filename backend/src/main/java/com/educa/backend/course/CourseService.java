@@ -146,6 +146,31 @@ public class CourseService {
         return courseRepository.findById(courseId).map(this::isOwnerOrAdmin).orElse(false);
     }
 
+    /** Contexte textuel borné d'un cours (titre + description + chapitres + contenus TEXT), pour le chatbot. */
+    @Transactional(readOnly = true)
+    public String aiContext(Long courseId, int maxChars) {
+        Course course = requireCourse(courseId);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Titre : ").append(course.getTitle()).append('\n');
+        if (course.getDescription() != null && !course.getDescription().isBlank()) {
+            sb.append("Description : ").append(course.getDescription()).append('\n');
+        }
+        for (Chapter chapter : course.getChapters()) {
+            sb.append("\n## ").append(chapter.getPosition()).append(". ").append(chapter.getTitle()).append('\n');
+            for (Content content : chapter.getContents()) {
+                sb.append("- ").append(content.getTitle());
+                if (content.getType() == ContentType.TEXT && content.getTextBody() != null) {
+                    sb.append(" : ").append(content.getTextBody());
+                }
+                sb.append('\n');
+                if (sb.length() >= maxChars) {
+                    return sb.substring(0, maxChars) + "…";
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     // ---------- privé ----------
 
     private boolean isOwnerOrAdmin(Course course) {

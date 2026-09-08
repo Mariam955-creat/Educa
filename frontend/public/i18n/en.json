@@ -1,0 +1,48 @@
+{
+  "lang": { "label": "Language", "fr": "Français", "en": "English", "ar": "العربية" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "catalog": "Catalog",
+    "certificates": "My certificates",
+    "instructor": "Instructor",
+    "admin": "Admin",
+    "logout": "Sign out",
+    "login": "Sign in",
+    "register": "Sign up"
+  },
+  "common": { "loading": "Loading…" },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "educa — e-learning platform",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "create": "Create an account",
+      "errorCredentials": "Wrong email or password.",
+      "errorServer": "Cannot reach the server."
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "You will be registered as a learner.",
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "language": "Language",
+      "submit": "Create my account",
+      "submitting": "Creating…",
+      "haveAccount": "Already registered?",
+      "signIn": "Sign in"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hello {{name}} 👋",
+    "learnerRole": "Learner area",
+    "browseCatalog": "Browse the catalog",
+    "myCourses": "My courses",
+    "noCourses": "You are not enrolled in any course yet.",
+    "contentsDone": "{{done}} / {{total}} item(s) completed"
+  }
+}

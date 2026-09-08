@@ -1,16 +1,16 @@
 <section class="page">
-  <h1>Bonjour {{ auth.user()?.fullName }} 👋</h1>
-  <p class="role">Espace apprenant</p>
+  <h1>{{ 'dashboard.greeting' | translate: { name: auth.user()?.fullName } }}</h1>
+  <p class="role">{{ 'dashboard.learnerRole' | translate }}</p>
 
   <div class="toolbar">
-    <a class="btn" routerLink="/catalog">Parcourir le catalogue</a>
+    <a class="btn" routerLink="/catalog">{{ 'dashboard.browseCatalog' | translate }}</a>
   </div>
 
-  <h2>Mes formations</h2>
+  <h2>{{ 'dashboard.myCourses' | translate }}</h2>
   @if (loading()) {
-    <p class="muted">Chargement…</p>
+    <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (enrollments().length === 0) {
-    <p class="muted">Vous n'êtes inscrit à aucune formation pour l'instant.</p>
+    <p class="muted">{{ 'dashboard.noCourses' | translate }}</p>
   } @else {
     <div class="list">
       @for (e of enrollments(); track e.courseId) {
@@ -22,7 +22,9 @@
           <div class="progress-track">
             <div class="progress-fill" [style.width.%]="e.progressPercent"></div>
           </div>
-          <p class="sub">{{ e.completedContents }} / {{ e.totalContents }} contenu(s) terminé(s)</p>
+          <p class="sub">
+            {{ 'dashboard.contentsDone' | translate: { done: e.completedContents, total: e.totalContents } }}
+          </p>
         </a>
       }
     </div>

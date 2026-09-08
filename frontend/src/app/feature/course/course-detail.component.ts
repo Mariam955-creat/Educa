@@ -7,10 +7,11 @@ import { ContentItem, CourseDetail } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
+import { CourseChatComponent } from './course-chat.component';
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink],
+  imports: [RouterLink, CourseChatComponent],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })

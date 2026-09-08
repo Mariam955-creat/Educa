@@ -164,7 +164,7 @@ Dernière mise à jour : 2026-09-08.
 | Phase | État | Début | Fin |
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
-| 1 — Socle technique | backend testé (9 tests) + frontend Angular (build OK) ; reste 1.10 (Swagger) | 2026-09-08 | — |
+| 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

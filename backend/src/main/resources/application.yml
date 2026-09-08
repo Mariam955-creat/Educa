@@ -21,7 +21,7 @@ spring:
       max-request-size: ${STORAGE_MAX_FILE_SIZE_MB:200}MB
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8081}
   error:
     include-message: always
     include-binding-errors: always

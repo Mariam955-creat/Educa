@@ -10,7 +10,7 @@ CREATE TABLE users (
     email              VARCHAR(255) NOT NULL UNIQUE,
     password_hash      VARCHAR(255) NOT NULL,
     full_name          VARCHAR(150) NOT NULL,
-    preferred_language CHAR(2)      NOT NULL DEFAULT 'fr',
+    preferred_language VARCHAR(2)   NOT NULL DEFAULT 'fr',
     enabled            BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at         TIMESTAMPTZ  NOT NULL DEFAULT now(),
     updated_at         TIMESTAMPTZ  NOT NULL DEFAULT now()
@@ -45,7 +45,7 @@ CREATE TABLE courses (
     title          VARCHAR(200) NOT NULL,
     slug           VARCHAR(220) NOT NULL UNIQUE,
     description    TEXT,
-    language       CHAR(2)      NOT NULL DEFAULT 'fr',
+    language       VARCHAR(2)   NOT NULL DEFAULT 'fr',
     published      BOOLEAN      NOT NULL DEFAULT FALSE,
     control_weight INT          NOT NULL DEFAULT 40,
     exam_weight    INT          NOT NULL DEFAULT 60,

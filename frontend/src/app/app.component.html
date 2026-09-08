@@ -1,0 +1,29 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">educa</a>
+
+  @if (auth.isAuthenticated()) {
+    <nav class="nav">
+      <a routerLink="/dashboard" routerLinkActive="active">Tableau de bord</a>
+      @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
+        <a routerLink="/instructor" routerLinkActive="active">Formateur</a>
+      }
+      @if (auth.hasRole('ADMIN')) {
+        <a routerLink="/admin" routerLinkActive="active">Admin</a>
+      }
+    </nav>
+
+    <div class="account">
+      <span class="who">{{ auth.user()?.fullName }}</span>
+      <button type="button" (click)="auth.logout()">Déconnexion</button>
+    </div>
+  } @else {
+    <nav class="nav">
+      <a routerLink="/login" routerLinkActive="active">Connexion</a>
+      <a routerLink="/register" routerLinkActive="active">Inscription</a>
+    </nav>
+  }
+</header>
+
+<main>
+  <router-outlet />
+</main>

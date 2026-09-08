@@ -32,7 +32,7 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 1 — Socle technique  ·  statut : `en cours`
+## Phase 1 — Socle technique  ·  statut : `quasi terminée` (reste 1.10 Swagger)
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
@@ -47,13 +47,15 @@ Dernière mise à jour : 2026-09-08.
 | 1.8 | Gestion d'erreurs `@RestControllerAdvice` (`GlobalExceptionHandler`) + `ApiError` homogène + `ApiException`/`ResourceNotFoundException`/`ConflictException` | `com.educa.backend.common.error` | fait | 2026-09-08 |
 | 1.9 | Seed rôles (via `V2`) + `DevDataInitializer` (profil `dev`) : `admin@educa.dev`, `formateur@educa.dev`, `apprenant@educa.dev` — mot de passe `password123` | `com.educa.backend.config` | fait | 2026-09-08 |
 | 1.10 | Swagger UI (springdoc) accessible en dev — en attente d'une version compatible Spring Boot 4 | `backend/pom.xml`, config | à faire | — |
-| 1.11 | Init projet Angular dans `frontend/` (routing, HttpClient, structure `core/feature/shared`) | `frontend/` | à faire | — |
-| 1.12 | Frontend : layout + navigation conditionnée par rôle, pages `login` / `register` | `frontend/src/app/feature/auth` | à faire | — |
-| 1.13 | Frontend : intercepteur HTTP (Bearer + refresh), `AuthGuard`, `RoleGuard`, service `AuthService` | `frontend/src/app/core` | à faire | — |
-| 1.14 | Frontend : dashboards vides par rôle (`/dashboard`, `/instructor`, `/admin`) | `frontend/src/app/feature` | à faire | — |
+| 1.11 | Projet **Angular 19.2** dans `frontend/` (Node 24.12 → CLI *latest* refusée, CLI 19.2 utilisée) ; standalone, `provideRouter` + `provideHttpClient(withInterceptors)` ; structure `core/` + `feature/` ; `ng build` OK | `frontend/` | fait | 2026-09-08 |
+| 1.12 | Frontend : shell `AppComponent` avec navigation conditionnée par rôle + déconnexion ; pages **login** / **register** (formulaires réactifs, connexion auto après inscription) | `frontend/src/app` | fait | 2026-09-08 |
+| 1.13 | Frontend : `AuthService` (signals, localStorage), `authInterceptor` (Bearer + refresh auto sur 401), `authGuard` + `roleGuard(...)` | `frontend/src/app/core/auth` | fait | 2026-09-08 |
+| 1.14 | Frontend : dashboards par rôle `/dashboard` (apprenant), `/instructor`, `/admin` (placeholders) + lazy loading | `frontend/src/app/feature` | fait | 2026-09-08 |
 | 1.15 | Tests backend : `AuthControllerTest` (8 tests) — register 201 / doublon 409 / payload invalide 400 / login 200 / mauvais mdp 401 / `/me` sans jeton 401 / `/me` avec jeton 200 / refresh rotation. `./mvnw test` → **9 tests verts** (dont `contextLoads`) sur `educa_test` | `backend/src/test/...` | fait | 2026-09-08 |
 
-**Livrable démontrable** : ✅ backend — un utilisateur s'inscrit (`POST /auth/register` → 201) et se connecte (`POST /auth/login` → jetons JWT), `/auth/me` renvoie le profil selon le rôle. Reste le frontend (1.11–1.14) pour le dashboard visuel.
+**Livrable démontrable** : ✅ un utilisateur ouvre `http://localhost:4200`, crée un compte ou se connecte (`apprenant@educa.dev` / `password123`), et voit le tableau de bord correspondant à son rôle. Navigation et accès aux pages `/instructor` et `/admin` filtrés par `roleGuard`.
+
+**Commande de lancement** : backend `cd backend && ./mvnw spring-boot:run` (port 8081) · frontend `cd frontend && npm start` (port 4200).
 
 ---
 
@@ -162,7 +164,7 @@ Dernière mise à jour : 2026-09-08.
 | Phase | État | Début | Fin |
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
-| 1 — Socle technique | en cours (backend auth compile ; frontend + tests à faire) | 2026-09-08 | — |
+| 1 — Socle technique | backend testé (9 tests) + frontend Angular (build OK) ; reste 1.10 (Swagger) | 2026-09-08 | — |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

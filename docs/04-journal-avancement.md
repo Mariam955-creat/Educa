@@ -178,3 +178,31 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 **Prochaine étape**
 - Frontend Angular : `ng new` dans `frontend/`, structure `core/feature/shared`, pages `login`/`register`, `AuthService` + intercepteur (Bearer + refresh), `authGuard`/`roleGuard`, dashboards vides par rôle (`/dashboard`, `/instructor`, `/admin`). → clôture de la Phase 1.
 - Puis tâche 1.10 (Swagger) si une version springdoc compatible Spring Boot 4 est dispo.
+
+---
+
+## [2026-09-08] Phase 1 — Frontend Angular (login / register / dashboards)
+
+**Fait**
+- Vérifié : base `educa` intacte (16 tables, rôles seedés) — la manip pgAdmin de l'utilisatrice ne concernait que les *connexions serveur* pgAdmin, pas les bases. Mot de passe PostgreSQL confirmé = `change-me` (psql se connecte).
+- **Angular** : CLI *latest* exige Node ≥ 24.15 (poste en 24.12) → projet généré avec **`@angular/cli@19.2.15`** (`--style=scss --ssr=false --skip-git --defaults`). Standalone components.
+- `app.config.ts` : `provideHttpClient(withInterceptors([authInterceptor]))` ajouté.
+- **`core/auth/`** : `AuthService` (signals `user`/`isAuthenticated`, persistance `localStorage`, `login`/`register`/`refresh`/`logout`, `hasRole`/`hasAnyRole`, `homePathForRole`) ; `authInterceptor` (ajoute `Bearer`, tente un `refresh` unique sur 401 puis rejoue, sinon `logout`) ; `authGuard` + `roleGuard(...roles)` fonctionnels.
+- **`feature/auth/`** : `LoginComponent` et `RegisterComponent` (Reactive Forms, gestion 401/409/400, connexion auto après inscription).
+- **`feature/{dashboard,instructor,admin}/`** : composants placeholder par rôle, chargés en lazy.
+- `AppComponent` = shell : barre de navigation filtrée par rôle + bouton déconnexion + `<router-outlet>`. `styles.scss` : thème clair minimal (variables CSS, police incluant Noto Sans Arabic en fallback).
+- `app.routes.ts` : `/login`, `/register`, `/dashboard` (`authGuard`), `/instructor` (`roleGuard INSTRUCTOR/ADMIN`), `/admin` (`roleGuard ADMIN`), lazy `loadComponent`.
+- `index.html` : `<title>educa</title>`.
+- **`npm run build` → succès** (bundles main + chunks lazy login/register/dashboards).
+
+**Décisions techniques**
+- Angular **19.2** (pas 20+) tant que Node reste en 24.12 sur le poste.
+- Jetons stockés en `localStorage` (backend sans état, pas de cookie) ; refresh géré dans l'intercepteur.
+- Frontend cible l'API sur `http://localhost:8081/api/v1` (`core/api.ts`).
+
+**Bloquant** — aucun. Il reste la tâche **1.10 (Swagger)** pour clôturer complètement la Phase 1 : à faire quand une version `springdoc-openapi` compatible Spring Boot 4 / Spring 7 est disponible (sinon reporter en Phase 5).
+
+**Prochaine étape**
+- Lancer les deux serveurs et valider le parcours visuel (inscription → dashboard).
+- Décision sur 1.10 (Swagger maintenant ou reporté).
+- Démarrer la **Phase 2** (gestion des formations : module `course`, `enrollment`, stockage local des fichiers).

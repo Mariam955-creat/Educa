@@ -1,0 +1,27 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.role {
+  margin: 0 0 1.5rem;
+  color: var(--muted, #6b7280);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.placeholder {
+  border: 1px dashed var(--border, #cbd0d6);
+  border-radius: 12px;
+  padding: 2rem;
+  color: var(--muted, #6b7280);
+  background: var(--surface, #fff);
+}

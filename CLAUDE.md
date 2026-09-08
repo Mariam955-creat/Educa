@@ -15,7 +15,7 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 | Couche | Techno | Notes |
 |---|---|---|
-| Frontend | **Angular** (standalone components) + TypeScript | i18n via `@ngx-translate/core`, gestion RTL pour l'arabe |
+| Frontend | **Angular 19.2** (standalone components) + TypeScript | dev server :4200 ; i18n via `@ngx-translate/core` (Phase 4), RTL arabe. Version bloquée à 19 tant que Node < 24.15 sur le poste |
 | Backend | **Java 25 + Spring Boot 4.1.1** (Maven) | Structure en couches : `controller` → `service` → `repository` ; package racine `com.educa.backend` |
 | Persistance | **PostgreSQL** + Spring Data JPA / Hibernate | Migrations versionnées avec **Flyway** dès la Phase 1 |
 | BDD (dev) | **PostgreSQL installé en local + pgAdmin** | Pas de Docker pour l'instant. Bases : `educa` (dev), `educa_test` (tests) |
@@ -57,8 +57,9 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 | Backend — run | `cd backend && ./mvnw spring-boot:run` (profil `dev`, API sur **:8081**) |
 | Backend — tests | `cd backend && ./mvnw test` (profil `test` → `educa_test`) |
 | Nettoyer le schéma dev | `cd backend && ./mvnw org.flywaydb:flyway-maven-plugin:12.4.0:clean -Dflyway.url=jdbc:postgresql://localhost:5432/educa -Dflyway.user=postgres -Dflyway.password=<mdp> -Dflyway.cleanDisabled=false` |
-| Frontend — run | `cd frontend && npm start` *(après Phase 1)* |
-| Frontend — tests | `cd frontend && npm test` |
+| Frontend — run | `cd frontend && npm start` (Angular 19.2, dev server sur **:4200**) |
+| Frontend — build | `cd frontend && npm run build` |
+| Frontend — tests | `cd frontend && npm test` (Karma) |
 
 ## 5. Règles de travail (imposées par le brief)
 
@@ -82,10 +83,10 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phase 0 terminée.** **Phase 1 (socle technique) : backend fait, frontend à faire.**
-Backend **opérationnel et testé** : squelette *package-by-feature*, module `user` complet, sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2` appliquées sur `educa`, `DevDataInitializer`. `./mvnw test` → **9 tests verts**. API démarre sur **:8081**.
+**Phase 0 terminée.** **Phase 1 quasi terminée** (reste 1.10 Swagger).
+Backend **opérationnel et testé** : squelette *package-by-feature*, module `user` complet, sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2` appliquées sur `educa`, `DevDataInitializer`. `./mvnw test` → **9 tests verts**. API sur **:8081**.
 Modules `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai` : `package-info.java` seulement (Phases 2–4).
-Frontend : vide (tâches 1.11–1.14 : init Angular, login/register, intercepteur, guards, dashboards).
+Frontend **Angular 19.2** : `core/auth/` (`AuthService` + `authInterceptor` + `authGuard`/`roleGuard`), pages login/register, shell avec nav par rôle, dashboards placeholder par rôle. `npm run build` OK.
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 

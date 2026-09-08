@@ -1,0 +1,18 @@
+# Normalisation des fins de ligne : LF partout, sauf scripts Windows
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Fichiers binaires
+*.jar  binary
+*.war  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary

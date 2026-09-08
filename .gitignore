@@ -5,7 +5,8 @@
 
 # --- Java / Maven (backend) ---
 backend/target/
-backend/var/            # stockage fichiers local en dev (module storage)
+# stockage fichiers local en dev (module storage)
+backend/var/
 *.class
 *.jar
 *.war

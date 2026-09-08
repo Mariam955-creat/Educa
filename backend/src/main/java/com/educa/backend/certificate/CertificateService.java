@@ -64,7 +64,7 @@ public class CertificateService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Resource download(Long certificateId, Long requesterId, boolean isAdmin) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificat introuvable"));
@@ -72,7 +72,16 @@ public class CertificateService {
             throw new ApiException(HttpStatus.FORBIDDEN, "Ce certificat ne vous appartient pas");
         }
         if (certificate.getPdfKey() == null) {
-            throw new ResourceNotFoundException("PDF non disponible");
+            // Génération paresseuse (ou re-tentative si l'émission avait échoué).
+            String holderName = userService.displayNameById(certificate.getUserId());
+            String courseTitle = courseService.summary(certificate.getCourseId()).title();
+            try {
+                byte[] pdf = renderPdf(certificate, holderName, courseTitle);
+                certificate.setPdfKey(storageService.store(pdf, "certificates/" + certificate.getId(), "pdf"));
+            } catch (Exception e) {
+                log.error("Génération du PDF du certificat {} échouée", certificate.getId(), e);
+                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "PDF du certificat indisponible");
+            }
         }
         return storageService.loadAsResource(certificate.getPdfKey());
     }
@@ -141,16 +150,16 @@ public class CertificateService {
                   .meta { margin-top: 40px; color: #6b7280; font-size: 12px; }
                 </style></head><body>
                 <div class="frame">
-                  <h1>CERTIFICAT DE RÉUSSITE</h1>
+                  <h1>CERTIFICAT DE R&#201;USSITE</h1>
                   <p class="sub">Plateforme e-learning educa</p>
                   <p>Ce certificat atteste que</p>
                   <p class="name">%s</p>
-                  <p>a validé avec succès la formation</p>
-                  <p class="course">« %s »</p>
+                  <p>a valid&#233; avec succ&#232;s la formation</p>
+                  <p class="course">&#171; %s &#187;</p>
                   <p class="grade">Note finale : <b>%s / 100</b>
-                     &nbsp;(contrôles : %s · examen final : %s)</p>
-                  <p class="meta">N° %s &nbsp;·&nbsp; délivré le %s<br/>
-                     Vérification : code %s</p>
+                     (contr&#244;les : %s &#183; examen final : %s)</p>
+                  <p class="meta">N&#176; %s &#183; d&#233;livr&#233; le %s<br/>
+                     V&#233;rification : code %s</p>
                 </div>
                 </body></html>
                 """.formatted(escape(holderName), escape(courseTitle),

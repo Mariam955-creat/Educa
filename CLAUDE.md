@@ -83,13 +83,13 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phase 0 + Phase 1 terminées** (reste 1.10 Swagger). **Phase 2 : backend fait, frontend à faire.**
-Backend **opérationnel et testé** (`./mvnw test` → **14 tests verts**), API sur **:8081** :
-- modules `user` (auth JWT), `course` (CRUD cours/chapitres/contenus + catalogue + publication), `enrollment` (inscription + progression %), `storage` (`FileSystemStorageService` + upload/download multipart) ;
-- sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet « est-ce mon cours ? », `CurrentUser.hasRole/optionalId` ;
-- migrations Flyway `V1`+`V2` (aucune nouvelle en Phase 2) ; `DevDataInitializer` seede 3 comptes + un cours de démo publié.
-Modules `quiz` / `certificate` / `ai` : `package-info.java` seulement (Phases 3–4).
-Frontend **Angular 19.2** (`npm run build` OK) : `core/auth` + `core/courses` + `core/enrollments` ; `feature/` catalog, course (page cours + inscription + progression), instructor (liste + `course-editor` CRUD + upload), dashboard apprenant branché sur `/enrollments/me`. Reste à valider au navigateur.
+**Phases 0 → 3 terminées** (reste 1.10 Swagger). Prochaine : **Phase 4 (multilingue + chatbot IA)**.
+Backend **opérationnel et testé** (`./mvnw test` → **18 tests verts**), API sur **:8081** :
+- modules `user` (auth JWT), `course` (CRUD + catalogue + publication), `enrollment` (inscription + progression %), `storage` (FS local + upload/download multipart), `quiz` (contrôle par chapitre + examen final, correction auto, note pondérée 40/60, déverrouillage à 100 %), `certificate` (génération PDF via openhtmltopdf, n° de série, vérification publique par code) ;
+- sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet, `CurrentUser.hasRole/optionalId` ;
+- migrations Flyway `V1`+`V2` (aucune nouvelle en Phases 2–3) ; `DevDataInitializer` seede 3 comptes + un cours de démo publié avec un contrôle et un examen final.
+Module `ai` : `package-info.java` seulement (Phase 4).
+Frontend **Angular 19.2** (`npm run build` OK) : `core/` auth + courses + enrollments + quiz + certificates ; `feature/` catalog, course (page cours + inscription + progression + évaluation + certificat), quiz (`quiz-take`), instructor (`course-editor` + `quiz-editor` + `course-results`), certificate (`my-certificates` + `verify/:code` public), dashboard. Reste à valider au navigateur.
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 

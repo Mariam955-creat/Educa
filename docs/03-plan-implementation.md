@@ -83,27 +83,27 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 3 — Évaluation & certification  ·  statut : `à faire`
+## Phase 3 — Évaluation & certification  ·  statut : `terminée (build/tests OK, à valider au navigateur)`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 3.1 | CRUD `quizzes` : `type=CONTROL` (1 par chapitre, `POST /chapters/{id}/control-quiz`) et `type=FINAL_EXAM` (1 par cours, `POST /courses/{id}/final-exam`) ; contraintes d'unicité | `com.educa.backend.quiz` | à faire | — |
-| 3.2 | CRUD `questions` + `answer_options` (types `SINGLE/MULTIPLE/TRUE_FALSE`), validation (≥2 options, ≥1 correcte ; `TRUE_FALSE` = 2 options) | `com.educa.backend.quiz` | à faire | — |
-| 3.3 | `GET /quizzes/{id}` : version apprenant (sans `isCorrect`) vs propriétaire/admin ; `403` si `FINAL_EXAM` et progression < 100 % | `com.educa.backend.quiz` | à faire | — |
-| 3.4 | `POST /quizzes/{id}/attempts` : correction auto, score %, gestion `max_attempts` (illimité `CONTROL` / limité `FINAL_EXAM`), `409` si verrouillé/épuisé | `com.educa.backend.quiz` | à faire | — |
-| 3.5 | Persistance `quiz_attempts` + `attempt_answers` (snapshot des réponses) ; score retenu par quiz = meilleure tentative | `com.educa.backend.quiz` | à faire | — |
-| 3.6 | Déverrouillage de l'examen final : 100 % des `contents` vus **et** tous les contrôles tentés | `com.educa.backend.enrollment`, `.quiz` | à faire | — |
-| 3.7 | Calcul de la **note finale pondérée** (`control_weight`/`exam_weight`), moyenne des meilleurs contrôles (contrôle non tenté = 0) ; endpoint `GET /courses/{id}/grade` | `com.educa.backend.quiz`, `.course` | à faire | — |
-| 3.8 | `GET /quizzes/{id}/attempts/me` + `GET /instructor/courses/{id}/results` (agrégat par apprenant) | `com.educa.backend.quiz` | à faire | — |
-| 3.9 | Choisir + intégrer la lib PDF ; gabarit certificat (latin + arabe) affichant moyenne contrôles / score examen / note finale | `backend/pom.xml`, `com.educa.backend.certificate` | à faire | — |
-| 3.10 | Génération auto du `certificate` quand note finale ≥ `courses.pass_threshold` : `serial_number`, `verification_code`, `controls_average`, `final_exam_score`, `final_grade`, `pdf_key` ; passage de l'`enrollment` à `COMPLETED` | `com.educa.backend.certificate` | à faire | — |
-| 3.11 | `GET /certificates/me`, `GET /certificates/{id}/download`, `GET /certificates/verify/{code}` (public) | `com.educa.backend.certificate` | à faire | — |
-| 3.12 | Frontend : éditeur de quiz formateur (contrôle par chapitre + examen final, pondération & seuil du cours) | `frontend/src/app/feature/instructor` | à faire | — |
-| 3.13 | Frontend : passage de quiz (navigation, soumission, écrans résultat contrôle vs examen) ; examen final grisé tant que progression < 100 % | `frontend/src/app/feature/quiz` | à faire | — |
-| 3.14 | Frontend : page « ma note » (moyenne contrôles, détail par chapitre, note finale) + liste/téléchargement certificats + page publique de vérification | `frontend/src/app/feature/certificate` | à faire | — |
-| 3.15 | Tests backend : correction (chaque type), calcul pondéré 40/60, meilleur score, déverrouillage examen, seuil, génération + vérification certificat | `backend/src/test/...` | à faire | — |
+| 3.1 | CRUD `quizzes` : `CONTROL` (`POST /chapters/{id}/control-quiz`, 1/chapitre) et `FINAL_EXAM` (`POST /courses/{id}/final-exam`, 1/cours) ; `PUT/DELETE /quizzes/{id}` | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.2 | CRUD `questions` + `answer_options` (`SINGLE/MULTIPLE/TRUE_FALSE`) ; validation ≥2 options, ≥1 correcte, `TRUE_FALSE`=2, `SINGLE`=1 correcte | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.3 | `GET /quizzes/{id}` : version propriétaire (`answersVisible`) vs apprenant (options sans `correct`) ; `403` si non inscrit ou `FINAL_EXAM` verrouillé. `GET /courses/{id}/quizzes` (liste contrôles + examen) | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.4 | `POST /quizzes/{id}/attempts` : `GradingService` (score = points obtenus/total ; question juste = ensemble des options cochées == bonnes) ; `max_attempts` ; `409` verrouillé/épuisé | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.5 | Persistance `quiz_attempts` + `attempt_answers` (`selected_option_ids bigint[]`) ; score retenu = meilleure tentative | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.6 | `QuizUnlockService` : examen final débloqué à 100 % des `contents` vus **et** tous les contrôles tentés | `com.educa.backend.quiz`, `.enrollment` | fait | 2026-09-08 |
+| 3.7 | Note finale pondérée (`control_weight`/`exam_weight` du cours) ; moyenne des meilleurs contrôles (non tenté = 0 ; aucun contrôle → note = examen) ; `GET /courses/{id}/grade` | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.8 | `GET /quizzes/{id}/attempts/me` + `GET /instructor/courses/{id}/results` (moyenne contrôles, examen, note finale, certifié — par apprenant) | `com.educa.backend.quiz` | fait | 2026-09-08 |
+| 3.9 | `openhtmltopdf-pdfbox` 1.0.10 ; gabarit HTML/CSS du certificat (A4 paysage, note finale + composantes) | `backend/pom.xml`, `com.educa.backend.certificate` | fait | 2026-09-08 |
+| 3.10 | Génération auto du `certificate` quand note finale ≥ `courses.pass_threshold` : `serial_number` (`EDUCA-AAAA-000001`), `verification_code`, `controls_average`/`final_exam_score`/`final_grade`, `pdf_key` (via `storage`) ; `enrollment` → `COMPLETED` | `com.educa.backend.certificate` | fait | 2026-09-08 |
+| 3.11 | `GET /certificates/me`, `GET /certificates/{id}/download` (propriétaire/ADMIN), `GET /certificates/verify/{code}` (public) | `com.educa.backend.certificate` | fait | 2026-09-08 |
+| 3.12 | Frontend : `course-editor` — créer un contrôle par chapitre / l'examen final ; `quiz-editor` — ajout de questions (énoncé, type, options + bonnes réponses) | `frontend/src/app/feature/instructor` | fait | 2026-09-08 |
+| 3.13 | Frontend : `quiz-take` — passage d'un quiz (radio/checkbox selon le type), écran résultat (score, note finale + certificat si examen final) ; examen final grisé si non déverrouillé | `frontend/src/app/feature/quiz` | fait | 2026-09-08 |
+| 3.14 | Frontend : `course-detail` — panneau évaluation (moyenne contrôles, meilleur score par contrôle, note finale, bouton certificat) ; `my-certificates` (liste + PDF) ; `verify/:code` (page publique) ; `course-results` (formateur) | `frontend/src/app/feature/certificate`, `.../course` | fait | 2026-09-08 |
+| 3.15 | Tests backend : `QuizFlowTest` (4 tests, dont parcours complet contrôle → déverrouillage → examen final → certificat → vérification). `./mvnw test` → **18 verts** | `backend/src/test/...` | fait | 2026-09-08 |
 
-**Livrable démontrable** : un apprenant passe les contrôles de chapitre, atteint 100 %, débloque et réussit l'examen final ; sa note finale pondérée atteint le seuil et il télécharge un certificat PDF vérifiable.
+**Livrable démontrable** : ✅ (test d'intégration) un apprenant passe le contrôle, atteint 100 %, débloque et réussit l'examen final, la note pondérée atteint le seuil, un certificat PDF est généré et vérifiable par code. Reste la validation au navigateur.
 
 ---
 
@@ -168,6 +168,7 @@ Dernière mise à jour : 2026-09-08.
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
 | 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | backend (14 tests) + frontend Angular (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
+| 3 — Évaluation & certification | backend (18 tests, parcours certificat complet) + frontend (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

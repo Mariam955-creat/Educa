@@ -261,3 +261,44 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Prochaine étape**
 - Validation visuelle Phase 2 (catalogue → inscription → progression ; côté formateur : créer un cours complet).
 - **Phase 3** : évaluation & certification (module `quiz` : contrôles de chapitre + examen final, note pondérée 40/60, génération du certificat PDF).
+
+---
+
+## [2026-09-08] Phase 3 — Évaluation & certification (backend + frontend)
+
+**Backend — module `quiz`**
+- Entités `Quiz` (`CONTROL`/`FINAL_EXAM`), `Question`, `AnswerOption`, `QuizAttempt`, `AttemptAnswer` (`selected_option_ids` en `bigint[]` via `@JdbcTypeCode(ARRAY)` — schéma `V1` inchangé, validé par Hibernate).
+- `QuizService` : CRUD (contrôle par chapitre, examen final par cours, questions + options) ; validation ≥2 options / ≥1 correcte / `TRUE_FALSE`=2 / `SINGLE_CHOICE`=1 correcte. `getViewForCurrentUser` (tout en une transaction — un `GET` hors tx levait `LazyInitializationException` en prod ; le test `@Transactional` le masquait).
+- `GradingService` : correction auto ; question juste = l'ensemble des options cochées == l'ensemble des bonnes ; score = points obtenus / total.
+- `QuizUnlockService` (service dédié pour casser le cycle `QuizService` ⇄ `QuizAttemptService`) : examen final débloqué à 100 % de progression + tous les contrôles tentés.
+- `QuizAttemptService` : `submit` (inscription + verrouillage + `max_attempts` + note pondérée `40/60` depuis `courses.control_weight`/`exam_weight` ; déclenche le certificat), `courseGrade`, `courseResults`.
+- Contrôleurs : `QuizController` (+ `GET /courses/{id}/quizzes`), `QuizAttemptController` (`/attempts`, `/attempts/me`, `/courses/{id}/grade`), `InstructorResultsController`.
+
+**Backend — module `certificate`**
+- `Certificate` + `CertificateService` : `issueIfAbsent` (n° `EDUCA-AAAA-000001` calculé **avant** l'insert — un `save` puis `setSerialNumber` violait `NOT NULL` ; corrigé), code de vérification aléatoire, **PDF via openhtmltopdf** (`openhtmltopdf-pdfbox` 1.0.10) rendu depuis un gabarit HTML/CSS et stocké via `StorageService` (`store(byte[], folder, ext)` ajouté).
+- `CertificateController` : `/certificates/me`, `/{id}/download` (propriétaire ou ADMIN), `/verify/{code}` (public).
+- `enrollment` : `contentsFullyCompleted`, `progressPercent`, `markCompleted`, `enrolledUserIds`.
+- `GlobalExceptionHandler` : log des 500.
+- `DevDataInitializer` : + un contrôle sur le chapitre 1 et un examen final sur le cours de démo.
+
+**Frontend**
+- `core/quiz` (`QuizApiService` + modèles), `core/certificates` (`CertificateApiService`).
+- `feature/quiz/quiz-take` : passage d'un quiz (radio / checkbox selon `SINGLE`/`MULTIPLE`/`TRUE_FALSE`), écran résultat (score ; pour l'examen : moyenne contrôles + note finale + lien certificat).
+- `feature/instructor/quiz-editor` : ajout de questions (énoncé, type, points, options avec cases « correcte »).
+- `feature/certificate/my-certificates` (liste + téléchargement PDF) ; `feature/certificate/verify` (route publique `/verify/:code`, sans guard).
+- `feature/instructor/course-results` : tableau moyenne contrôles / examen / note finale / certifié par apprenant.
+- `course-detail` : liens vers les contrôles (+ meilleur score), panneau « Évaluation » (progression, moyenne contrôles, examen final déverrouillé ou 🔒, note finale, bouton « Télécharger le certificat »).
+- `course-editor` : créer/éditer un contrôle par chapitre et l'examen final.
+- Routes ajoutées + lien « Mes certificats » dans la nav.
+- Templates : `@else if (x; as y)` interdit par Angular → passage à `@let`.
+
+**Vérifications**
+- `./mvnw test` → **18 tests verts** (`QuizFlowTest` : quiz non visible si non inscrit, options sans bonnes réponses côté apprenant, examen verrouillé avant 100 %, **parcours complet jusqu'au certificat + vérification par code**).
+- `npm run build` (frontend) → OK.
+- Live : `GET /quizzes/1` (cours de démo) → 200 après correction du lazy-loading.
+
+**Bloquant** — aucun.
+
+**Prochaine étape**
+- Validation visuelle Phase 3 (apprenant : contrôle → examen final → certificat ; formateur : créer un quiz).
+- **Phase 4** : multilingue FR/EN/AR (+ RTL) et chatbot pédagogique (API Claude, module `ai`).

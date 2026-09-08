@@ -28,8 +28,11 @@ export class MyCertificatesComponent implements OnInit {
   download(certificate: Certificate): void {
     this.api.download(certificate.id).subscribe((blob) => {
       const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `certificat-${certificate.serialNumber}.pdf`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
     });
   }
 }

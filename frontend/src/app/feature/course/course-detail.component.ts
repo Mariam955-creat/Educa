@@ -83,8 +83,11 @@ export class CourseDetailComponent implements OnInit {
     if (!id) return;
     this.certificateApi.download(id).subscribe((blob) => {
       const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `certificat-${id}.pdf`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
     });
   }
 

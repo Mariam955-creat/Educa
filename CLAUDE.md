@@ -83,5 +83,6 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 **Phase 0 — Cadrage** en cours. Documentation produite ; 6 décisions de cadrage actées (voir `docs/04-journal-avancement.md`, entrée du 2026-09-08). En attente de la relecture finale humaine du MCD et de la matrice RBAC.
 Backend = squelette Spring Boot généré (dépendance `spring-boot-starter-security` uniquement). Frontend vide.
-Git initialisé (`main`), remote `origin` = `https://github.com/Mariam955-creat/Educa.git`, `user.*` en `--local`. **Aucun commit encore.**
-Reste avant Phase 1 : `.env.example`, config de formatage, 1er commit + push. **Pas de Docker pour l'instant** — PostgreSQL local + pgAdmin (l'utilisatrice installe pgAdmin).
+Git : branche `main` poussée sur `origin` (`https://github.com/Mariam955-creat/Educa.git`), `user.*` en `--local`. 1er commit fait (`chore: cadrage Phase 0`).
+PostgreSQL local : bases `educa` et `educa_test` créées via pgAdmin. **Pas de Docker.**
+Reste avant Phase 1 : **relecture humaine du MCD (`docs/02-conception.md §2`) et de la matrice RBAC (`§5`)**.

@@ -101,5 +101,22 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 
 **Prochaine étape**
 - Validation finale MCD + RBAC.
-- Fin de Phase 0 : l'utilisatrice installe PostgreSQL + pgAdmin et crée `educa` / `educa_test` ; côté repo : `.env.example`, `.editorconfig`, puis **premier commit + push** vers `origin/main`.
-- Puis Phase 1, en commençant par la tâche 1.0 (squelette *package-by-feature*).
+- Voir l'entrée suivante.
+
+---
+
+## [2026-09-08] Phase 0 — Repo initialisé et poussé
+
+**Fait**
+- Bases PostgreSQL `educa` et `educa_test` créées par l'utilisatrice via pgAdmin (connexion `localhost:5432`, l'erreur initiale venait d'un hôte `postgres` hérité de la config Docker).
+- Ajout `.env.example` (PostgreSQL, JWT, stockage local, clé API Claude), `.editorconfig`, `.gitattributes` (LF partout, CRLF pour `*.bat`/`*.cmd`).
+- **Premier commit** `d564d67` — `chore: cadrage Phase 0 …` — auteur `mariam Balde <mariambalde95@gmail.com>`, sans trailer.
+- **Push** de `main` vers `origin` (`Mariam955-creat/Educa`) : OK (dépôt distant était vide).
+- Checklist Phase 0 : 0.10 → 0.13 cochées dans `03-plan-implementation.md`.
+
+**Bloquants / points à trancher**
+- Aucun. **Seul reste avant la Phase 1 : la relecture humaine du MCD (`02-conception.md §2`) et de la matrice RBAC (`§5`).**
+
+**Prochaine étape**
+- Relecture MCD + RBAC par l'utilisatrice → clôture de la Phase 0.
+- Phase 1 : commencer par la tâche 1.0 (squelette *package-by-feature*), puis 1.1 (dépendances Maven), 1.2 (profils `dev`/`test`), 1.3 (migration Flyway `V1__init.sql`).

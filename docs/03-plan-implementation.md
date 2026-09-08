@@ -21,13 +21,14 @@ Dernière mise à jour : 2026-09-08.
 | 0.7 | **Validation humaine du MCD et de la matrice RBAC** | `docs/02-conception.md` | à faire | — |
 | 0.8 | Initialiser git + connecter le remote GitHub + `user.*` en `--local` (commits au nom de l'autrice, sans trailer) | repo | fait | 2026-09-08 |
 | 0.9 | Créer `.gitignore` (racine : secrets, Maven, Angular, IDE) | `.gitignore` | fait | 2026-09-08 |
-| 0.10 | Installer PostgreSQL en local + pgAdmin ; créer les bases `educa` et `educa_test` + un utilisateur applicatif | pgAdmin | à faire *(utilisatrice)* | — |
-| 0.11 | Créer `.env.example` (mot de passe PostgreSQL, secret JWT, clé API Claude, chemin `storage`) | `.env.example` | à faire | — |
-| 0.12 | Config linting/format backend (`.editorconfig` / spotless) + frontend (eslint/prettier) | `.editorconfig`, configs | à faire | — |
+| 0.10 | Installer PostgreSQL en local + pgAdmin ; créer les bases `educa` et `educa_test` | pgAdmin | fait | 2026-09-08 |
+| 0.11 | Créer `.env.example` (PostgreSQL, JWT, clé API Claude, chemin `storage`) | `.env.example` | fait | 2026-09-08 |
+| 0.12 | Config format : `.editorconfig` + `.gitattributes` (LF). ESLint/Prettier frontend = à l'init Angular (tâche 1.11) | `.editorconfig`, `.gitattributes` | fait | 2026-09-08 |
+| 0.13 | Premier commit + push vers `origin/main` (au nom de mariam Balde, sans trailer) | repo | fait | 2026-09-08 |
 
 > `docker-compose.yml` : **reporté**. Sera ajouté plus tard (confort de dev + déploiement).
 
-**Livrable Phase 0** : documentation validée + PostgreSQL local opérationnel + repo prêt (git, `.gitignore`, `.env.example`) — sans fonctionnalité métier.
+**Livrable Phase 0** : documentation validée + PostgreSQL local opérationnel + repo poussé sur GitHub (git, `.gitignore`, `.gitattributes`, `.editorconfig`, `.env.example`) — sans fonctionnalité métier. **Reste : relecture humaine du MCD + matrice RBAC.**
 
 ---
 
@@ -160,7 +161,7 @@ Dernière mise à jour : 2026-09-08.
 
 | Phase | État | Début | Fin |
 |---|---|---|---|
-| 0 — Cadrage | en cours | 2026-09-08 | — |
+| 0 — Cadrage | quasi terminée (reste relecture MCD/RBAC) | 2026-09-08 | — |
 | 1 — Socle technique | à faire | — | — |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |

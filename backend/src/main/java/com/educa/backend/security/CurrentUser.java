@@ -25,4 +25,20 @@ public final class CurrentUser {
     public static Long id() {
         return require().id();
     }
+
+    /** Id de l'utilisateur courant, ou {@code null} si la requête est anonyme. */
+    public static Long optionalId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getPrincipal() instanceof AuthPrincipal principal ? principal.id() : null;
+    }
+
+    public static boolean hasRole(String role) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_" + role));
+    }
+
+    public static boolean isAdmin() {
+        return hasRole("ADMIN");
+    }
 }

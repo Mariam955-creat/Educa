@@ -206,3 +206,32 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 - Lancer les deux serveurs et valider le parcours visuel (inscription → dashboard).
 - Décision sur 1.10 (Swagger maintenant ou reporté).
 - Démarrer la **Phase 2** (gestion des formations : module `course`, `enrollment`, stockage local des fichiers).
+
+---
+
+## [2026-09-08] Phase 2 — Backend : cours, chapitres, contenus, inscription, progression, stockage
+
+**Fait**
+- **Module `course`** : entités `Course` / `Chapter` / `Content` (Lombok ; agrégat, relations bidirectionnelles maintenues en mémoire ; `instructorId` en `Long`, pas de relation JPA inter-module) ; repos ; `CourseMapper` (MapStruct) ; DTO en `record` (`CourseSummaryDto`, `CourseDetailDto`, `ChapterDto`, `ContentDto`, requêtes).
+- `CourseService` : `create` (slug auto-unique via `common.Slugs`), `update`, `delete`, `setPublished`, `catalog` (recherche paginée `q`/`language`), `listByInstructor`, `getDetailBySlug` (contenus masqués si non inscrit/non propriétaire), helpers `requireOwned` / `requireCourse` / `contentCount` / `isOwnerOrAdmin`. `ChapterService`, `ContentService` (upload/suppression de fichier, contrôle de position).
+- `CourseController` (`/api/v1/courses`, `/api/v1/instructor/courses`), `ChapterController`, `ContentController` (dont `POST|GET /contents/{id}/file`). RBAC : `@PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")` + contrôle objet « est-ce mon cours ? » dans le service.
+- **Module `storage`** : `StorageService` + `FileSystemStorageService` (racine `${STORAGE_LOCAL_PATH}`, nom régénéré en UUID, garde anti-path-traversal, `delete` idempotent).
+- **Module `enrollment`** : entités `Enrollment` / `Progress` (ids `Long`) ; repos ; `EnrollmentService` (`enroll` sur cours publié + unicité 409, `myEnrollments` avec %, `completeContent`, `courseProgress`, `isEnrolled`) ; `EnrollmentController` (`/courses/{id}/enroll`, `/enrollments/me`, `/contents/{id}/complete`, `/courses/{id}/progress`).
+- `CurrentUser` étendu : `hasRole`, `isAdmin`, `optionalId` (null si anonyme).
+- `SecurityConfig` : `GET /api/v1/courses/**` public (les sous-ressources sensibles sont gardées par `CurrentUser.id()` / `@PreAuthorize`).
+- `DevDataInitializer` : + cours de démo publié « Introduction à Python » (2 chapitres, 4 contenus TEXT) appartenant à `formateur@educa.dev`.
+- **`CourseFlowTest`** : 5 tests d'intégration → `./mvnw test` = **14 verts**.
+- **Vérif manuelle** (`spring-boot:run` sur 8081) : catalogue OK, création cours/chapitre/contenus, apprenant → 403 sur création, upload d'un fichier sur un contenu DOCUMENT, inscription, `complete` → 50 %, download du fichier par l'apprenant inscrit, `GET /enrollments/me` cohérent.
+
+**Décisions / corrections techniques**
+- Couplage inter-module par **id** (`instructorId`, `userId`, `courseId` en `Long`), pas de `@ManyToOne` vers l'entité d'un autre module — conforme à la règle *package-by-feature* (« dépendre du service, pas de l'entité/repo »).
+- Pas de cycle de dépendances : `enrollment` → `course` (jamais l'inverse) ; la visibilité « inscrit ? » est calculée dans le **contrôleur** (`CourseController` injecte `EnrollmentService`).
+- `CourseRepository.searchPublished` : `cast(:q as string)` obligatoire — sinon PostgreSQL lève `function lower(bytea) does not exist` quand le paramètre est `null`.
+- `isOwnerOrAdmin(Course)` utilise `CurrentUser.optionalId()` (et non `id()`) pour ne pas lever 401 sur une requête anonyme (catalogue public).
+- `ChapterService.create` / `ContentService.create` maintiennent la collection parente en mémoire (`course.addChapter` / `chapter.addContent`) pour éviter une lecture périmée dans une même transaction.
+- Aucune nouvelle migration : le schéma `enrollments` / `progress` / `courses` … était déjà dans `V1`.
+
+**Bloquant** — aucun.
+
+**Prochaine étape**
+- Frontend Phase 2 : espace formateur (CRUD cours/chapitres/contenus + upload), catalogue + page cours (inscription, « marquer terminé »), dashboard apprenant branché sur `GET /enrollments/me`.

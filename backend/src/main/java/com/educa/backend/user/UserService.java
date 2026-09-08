@@ -23,6 +23,12 @@ public class UserService {
         return userMapper.toDto(loadById(id));
     }
 
+    /** Nom d'affichage d'un utilisateur (pour les DTO d'autres modules). */
+    @Transactional(readOnly = true)
+    public String displayNameById(Long id) {
+        return userRepository.findById(id).map(User::getFullName).orElse("—");
+    }
+
     @Transactional
     public UserDto update(Long id, UpdateMeRequest request) {
         User user = loadById(id);

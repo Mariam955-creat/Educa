@@ -83,10 +83,13 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phase 0 terminée.** **Phase 1 quasi terminée** (reste 1.10 Swagger).
-Backend **opérationnel et testé** : squelette *package-by-feature*, module `user` complet, sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2` appliquées sur `educa`, `DevDataInitializer`. `./mvnw test` → **9 tests verts**. API sur **:8081**.
-Modules `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai` : `package-info.java` seulement (Phases 2–4).
-Frontend **Angular 19.2** : `core/auth/` (`AuthService` + `authInterceptor` + `authGuard`/`roleGuard`), pages login/register, shell avec nav par rôle, dashboards placeholder par rôle. `npm run build` OK.
+**Phase 0 + Phase 1 terminées** (reste 1.10 Swagger). **Phase 2 : backend fait, frontend à faire.**
+Backend **opérationnel et testé** (`./mvnw test` → **14 tests verts**), API sur **:8081** :
+- modules `user` (auth JWT), `course` (CRUD cours/chapitres/contenus + catalogue + publication), `enrollment` (inscription + progression %), `storage` (`FileSystemStorageService` + upload/download multipart) ;
+- sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet « est-ce mon cours ? », `CurrentUser.hasRole/optionalId` ;
+- migrations Flyway `V1`+`V2` (aucune nouvelle en Phase 2) ; `DevDataInitializer` seede 3 comptes + un cours de démo publié.
+Modules `quiz` / `certificate` / `ai` : `package-info.java` seulement (Phases 3–4).
+Frontend **Angular 19.2** : `core/auth/` complet, pages login/register, shell + nav par rôle, dashboards placeholder. Phase 2 frontend (espace formateur, catalogue, page cours, progression) : **à faire**.
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 

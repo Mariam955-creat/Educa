@@ -59,25 +59,27 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 2 — Gestion des formations  ·  statut : `à faire`
+## Phase 2 — Gestion des formations  ·  statut : `backend fait, frontend à faire`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 2.1 | CRUD `courses` (propriétaire) + `slug` + publish/unpublish | `com.educa.backend.course` | à faire | — |
-| 2.2 | CRUD `chapters` ordonnés | `com.educa.backend.course` | à faire | — |
-| 2.3 | CRUD `contents` (`TEXT/VIDEO/DOCUMENT`) ordonnés | `com.educa.backend.course` | à faire | — |
-| 2.4 | Module `storage` : interface `StorageService` + impl. `FileSystemStorageService` (dossier `backend/var/storage/`) ; upload **multipart** `POST /contents/{id}/file`, download `GET /contents/{id}/file`. Impl. S3/MinIO = plus tard | `com.educa.backend.storage` | à faire | — |
-| 2.5 | Catalogue public `GET /courses` (filtre `q`, `language`, pagination) + `GET /courses/{slug}` | `com.educa.backend.course` | à faire | — |
-| 2.6 | `enrollments` : `POST /courses/{id}/enroll`, `GET /enrollments/me` | `com.educa.backend.enrollment` | à faire | — |
-| 2.7 | `progress` : `POST /contents/{id}/complete`, `GET /courses/{id}/progress`, calcul du % | `com.educa.backend.enrollment` | à faire | — |
-| 2.8 | Contrôle d'accès objet : contenu visible seulement si inscrit / propriétaire / admin | `com.educa.backend.security` | à faire | — |
+| 2.1 | CRUD `courses` : `POST/PUT/DELETE /courses`, `slug` auto-unique, `publish`/`unpublish`, `GET /instructor/courses` ; contrainte `control_weight + exam_weight = 100` | `com.educa.backend.course` | fait | 2026-09-08 |
+| 2.2 | CRUD `chapters` ordonnés : `POST /courses/{id}/chapters`, `PUT/DELETE /chapters/{id}` (unicité de `position`) | `com.educa.backend.course` | fait | 2026-09-08 |
+| 2.3 | CRUD `contents` (`TEXT/VIDEO/DOCUMENT`) ordonnés : `POST /chapters/{id}/contents`, `PUT/DELETE /contents/{id}` | `com.educa.backend.course` | fait | 2026-09-08 |
+| 2.4 | Module `storage` : `StorageService` + `FileSystemStorageService` (dossier `${STORAGE_LOCAL_PATH}`, anti-path-traversal) ; `POST /contents/{id}/file` (multipart), `GET /contents/{id}/file` (flux binaire) | `com.educa.backend.storage` | fait | 2026-09-08 |
+| 2.5 | Catalogue public `GET /courses` (`q`, `language`, pagination `PageResponse`) + `GET /courses/{slug}` (détail, contenus masqués si non inscrit) | `com.educa.backend.course` | fait | 2026-09-08 |
+| 2.6 | `enrollments` : `POST /courses/{id}/enroll` (publié uniquement, unicité), `GET /enrollments/me` (avec %) | `com.educa.backend.enrollment` | fait | 2026-09-08 |
+| 2.7 | `progress` : `POST /contents/{id}/complete`, `GET /courses/{id}/progress`, calcul du % (contenus vus / total) | `com.educa.backend.enrollment` | fait | 2026-09-08 |
+| 2.8 | Contrôle d'accès objet : `CourseService.requireOwned` (propriétaire ou ADMIN) ; contenus + fichier visibles seulement si inscrit / propriétaire / ADMIN ; `CurrentUser.hasRole` / `optionalId` | `com.educa.backend.course`, `.security` | fait | 2026-09-08 |
 | 2.9 | Frontend : espace formateur — création cours, éditeur de chapitres/contenus, upload | `frontend/src/app/feature/instructor` | à faire | — |
 | 2.10 | Frontend : catalogue + page cours (lecture chapitres/contenus, bouton s'inscrire, marquer terminé) | `frontend/src/app/feature/catalog`, `.../course` | à faire | — |
 | 2.11 | Frontend : dashboard apprenant — formations en cours + % (branché sur `GET /enrollments/me`) | `frontend/src/app/feature/dashboard` | à faire | — |
-| 2.12 | Tests backend : RBAC cours (formateur ≠ propriétaire refusé), inscription, progression | `backend/src/test/...` | à faire | — |
+| 2.12 | Tests backend : `CourseFlowTest` (5 tests) — création + slug, apprenant → 403, catalogue = publiés seulement, inscription + progression + doublon 409, contenus masqués si non inscrit. `./mvnw test` → **14 verts** | `backend/src/test/...` | fait | 2026-09-08 |
 | 2.13 | (S) Recherche/filtrage avancé du catalogue | — | à faire | — |
 
-**Livrable démontrable** : un formateur crée un cours avec chapitres et contenus ; un apprenant s'inscrit, le consulte, sa progression est suivie.
+**Livrable démontrable** : ✅ backend vérifié en conditions réelles (formateur crée « Bases du Git » + chapitre + contenus + fichier, publie ; apprenant s'inscrit, complète un contenu → 50 %, télécharge le fichier). Reste le frontend (2.9–2.11).
+
+**Note** : `DevDataInitializer` seede aussi un cours de démo publié « Introduction à Python » (2 chapitres, 4 contenus) appartenant à `formateur@educa.dev`.
 
 ---
 
@@ -165,6 +167,7 @@ Dernière mise à jour : 2026-09-08.
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
 | 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
+| 2 — Gestion des formations | backend fait (`course` + `enrollment` + `storage`, 14 tests) ; frontend 2.9–2.11 à faire | 2026-09-08 | — |
 | 2 — Gestion des formations | à faire | — | — |
 | 3 — Évaluation & certification | à faire | — | — |
 | 4 — Multilingue & IA | à faire | — | — |

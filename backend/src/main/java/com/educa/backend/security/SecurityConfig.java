@@ -53,6 +53,8 @@ public class SecurityConfig {
                                 "/api/v1/certificates/verify/**",
                                 "/error")
                         .permitAll()
+                        // Catalogue public. Les sous-ressources sensibles (progress, …)
+                        // sont protégées par CurrentUser.id() / @PreAuthorize côté contrôleur.
                         .requestMatchers(HttpMethod.GET, "/api/v1/courses", "/api/v1/courses/**")
                         .permitAll()
                         .anyRequest().authenticated())

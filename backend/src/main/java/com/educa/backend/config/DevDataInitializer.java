@@ -14,6 +14,12 @@ import com.educa.backend.course.Content;
 import com.educa.backend.course.ContentType;
 import com.educa.backend.course.Course;
 import com.educa.backend.course.CourseRepository;
+import com.educa.backend.quiz.AnswerOption;
+import com.educa.backend.quiz.Question;
+import com.educa.backend.quiz.QuestionType;
+import com.educa.backend.quiz.Quiz;
+import com.educa.backend.quiz.QuizRepository;
+import com.educa.backend.quiz.QuizType;
 import com.educa.backend.user.Role;
 import com.educa.backend.user.RoleName;
 import com.educa.backend.user.RoleRepository;
@@ -36,13 +42,16 @@ public class DevDataInitializer implements ApplicationRunner {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CourseRepository courseRepository;
+    private final QuizRepository quizRepository;
 
     public DevDataInitializer(UserRepository userRepository, RoleRepository roleRepository,
-                              PasswordEncoder passwordEncoder, CourseRepository courseRepository) {
+                              PasswordEncoder passwordEncoder, CourseRepository courseRepository,
+                              QuizRepository quizRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.courseRepository = courseRepository;
+        this.quizRepository = quizRepository;
     }
 
     @Override
@@ -72,6 +81,7 @@ public class DevDataInitializer implements ApplicationRunner {
 
     private void seedDemoCourse(User instructor) {
         if (courseRepository.existsBySlug(DEMO_COURSE_SLUG)) {
+            seedDemoQuizzes();
             return;
         }
         Course course = new Course();
@@ -102,6 +112,75 @@ public class DevDataInitializer implements ApplicationRunner {
 
         courseRepository.save(course);
         log.info("Cours de démo créé : « {} » ({} chapitres)", course.getTitle(), course.getChapters().size());
+        seedDemoQuizzes();
+    }
+
+    /** Ajoute un contrôle au 1er chapitre + un examen final au cours de démo, s'ils manquent. */
+    private void seedDemoQuizzes() {
+        Course course = courseRepository.findBySlug(DEMO_COURSE_SLUG).orElse(null);
+        if (course == null || course.getChapters().isEmpty()) {
+            return;
+        }
+        Chapter firstChapter = course.getChapters().get(0);
+
+        if (!quizRepository.existsByChapterIdAndType(firstChapter.getId(), QuizType.CONTROL)) {
+            Quiz control = new Quiz();
+            control.setType(QuizType.CONTROL);
+            control.setCourseId(course.getId());
+            control.setChapterId(firstChapter.getId());
+            control.setTitle("Contrôle — Prise en main");
+            control.setPassThreshold(50);
+            control.addQuestion(singleChoice("Python est un langage…", 1,
+                    "interprété", true, "compilé uniquement", false, "sans variables", false));
+            control.addQuestion(trueFalse("La commande `python --version` affiche la version installée.", 2, true));
+            quizRepository.save(control);
+        }
+
+        if (!quizRepository.existsByCourseIdAndType(course.getId(), QuizType.FINAL_EXAM)) {
+            Quiz exam = new Quiz();
+            exam.setType(QuizType.FINAL_EXAM);
+            exam.setCourseId(course.getId());
+            exam.setTitle("Examen final — Introduction à Python");
+            exam.setPassThreshold(50);
+            exam.setMaxAttempts(3);
+            exam.addQuestion(singleChoice("Quelle affectation est correcte en Python ?", 1,
+                    "x = 5", true, "int x = 5;", false, "5 =: x", false));
+            exam.addQuestion(trueFalse("Une liste et un tuple sont strictement identiques.", 2, false));
+            quizRepository.save(exam);
+        }
+        log.info("Quiz de démo prêts pour « {} »", course.getTitle());
+    }
+
+    private static Question singleChoice(String statement, int position,
+                                        String a, boolean aOk, String b, boolean bOk, String c, boolean cOk) {
+        Question question = new Question();
+        question.setStatement(statement);
+        question.setType(QuestionType.SINGLE_CHOICE);
+        question.setPoints(1);
+        question.setPosition(position);
+        question.addOption(option(a, aOk, 1));
+        question.addOption(option(b, bOk, 2));
+        question.addOption(option(c, cOk, 3));
+        return question;
+    }
+
+    private static Question trueFalse(String statement, int position, boolean answerIsTrue) {
+        Question question = new Question();
+        question.setStatement(statement);
+        question.setType(QuestionType.TRUE_FALSE);
+        question.setPoints(1);
+        question.setPosition(position);
+        question.addOption(option("Vrai", answerIsTrue, 1));
+        question.addOption(option("Faux", !answerIsTrue, 2));
+        return question;
+    }
+
+    private static AnswerOption option(String label, boolean correct, int position) {
+        AnswerOption option = new AnswerOption();
+        option.setLabel(label);
+        option.setCorrect(correct);
+        option.setPosition(position);
+        return option;
     }
 
     private static Content textContent(String title, int position, String body) {

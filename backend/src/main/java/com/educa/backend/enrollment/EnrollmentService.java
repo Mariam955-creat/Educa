@@ -75,7 +75,43 @@ public class EnrollmentService {
 
     @Transactional(readOnly = true)
     public boolean isEnrolled(Long userId, Long courseId) {
-        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.ACTIVE);
+        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.ACTIVE)
+                || enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.COMPLETED);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean contentsFullyCompleted(Long userId, Long courseId) {
+        long total = courseService.contentCount(courseId);
+        if (total == 0) {
+            return false;
+        }
+        return enrollmentRepository.findByUserIdAndCourseId(userId, courseId)
+                .map(e -> progressRepository.countByEnrollmentId(e.getId()) >= total)
+                .orElse(false);
+    }
+
+    @Transactional(readOnly = true)
+    public int progressPercent(Long userId, Long courseId) {
+        long total = courseService.contentCount(courseId);
+        return enrollmentRepository.findByUserIdAndCourseId(userId, courseId)
+                .map(e -> percent(progressRepository.countByEnrollmentId(e.getId()), total))
+                .orElse(0);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> enrolledUserIds(Long courseId) {
+        return enrollmentRepository.findByCourseId(courseId).stream().map(Enrollment::getUserId).toList();
+    }
+
+    @Transactional
+    public void markCompleted(Long userId, Long courseId) {
+        enrollmentRepository.findByUserIdAndCourseId(userId, courseId).ifPresent(e -> {
+            if (e.getStatus() != EnrollmentStatus.COMPLETED) {
+                e.setStatus(EnrollmentStatus.COMPLETED);
+                e.setCompletedAt(Instant.now());
+                enrollmentRepository.save(e);
+            }
+        });
     }
 
     // ---------- privé ----------

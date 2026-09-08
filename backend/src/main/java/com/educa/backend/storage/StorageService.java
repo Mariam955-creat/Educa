@@ -12,6 +12,9 @@ public interface StorageService {
     /** Stocke le fichier sous {@code folder/} et renvoie sa clé (chemin relatif). */
     String store(MultipartFile file, String folder);
 
+    /** Stocke un contenu binaire brut sous {@code folder/} avec l'extension donnée (ex. {@code "pdf"}). */
+    String store(byte[] content, String folder, String extension);
+
     Resource loadAsResource(String key);
 
     void delete(String key);

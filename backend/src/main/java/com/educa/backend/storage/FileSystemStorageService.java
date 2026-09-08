@@ -51,6 +51,20 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    public String store(byte[] content, String folder, String extension) {
+        String ext = extension == null || extension.isBlank() ? "" : "." + extension.toLowerCase();
+        String key = folder + "/" + UUID.randomUUID() + ext;
+        Path target = resolveWithinRoot(key);
+        try {
+            Files.createDirectories(target.getParent());
+            Files.write(target, content);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Échec de l'écriture du fichier", e);
+        }
+        return key;
+    }
+
+    @Override
     public Resource loadAsResource(String key) {
         Path target = resolveWithinRoot(key);
         if (!Files.exists(target) || !Files.isReadable(target)) {

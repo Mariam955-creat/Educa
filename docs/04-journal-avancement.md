@@ -131,15 +131,15 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 - **pom.xml** : ajout `spring-boot-starter-web`, `-validation`, `-data-jpa`, `flyway-core` + `flyway-database-postgresql`, `postgresql`, `jjwt 0.12.6`. Corrigé l'artefact de test (`spring-security-test`).
 - **Config** : `application.yml` + profils `dev`/`test` ; `spring.config.import: optional:file:../.env[.properties]` (lance `mvn` depuis `backend/`) ; `spring.jpa.hibernate.ddl-auto=validate` ; `EducaProperties` (`educa.jwt|cors|storage|ai`).
 - **Migrations Flyway** : `V1__init.sql` (15 tables : users, roles, user_roles, refresh_tokens, courses, chapters, contents, quizzes, questions, answer_options, enrollments, progress, quiz_attempts, attempt_answers, certificates ; CHECK poids 40/60, index partiels 1 contrôle/chapitre & 1 examen/cours) ; `V2__seed_roles.sql` (LEARNER, INSTRUCTOR, ADMIN).
-- **Module `user`** : entités `User`, `Role`, `RefreshToken` ; repos ; `AuthService` (register/login/refresh avec rotation/logout ; refresh token aléatoire, stocké haché SHA-256) ; `UserService` (`/me`) ; `AuthController` (`/api/v1/auth/**`) ; `UserMapper` (manuel) ; DTO en `record`.
+- **Module `user`** : entités `User`, `Role`, `RefreshToken` (Lombok) ; repos ; `AuthService` (register/login/refresh avec rotation/logout ; refresh token aléatoire, stocké haché SHA-256) ; `UserService` (`/me`) ; `AuthController` (`/api/v1/auth/**`) ; `UserMapper` (MapStruct) ; DTO en `record`.
 - **Sécurité** : `SecurityConfig` (`proxyBeanMethods=false`, stateless, CORS, points d'entrée JSON 401/403), BCrypt, `JwtService` (HS256, jjwt), `JwtAuthenticationFilter` (identité depuis les claims, pas d'accès base), `AppUserDetailsService`, `CurrentUser`.
 - **Erreurs** : `GlobalExceptionHandler` (`@RestControllerAdvice`) + `ApiError` + hiérarchie `ApiException`.
-- **Vérifs** : `./mvnw compile` → BUILD SUCCESS ; `./mvnw test-compile` → OK. `./mvnw test` : le contexte démarre, câblage OK, **échec attendu** sur la connexion PostgreSQL (mot de passe par défaut `postgres` incorrect — il faut le vrai mot de passe dans `.env`).
+- **Vérifs** : `./mvnw clean compile` et `./mvnw test-compile` → OK (Lombok + MapStruct actifs, `UserMapperImpl` généré). `./mvnw test` : le contexte démarre, câblage OK, **échec attendu** sur la connexion PostgreSQL (mot de passe par défaut `postgres` incorrect — il faut le vrai mot de passe dans `.env`).
 
 **Décisions techniques**
-- **Pas de Lombok** : la génération des accesseurs échouait (Java 25 + Spring Boot 4). Entités écrites avec getters/setters explicites — code lisible et sans magie, adapté à une soutenance.
-- **Mapper manuel** (pas de MapStruct) : moins de dépendances, code explicite.
+- **Lombok + MapStruct** (sur demande). Un 1er essai « sans annotation processor » échouait (accesseurs non générés) ; corrigé en déclarant explicitement `annotationProcessorPaths` sur le `maven-compiler-plugin` (ordre : `lombok`, `mapstruct-processor`, `lombok-mapstruct-binding`). Lombok 1.18.46 (géré par Boot), MapStruct 1.6.3. `UserMapperImpl` bien généré en `@Component`. ⚠️ activer le plugin Lombok dans l'IDE.
 - **DTO en `record`** Java.
+- **Jackson 3** : Spring Boot 4 fournit `tools.jackson.*` (Jackson 3) ; `com.fasterxml.jackson.databind.ObjectMapper` (Jackson 2) n'est présent qu'en transitif *runtime* de `jjwt-jackson`. `SecurityConfig` n'utilise donc plus `ObjectMapper` : la réponse d'erreur 401/403 est sérialisée à la main.
 - `SecurityConfig` en `@Configuration(proxyBeanMethods = false)` : contourne un échec d'enhancement CGLIB observé au runtime.
 - Refresh token : valeur opaque aléatoire (32 octets hex), stockée **hachée** (SHA-256) ; rotation à chaque `/refresh` ; révocable pour `/logout`.
 

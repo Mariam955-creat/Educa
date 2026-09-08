@@ -89,7 +89,7 @@ com.educa.backend
 - **Repository** : `interface … extends JpaRepository<Entity, Long>` dans le module.
 - **Service** : porte la logique métier + les règles d'autorisation objet (« est-ce bien mon cours ? ») ; annoté `@Transactional` au besoin.
 - **Controller** : fin, délègue au service ; `@PreAuthorize` pour le RBAC de rôle ; préfixe `/api/v1/<ressource>`.
-- **Mapper** : entité ⇄ DTO (manuel ou MapStruct — à figer en Phase 1).
+- **Mapper** : entité ⇄ DTO via **MapStruct** (`@Mapper(componentModel = "spring")`), figé en Phase 1. Entités annotées **Lombok** (`@Getter/@Setter`).
 - **Visibilité** : préférer `package-private` pour ce qui n'a pas à sortir du module ; `public` uniquement pour l'API du module (service, DTO, controller).
 - **Dépendances entre modules** : un module peut dépendre du **service** d'un autre (ex. `certificate` → `enrollment`), jamais de son repository ni de ses entités directement. Pas de dépendance circulaire.
 - **Agrégats** : `Course/Chapter/Content` et `Quiz/Question/AnswerOption` forment chacun un agrégat cohérent regroupé dans un seul module (le cycle de vie des enfants suit le parent).

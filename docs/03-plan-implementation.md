@@ -36,8 +36,8 @@ Dernière mise à jour : 2026-09-08.
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 1.0 | Squelette *package-by-feature* : `common/error`, `config`, `security`, `user` + `package-info.java` pour `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai`. Patron figé : **mapper manuel** (pas de MapStruct), entités JPA getters/setters explicites (**pas de Lombok** — build Java 25 fragile), DTO en `record` | `com.educa.backend.*` | fait | 2026-09-08 |
-| 1.1 | Dépendances Maven : web, validation, data-jpa, flyway (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6. springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
+| 1.0 | Squelette *package-by-feature* : `common/error`, `config`, `security`, `user` + `package-info.java` pour `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai`. Patron figé : **Lombok** sur les entités, **MapStruct** pour les mappers (`annotationProcessorPaths`), DTO en `record` | `com.educa.backend.*` | fait | 2026-09-08 |
+| 1.1 | Dépendances Maven : web, validation, data-jpa, flyway (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6, Lombok, MapStruct 1.6.3 (+ `annotationProcessorPaths` : lombok / mapstruct-processor / lombok-mapstruct-binding). springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
 | 1.2 | `application.yml` (+ `-dev` / `-test`), `spring.config.import` du `.env` racine, `ddl-auto: validate`, propriétés `educa.*` (`EducaProperties`) | `backend/src/main/resources/` | fait | 2026-09-08 |
 | 1.3 | Migration Flyway `V1__init.sql` (15 tables + contraintes + index partiels quiz) et `V2__seed_roles.sql` | `backend/.../db/migration/` | fait | 2026-09-08 |
 | 1.4 | Entités JPA + repositories — **module `user`** (`User`, `Role`, `RefreshToken` + repos). Autres domaines : Phases 2–3 | `com.educa.backend.user` | en cours | 2026-09-08 |

@@ -91,8 +91,8 @@ PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 ⚠️ **Pour lancer le backend / les tests : créer `.env` à la racine** (`cp .env.example .env`) et renseigner `POSTGRES_PASSWORD`. Sans ça, `./mvnw test` échoue sur l'authentification PostgreSQL.
 
 ### Choix techniques figés en Phase 1
-- **Pas de Lombok** — accesseurs explicites dans les entités.
-- **Mapper manuel** (pas de MapStruct).
+- **Lombok** (`@Getter/@Setter/@NoArgsConstructor` sur les entités) + **MapStruct** (`@Mapper(componentModel = "spring")`) — configurés via `annotationProcessorPaths` du `maven-compiler-plugin` (ordre : lombok, mapstruct-processor, lombok-mapstruct-binding). ⚠️ l'IDE doit avoir le plugin Lombok activé.
 - **DTO = `record`** Java.
+- **Jackson 3** (`tools.jackson`) : c'est le défaut de Spring Boot 4 (Jackson 2 n'est présent qu'en transitif runtime de jjwt). Ne pas importer `com.fasterxml.jackson.databind.ObjectMapper`.
 - Refresh token opaque aléatoire, stocké haché (SHA-256), rotation à chaque `/refresh`.
 - `SecurityConfig` en `@Configuration(proxyBeanMethods = false)`.

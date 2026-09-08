@@ -1,0 +1,30 @@
+<section class="page">
+  <h1>Bonjour {{ auth.user()?.fullName }} 👋</h1>
+  <p class="role">Espace apprenant</p>
+
+  <div class="toolbar">
+    <a class="btn" routerLink="/catalog">Parcourir le catalogue</a>
+  </div>
+
+  <h2>Mes formations</h2>
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (enrollments().length === 0) {
+    <p class="muted">Vous n'êtes inscrit à aucune formation pour l'instant.</p>
+  } @else {
+    <div class="list">
+      @for (e of enrollments(); track e.courseId) {
+        <a class="enr-card" [routerLink]="['/courses', e.courseSlug]">
+          <div class="enr-head">
+            <strong>{{ e.courseTitle }}</strong>
+            <span class="pct">{{ e.progressPercent }} %</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="e.progressPercent"></div>
+          </div>
+          <p class="sub">{{ e.completedContents }} / {{ e.totalContents }} contenu(s) terminé(s)</p>
+        </a>
+      }
+    </div>
+  }
+</section>

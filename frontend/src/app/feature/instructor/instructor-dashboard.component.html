@@ -1,0 +1,43 @@
+<section class="page">
+  <div class="head">
+    <h1>Espace formateur</h1>
+    <a class="btn" routerLink="/instructor/courses/new">+ Nouveau cours</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (courses().length === 0) {
+    <p class="muted">Vous n'avez pas encore créé de cours.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Chapitres</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (course of courses(); track course.id) {
+          <tr>
+            <td>{{ course.title }}</td>
+            <td>{{ course.chapterCount }}</td>
+            <td>
+              <span class="badge" [class.on]="course.published">
+                {{ course.published ? 'Publié' : 'Brouillon' }}
+              </span>
+            </td>
+            <td class="actions">
+              <a [routerLink]="['/instructor/courses', course.slug, 'edit']">Éditer</a>
+              <button type="button" (click)="togglePublish(course)">
+                {{ course.published ? 'Dépublier' : 'Publier' }}
+              </button>
+              <button type="button" class="danger" (click)="remove(course)">Supprimer</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

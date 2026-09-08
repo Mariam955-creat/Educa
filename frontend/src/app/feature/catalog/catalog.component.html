@@ -1,0 +1,24 @@
+<section class="page">
+  <h1>Catalogue des formations</h1>
+
+  <input class="search" type="search" [formControl]="search" placeholder="Rechercher un cours…" />
+
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (courses().length === 0) {
+    <p class="muted">Aucun cours ne correspond.</p>
+  } @else {
+    <div class="grid">
+      @for (course of courses(); track course.id) {
+        <a class="course-card" [routerLink]="['/courses', course.slug]">
+          <h3>{{ course.title }}</h3>
+          <p class="desc">{{ course.description }}</p>
+          <p class="meta">
+            {{ course.instructorName }} · {{ course.chapterCount }} chapitre(s) ·
+            {{ course.language | uppercase }}
+          </p>
+        </a>
+      }
+    </div>
+  }
+</section>

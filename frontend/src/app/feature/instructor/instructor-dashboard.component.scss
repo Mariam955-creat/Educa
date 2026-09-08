@@ -1,0 +1,98 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+th {
+  background: #fafafa;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  background: var(--border);
+  color: var(--muted);
+}
+
+.badge.on {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.actions a,
+.actions button {
+  font: inherit;
+  font-size: 0.82rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.actions .danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}

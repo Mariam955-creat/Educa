@@ -1,0 +1,68 @@
+<section class="page">
+  <a class="back" routerLink="/catalog">‹ Catalogue</a>
+
+  @if (course(); as c) {
+    <header class="course-head">
+      <h1>{{ c.title }}</h1>
+      <p class="meta">Par {{ c.instructorName }} · {{ c.language }}</p>
+      <p class="desc">{{ c.description }}</p>
+
+      @if (canEnroll()) {
+        <button type="button" (click)="enroll()" [disabled]="enrolling()">
+          {{ enrolling() ? 'Inscription…' : "S'inscrire à cette formation" }}
+        </button>
+      } @else if (c.contentsVisible) {
+        <div class="progress">
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+          </div>
+          <span>{{ progressPercent() }} %</span>
+        </div>
+      }
+    </header>
+
+    @if (!c.contentsVisible) {
+      <p class="muted">Inscrivez-vous pour accéder au contenu des chapitres.</p>
+      <ol class="chapter-list">
+        @for (ch of c.chapters; track ch.id) {
+          <li>{{ ch.title }}</li>
+        }
+      </ol>
+    } @else {
+      @for (ch of c.chapters; track ch.id) {
+        <article class="chapter">
+          <h2>{{ ch.position }}. {{ ch.title }}</h2>
+          @for (content of ch.contents; track content.id) {
+            <div class="content" [class.done]="isDone(content)">
+              <div class="content-head">
+                <span class="type">{{ content.type }}</span>
+                <strong>{{ content.title }}</strong>
+              </div>
+              @if (content.type === 'TEXT') {
+                <p class="text-body">{{ content.textBody }}</p>
+              } @else if (content.hasFile) {
+                <button type="button" class="link-btn" (click)="openFile(content)">
+                  Ouvrir {{ content.fileName }}
+                </button>
+              } @else {
+                <p class="muted">Fichier non fourni.</p>
+              }
+              <button
+                type="button"
+                class="complete-btn"
+                [disabled]="isDone(content)"
+                (click)="markComplete(content)"
+              >
+                {{ isDone(content) ? '✓ Terminé' : 'Marquer comme terminé' }}
+              </button>
+            </div>
+          }
+        </article>
+      }
+    }
+  } @else if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else {
+    <p class="form-error">{{ error() ?? 'Cours indisponible.' }}</p>
+  }
+</section>

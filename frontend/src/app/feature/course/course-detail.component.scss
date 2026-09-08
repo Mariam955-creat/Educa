@@ -1,0 +1,143 @@
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.back {
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.course-head {
+  margin: 1rem 0 2rem;
+}
+
+.course-head h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.6rem;
+}
+
+.meta {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.desc {
+  margin: 0 0 1.25rem;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.form-error {
+  color: #b91c1c;
+}
+
+.chapter-list li {
+  margin: 0.4rem 0;
+}
+
+.chapter {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: var(--surface);
+}
+
+.chapter h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.content {
+  border-top: 1px solid var(--border);
+  padding: 0.9rem 0;
+}
+
+.content:first-of-type {
+  border-top: 0;
+}
+
+.content.done {
+  opacity: 0.7;
+}
+
+.content-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.type {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+}
+
+.text-body {
+  margin: 0.25rem 0 0.75rem;
+  white-space: pre-wrap;
+}
+
+.link-btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.7rem;
+  margin-bottom: 0.5rem;
+}
+
+.complete-btn {
+  display: block;
+  margin-top: 0.5rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,95 @@
+<section class="page">
+  <a class="back" routerLink="/instructor">‹ Mes cours</a>
+  <h1>{{ isNew() ? 'Nouveau cours' : 'Éditer le cours' }}</h1>
+
+  @if (message()) {
+    <p class="flash">{{ message() }}</p>
+  }
+
+  <form class="card" [formGroup]="courseForm" (ngSubmit)="saveCourse()">
+    <label>
+      Titre
+      <input type="text" formControlName="title" />
+    </label>
+    <label>
+      Description
+      <textarea formControlName="description" rows="3"></textarea>
+    </label>
+    <label>
+      Langue
+      <select formControlName="language">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </label>
+    <button type="submit">{{ isNew() ? 'Créer le cours' : 'Enregistrer' }}</button>
+  </form>
+
+  @if (course(); as c) {
+    <h2>Chapitres</h2>
+    @if (c.chapters.length === 0) {
+      <p class="muted">Aucun chapitre pour l'instant.</p>
+    }
+    @for (ch of c.chapters; track ch.id) {
+      <article class="card chapter">
+        <div class="chapter-head">
+          <strong>{{ ch.position }}. {{ ch.title }}</strong>
+          <button type="button" class="danger" (click)="deleteChapter(ch.id)">Supprimer</button>
+        </div>
+        <ul>
+          @for (content of ch.contents; track content.id) {
+            <li>
+              <span class="type">{{ content.type }}</span> {{ content.title }}
+              @if (content.hasFile) {
+                <em>({{ content.fileName }})</em>
+              }
+              <button type="button" class="link-danger" (click)="deleteContent(content.id)">×</button>
+            </li>
+          }
+        </ul>
+      </article>
+    }
+
+    <form class="card sub" [formGroup]="chapterForm" (ngSubmit)="addChapter()">
+      <h3>Ajouter un chapitre</h3>
+      <div class="row">
+        <label>Titre <input type="text" formControlName="title" /></label>
+        <label class="narrow">Position <input type="number" formControlName="position" min="1" /></label>
+        <button type="submit">Ajouter</button>
+      </div>
+    </form>
+
+    @if (c.chapters.length > 0) {
+      <form class="card sub" [formGroup]="contentForm" (ngSubmit)="addContent()">
+        <h3>Ajouter un contenu</h3>
+        <div class="row">
+          <label>
+            Chapitre
+            <select formControlName="chapterId">
+              @for (ch of c.chapters; track ch.id) {
+                <option [value]="ch.id">{{ ch.position }}. {{ ch.title }}</option>
+              }
+            </select>
+          </label>
+          <label class="narrow">
+            Type
+            <select formControlName="type">
+              <option value="TEXT">Texte</option>
+              <option value="VIDEO">Vidéo</option>
+              <option value="DOCUMENT">Document</option>
+            </select>
+          </label>
+          <label class="narrow">Position <input type="number" formControlName="position" min="1" /></label>
+        </div>
+        <label>Titre <input type="text" formControlName="title" /></label>
+        @if (contentForm.controls.type.value === 'TEXT') {
+          <label>Contenu <textarea formControlName="textBody" rows="3"></textarea></label>
+        } @else {
+          <label>Fichier <input type="file" (change)="onFilePicked($event)" /></label>
+        }
+        <button type="submit">Ajouter le contenu</button>
+      </form>
+    }
+  }
+</section>

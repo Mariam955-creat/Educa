@@ -151,3 +151,30 @@ Format : `## [AAAA-MM-JJ] Phase X — <titre>` puis Fait / Décisions techniques
 - Tâche 1.9 : `DataInitializer` (profil `dev`) — 1 admin / 1 formateur / 1 apprenant de démo.
 - Tâche 1.15 : tests d'auth (register/login/refresh, accès refusé sans rôle).
 - Tâches 1.11–1.14 : init du frontend Angular (structure, login/register, intercepteur, guards, dashboards vides).
+
+---
+
+## [2026-09-08] Phase 1 — Backend d'authentification opérationnel et testé
+
+**Fait**
+- `.env` créé (valeurs d'exemple) ; mot de passe PostgreSQL aligné sur `change-me`.
+- **Compat Spring Boot 4** — trois obstacles levés :
+  1. `flyway-core` seul ne migre plus au démarrage → ajout du module `spring-boot-flyway`.
+  2. `preferred_language`/`language` en `CHAR(2)` → Hibernate 7 valide `varchar` → passés en `VARCHAR(2)` dans `V1`.
+  3. `AutoConfigureMockMvc` a changé de package (`org.springframework.boot.webmvc.test.autoconfigure`) et vit dans `spring-boot-starter-webmvc-test` (non transitif) → dépendance ajoutée.
+- **Port 8081** : le 8080 est occupé par un service `mysqld` local (non arrêtable sans admin). `SERVER_PORT` et le défaut de `application.yml` passés à 8081 ; `.env.example` aussi.
+- `flyway:clean` autorisé en dev/test (`spring.flyway.clean-disabled=false`). Base `educa` nettoyée + migrations rejouées proprement.
+- **`DevDataInitializer`** (profil `dev`) : crée `admin@educa.dev` / `formateur@educa.dev` / `apprenant@educa.dev`, mot de passe `password123`.
+- **`AuthControllerTest`** : 8 tests d'intégration (MockMvc + `educa_test`). `./mvnw test` → **9/9 verts**.
+- Vérification manuelle (`./mvnw spring-boot:run`) : démarrage OK sur 8081, Flyway `V1`+`V2`, schéma validé, `POST /auth/register` → 201, `POST /auth/login` (mauvais mdp) → 401 JSON.
+- Note : un compte réel `amina@example.com` a été créé dans `educa` lors d'un test manuel (données de dev, sans importance).
+
+**Décisions techniques**
+- Nom des tests d'intégration : suffixe `Test` (exécutés par Surefire sur `./mvnw test`), pas `IT` (qui nécessiterait Failsafe + `verify`).
+- Migrations désormais **append-only** (`V3`, `V4`, …) — plus de modification de `V1`, donc plus de recréation de base nécessaire.
+
+**Bloquant** — aucun.
+
+**Prochaine étape**
+- Frontend Angular : `ng new` dans `frontend/`, structure `core/feature/shared`, pages `login`/`register`, `AuthService` + intercepteur (Bearer + refresh), `authGuard`/`roleGuard`, dashboards vides par rôle (`/dashboard`, `/instructor`, `/admin`). → clôture de la Phase 1.
+- Puis tâche 1.10 (Swagger) si une version springdoc compatible Spring Boot 4 est dispo.

@@ -54,8 +54,9 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 |---|---|
 | Prérequis dev | PostgreSQL local démarré (port 5432), bases `educa` + `educa_test` créées via pgAdmin |
 | Backend — build | `cd backend && ./mvnw clean package` |
-| Backend — run | `cd backend && ./mvnw spring-boot:run` (profil `dev`) |
+| Backend — run | `cd backend && ./mvnw spring-boot:run` (profil `dev`, API sur **:8081**) |
 | Backend — tests | `cd backend && ./mvnw test` (profil `test` → `educa_test`) |
+| Nettoyer le schéma dev | `cd backend && ./mvnw org.flywaydb:flyway-maven-plugin:12.4.0:clean -Dflyway.url=jdbc:postgresql://localhost:5432/educa -Dflyway.user=postgres -Dflyway.password=<mdp> -Dflyway.cleanDisabled=false` |
 | Frontend — run | `cd frontend && npm start` *(après Phase 1)* |
 | Frontend — tests | `cd frontend && npm test` |
 
@@ -81,14 +82,15 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phase 0 terminée.** **Phase 1 (socle technique) en cours.**
-Backend : squelette *package-by-feature* en place ; module `user` complet (entités, repos, `AuthService`, `AuthController` `/api/v1/auth/**`), sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2`. `./mvnw compile` OK.
+**Phase 0 terminée.** **Phase 1 (socle technique) : backend fait, frontend à faire.**
+Backend **opérationnel et testé** : squelette *package-by-feature*, module `user` complet, sécurité JWT (BCrypt, `JwtService` HS256, filtre, `SecurityConfig` stateless), gestion d'erreurs `@RestControllerAdvice`, migrations Flyway `V1`+`V2` appliquées sur `educa`, `DevDataInitializer`. `./mvnw test` → **9 tests verts**. API démarre sur **:8081**.
 Modules `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai` : `package-info.java` seulement (Phases 2–4).
-Frontend : vide (tâches 1.11–1.14 à venir).
+Frontend : vide (tâches 1.11–1.14 : init Angular, login/register, intercepteur, guards, dashboards).
 Git : `main` sur `origin`, commits au nom de mariam Balde.
 PostgreSQL local : bases `educa` et `educa_test` créées. **Pas de Docker.**
 
-⚠️ **Pour lancer le backend / les tests : créer `.env` à la racine** (`cp .env.example .env`) et renseigner `POSTGRES_PASSWORD`. Sans ça, `./mvnw test` échoue sur l'authentification PostgreSQL.
+⚠️ **`.env` à la racine requis** (`cp .env.example .env` + `POSTGRES_PASSWORD`). Le mot de passe PostgreSQL local est actuellement `change-me`. Port API = **8081** (8080 pris par `mysqld`).
+Comptes de démo (profil `dev`) : `admin@educa.dev` / `formateur@educa.dev` / `apprenant@educa.dev`, mot de passe `password123`.
 
 ### Choix techniques figés en Phase 1
 - **Lombok** (`@Getter/@Setter/@NoArgsConstructor` sur les entités) + **MapStruct** (`@Mapper(componentModel = "spring")`) — configurés via `annotationProcessorPaths` du `maven-compiler-plugin` (ordre : lombok, mapstruct-processor, lombok-mapstruct-binding). ⚠️ l'IDE doit avoir le plugin Lombok activé.

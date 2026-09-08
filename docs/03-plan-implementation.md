@@ -37,23 +37,23 @@ Dernière mise à jour : 2026-09-08.
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
 | 1.0 | Squelette *package-by-feature* : `common/error`, `config`, `security`, `user` + `package-info.java` pour `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai`. Patron figé : **Lombok** sur les entités, **MapStruct** pour les mappers (`annotationProcessorPaths`), DTO en `record` | `com.educa.backend.*` | fait | 2026-09-08 |
-| 1.1 | Dépendances Maven : web, validation, data-jpa, flyway (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6, Lombok, MapStruct 1.6.3 (+ `annotationProcessorPaths` : lombok / mapstruct-processor / lombok-mapstruct-binding). springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
-| 1.2 | `application.yml` (+ `-dev` / `-test`), `spring.config.import` du `.env` racine, `ddl-auto: validate`, propriétés `educa.*` (`EducaProperties`) | `backend/src/main/resources/` | fait | 2026-09-08 |
-| 1.3 | Migration Flyway `V1__init.sql` (15 tables + contraintes + index partiels quiz) et `V2__seed_roles.sql` | `backend/.../db/migration/` | fait | 2026-09-08 |
-| 1.4 | Entités JPA + repositories — **module `user`** (`User`, `Role`, `RefreshToken` + repos). Autres domaines : Phases 2–3 | `com.educa.backend.user` | en cours | 2026-09-08 |
+| 1.1 | Dépendances Maven : web, validation, data-jpa, **spring-boot-flyway** + flyway-core (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6, Lombok, MapStruct 1.6.3 (+ `annotationProcessorPaths`), **spring-boot-starter-webmvc-test** (tests). springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
+| 1.2 | `application.yml` (+ `-dev` / `-test`), `spring.config.import` du `.env` racine, `ddl-auto: validate`, propriétés `educa.*` (`EducaProperties`), **port `8081`** (8080 pris par un `mysqld` local) | `backend/src/main/resources/` | fait | 2026-09-08 |
+| 1.3 | Migration Flyway `V1__init.sql` (15 tables + contraintes + index partiels quiz ; `VARCHAR(2)` pour les codes langue) et `V2__seed_roles.sql` — **appliquées et validées sur `educa`** | `backend/.../db/migration/` | fait | 2026-09-08 |
+| 1.4 | Entités JPA + repositories — **module `user`** (`User`, `Role`, `RefreshToken` + repos). Autres domaines : Phases 2–3 | `com.educa.backend.user` | fait | 2026-09-08 |
 | 1.5 | Sécurité : `SecurityConfig` (stateless, CORS, entrypoints JSON 401/403), `PasswordEncoder` BCrypt, `JwtService` (HS256), `JwtAuthenticationFilter`, `AppUserDetailsService`, `CurrentUser` | `com.educa.backend.security` | fait | 2026-09-08 |
 | 1.6 | Auth : `POST /auth/register` (201), `/login`, `/refresh` (rotation), `/logout`, `GET/PATCH /auth/me` | `com.educa.backend.user` | fait | 2026-09-08 |
 | 1.7 | RBAC : `RoleName` `LEARNER/INSTRUCTOR/ADMIN`, `@EnableMethodSecurity`, `CurrentUser.id()`. `@PreAuthorize` + helper « propriétaire » viendront avec les endpoints métier (Phase 2) | `com.educa.backend.security` | en cours | 2026-09-08 |
 | 1.8 | Gestion d'erreurs `@RestControllerAdvice` (`GlobalExceptionHandler`) + `ApiError` homogène + `ApiException`/`ResourceNotFoundException`/`ConflictException` | `com.educa.backend.common.error` | fait | 2026-09-08 |
-| 1.9 | Seed rôles (fait via `V2`). Utilisateurs de démo (admin/formateur/apprenant) : `DataInitializer` profil `dev` — à faire | `backend/.../db/migration/`, `config` | en cours | 2026-09-08 |
+| 1.9 | Seed rôles (via `V2`) + `DevDataInitializer` (profil `dev`) : `admin@educa.dev`, `formateur@educa.dev`, `apprenant@educa.dev` — mot de passe `password123` | `com.educa.backend.config` | fait | 2026-09-08 |
 | 1.10 | Swagger UI (springdoc) accessible en dev — en attente d'une version compatible Spring Boot 4 | `backend/pom.xml`, config | à faire | — |
 | 1.11 | Init projet Angular dans `frontend/` (routing, HttpClient, structure `core/feature/shared`) | `frontend/` | à faire | — |
 | 1.12 | Frontend : layout + navigation conditionnée par rôle, pages `login` / `register` | `frontend/src/app/feature/auth` | à faire | — |
 | 1.13 | Frontend : intercepteur HTTP (Bearer + refresh), `AuthGuard`, `RoleGuard`, service `AuthService` | `frontend/src/app/core` | à faire | — |
 | 1.14 | Frontend : dashboards vides par rôle (`/dashboard`, `/instructor`, `/admin`) | `frontend/src/app/feature` | à faire | — |
-| 1.15 | Tests backend : auth (register/login/refresh), accès refusé sans rôle — sur base `educa_test` locale, profil `test`. *(Bloqué : nécessite `.env` avec le mot de passe PostgreSQL.)* | `backend/src/test/...` | à faire | — |
+| 1.15 | Tests backend : `AuthControllerTest` (8 tests) — register 201 / doublon 409 / payload invalide 400 / login 200 / mauvais mdp 401 / `/me` sans jeton 401 / `/me` avec jeton 200 / refresh rotation. `./mvnw test` → **9 tests verts** (dont `contextLoads`) sur `educa_test` | `backend/src/test/...` | fait | 2026-09-08 |
 
-**Livrable démontrable** : un utilisateur s'inscrit, se connecte, voit un dashboard vide correspondant à son rôle.
+**Livrable démontrable** : ✅ backend — un utilisateur s'inscrit (`POST /auth/register` → 201) et se connecte (`POST /auth/login` → jetons JWT), `/auth/me` renvoie le profil selon le rôle. Reste le frontend (1.11–1.14) pour le dashboard visuel.
 
 ---
 

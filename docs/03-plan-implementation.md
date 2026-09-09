@@ -140,7 +140,7 @@ Dernière mise à jour : 2026-09-08.
 | 5.5 | Revue : secrets hors du code, `.env.example` à jour, pas de secret loggé | repo | fait | 2026-09-09 |
 | 5.6 | Exécuter `/security-review` et traiter les findings | — | à faire | — |
 | 5.7 | Correctifs de bugs identifiés | — | en cours (uploads/downloads durcis ; `413`/`400` au lieu de `500`) | 2026-09-09 |
-| 5.8 | Vérifier la performance des listes (pagination, index) sur le jeu de démo | — | à faire | — |
+| 5.8 | Vérifier la performance des listes (pagination, index) sur le jeu de démo | — | fait (catalogue paginé + `size` borné 1..100 ; toutes les listes FK indexées : `idx_courses_*`, `idx_enrollments_*`, `idx_quiz_attempts_user_quiz`, `idx_certificates_verification_code`…) | 2026-09-10 |
 
 **Livrable démontrable** : suite de tests verte sur les parcours critiques ; aucune faille RBAC évidente.
 

@@ -405,3 +405,16 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 - Aucune dépendance à un backend lancé : tout est mocké (`HttpTestingController` / spies).
 
 **Reste Phase 5** : 5.6 `/security-review`, 5.8 perf des listes (pagination/index) sur le jeu de démo. Résiduel : `server.error.include-message: always` → `never` pour un déploiement public.
+
+---
+
+## [2026-09-10] Phase 5 — Revue perf des listes (5.8)
+
+**Fait**
+- **Pagination** : seule liste potentiellement volumineuse = le catalogue public (`GET /courses`). Paginée (`PageRequest`), `page` ≥ 0 et `size` borné à `[1, 100]` côté contrôleur. `PageResponse` renvoie `totalElements`/`totalPages`.
+- **Index** : toutes les listes filtrées par clé étrangère ont un index couvrant — `idx_courses_instructor`, `idx_courses_published`, `idx_enrollments_user`, `idx_enrollments_course`, `idx_progress_enrollment`, `idx_quiz_attempts_user_quiz`, `idx_attempt_answers_attempt`, `idx_certificates_verification_code`, `idx_refresh_tokens_user`. Les autres listes (chapitres/contenus/quiz d'un cours, résultats d'un cours) sont bornées par l'agrégat cours.
+- Jeu de démo (3 cours, ~4 contenus/cours) : aucune requête lente.
+
+**Résiduel (hors MVP)** : la recherche catalogue fait `LOWER(title/description) LIKE %q%` → *seq scan*. À l'échelle, ajouter une extension `pg_trgm` + index GIN (`V?__catalog_trgm.sql`). Sans impact sur le périmètre PFE.
+
+**Reste Phase 5** : 5.6 `/security-review` (déclenché par l'utilisatrice). Ensuite Phase 6 (doc finale, jeu de démo, soutenance).

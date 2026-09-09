@@ -107,7 +107,7 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 4 — Multilingue & IA  ·  statut : `terminée (MVP — build/tests OK, à valider au navigateur)`
+## Phase 4 — Multilingue & IA  ·  statut : `terminée (MVP) — multilingue validé au navigateur (2026-09-10) ; réponse IA réelle en attente d'une clé Anthropic`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
@@ -134,7 +134,7 @@ Dernière mise à jour : 2026-09-08.
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
 | 5.1 | Tests d'intégration bout-en-bout des parcours critiques (auth, inscription→cours, quiz→certificat) | `backend/src/test/...` | en cours (23 tests ; + `UploadSecurityTest`) | 2026-09-09 |
-| 5.2 | Tests frontend : login, passage de quiz | `frontend/src/app/...spec.ts` | à faire | — |
+| 5.2 | Tests frontend : login, passage de quiz | `frontend/src/app/...spec.ts` | fait (`karma.conf.js` + `npm run test:ci` headless ; `auth.service` 4, `login.component` 3, `quiz-take.component` 4, `app.component` 2 → **13 verts**) | 2026-09-10 |
 | 5.3 | Revue de sécurité : matrice RBAC vérifiée endpoint par endpoint, accès objet, exposition des bonnes réponses de quiz | `docs/`, code | fait | 2026-09-09 |
 | 5.4 | Revue : validation des entrées, tailles/MIME des uploads, en-têtes de sécurité, CORS | code, config | fait (uploads bornés + liste blanche MIME ; download `attachment` par défaut + `nosniff` ; CORS origines explicites) | 2026-09-09 |
 | 5.5 | Revue : secrets hors du code, `.env.example` à jour, pas de secret loggé | repo | fait | 2026-09-09 |

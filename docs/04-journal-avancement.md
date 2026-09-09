@@ -369,3 +369,39 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 - 5.6 exécuter `/security-review` et traiter les findings.
 - 5.8 vérifier la performance des listes (pagination/index) sur le jeu de démo.
 - Résiduel : `server.error.include-message: always` (acceptable en dev/PFE, à repasser à `never` pour un déploiement public).
+
+---
+
+## [2026-09-10] Phase 4 — Validation navigateur du multilingue
+
+**Fait**
+- Backend + frontend relancés (`:8081` / `:4200`). Fichiers `public/i18n/{fr,en,ar}.json` servis en 200.
+- **Test manuel multilingue avec l'utilisatrice — tout vert** :
+  - bascule Français ↔ English (libellés de nav mis à jour sans rechargement) ;
+  - arabe → interface en arabe **et** passage RTL (barre de nav et alignement inversés) ;
+  - langue conservée après rechargement (F5) → persistance `localStorage` OK ;
+  - langue conservée après déconnexion/reconnexion → persistance serveur `preferredLanguage` (`PATCH /auth/me`) OK.
+- **Chatbot** : widget affiché, saisie fonctionnelle, contrôle d'accès (`403` si non inscrit) et dégradation propre (`{degraded:true}`, jamais de 500) déjà vérifiés (curl + logs). La clé `ANTHROPIC_API_KEY` de `.env` est le placeholder → Anthropic renvoie « API key is invalid » → repli. **Réponse IA réelle : en attente d'une vraie clé de compte Anthropic** (à fournir par l'utilisatrice ; côté code, rien à changer — mise à jour `.env` + redémarrage backend suffisent).
+
+**Bloquant** — aucun pour le périmètre MVP. La réponse IA live nécessite une clé payante côté compte utilisateur, non fournissable par l'assistant.
+
+**Prochaine étape**
+- Reprendre la **Phase 5** (5.2 tests frontend, 5.6 `/security-review`, 5.8 perf listes).
+
+---
+
+## [2026-09-10] Phase 5 — Tests frontend (login + passage de quiz)
+
+**Fait**
+- **`karma.conf.js`** ajouté (exécution locale navigateur + launcher `ChromeHeadlessNoSandbox`) et script **`npm run test:ci`** (`ng test --watch=false --browsers=ChromeHeadlessNoSandbox`).
+- **`core/auth/auth.service.spec.ts`** (4) — login stocke access/refresh/user + passe `isAuthenticated`, `homePathForRole` selon le rôle, `logout` appelle l'API + purge le stockage + redirige `/login`. `HttpTestingController`.
+- **`feature/auth/login.component.spec.ts`** (3) — formulaire invalide → pas d'appel API + champs marqués touched ; identifiants valides → `auth.login` puis `router.navigateByUrl(homePath)` ; `401` → message `auth.login.errorCredentials`, pas de navigation. `provideRouter([])` + stub `AuthService`.
+- **`feature/quiz/quiz-take.component.spec.ts`** (4) — chargement du quiz depuis l'id de route ; `toggle` choix unique = une seule option, choix multiple = accumulation ; `submit` mappe la sélection en `{questionId, selectedOptionIds}` et affiche le résultat. Stubs `QuizApiService` + `ActivatedRoute`.
+- **`app.component.spec.ts`** réparé : cassé depuis la Phase 4 (`LanguageService` → `TranslateService` sans provider) → ajout `provideTranslateService({})` + `provideHttpClientTesting()`.
+- `npm run test:ci` → **13 verts**. `npm run build` → OK.
+
+**Décisions techniques**
+- Specs de composants : on ne teste que la logique (classe). Pour `login` le template rend un `RouterLink` inconditionnel → `provideRouter([])` (routeur réel) plutôt qu'un stub incomplet ; pour `quiz-take` les `RouterLink` sont derrière `@if`, un stub `ActivatedRoute` suffit.
+- Aucune dépendance à un backend lancé : tout est mocké (`HttpTestingController` / spies).
+
+**Reste Phase 5** : 5.6 `/security-review`, 5.8 perf des listes (pagination/index) sur le jeu de démo. Résiduel : `server.error.include-message: always` → `never` pour un déploiement public.

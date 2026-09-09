@@ -83,7 +83,7 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phases 0 → 4 (MVP) terminées** (reste 1.10 Swagger). **Phase 5 (tests & durcissement) en cours** : revue RBAC faite ; uploads durcis (taille bornée + liste blanche MIME → `413`/`415`), téléchargement en `attachment` par défaut + `X-Content-Type-Options: nosniff`, `GlobalExceptionHandler` renvoie `413`/`400` au lieu de `500`. Reste 5.2 (tests frontend), 5.6 (`/security-review`), 5.8 (perf listes).
+**Phases 0 → 4 (MVP) terminées** (reste 1.10 Swagger ; multilingue Phase 4 validé au navigateur, chatbot IA live en attente d'une vraie clé Anthropic). **Phase 5 (tests & durcissement) en cours** : revue RBAC faite ; uploads durcis (taille bornée + liste blanche MIME → `413`/`415`), téléchargement en `attachment` par défaut + `X-Content-Type-Options: nosniff`, `GlobalExceptionHandler` renvoie `413`/`400` au lieu de `500` ; **tests frontend** (`npm run test:ci` headless → 13 verts). Reste 5.6 (`/security-review`), 5.8 (perf listes).
 Backend **opérationnel et testé** (`./mvnw test` → **23 tests verts**), API sur **:8081** :
 - modules `user` (auth JWT), `course` (CRUD + catalogue + publication), `enrollment` (inscription + progression %), `storage` (FS local + upload/download multipart), `quiz` (contrôle + examen final, correction auto, note pondérée 40/60, déverrouillage à 100 %), `certificate` (PDF via openhtmltopdf, n° de série, vérif publique par code), `ai` (chatbot via SDK Anthropic `anthropic-java`, repli `degraded` si clé absente/erreur) ;
 - sécurité : `SecurityConfig` stateless, `@PreAuthorize` INSTRUCTOR/ADMIN + contrôle objet, `CurrentUser.hasRole/optionalId` ; `GlobalExceptionHandler` (400/401/403/404/409/500 homogènes) ;

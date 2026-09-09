@@ -1,8 +1,11 @@
 package com.educa.backend.course;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -82,13 +85,45 @@ public class ContentController {
         }
 
         Resource resource = contentService.loadFile(content);
-        MediaType mediaType = content.getMimeType() != null
-                ? MediaType.parseMediaType(content.getMimeType())
-                : MediaType.APPLICATION_OCTET_STREAM;
-        String filename = content.getFileName() != null ? content.getFileName() : "fichier";
+
+        // Le type MIME est fourni par le téléverseur : on le parse défensivement et on ne
+        // sert « inline » que les formats sûrs (les autres en pièce jointe) pour éviter
+        // qu'un HTML/SVG piégé s'exécute sur l'origine de l'API.
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (content.getMimeType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(content.getMimeType());
+            } catch (InvalidMediaTypeException ignored) {
+                // reste application/octet-stream
+            }
+        }
+        String disposition = (isInlineSafe(mediaType) ? "inline" : "attachment")
+                + "; filename=\"" + sanitizeFilename(content.getFileName()) + "\"";
         return ResponseEntity.ok()
                 .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition)
+                .header("X-Content-Type-Options", "nosniff")
                 .body(resource);
+    }
+
+    private static final List<MediaType> INLINE_SAFE = List.of(
+            MediaType.APPLICATION_PDF,
+            new MediaType("image"),
+            new MediaType("video"),
+            new MediaType("audio"));
+
+    private static boolean isInlineSafe(MediaType type) {
+        if (MediaType.valueOf("image/svg+xml").isCompatibleWith(type)) {
+            return false; // un SVG peut embarquer du script
+        }
+        return INLINE_SAFE.stream().anyMatch(safe -> safe.isCompatibleWith(type));
+    }
+
+    private static String sanitizeFilename(String name) {
+        if (name == null || name.isBlank()) {
+            return "fichier";
+        }
+        String cleaned = name.replaceAll("[\\r\\n\"\\\\/]", "_").trim();
+        return cleaned.isBlank() ? "fichier" : cleaned;
     }
 }

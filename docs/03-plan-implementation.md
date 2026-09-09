@@ -129,17 +129,17 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 5 — Tests & durcissement  ·  statut : `à faire`
+## Phase 5 — Tests & durcissement  ·  statut : `en cours`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 5.1 | Tests d'intégration bout-en-bout des parcours critiques (auth, inscription→cours, quiz→certificat) | `backend/src/test/...` | à faire | — |
+| 5.1 | Tests d'intégration bout-en-bout des parcours critiques (auth, inscription→cours, quiz→certificat) | `backend/src/test/...` | en cours (23 tests ; + `UploadSecurityTest`) | 2026-09-09 |
 | 5.2 | Tests frontend : login, passage de quiz | `frontend/src/app/...spec.ts` | à faire | — |
-| 5.3 | Revue de sécurité : matrice RBAC vérifiée endpoint par endpoint, accès objet, exposition des bonnes réponses de quiz | `docs/`, code | à faire | — |
-| 5.4 | Revue : validation des entrées, tailles/MIME des uploads, en-têtes de sécurité, CORS | code, config | à faire | — |
-| 5.5 | Revue : secrets hors du code, `.env.example` à jour, pas de secret loggé | repo | à faire | — |
+| 5.3 | Revue de sécurité : matrice RBAC vérifiée endpoint par endpoint, accès objet, exposition des bonnes réponses de quiz | `docs/`, code | fait | 2026-09-09 |
+| 5.4 | Revue : validation des entrées, tailles/MIME des uploads, en-têtes de sécurité, CORS | code, config | fait (uploads bornés + liste blanche MIME ; download `attachment` par défaut + `nosniff` ; CORS origines explicites) | 2026-09-09 |
+| 5.5 | Revue : secrets hors du code, `.env.example` à jour, pas de secret loggé | repo | fait | 2026-09-09 |
 | 5.6 | Exécuter `/security-review` et traiter les findings | — | à faire | — |
-| 5.7 | Correctifs de bugs identifiés | — | à faire | — |
+| 5.7 | Correctifs de bugs identifiés | — | en cours (uploads/downloads durcis ; `413`/`400` au lieu de `500`) | 2026-09-09 |
 | 5.8 | Vérifier la performance des listes (pagination, index) sur le jeu de démo | — | à faire | — |
 
 **Livrable démontrable** : suite de tests verte sur les parcours critiques ; aucune faille RBAC évidente.

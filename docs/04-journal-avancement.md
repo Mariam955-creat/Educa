@@ -339,3 +339,33 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Prochaine étape**
 - Validation visuelle Phase 4 (bascule de langue + RTL ; widget chatbot).
 - **Phase 5** : tests & durcissement (parcours critiques bout-en-bout, revue de sécurité RBAC, `/security-review`), puis **Phase 6** (doc finale + jeu de démo + soutenance).
+
+---
+
+## [2026-09-09] Phase 5 — Durcissement des téléversements/téléchargements + revue RBAC
+
+**Fait**
+- **Revue RBAC endpoint par endpoint** (tâche 5.3) : les mutations `course`/`chapter`/`content`/`quiz`/`question` sont toutes gardées par `@PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")` **plus** un contrôle « propriétaire ou ADMIN » dans le service (`requireOwned` / `requireOwnedByCourse`). Les endpoints sans `@PreAuthorize` sont soit publics et assumés (`/auth/{register,login,refresh}`, `GET /courses/**`, `/certificates/verify/{code}`), soit gardés par `CurrentUser.id()` + contrôle objet (`enrollment`, `quiz/attempts`, `certificate/{id}/download`, `ai/chat`). Aucune faille évidente relevée.
+- **Durcissement des uploads** (`ContentService.validateUpload`, tâches 5.4 / 5.7) :
+  - taille bornée par `educa.storage.max-file-size-mb` (en plus du plafond servlet `multipart`) → `413 Payload Too Large` ;
+  - **liste blanche de types MIME** par nature de contenu : `VIDEO` → `video/{mp4,webm,ogg,quicktime}` ; `DOCUMENT` → PDF, Office (doc/docx/ppt/pptx/xls/xlsx), `text/{plain,csv,markdown}`, images `png/jpeg/gif/webp`, `application/zip`. Type absent ou hors liste → `415 Unsupported Media Type` ;
+  - nom de fichier stocké réduit à son *basename* (`StringUtils.getFilename`), type MIME stocké normalisé en minuscules.
+- **Durcissement du téléchargement** (`ContentController.downloadFile`) :
+  - le type MIME (fourni par le téléverseur) est parsé défensivement ; un type invalide retombe sur `application/octet-stream` ;
+  - `Content-Disposition: inline` **uniquement** pour PDF, images (hors SVG), audio, vidéo ; tout le reste en `attachment` → empêche l'exécution d'un HTML/SVG piégé sur l'origine de l'API ;
+  - en-tête `X-Content-Type-Options: nosniff` ajouté ; nom de fichier assaini (retrait de `"`, `\`, `/`, CR/LF) dans l'en-tête.
+- **`GlobalExceptionHandler`** : ajout de `MaxUploadSizeExceededException` → `413` et `MethodArgumentTypeMismatchException` → `400` (au lieu de `500` sur un id de chemin non numérique).
+- **Tests** (tâche 5.1) : nouvelle classe `UploadSecurityTest` (3 tests) — rejet d'un `text/html` (`415`), acceptation d'un PDF servi `inline` + `nosniff`, type autorisé non-inline (`application/zip`) servi en `attachment`. `./mvnw test` → **23 verts**.
+- **Secrets** (tâche 5.5) : vérifié — `.env` bien git-ignoré (`git check-ignore` OK), `.env.example` à jour, aucune valeur réelle en clair dans le dépôt.
+
+**Décisions techniques**
+- Liste blanche MIME côté service (pas de sniffing de contenu réel type Apache Tika au MVP — le `Content-Type` déclaré suffit combiné au `attachment` par défaut au téléchargement).
+- En-tête `X-Content-Type-Options` posé en dur (`"X-Content-Type-Options"`) : la constante `HttpHeaders.X_CONTENT_TYPE_OPTIONS` n'existe pas dans Spring 7.
+
+**Bloquant** — aucun.
+
+**Reste Phase 5**
+- 5.2 tests frontend (login, passage de quiz).
+- 5.6 exécuter `/security-review` et traiter les findings.
+- 5.8 vérifier la performance des listes (pagination/index) sur le jeu de démo.
+- Résiduel : `server.error.include-message: always` (acceptable en dev/PFE, à repasser à `never` pour un déploiement public).

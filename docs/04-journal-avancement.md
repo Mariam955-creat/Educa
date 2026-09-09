@@ -418,3 +418,19 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Résiduel (hors MVP)** : la recherche catalogue fait `LOWER(title/description) LIKE %q%` → *seq scan*. À l'échelle, ajouter une extension `pg_trgm` + index GIN (`V?__catalog_trgm.sql`). Sans impact sur le périmètre PFE.
 
 **Reste Phase 5** : 5.6 `/security-review` (déclenché par l'utilisatrice). Ensuite Phase 6 (doc finale, jeu de démo, soutenance).
+
+---
+
+## [2026-09-10] Phase 5 — Passage responsive du frontend
+
+**Fait**
+- `index.html` : balise `viewport` déjà présente. Layout déjà fluide (conteneurs `max-width` centrés, grilles `auto-fill`, `flex-wrap` sur la plupart des barres d'action). Corrections ciblées des points qui cassaient en dessous de ~760 px :
+  - **Barre de navigation** (`app.component.scss`) : `@media (max-width: 760px)` → `.topbar` passe sur 2 lignes (marque + compte, puis liens de nav en pleine largeur), nom complet masqué. RTL préservé (`margin-inline-start`).
+  - **Tableaux** (`styles.scss`, global) : `@media (max-width: 640px)` → `table { display:block; overflow-x:auto; white-space:nowrap }` — défilement horizontal au lieu de déborder (espace formateur, résultats de cours).
+  - **Cartes certificat** (`my-certificates`) : `@media (max-width: 560px)` → passage en colonne, bouton pleine largeur.
+  - **Catalogue** : grille `minmax(min(260px, 100%), 1fr)` — plus de débordement sur très petit écran.
+  - **Éditeur de quiz** / **espace formateur** : `.row` et `.head` passent en `flex-wrap: wrap`.
+  - `img, video { max-width: 100%; height: auto }` global.
+- `npm run build` → OK. `npm run test:ci` → 13 verts (styles seuls).
+
+**À vérifier au navigateur** : DevTools → mode appareil (Ctrl+Shift+M), largeurs 360 / 414 / 768 px, sur catalogue, page cours, espace formateur, certificats — en FR et en AR (RTL).

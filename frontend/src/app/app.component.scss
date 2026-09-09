@@ -63,3 +63,29 @@
   font-size: 0.85rem;
   cursor: pointer;
 }
+
+/* --- Mobile : la barre passe sur 2 lignes (marque + compte, puis nav) --- */
+@media (max-width: 760px) {
+  .topbar {
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
+
+  .account {
+    margin-inline-start: auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .who {
+    display: none; /* le nom complet prend trop de place sur petit écran */
+  }
+}

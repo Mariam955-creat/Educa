@@ -49,3 +49,21 @@ a {
   padding-left: 0;
 }
 
+/* --- Responsive --- */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 640px) {
+  /* Tableaux larges : défilement horizontal au lieu de déborder la page */
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

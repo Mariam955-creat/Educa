@@ -434,3 +434,26 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 - `npm run build` → OK. `npm run test:ci` → 13 verts (styles seuls).
 
 **À vérifier au navigateur** : DevTools → mode appareil (Ctrl+Shift+M), largeurs 360 / 414 / 768 px, sur catalogue, page cours, espace formateur, certificats — en FR et en AR (RTL).
+
+---
+
+## [2026-09-10] Phase 5 — `/security-review` (5.6) & clôture
+
+**Fait**
+- **`/security-review`** exécuté sur le diff de la branche (4 commits Phase 5 vs `origin/main`). **0 finding.**
+  - `ContentController` / `ContentService` : le diff est du durcissement pur (allowlist MIME, `attachment` par défaut, `nosniff`, nom de fichier assaini, `parseMediaType` défensif). Pas de nouvelle surface.
+  - Résiduel identifié **LOW** (sous le seuil de report) : l'allowlist se base sur le `Content-Type` déclaré par le téléverseur, pas sur les magic bytes. Neutralisé par `X-Content-Type-Options: nosniff` + `Content-Disposition: attachment` par défaut → pas de XSS stocké exploitable. Un sniffing réel (Apache Tika) serait de la défense en profondeur, hors MVP.
+  - `GlobalExceptionHandler.handleTypeMismatch` : `ex.getName()` = nom du paramètre du contrôleur (constante côté code), pas une entrée requête → pas d'injection.
+- Suivi global du plan nettoyé (lignes de phases dupliquées supprimées).
+
+**Bilan Phase 5**
+- Tests : **23 backend + 13 frontend** verts.
+- Revue RBAC : endpoint par endpoint, contrôle objet vérifié, aucune faille.
+- Durcissement : uploads (taille + MIME), downloads (`attachment`/`nosniff`), codes HTTP (`413`/`415`/`400` au lieu de `500`).
+- Perf : listes paginées + indexées.
+- Frontend responsive (barre nav, tableaux, cartes, grille catalogue).
+- `/security-review` : 0 finding.
+
+**Résiduel (hors MVP, avant déploiement public)** : `server.error.include-message: always` → `never` ; Apache Tika sur les uploads ; `pg_trgm` + GIN pour la recherche catalogue ; Swagger (tâche 1.10) ; clé Anthropic réelle pour le chatbot live.
+
+**Prochaine étape — Phase 6** : mise à jour finale `docs/01`→`04` + `README.md`, jeu de démo complet (script de seed), scénario de soutenance, diagrammes propres (archi + MCD), vérification bout-en-bout du périmètre « Must have », instructions de déploiement.

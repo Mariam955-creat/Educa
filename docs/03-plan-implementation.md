@@ -129,20 +129,22 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 5 — Tests & durcissement  ·  statut : `en cours`
+## Phase 5 — Tests & durcissement  ·  statut : `terminée` (2026-09-10)
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 5.1 | Tests d'intégration bout-en-bout des parcours critiques (auth, inscription→cours, quiz→certificat) | `backend/src/test/...` | en cours (23 tests ; + `UploadSecurityTest`) | 2026-09-09 |
+| 5.1 | Tests d'intégration bout-en-bout des parcours critiques (auth, inscription→cours, quiz→certificat) | `backend/src/test/...` | fait (23 tests backend : `AuthControllerTest` 8, `CourseFlowTest` 5, `QuizFlowTest` 4, `AiChatTest` 2, `UploadSecurityTest` 3, contexte 1) | 2026-09-10 |
 | 5.2 | Tests frontend : login, passage de quiz | `frontend/src/app/...spec.ts` | fait (`karma.conf.js` + `npm run test:ci` headless ; `auth.service` 4, `login.component` 3, `quiz-take.component` 4, `app.component` 2 → **13 verts**) | 2026-09-10 |
 | 5.3 | Revue de sécurité : matrice RBAC vérifiée endpoint par endpoint, accès objet, exposition des bonnes réponses de quiz | `docs/`, code | fait | 2026-09-09 |
 | 5.4 | Revue : validation des entrées, tailles/MIME des uploads, en-têtes de sécurité, CORS | code, config | fait (uploads bornés + liste blanche MIME ; download `attachment` par défaut + `nosniff` ; CORS origines explicites) | 2026-09-09 |
 | 5.5 | Revue : secrets hors du code, `.env.example` à jour, pas de secret loggé | repo | fait | 2026-09-09 |
-| 5.6 | Exécuter `/security-review` et traiter les findings | — | à faire | — |
-| 5.7 | Correctifs de bugs identifiés | — | en cours (uploads/downloads durcis ; `413`/`400` au lieu de `500`) | 2026-09-09 |
+| 5.6 | Exécuter `/security-review` et traiter les findings | — | fait — **0 finding** (diff = durcissement pur ; XSS upload neutralisé par `nosniff` + `attachment`) | 2026-09-10 |
+| 5.7 | Correctifs de bugs identifiés | — | fait (uploads/downloads durcis ; `413`/`415`/`400` au lieu de `500` ; `app.component.spec` réparé) | 2026-09-10 |
 | 5.8 | Vérifier la performance des listes (pagination, index) sur le jeu de démo | — | fait (catalogue paginé + `size` borné 1..100 ; toutes les listes FK indexées : `idx_courses_*`, `idx_enrollments_*`, `idx_quiz_attempts_user_quiz`, `idx_certificates_verification_code`…) | 2026-09-10 |
 
-**Livrable démontrable** : suite de tests verte sur les parcours critiques ; aucune faille RBAC évidente.
+**Livrable démontrable** : ✅ suite de tests verte (backend 23 + frontend 13) ; revue RBAC endpoint par endpoint sans faille ; uploads/downloads durcis ; `/security-review` sans finding.
+
+**Résiduel (hors MVP, à faire avant un déploiement public)** : `server.error.include-message: always` → `never` ; sniffing réel du contenu des uploads (Apache Tika) ; extension `pg_trgm` + index GIN pour la recherche catalogue à l'échelle ; tâche 1.10 Swagger (springdoc pas encore compatible Spring Boot 4).
 
 ---
 
@@ -166,12 +168,9 @@ Dernière mise à jour : 2026-09-08.
 | Phase | État | Début | Fin |
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
-| 1 — Socle technique | ✅ backend (9 tests) + frontend Angular — parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
-| 2 — Gestion des formations | backend (14 tests) + frontend Angular (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
-| 3 — Évaluation & certification | backend (18 tests, parcours certificat complet) + frontend (build OK) — à valider au navigateur | 2026-09-08 | 2026-09-08 |
-| 4 — Multilingue & IA (MVP) | i18n FR/EN/AR + RTL, chatbot (SDK Anthropic + repli) — backend 20 tests, frontend build OK | 2026-09-08 | 2026-09-08 |
-| 2 — Gestion des formations | à faire | — | — |
-| 3 — Évaluation & certification | à faire | — | — |
-| 4 — Multilingue & IA | à faire | — | — |
-| 5 — Tests & durcissement | à faire | — | — |
+| 1 — Socle technique | terminée — backend + frontend Angular, parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
+| 2 — Gestion des formations | terminée — backend (14 tests) + frontend, catalogue/inscription/progression | 2026-09-08 | 2026-09-08 |
+| 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
+| 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |
+| 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
 | 6 — Rédaction finale & soutenance | à faire | — | — |

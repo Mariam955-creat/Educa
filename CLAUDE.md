@@ -23,7 +23,7 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 | IA | API Claude / Anthropic | Isolée dans `com.educa.backend.ai` — derrière l'interface `AiAssistant`, fallback si indispo |
 | Stockage fichiers | Interface `storage` — **dev : système de fichiers local** ; cible : S3-compatible | Vidéos / documents de cours ; impl. S3/MinIO ajoutée plus tard |
 | PDF certificats | openhtmltopdf / OpenPDF (à figer en Phase 3) | Template HTML → PDF |
-| Conteneurisation | Docker + `docker-compose.yml` — **reporté** | Sera ajouté plus tard (confort de dev + cible de déploiement) |
+| Conteneurisation | `docker-compose.yml` (racine) : `backend/Dockerfile` (JRE 25), `frontend/Dockerfile` (Angular → nginx + reverse-proxy `/api`), `postgres:18` — profil `prod` (`application-prod.yml`). Voir `docs/07-deploiement.md`. **Écrit mais pas encore exécuté** (poste sans Docker). En dev : toujours PostgreSQL local, pas de Docker |
 | Tests backend | JUnit 5 + Spring Boot Test ; BDD de test = `educa_test` locale | Testcontainers seulement si Docker dispo (CI). a minima : auth, quiz, certification |
 | Tests frontend | Karma/Jasmine (défaut Angular) | a minima : parcours login + passage de quiz |
 
@@ -46,7 +46,7 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 └── README.md
 ```
 
-> `docker-compose.yml` : reporté (pas de Docker pour l'instant). En dev, PostgreSQL est installé localement et administré avec pgAdmin.
+> `docker-compose.yml` (racine) = stack de déploiement (voir `docs/07-deploiement.md`). En **dev**, PostgreSQL reste installé localement et administré avec pgAdmin (pas de Docker sur le poste).
 
 ## 4. Commandes utiles
 
@@ -83,7 +83,7 @@ Fonctionnalités différenciantes : interface multilingue **FR / EN / AR** (avec
 
 ## 7. État actuel
 
-**Phases 0 → 5 (MVP) terminées** (reste 1.10 Swagger ; multilingue Phase 4 validé au navigateur, chatbot IA live en attente d'une vraie clé Anthropic). **Phase 6 (rédaction finale & soutenance) en cours** : `README.md` réécrit (état réel, port 8081, comptes démo) ; `docs/05-demo-soutenance.md` créé (scénario pas à pas ~15 min) ; **jeu de démo enrichi** (6.2 : 4 comptes dont `diplome@educa.dev`, 2 cours publiés « Introduction à Python » + « Les bases de Git », parcours du compte diplômé rejoué → certificat pré-émis) ; **diagrammes exportés** (6.4 : `docs/assets/architecture.*` + `docs/assets/mcd.*` en .mmd/.svg/.png) ; **vérif bout-en-bout API** (6.5 : `scripts/e2e-mvp.mjs` rejoue tout le parcours MVP contre `:8081` → **47/47 PASS** ; rapport `docs/06-verification-mvp.md`). Reste : relecture UI au navigateur (checklist `docs/06` §4), passe finale `docs/01`+`02` (6.1), `docker-compose` de déploiement (6.6, cible à confirmer).
+**Phases 0 → 5 (MVP) terminées** (reste 1.10 Swagger ; multilingue Phase 4 validé au navigateur, chatbot IA live en attente d'une vraie clé Anthropic). **Phase 6 (rédaction finale & soutenance) en cours** : `README.md` réécrit (état réel, port 8081, comptes démo) ; `docs/05-demo-soutenance.md` créé (scénario pas à pas ~15 min) ; **jeu de démo enrichi** (6.2 : 4 comptes dont `diplome@educa.dev`, 2 cours publiés « Introduction à Python » + « Les bases de Git », parcours du compte diplômé rejoué → certificat pré-émis) ; **diagrammes exportés** (6.4 : `docs/assets/architecture.*` + `docs/assets/mcd.*` en .mmd/.svg/.png) ; **vérif bout-en-bout API** (6.5 : `scripts/e2e-mvp.mjs` rejoue tout le parcours MVP contre `:8081` → **47/47 PASS** ; rapport `docs/06-verification-mvp.md`) ; **déploiement Docker** (6.6 : `docker-compose.yml` + `backend/Dockerfile` + `frontend/Dockerfile` (nginx, reverse-proxy `/api`) + `application-prod.yml` + `docs/07-deploiement.md` ; frontend passé à une API relative `/api/v1` + proxy Angular en dev ; **fichiers Docker non encore exécutés**, poste sans Docker). Reste : relecture UI au navigateur (checklist `docs/06` §4), passe finale `docs/01`+`02` (6.1).
 Phase 5 : revue RBAC endpoint par endpoint (sans faille) ; uploads durcis (taille bornée + liste blanche MIME → `413`/`415`), téléchargement en `attachment` par défaut + `X-Content-Type-Options: nosniff`, `GlobalExceptionHandler` renvoie `413`/`415`/`400` au lieu de `500` ; **tests frontend** (`npm run test:ci` headless → **13 verts**) ; **frontend responsive** (barre nav, tableaux, cartes) ; `/security-review` → **0 finding**.
 Backend **opérationnel et testé** (`./mvnw test` → **23 tests verts** : auth 8, course 5, quiz 4, ai 2, upload-security 3, contexte 1), API sur **:8081** :
 - modules `user` (auth JWT), `course` (CRUD + catalogue + publication), `enrollment` (inscription + progression %), `storage` (FS local + upload/download multipart), `quiz` (contrôle + examen final, correction auto, note pondérée 40/60, déverrouillage à 100 %), `certificate` (PDF via openhtmltopdf, n° de série, vérif publique par code), `ai` (chatbot via SDK Anthropic `anthropic-java`, repli `degraded` si clé absente/erreur) ;

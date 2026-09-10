@@ -540,3 +540,28 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun. Reste la **relecture UI au navigateur** (checklist `docs/06` §4), à faire avec l'utilisatrice sur base propre (`flyway:clean` dev + redémarrage), en suivant `docs/05-demo-soutenance.md`.
 
 **Reste Phase 6** : 6.6 (`docker-compose` de déploiement — cible à confirmer), 6.1 (passe finale `01-analyse.md` / `02-conception.md`).
+
+---
+
+## [2026-09-10] Phase 6 — Déploiement Docker (6.6)
+
+**Fait**
+- **`backend/Dockerfile`** — multi-étapes : `eclipse-temurin:25-jdk` (build Maven via `./mvnw`, cache `dependency:go-offline`) → `eclipse-temurin:25-jre`, utilisateur non-root `educa`, `EXPOSE 8081`, `SPRING_PROFILES_ACTIVE=prod`, `-XX:MaxRAMPercentage=75`. `backend/.dockerignore`.
+- **`frontend/Dockerfile`** — `node:22-alpine` (`npm ci` + `npm run build`) → `nginx:1.27-alpine` servant `dist/frontend/browser`. `frontend/.dockerignore`.
+- **`frontend/nginx.conf`** — fallback SPA (`try_files … /index.html`), **reverse-proxy `location /api/` → `http://backend:8081`** (en-têtes `X-Forwarded-*`, `client_max_body_size 210m` aligné sur `STORAGE_MAX_FILE_SIZE_MB`), cache long des fichiers hashés.
+- **`docker-compose.yml`** (racine) — 3 services : `db` (`postgres:18-alpine` + volume `db-data` + healthcheck `pg_isready`), `backend` (build, `depends_on: db healthy`, env `POSTGRES_HOST=db` + secrets `${…:?}` requis, volume `storage-data`), `frontend` (build, seul à publier un port `${WEB_PORT:-8080}:80`). Compose lit le `.env` racine.
+- **`backend/src/main/resources/application-prod.yml`** (nouveau profil `prod`) — datasource depuis `POSTGRES_*` (sans défaut), `hibernate.show_sql=false`, `flyway.clean-disabled=true`, **`server.error.include-message=never`** (ferme le résiduel Phase 5), `logging.root=INFO`.
+- **Frontend : API relative.** `core/api.ts` passe de `http://localhost:8081/api/v1` en dur à **`/api/v1`** (avec surcharge runtime optionnelle `window.EDUCA_API_BASE_URL`). En dev : nouveau **`frontend/proxy.conf.json`** (`/api` → `localhost:8081`) et `npm start` = `ng serve --proxy-config proxy.conf.json`. → même origine en dev (proxy Angular) et en prod (nginx), plus de CORS déclenché côté navigateur.
+- **`.env.docker.example`** + **`docs/07-deploiement.md`** (déploiement local pas à pas ; cloud : VM Docker, base managée = retirer `db` + pointer `POSTGRES_HOST`, PaaS conteneur, TLS par reverse-proxy devant `frontend`, stockage fichiers ; checklist mise en ligne).
+- `README.md` (section Déploiement + table docs + structure), `CLAUDE.md` (table stack + §7) mis à jour.
+
+**Vérifications**
+- `cd frontend && npm run build` → OK ; `npm run test:ci` → **13/13** (les specs utilisent la constante `API_BASE_URL`, pas d'URL en dur → inchangées).
+- `cd backend && ./mvnw test` → **23/23** (profil `test` inchangé ; `application-prod.yml` n'est pas chargé).
+- `git check-ignore` : aucun des nouveaux fichiers n'est ignoré (`*.env` ne matche pas `.env.docker.example`).
+
+**Non fait / limite**
+- ⚠️ **Les images Docker n'ont pas été construites** : le poste de dev n'a pas Docker installé (contrainte projet). `docker compose build` doit être lancé sur la machine cible avant la soutenance. Points à surveiller : disponibilité des tags `eclipse-temurin:25-*`, `postgres:18-alpine`, `node:22-alpine` ; réseau pendant le build Maven (téléchargement du wrapper + dépendances).
+- Le profil `prod` ne seede rien : pour une démo cloud, `BACKEND_PROFILE=dev` dans `.env` (documenté dans `docs/07` §1).
+
+**Reste Phase 6** : 6.5 relecture UI au navigateur (checklist `docs/06` §4, avec l'utilisatrice), 6.1 passe finale `01-analyse.md` / `02-conception.md`.

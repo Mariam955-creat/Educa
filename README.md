@@ -24,7 +24,7 @@ Dépôt : https://github.com/Mariam955-creat/Educa
 | Fichiers | Module `storage` — système de fichiers local en dev, S3-compatible en cible |
 | PDF | openhtmltopdf (gabarit HTML → certificat A4 paysage) |
 | IA | SDK officiel `com.anthropic:anthropic-java`, isolé dans `com.educa.backend.ai`, repli `degraded` si clé absente |
-| Infra | Docker + docker-compose : reporté |
+| Déploiement | `docker-compose.yml` (backend + frontend/nginx + PostgreSQL) — voir [`docs/07-deploiement.md`](docs/07-deploiement.md). En dev : PostgreSQL local, pas de Docker |
 
 > Le détail et la justification des choix : [`docs/02-conception.md`](docs/02-conception.md) §8.
 
@@ -33,10 +33,12 @@ Dépôt : https://github.com/Mariam955-creat/Educa
 ## Structure du dépôt
 
 ```
-backend/    API Spring Boot (Maven) — package-by-feature : user, course, enrollment, quiz, certificate, storage, ai (+ common, security)
-frontend/   Application Angular — core/ (transverses) + feature/ (un dossier par domaine)
-docs/       Analyse, conception, plan d'implémentation, journal, scénario de soutenance
-CLAUDE.md   Contexte condensé du projet (à lire en premier)
+backend/            API Spring Boot (Maven) — package-by-feature : user, course, enrollment, quiz, certificate, storage, ai (+ common, security)
+frontend/           Application Angular — core/ (transverses) + feature/ (un dossier par domaine)
+docs/               Analyse, conception, plan d'implémentation, journal, démo, vérification, déploiement
+scripts/            e2e-mvp.mjs — vérification bout-en-bout du parcours MVP contre l'API
+docker-compose.yml  Stack de déploiement (backend + frontend/nginx + PostgreSQL)
+CLAUDE.md           Contexte condensé du projet (à lire en premier)
 ```
 
 ---
@@ -51,6 +53,7 @@ CLAUDE.md   Contexte condensé du projet (à lire en premier)
 | [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md) | Journal daté par session de travail |
 | [`docs/05-demo-soutenance.md`](docs/05-demo-soutenance.md) | Scénario de démonstration pas à pas pour la soutenance |
 | [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) | Vérification bout-en-bout du périmètre MVP (résultats + couverture) |
+| [`docs/07-deploiement.md`](docs/07-deploiement.md) | Déploiement Docker (local + cloud) |
 | [`docs/assets/`](docs/assets/) | Diagrammes exportés (architecture, MCD) — sources Mermaid + SVG/PNG |
 
 ---
@@ -106,9 +109,21 @@ Deux cours publiés du formateur de démo sont seedés — « Introduction à Py
 
 ---
 
+## Déploiement (Docker)
+
+```bash
+cp .env.docker.example .env        # renseigner POSTGRES_PASSWORD + JWT_SECRET
+docker compose up -d --build       # backend + frontend/nginx + PostgreSQL
+# → http://localhost:8080
+```
+
+Détail (cloud, base managée, TLS, données de démo) : [`docs/07-deploiement.md`](docs/07-deploiement.md).
+
+---
+
 ## État d'avancement
 
 **Phases 0 → 5 (MVP) terminées.** Phase 6 (rédaction finale & soutenance) en cours.
 Suivi détaillé : [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) et [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md).
 
-Résiduel connu (hors périmètre MVP) : Swagger UI (springdoc pas encore compatible Spring Boot 4), clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika), `docker-compose` de déploiement.
+Résiduel connu (hors périmètre MVP) : Swagger UI (springdoc pas encore compatible Spring Boot 4), clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika). Les fichiers Docker sont rédigés mais pas encore exécutés (poste de dev sans Docker).

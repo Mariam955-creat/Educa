@@ -1,0 +1,8 @@
+target/
+var/
+.git/
+.github/
+.vscode/
+.idea/
+*.md
+HELP.md

@@ -1,0 +1,25 @@
+# Profil `prod` — déploiement conteneurisé (voir docs/07-deploiement.md).
+# Toute la configuration sensible vient de vraies variables d'environnement.
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    properties:
+      hibernate.show_sql: false
+  flyway:
+    # jamais de `clean` en production
+    clean-disabled: true
+
+server:
+  error:
+    # ne pas divulguer les messages d'exception au client en production
+    include-message: never
+    include-binding-errors: never
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
+    org.flywaydb: INFO

@@ -50,6 +50,7 @@ CLAUDE.md   Contexte condensé du projet (à lire en premier)
 | [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) | Tableau de bord : checklist des phases 0 → 6 |
 | [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md) | Journal daté par session de travail |
 | [`docs/05-demo-soutenance.md`](docs/05-demo-soutenance.md) | Scénario de démonstration pas à pas pour la soutenance |
+| [`docs/assets/`](docs/assets/) | Diagrammes exportés (architecture, MCD) — sources Mermaid + SVG/PNG |
 
 ---
 

@@ -1,0 +1,141 @@
+%%{init: {"er": {"layoutDirection": "TB"}} }%%
+erDiagram
+    USER {
+        bigint   id PK
+        varchar  email UK
+        varchar  password_hash
+        varchar  full_name
+        varchar  preferred_language "fr | en | ar"
+        boolean  enabled
+    }
+    ROLE {
+        bigint   id PK
+        varchar  name UK "LEARNER | INSTRUCTOR | ADMIN"
+    }
+    USER_ROLE {
+        bigint user_id PK,FK
+        bigint role_id PK,FK
+    }
+    REFRESH_TOKEN {
+        bigint    id PK
+        bigint    user_id FK
+        varchar   token_hash "SHA-256"
+        timestamptz expires_at
+        boolean   revoked
+    }
+    COURSE {
+        bigint   id PK
+        bigint   instructor_id FK
+        varchar  title
+        varchar  slug UK
+        text     description
+        varchar  language
+        boolean  published
+        int      control_weight "défaut 40"
+        int      exam_weight "défaut 60"
+        int      pass_threshold "défaut 70"
+    }
+    CHAPTER {
+        bigint id PK
+        bigint course_id FK
+        varchar title
+        int    position
+    }
+    CONTENT {
+        bigint  id PK
+        bigint  chapter_id FK
+        varchar type "TEXT | VIDEO | DOCUMENT"
+        varchar title
+        int     position
+        text    text_body
+        varchar file_key
+        varchar mime_type
+    }
+    QUIZ {
+        bigint  id PK
+        bigint  course_id FK
+        bigint  chapter_id FK "null si FINAL_EXAM"
+        varchar type "CONTROL | FINAL_EXAM"
+        varchar title
+        int     pass_threshold
+        int     max_attempts "null = illimité"
+    }
+    QUESTION {
+        bigint  id PK
+        bigint  quiz_id FK
+        text    statement
+        varchar type "SINGLE_CHOICE | MULTIPLE_CHOICE | TRUE_FALSE"
+        int     points
+        int     position
+    }
+    ANSWER_OPTION {
+        bigint  id PK
+        bigint  question_id FK
+        text    label
+        boolean is_correct
+        int     position
+    }
+    ENROLLMENT {
+        bigint   id PK
+        bigint   user_id FK
+        bigint   course_id FK
+        varchar  status "ACTIVE | COMPLETED | CANCELLED"
+        timestamptz enrolled_at
+        timestamptz completed_at
+    }
+    PROGRESS {
+        bigint   id PK
+        bigint   enrollment_id FK
+        bigint   content_id FK
+        timestamptz completed_at
+    }
+    QUIZ_ATTEMPT {
+        bigint   id PK
+        bigint   user_id FK
+        bigint   quiz_id FK
+        numeric  score "0..100"
+        boolean  passed
+        timestamptz started_at
+        timestamptz submitted_at
+    }
+    ATTEMPT_ANSWER {
+        bigint  id PK
+        bigint  attempt_id FK
+        bigint  question_id FK
+        bigint  selected_option_ids "bigint[]"
+    }
+    CERTIFICATE {
+        bigint   id PK
+        bigint   user_id FK
+        bigint   course_id FK
+        bigint   final_exam_attempt_id FK
+        varchar  serial_number UK "EDUCA-AAAA-000001"
+        varchar  verification_code UK
+        numeric  controls_average
+        numeric  final_exam_score
+        numeric  final_grade
+        varchar  pdf_key
+        timestamptz issued_at
+    }
+
+    USER      ||--o{ USER_ROLE      : "possède"
+    ROLE      ||--o{ USER_ROLE      : "attribué à"
+    USER      ||--o{ REFRESH_TOKEN  : "détient"
+    USER      ||--o{ COURSE         : "crée (formateur)"
+    COURSE    ||--o{ CHAPTER        : "contient"
+    CHAPTER   ||--o{ CONTENT        : "contient"
+    CHAPTER   ||--o| QUIZ           : "contrôle (CONTROL)"
+    COURSE    ||--o| QUIZ           : "examen final (FINAL_EXAM)"
+    QUIZ      ||--o{ QUESTION       : "compose"
+    QUESTION  ||--o{ ANSWER_OPTION  : "propose"
+    USER      ||--o{ ENROLLMENT     : "s'inscrit"
+    COURSE    ||--o{ ENROLLMENT     : "reçoit"
+    ENROLLMENT ||--o{ PROGRESS      : "suit"
+    CONTENT   ||--o{ PROGRESS       : "marque"
+    USER      ||--o{ QUIZ_ATTEMPT   : "passe"
+    QUIZ      ||--o{ QUIZ_ATTEMPT   : "reçoit"
+    QUIZ_ATTEMPT ||--o{ ATTEMPT_ANSWER : "détaille"
+    QUESTION  ||--o{ ATTEMPT_ANSWER : "concerne"
+    QUIZ_ATTEMPT ||--o| CERTIFICATE : "déclenche"
+    USER      ||--o{ CERTIFICATE    : "détient"
+    COURSE    ||--o{ CERTIFICATE    : "atteste"

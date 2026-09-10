@@ -1,0 +1,27 @@
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "basis"}} }%%
+flowchart LR
+    subgraph Client["Client"]
+      NG["Application Angular 19<br/>SPA — navigateur / mobile web"]
+    end
+
+    subgraph Backend["Backend — Spring Boot 4 (API REST /api/v1, port 8081)"]
+      SEC["Filtre de sécurité<br/>JWT + RBAC"]
+      CTRL["Controllers<br/>(1 par module)"]
+      SRV["Services métier<br/>user · course · enrollment · quiz · certificate"]
+      AIsrv["Module ai<br/>interface AiAssistant"]
+      STO["Module storage<br/>FileSystemStorageService (dev) → S3 cible"]
+      REPO["Repositories<br/>Spring Data JPA"]
+    end
+
+    DB[("PostgreSQL<br/>local + pgAdmin<br/>migrations Flyway")]
+    FS[("Système de fichiers local<br/>backend/var/storage")]
+    LLM[["API Claude / Anthropic<br/>SDK anthropic-java"]]
+    MAIL[["Service email<br/>(reset mot de passe — Should have)"]]
+
+    NG -- "HTTPS · JSON + multipart" --> SEC
+    SEC --> CTRL --> SRV
+    SRV --> REPO --> DB
+    SRV --> STO --> FS
+    SRV --> AIsrv
+    AIsrv -- "HTTPS (repli si indisponible)" --> LLM
+    SRV -. "Should have" .-> MAIL

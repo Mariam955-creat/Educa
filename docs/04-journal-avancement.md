@@ -502,3 +502,22 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Note pour la soutenance** : la base `educa` de dev contient encore des cours résiduels de tests manuels (« Bases du Java », « Bases du Git »…). Repartir d'une base propre (`flyway:clean` dev + redémarrage) avant la démo — déjà indiqué en `docs/05-demo-soutenance.md` §0.5.
 
 **Reste Phase 6** : 6.1 (passe finale `01`/`02`), 6.4 (export diagrammes), 6.5 (vérif bout-en-bout avec l'utilisatrice), 6.6 (`docker-compose`, cible à confirmer).
+
+---
+
+## [2026-09-10] Phase 6 — Diagrammes archi + MCD exportés (6.4)
+
+**Fait**
+- Nouveau dossier **`docs/assets/`** avec, pour chaque diagramme, la source Mermaid (`.mmd`) + un rendu **SVG** (vectoriel, pour le mémoire) + un **PNG** (aperçu / insertion Word) :
+  - `architecture.{mmd,svg,png}` — reprise du `flowchart` de `02-conception.md §1`, nettoyée : `\n` → `<br/>`, libellés remis à jour (Angular 19, Spring Boot 4, port 8081, noms de modules réels, SDK `anthropic-java`, repli IA).
+  - `mcd.{mmd,svg,png}` — `erDiagram` **réécrit avec les attributs** des 15 tables du MVP réellement migrées (Flyway `V1`/`V2`) : clés PK/FK/UK, types, énumérations, valeurs par défaut (poids 40/60, seuil 70), `selected_option_ids bigint[]`, `serial_number EDUCA-AAAA-000001`… Les entités `*_TRANSLATION` / `LANGUAGE` / `CHAT_MESSAGE` (Should have) sont **écartées** de l'export — elles restent dans le MCD de conception de `02-conception.md`.
+- **`docs/assets/README.md`** : table récap + procédure de régénération.
+- `02-conception.md` §1 et §2 : ajout d'un renvoi vers les fichiers exportés sous chaque bloc Mermaid.
+
+**Outillage**
+- Rendu via **`@mermaid-js/mermaid-cli@11`** (`npx`, pas d'ajout au projet) piloté sur le **Chrome du poste** (`-p puppeteer.json` avec `executablePath`), `PUPPETEER_SKIP_DOWNLOAD=1` → aucun téléchargement de Chromium.
+- Pièges : (1) `executablePath` doit être en slashes `/` dans le JSON (un `\P` casse le parse JSON) ; (2) en `erDiagram`, un libellé de relation contenant une apostrophe (`s'inscrit`) doit être **entre guillemets** sinon `Parse error`.
+
+**Bloquant** — aucun.
+
+**Reste Phase 6** : 6.5 (vérif bout-en-bout du « Must have » avec l'utilisatrice, sur base propre), 6.6 (`docker-compose` de déploiement — cible à confirmer), 6.1 (passe finale `01-analyse.md` / `02-conception.md`).

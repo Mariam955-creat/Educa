@@ -35,6 +35,8 @@ flowchart LR
     SRV -. S .-> MAIL
 ```
 
+> Version exportée pour le mémoire (source Mermaid + SVG/PNG) : [`assets/architecture.mmd`](assets/architecture.mmd) · [`assets/architecture.svg`](assets/architecture.svg).
+
 **Principes** :
 - Frontend = SPA Angular, aucun rendu serveur ; consomme uniquement l'API REST.
 - Backend sans état : l'identité voyage dans le JWT, aucune session serveur → scalabilité horizontale simple.
@@ -147,6 +149,8 @@ erDiagram
     USER ||--o{ CHAT_MESSAGE : echange
     COURSE ||--o{ CHAT_MESSAGE : contextualise
 ```
+
+> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des **15 tables du MVP réellement migrées** (Flyway `V1`/`V2`). Les entités `*_TRANSLATION` / `LANGUAGE` / `CHAT_MESSAGE` ci-dessus restent au stade conception (*Should have*).
 
 ### Cardinalités et règles de gestion
 

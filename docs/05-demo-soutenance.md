@@ -133,4 +133,4 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 | Port 8081 occupé | Adapter `SERVER_PORT` dans `.env` + `core/api.ts` côté frontend |
 | Frontend ne compile pas | `npm ci` dans `frontend/` ; vérifier Node ≥ 24.12 et Angular CLI 19.2 |
 | Chatbot muet | Comportement attendu sans clé réelle : montrer la réponse `degraded` et expliquer l'architecture de repli |
-| Démo « à froid » | Montrer les tests d'intégration (`QuizFlowTest` : parcours complet contrôle → examen → certificat → vérification) |
+| Démo « à froid » | Lancer `node scripts/e2e-mvp.mjs` (backend up) → 47 contrôles verts qui rejouent tout le parcours ; ou montrer `QuizFlowTest` (parcours complet contrôle → examen → certificat → vérification) |

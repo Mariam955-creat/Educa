@@ -521,3 +521,22 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Reste Phase 6** : 6.5 (vérif bout-en-bout du « Must have » avec l'utilisatrice, sur base propre), 6.6 (`docker-compose` de déploiement — cible à confirmer), 6.1 (passe finale `01-analyse.md` / `02-conception.md`).
+
+---
+
+## [2026-09-10] Phase 6 — Vérification bout-en-bout du « Must have » (6.5)
+
+**Fait**
+- **`scripts/e2e-mvp.mjs`** : script Node (fetch natif, aucune dépendance) qui rejoue **tout le parcours MVP contre l'API réelle** (`:8081`), de façon **non destructive** — formateur = compte de démo, apprenants créés à la volée, slug de cours unique par run.
+- Couverture : auth/JWT (register/login, rotation du refresh + **ancien jeton rejeté**, logout révoque), RBAC (LEARNER → 403 sur mutations cours et sur résultats formateur), CRUD formation (cours/chapitre/contenus/contrôle/examen), validations (options invalides → 400, 2ᵉ contrôle → 409), catalogue (brouillon absent → publié présent, contenus masqués si non inscrit), inscription (unicité 409), progression 100 %, contrôle & examen (verrouillage avant 100 % → 403, déverrouillage, scores), **note pondérée 40/60 démontrée avec deux cas** (100/100 → 100 et certificat ; 0/100 → 60 et **pas** de certificat car < seuil 70), certificat (PDF `%PDF` + `nosniff`, vérification publique par code, code invalide → `valid:false`), résultats formateur, chatbot (403 non inscrit, `{degraded:true}` sans clé — jamais 500).
+- **Résultat : 47 / 47 PASS.** (2 « FAIL » au 1er passage = faux négatifs du script : les `POST /attempts` renvoient `201` et non `200` — assertion corrigée, aucun défaut produit.)
+- En complément, ré-exécuté ce jour : backend `./mvnw test` → **23/23**, frontend `npm run test:ci` → **13/13**, `npm run build` → OK.
+- **`docs/06-verification-mvp.md`** : rapport (résultat global + table détaillée des 47 contrôles + matrice de couverture des exigences MVP + checklist UI restante + résiduel hors MVP).
+
+**Décisions techniques**
+- Le script est gardé au dépôt (`scripts/`) : il sert aussi de **plan B « démo à froid »** pour la soutenance et de smoke-test avant démo.
+- Instructeur du script = `formateur@educa.dev` (l'inscription publique crée un `LEARNER`, pas un `INSTRUCTOR` — conforme à la décision de cadrage « un seul rôle actif, promotion INSTRUCTOR par l'admin »).
+
+**Bloquant** — aucun. Reste la **relecture UI au navigateur** (checklist `docs/06` §4), à faire avec l'utilisatrice sur base propre (`flyway:clean` dev + redémarrage), en suivant `docs/05-demo-soutenance.md`.
+
+**Reste Phase 6** : 6.6 (`docker-compose` de déploiement — cible à confirmer), 6.1 (passe finale `01-analyse.md` / `02-conception.md`).

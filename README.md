@@ -50,6 +50,7 @@ CLAUDE.md   Contexte condensé du projet (à lire en premier)
 | [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) | Tableau de bord : checklist des phases 0 → 6 |
 | [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md) | Journal daté par session de travail |
 | [`docs/05-demo-soutenance.md`](docs/05-demo-soutenance.md) | Scénario de démonstration pas à pas pour la soutenance |
+| [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) | Vérification bout-en-bout du périmètre MVP (résultats + couverture) |
 | [`docs/assets/`](docs/assets/) | Diagrammes exportés (architecture, MCD) — sources Mermaid + SVG/PNG |
 
 ---
@@ -82,6 +83,14 @@ npm install
 npm start                 # http://localhost:4200
 npm run build             # build de production
 npm run test:ci           # Karma headless (13 tests)
+```
+
+### Vérification bout-en-bout
+
+Backend lancé (profil `dev`), puis :
+
+```bash
+node scripts/e2e-mvp.mjs   # rejoue tout le parcours MVP contre l'API — 47 contrôles
 ```
 
 ### Comptes de démonstration (profil `dev`)

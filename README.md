@@ -76,7 +76,7 @@ cp .env.example .env      # renseigner au minimum POSTGRES_PASSWORD (mot de pass
 ```bash
 cd backend
 ./mvnw spring-boot:run    # http://localhost:8081/api/v1  — profil dev, données de démo seedées
-./mvnw test               # profil test → base educa_test (23 tests)
+./mvnw test               # profil test → base educa_test (30 tests)
 ```
 
 ### Frontend

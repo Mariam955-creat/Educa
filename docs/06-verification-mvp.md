@@ -9,7 +9,7 @@ Dernière exécution : **2026-09-10**.
 
 | Suite | Résultat |
 |---|---|
-| Tests d'intégration backend (`cd backend && ./mvnw test`) | **23 / 23 verts** |
+| Tests d'intégration backend (`cd backend && ./mvnw test`) | **30 / 30 verts** |
 | Tests frontend headless (`cd frontend && npm run test:ci`) | **13 / 13 verts** |
 | Build frontend (`npm run build`) | **OK** |
 | Scénario E2E API (`node scripts/e2e-mvp.mjs`, backend dev lancé) | **47 / 47 PASS** |
@@ -87,7 +87,7 @@ Le scénario E2E rejoue le parcours complet contre l'API réelle (`:8081`), de f
 | Certification | Génération auto ≥ seuil, n° de série, PDF, vérification publique par code | ✅ CERT-01→05 |
 | Résultats formateur | Moyenne contrôles / examen / note finale / certifié, par apprenant | ✅ RES-01 |
 | Multilingue (interface) | FR / EN / AR + RTL, persistance `localStorage` + serveur | ✅ validé au navigateur le 2026-09-10 (journal) ; back : AUTH-08 |
-| Chatbot pédagogique | Contexte borné au cours, accès réservé aux inscrits, repli propre si IA indisponible | ✅ AI-01/02 ; réponse **live** en attente d'une clé Anthropic réelle |
+| Chatbot pédagogique | Contexte borné au cours, accès réservé aux inscrits, repli propre si IA indisponible | ✅ E2E AI-01/02 + **`AiChatTest` (9 tests)** : 401 sans jeton, 403 non inscrit, 200 dégradé (inscrit / propriétaire / ADMIN), historique accepté, validation `message` vide / > 2000 / `courseId` manquant → 400. Réponse **live** en attente d'une clé Anthropic réelle |
 
 ---
 

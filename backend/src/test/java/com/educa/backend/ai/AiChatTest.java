@@ -22,7 +22,7 @@ import com.jayway.jsonpath.JsonPath;
 
 /**
  * Profil {@code test} : {@code educa.ai.enabled=false} → {@link DisabledAiAssistant}.
- * On vérifie le contrôle d'accès et la réponse « dégradée ».
+ * On vérifie le contrôle d'accès, la validation de la requête et la réponse « dégradée ».
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,6 +39,15 @@ class AiChatTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    // ---------- contrôle d'accès ----------
+
+    @Test
+    void chat_refuse_si_non_authentifie() throws Exception {
+        mvc.perform(post("/api/v1/ai/chat").contentType(APPLICATION_JSON)
+                        .content("{\"courseId\":1,\"message\":\"Bonjour\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
     @Test
     void chat_refuse_si_non_inscrit() throws Exception {
         String prof = instructorToken("ai-prof@example.com");
@@ -50,6 +59,34 @@ class AiChatTest {
                         .content("{\"courseId\":" + courseId + ",\"message\":\"Bonjour\"}"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void chat_autorise_pour_le_proprietaire_du_cours_non_inscrit() throws Exception {
+        String prof = instructorToken("ai-prof-owner@example.com");
+        long courseId = createPublishedCourse(prof);
+
+        // le formateur propriétaire n'est pas « inscrit » mais doit pouvoir tester son assistant
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + prof)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"courseId\":" + courseId + ",\"message\":\"Résume le cours\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.degraded").value(true));
+    }
+
+    @Test
+    void chat_autorise_pour_un_admin_non_inscrit() throws Exception {
+        String prof = instructorToken("ai-prof-admincase@example.com");
+        long courseId = createPublishedCourse(prof);
+
+        String admin = adminToken("ai-admin@example.com");
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + admin)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"courseId\":" + courseId + ",\"message\":\"Bonjour\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.degraded").value(true));
+    }
+
+    // ---------- réponse dégradée ----------
 
     @Test
     void chat_repli_quand_ia_desactivee() throws Exception {
@@ -66,6 +103,60 @@ class AiChatTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.degraded").value(true))
                 .andExpect(jsonPath("$.reply").isNotEmpty());
+    }
+
+    @Test
+    void chat_accepte_un_historique_dans_la_requete() throws Exception {
+        String prof = instructorToken("ai-prof-hist@example.com");
+        long courseId = createPublishedCourse(prof);
+
+        String eleve = learnerToken("ai-eleve-hist@example.com");
+        mvc.perform(post("/api/v1/courses/" + courseId + "/enroll").header("Authorization", "Bearer " + eleve))
+                .andExpect(status().isCreated());
+
+        String body = "{\"courseId\":" + courseId + ",\"message\":\"Et ensuite ?\","
+                + "\"history\":[{\"role\":\"user\",\"content\":\"Bonjour\"},"
+                + "{\"role\":\"assistant\",\"content\":\"Bonjour, comment puis-je aider ?\"}]}";
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + eleve)
+                        .contentType(APPLICATION_JSON).content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.degraded").value(true));
+    }
+
+    // ---------- validation de la requête ----------
+
+    @Test
+    void chat_rejette_un_message_vide() throws Exception {
+        String prof = instructorToken("ai-prof-empty@example.com");
+        long courseId = createPublishedCourse(prof);
+        String eleve = enrolledLearnerToken("ai-eleve-empty@example.com", courseId);
+
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + eleve)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"courseId\":" + courseId + ",\"message\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void chat_rejette_un_message_trop_long() throws Exception {
+        String prof = instructorToken("ai-prof-long@example.com");
+        long courseId = createPublishedCourse(prof);
+        String eleve = enrolledLearnerToken("ai-eleve-long@example.com", courseId);
+
+        String tooLong = "x".repeat(2001);
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + eleve)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"courseId\":" + courseId + ",\"message\":\"" + tooLong + "\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void chat_rejette_une_requete_sans_courseId() throws Exception {
+        String eleve = learnerToken("ai-eleve-nocourse@example.com");
+        mvc.perform(post("/api/v1/ai/chat").header("Authorization", "Bearer " + eleve)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"message\":\"Bonjour\"}"))
+                .andExpect(status().isBadRequest());
     }
 
     // ---------- helpers ----------
@@ -86,11 +177,26 @@ class AiChatTest {
         return login(email);
     }
 
+    private String enrolledLearnerToken(String email, long courseId) throws Exception {
+        String token = learnerToken(email);
+        mvc.perform(post("/api/v1/courses/" + courseId + "/enroll").header("Authorization", "Bearer " + token))
+                .andExpect(status().isCreated());
+        return token;
+    }
+
     private String instructorToken(String email) throws Exception {
+        return tokenWithRole(email, RoleName.INSTRUCTOR);
+    }
+
+    private String adminToken(String email) throws Exception {
+        return tokenWithRole(email, RoleName.ADMIN);
+    }
+
+    private String tokenWithRole(String email, RoleName roleName) throws Exception {
         register(email);
         User user = userRepository.findByEmailIgnoreCase(email).orElseThrow();
-        Role instructor = roleRepository.findByName(RoleName.INSTRUCTOR).orElseThrow();
-        user.getRoles().add(instructor);
+        Role role = roleRepository.findByName(roleName).orElseThrow();
+        user.getRoles().add(role);
         userRepository.save(user);
         return login(email);
     }

@@ -587,3 +587,22 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Reste (Phase 6)** : **6.5** — relecture visuelle au navigateur (checklist `docs/06-verification-mvp.md` §4), à faire avec l'utilisatrice sur base propre. Hors doc : `docker compose build` à lancer sur une machine dotée de Docker.
+
+---
+
+## [2026-09-10] Phase 6 — Renforcement des tests du module IA
+
+**Fait**
+- **`AiChatTest`** passé de **2 à 9 tests** (module `ai` = le moins couvert). Ajouts :
+  - `chat_refuse_si_non_authentifie` → **401** sans jeton ;
+  - `chat_autorise_pour_le_proprietaire_du_cours_non_inscrit` → **200 `degraded`** (branche `isOwnerOrAdmin` : le formateur teste son assistant sans être « inscrit ») ;
+  - `chat_autorise_pour_un_admin_non_inscrit` → **200 `degraded`** ;
+  - `chat_accepte_un_historique_dans_la_requete` → payload avec `history:[{role,content}...]` désérialisé sans erreur → **200** ;
+  - `chat_rejette_un_message_vide` / `..._trop_long` (2001 car.) / `..._sans_courseId` → **400** (contraintes `@NotNull` / `@Size(1..2000)` de `AiChatRequest`).
+  - Helpers factorisés : `tokenWithRole(email, RoleName)`, `adminToken`, `enrolledLearnerToken`.
+- `./mvnw test` → **30 verts** (auth 8, course 5, quiz 4, **ai 9**, upload-security 3, contexte 1).
+- Comptes de test des références : `CLAUDE.md`, `README.md`, `docs/02` §8, `docs/03` (5.1 + 6.5), `docs/06` §1 & matrice de couverture (chatbot) — passés de 23 à **30**. Les entrées datées du journal (Phases 4/5) conservent leur compte d'époque.
+
+**Note** — la classe réelle `ClaudeAiAssistant` (try/catch → `degraded`) reste non couverte par un test unitaire dédié (mock du SDK Anthropic fragile) ; le contrat « jamais d'exception vers l'appelant » est garanti côté frontière par `AiChatTest` + le scénario E2E.
+
+**Bloquant** — aucun. **Reste Phase 6** : 6.5 relecture UI au navigateur.

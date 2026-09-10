@@ -153,7 +153,7 @@ Dernière mise à jour : 2026-09-08.
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
 | 6.1 | Mise à jour finale de `docs/01`→`04` + `CLAUDE.md` + `README.md` | `docs/`, racine | en cours (`README.md` réécrit : état réel, port 8081, comptes démo, commandes ; `03`/`04` à jour à chaque session ; reste passe finale `01`/`02` + `CLAUDE.md`) | 2026-09-10 |
-| 6.2 | Jeu de données de démonstration (script de seed : utilisateurs, cours complets, quiz, 1 certificat) | `backend/.../demo` | à faire (base actuelle : `DevDataInitializer` = 3 comptes + 1 cours publié avec contrôle + examen final ; manque un 2ᵉ cours et un certificat pré-généré) | — |
+| 6.2 | Jeu de données de démonstration (script de seed : utilisateurs, cours complets, quiz, 1 certificat) | `config/DevDataInitializer` | fait — **4 comptes** (+ `diplome@educa.dev` « Sara Diplômée »), **2 cours publiés** (« Introduction à Python » + « Les bases de Git », chacun 2 chapitres / 4 contenus / 1 contrôle / 1 examen final), et le **parcours complet du compte diplômé** rejoué via les services réels sur le cours Git → certificat émis. Idempotent, erreurs seulement loguées. Vérifié au boot dev : `/certificates/me`, `/certificates/verify/{code}`, PDF 200 | 2026-09-10 |
 | 6.3 | Script / scénario de démonstration pour la soutenance | `docs/05-demo-soutenance.md` | fait — déroulé pas à pas ~15 min (préparation, formateur, apprenant, certification, multilingue, IA, sécurité, plan B) | 2026-09-10 |
 | 6.4 | Diagrammes propres (archi, MCD) exportés pour le mémoire | `docs/assets` | à faire (sources Mermaid dans `02-conception.md` — à exporter en PNG/SVG) | — |
 | 6.5 | Vérification finale : tout le périmètre « Must have » est fonctionnel de bout en bout | — | à faire (checklist dérivée de `docs/05-demo-soutenance.md`) | — |
@@ -173,4 +173,4 @@ Dernière mise à jour : 2026-09-08.
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
 | 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |
 | 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
-| 6 — Rédaction finale & soutenance | en cours — `README.md` réécrit, scénario de soutenance rédigé (`docs/05`). Reste : jeu de démo enrichi, export diagrammes, vérif bout-en-bout, déploiement Docker | 2026-09-10 | — |
+| 6 — Rédaction finale & soutenance | en cours — `README.md` réécrit, scénario de soutenance (`docs/05`), jeu de démo enrichi (4 comptes, 2 cours, 1 certificat pré-émis). Reste : export diagrammes, vérif bout-en-bout, déploiement Docker, passe finale `docs/01`+`02` | 2026-09-10 | — |

@@ -477,3 +477,28 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 - 6.4 : exporter les diagrammes Mermaid de `02-conception.md` (archi + MCD) en PNG/SVG dans `docs/assets/`.
 - 6.5 : dérouler la checklist de `docs/05` sur l'appli lancée (avec l'utilisatrice).
 - 6.6 : `docker-compose` de déploiement — **cible à confirmer** avec l'utilisatrice (fournisseur cloud, avec ou sans conteneur pour PostgreSQL).
+
+---
+
+## [2026-09-10] Phase 6 — Jeu de données de démonstration enrichi (6.2)
+
+**Fait**
+- **`DevDataInitializer` réécrit** (profil `dev`) :
+  - **4ᵉ compte** `diplome@educa.dev` / « Sara Diplômée » (`LEARNER`, `password123`) — l'apprenant déjà certifié, pour montrer « Mes certificats » et la page de vérification publique sans dérouler tout le parcours en soutenance ;
+  - **2ᵉ cours publié** « Les bases de Git » (slug `les-bases-de-git`) du formateur de démo : 2 chapitres, 4 contenus TEXT, 1 contrôle (chapitre 1), 1 examen final (`max_attempts` 3). Le cours « Introduction à Python » est inchangé ;
+  - **parcours complet rejoué** pour Sara sur le cours Git **via les services réels** (`EnrollmentService.enroll` + `completeContent` sur chaque contenu, `QuizAttemptService.submit` avec toutes les bonnes réponses pour le contrôle puis l'examen) → note pondérée 100/100 ≥ seuil 70 → `CertificateService.issueIfAbsent` déclenché, `enrollment` passé à `COMPLETED`.
+- **Idempotence** : chaque bloc est gardé (`existsBySlug`, `existsBy…Type`, `certificateIdFor != null`). Le parcours certifié est enveloppé dans un `try/catch(RuntimeException)` qui **logue seulement** — un aléa de seed ne doit jamais bloquer le démarrage.
+- **Vérifications** :
+  - `./mvnw test` → **23 verts** (le profil `test` n'active pas `DevDataInitializer`, `@Profile("dev")`).
+  - Boot dev réel : log `Parcours de démo joué pour diplome@educa.dev sur « Les bases de Git » — certificat #N` ; `GET /certificates/me` (Bearer Sara) renvoie le certificat (`EDUCA-2026-0000NN`, note 100) ; `GET /certificates/verify/{code}` public → `{valid:true, …}` ; `GET /certificates/{id}/download` → `200 application/pdf` (`%PDF`), `inline` + `X-Content-Type-Options: nosniff` ; le catalogue liste « Les bases de Git ».
+
+**Décisions techniques**
+- Le certificat de démo est produit par **le vrai chemin métier** (grading + déverrouillage + émission + PDF), pas inséré à la main — il reste correct si la logique évolue.
+- `DevDataInitializer` dépend désormais de `EnrollmentService`, `QuizAttemptService`, `CertificateService` (beans `@Service`, pas de cycle : l'`ApplicationRunner` n'est dépendance de personne).
+- Piège rencontré : après édition, un `spring-boot:run` a échoué sur `NoClassDefFoundError: AnswerOption` (artefact de compilation incrémentale corrompu dans `target/`). Résolu par `./mvnw clean compile`. Sans impact sur `./mvnw test` (qui recompile).
+
+**Bloquant** — aucun.
+
+**Note pour la soutenance** : la base `educa` de dev contient encore des cours résiduels de tests manuels (« Bases du Java », « Bases du Git »…). Repartir d'une base propre (`flyway:clean` dev + redémarrage) avant la démo — déjà indiqué en `docs/05-demo-soutenance.md` §0.5.
+
+**Reste Phase 6** : 6.1 (passe finale `01`/`02`), 6.4 (export diagrammes), 6.5 (vérif bout-en-bout avec l'utilisatrice), 6.6 (`docker-compose`, cible à confirmer).

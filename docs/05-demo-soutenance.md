@@ -19,11 +19,14 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 
 **Comptes de démo** (mot de passe commun `password123`) :
 
-| Rôle | Email |
-|---|---|
-| Administrateur | `admin@educa.dev` |
-| Formateur | `formateur@educa.dev` |
-| Apprenant | `apprenant@educa.dev` |
+| Rôle | Email | Usage en démo |
+|---|---|---|
+| Administrateur | `admin@educa.dev` | espace admin |
+| Formateur | `formateur@educa.dev` | crée/publie les cours, consulte les résultats |
+| Apprenant | `apprenant@educa.dev` | déroule le parcours en direct (inscription → certificat) |
+| Apprenant certifié | `diplome@educa.dev` | « Sara Diplômée » a déjà terminé « Les bases de Git » — certificat prêt sans rien dérouler |
+
+**Cours seedés** (formateur de démo, publiés) : « Introduction à Python » et « Les bases de Git » — chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final.
 
 ---
 
@@ -66,6 +69,8 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 ---
 
 ## 4. Certification (2 min)
+
+> **Raccourci si le temps manque** : se connecter en `diplome@educa.dev` (« Sara Diplômée ») → « Mes certificats » : le certificat de « Les bases de Git » est déjà là. Passer directement à 4.4 (télécharger le PDF) et 4.5 (vérification publique).
 
 | # | Acteur | Action | À souligner |
 |---|---|---|---|

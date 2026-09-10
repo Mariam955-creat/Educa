@@ -90,8 +90,9 @@ npm run test:ci           # Karma headless (13 tests)
 | Administrateur | `admin@educa.dev` | `password123` |
 | Formateur | `formateur@educa.dev` | `password123` |
 | Apprenant | `apprenant@educa.dev` | `password123` |
+| Apprenant (déjà certifié) | `diplome@educa.dev` | `password123` |
 
-Un cours publié « Introduction à Python » (2 chapitres, 4 contenus, 1 contrôle, 1 examen final) est seedé et appartient au formateur de démo.
+Deux cours publiés du formateur de démo sont seedés — « Introduction à Python » et « Les bases de Git » (chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final). Le compte `diplome@educa.dev` a déjà suivi « Les bases de Git » de bout en bout : son certificat est disponible dans « Mes certificats » et vérifiable sur `/verify/<code>`.
 
 ---
 

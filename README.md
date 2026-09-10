@@ -123,7 +123,7 @@ Détail (cloud, base managée, TLS, données de démo) : [`docs/07-deploiement.m
 
 ## État d'avancement
 
-**Phases 0 → 5 (MVP) terminées.** Phase 6 (rédaction finale & soutenance) en cours.
+**Phases 0 → 5 (MVP) terminées.** Phase 6 (rédaction finale & soutenance) quasi terminée — reste la relecture visuelle au navigateur (voir [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) §4).
 Suivi détaillé : [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) et [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md).
 
 Résiduel connu (hors périmètre MVP) : Swagger UI (springdoc pas encore compatible Spring Boot 4), clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika). Les fichiers Docker sont rédigés mais pas encore exécutés (poste de dev sans Docker).

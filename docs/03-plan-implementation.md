@@ -148,11 +148,11 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 6 — Rédaction finale & soutenance  ·  statut : `en cours` (2026-09-10)
+## Phase 6 — Rédaction finale & soutenance  ·  statut : `quasi terminée` (2026-09-10) — reste 6.5 (relecture UI navigateur)
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
-| 6.1 | Mise à jour finale de `docs/01`→`04` + `CLAUDE.md` + `README.md` | `docs/`, racine | en cours (`README.md` réécrit : état réel, port 8081, comptes démo, commandes ; `03`/`04` à jour à chaque session ; reste passe finale `01`/`02` + `CLAUDE.md`) | 2026-09-10 |
+| 6.1 | Mise à jour finale de `docs/01`→`04` + `CLAUDE.md` + `README.md` | `docs/`, racine | fait — `README.md` réécrit ; `03`/`04`/`CLAUDE.md` tenus à jour à chaque session ; `01-analyse.md` : statut + note « état de réalisation » (M faites, S/C non faites) ; `02-conception.md` : statut + **nouvelle §0 « écarts conception ↔ implémentation »** (classes IA réelles, module admin non développé, `CHAR`→`VARCHAR(2)`, chemin i18n `public/`, PDF figé, Swagger non intégré, Docker livré en 6.6) + corrections §3/§6.1/§7.2/§8/§10 | 2026-09-10 |
 | 6.2 | Jeu de données de démonstration (script de seed : utilisateurs, cours complets, quiz, 1 certificat) | `config/DevDataInitializer` | fait — **4 comptes** (+ `diplome@educa.dev` « Sara Diplômée »), **2 cours publiés** (« Introduction à Python » + « Les bases de Git », chacun 2 chapitres / 4 contenus / 1 contrôle / 1 examen final), et le **parcours complet du compte diplômé** rejoué via les services réels sur le cours Git → certificat émis. Idempotent, erreurs seulement loguées. Vérifié au boot dev : `/certificates/me`, `/certificates/verify/{code}`, PDF 200 | 2026-09-10 |
 | 6.3 | Script / scénario de démonstration pour la soutenance | `docs/05-demo-soutenance.md` | fait — déroulé pas à pas ~15 min (préparation, formateur, apprenant, certification, multilingue, IA, sécurité, plan B) | 2026-09-10 |
 | 6.4 | Diagrammes propres (archi, MCD) exportés pour le mémoire | `docs/assets/` | fait — `architecture.{mmd,svg,png}` et `mcd.{mmd,svg,png}` générés via `@mermaid-js/mermaid-cli` (Chrome du poste). Archi nettoyée (`<br/>`, libellés à jour) ; MCD réécrit avec les attributs des **15 tables MVP migrées** (les entités *_translation / chat_message restent Should have). `docs/assets/README.md` = mode d'emploi de régénération ; `02-conception.md` §1/§2 renvoient vers les exports | 2026-09-10 |
@@ -173,4 +173,4 @@ Dernière mise à jour : 2026-09-08.
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
 | 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |
 | 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
-| 6 — Rédaction finale & soutenance | en cours — `README.md` réécrit, scénario de soutenance (`docs/05`), jeu de démo enrichi, diagrammes exportés (`docs/assets/`), vérif bout-en-bout API 47/47 (`scripts/e2e-mvp.mjs` + `docs/06`), **déploiement Docker** (`docker-compose.yml` + Dockerfiles + `docs/07`, non encore exécuté). Reste : relecture UI navigateur (6.5), passe finale `docs/01`+`02` (6.1) | 2026-09-10 | — |
+| 6 — Rédaction finale & soutenance | quasi terminée — 6.1→6.6 faites (README + docs 01→07, jeu de démo enrichi, diagrammes `docs/assets/`, vérif E2E API 47/47, stack Docker). **Reste uniquement : relecture UI au navigateur** (6.5, checklist `docs/06` §4, avec l'utilisatrice) + `docker compose build` sur une machine avec Docker | 2026-09-10 | — |

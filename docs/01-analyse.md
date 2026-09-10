@@ -1,8 +1,14 @@
 # 01 — Analyse
 
 Projet **educa** — plateforme e-learning (Projet de Fin d'Études).
-Statut : *brouillon Phase 0, en attente de validation*.
-Dernière mise à jour : 2026-09-08.
+Statut : *validée (Phase 0) ; périmètre MVP « Must have » réalisé et vérifié bout-en-bout (Phases 1→6)*.
+Dernière mise à jour : 2026-09-10.
+
+> **État de réalisation** — toutes les exigences **Must have (M)** ci-dessous sont implémentées et testées
+> (voir `docs/06-verification-mvp.md`). Les exigences **Should have (S)** non réalisées au MVP : réinitialisation
+> de mot de passe (EF-05), traductions du contenu pédagogique (EF-28), historique de chat persistant (EF-32),
+> génération de quiz par IA (EF-33), et le **module d'administration** (EF-35→39, US-D*) — cadré mais non
+> développé. Aucune exigence **Could have (C)**.
 
 ---
 
@@ -142,11 +148,11 @@ et d'un chatbot pédagogique s'appuyant sur une API d'IA générative.
 - ENF-02 — **Performance** : réponse API < 400 ms en médiane pour les lectures courantes (catalogue, détail cours) sur un jeu de données de démonstration ; pagination obligatoire sur les listes.
 - ENF-03 — **Accessibilité** : contraste suffisant, navigation clavier, libellés ARIA sur les composants interactifs, support RTL complet.
 - ENF-04 — **Multilingue** : ajout d'une langue d'interface sans changement de code (fichiers de ressources) ; encodage UTF-8 de bout en bout.
-- ENF-05 — **Portabilité / repro** : migrations de base versionnées (Flyway) rejouables ; procédure d'installation documentée (PostgreSQL local + pgAdmin ; `docker-compose` reporté).
+- ENF-05 — **Portabilité / repro** : migrations de base versionnées (Flyway) rejouables ; procédure d'installation documentée (PostgreSQL local + pgAdmin en dev ; **stack `docker-compose` de déploiement** livrée en Phase 6, voir `docs/07-deploiement.md`).
 - ENF-06 — **Maintenabilité** : architecture en couches, séparation par domaine, couverture de tests sur les parcours critiques (auth, quiz, certification).
 - ENF-07 — **Observabilité** : logs structurés côté backend, gestion d'erreurs centralisée renvoyant un format d'erreur homogène.
 - ENF-08 — **Coût / dépendance IA** : appels IA encapsulés dans un seul module, quota/longueur de contexte bornés, possibilité de désactiver la fonctionnalité par configuration.
-- ENF-09 — **Scalabilité (raisonnable PFE)** : backend sans état (JWT), fichiers déportés sur stockage objet, base relationnelle unique — suffisant pour la soutenance, pas d'objectif haute disponibilité.
+- ENF-09 — **Scalabilité (raisonnable PFE)** : backend sans état (JWT), fichiers gérés par le module `storage` (système de fichiers local en dev / volume conteneur ; impl. objet S3-compatible prévue par l'interface), base relationnelle unique — suffisant pour la soutenance, pas d'objectif haute disponibilité.
 - ENF-10 — **RGPD (sensibilisation)** : données personnelles limitées au nécessaire (email, nom), suppression de compte possible (S).
 
 ---

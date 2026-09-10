@@ -1,7 +1,26 @@
 # 02 — Conception
 
-Projet **educa**. Statut : *Phase 0 — 6 décisions de cadrage actées le 2026-09-08 (voir §10) ; MCD + matrice RBAC à relire une dernière fois avant la Phase 1*.
-Dernière mise à jour : 2026-09-08.
+Projet **educa**. Statut : *conception validée (Phase 0) et implémentée (Phases 1→6). Ce document décrit la cible de conception ; les écarts avec le code livré sont listés en §0.*
+Dernière mise à jour : 2026-09-10.
+
+---
+
+## 0. État de réalisation — écarts conception ↔ implémentation
+
+Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06-verification-mvp.md`).
+Écarts à connaître en lisant la suite :
+
+| § | Conception (ci-dessous) | Réalité du code livré |
+|---|---|---|
+| §1.1 / §7.2 | `LlmAiAssistant`, config `ai.provider` | classes réelles : `AiAssistant` → **`ClaudeAiAssistant`** (SDK `com.anthropic:anthropic-java`) / **`DisabledAiAssistant`** ; config `AI_ENABLED` / `ANTHROPIC_API_KEY` / `AI_MODEL` (pas de clé `ai.provider`) |
+| §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **non développé** (Should have) — pas de contrôleur `/admin/**`. La promotion `INSTRUCTOR` se fait en base |
+| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; les tables i18n de contenu et `chat_messages` **ne sont pas** dans les migrations (`V1`/`V2`) — Should have |
+| §4 | `options:[{… isCorrect …}]` ; `verify` renvoie `score` ; `409` si examen verrouillé | champ JSON **`correct`** ; `verify` renvoie **`finalGrade`** ; examen verrouillé → **`403`** (le `409` reste pour « tentatives épuisées ») |
+| §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
+| §8 | PDF « à confirmer » ; Swagger UI ; conteneurisation « reportée » | PDF = **`openhtmltopdf-pdfbox` 1.0.10** (figé) ; **Swagger non intégré** (springdoc pas compatible Spring Boot 4 — tâche 1.10 en attente) ; **stack Docker livrée** en Phase 6.6 (`docs/07-deploiement.md`) |
+| §5 | rate limiting `/auth/login` & `/ai/chat` | Should have — non implémenté |
+
+Le reste du document correspond à ce qui a été construit.
 
 ---
 
@@ -186,7 +205,7 @@ users
   email               VARCHAR(255) UNIQUE NOT NULL
   password_hash       VARCHAR(255) NOT NULL
   full_name           VARCHAR(150) NOT NULL
-  preferred_language  CHAR(2) NOT NULL DEFAULT 'fr'   -- fr | en | ar
+  preferred_language  VARCHAR(2) NOT NULL DEFAULT 'fr'   -- fr | en | ar  (CHAR(2) en conception, VARCHAR(2) au final : validation Hibernate 7)
   enabled             BOOLEAN NOT NULL DEFAULT TRUE
   created_at, updated_at
 
@@ -213,7 +232,7 @@ courses
   title           VARCHAR(200) NOT NULL
   slug            VARCHAR(220) UNIQUE NOT NULL
   description     TEXT
-  language        CHAR(2) NOT NULL DEFAULT 'fr'  -- langue d'origine du contenu
+  language        VARCHAR(2) NOT NULL DEFAULT 'fr'  -- langue d'origine du contenu
   published       BOOLEAN NOT NULL DEFAULT FALSE
   control_weight  INT NOT NULL DEFAULT 40        -- % des contrôles dans la note finale
   exam_weight     INT NOT NULL DEFAULT 60        -- % de l'examen final  (control_weight + exam_weight = 100)
@@ -501,8 +520,8 @@ Sécurité au niveau endpoint (`SecurityFilterChain` + `@PreAuthorize`) **et** a
 Deux niveaux distincts :
 
 ### 6.1 i18n de l'interface (Must have)
-- Librairie : **`@ngx-translate/core`** + `@ngx-translate/http-loader`.
-- Fichiers de traduction : `frontend/src/assets/i18n/{fr,en,ar}.json` (clé → texte).
+- Librairie : **`@ngx-translate/core` v18** + `@ngx-translate/http-loader` (`provideTranslateHttpLoader`).
+- Fichiers de traduction : **`frontend/public/i18n/{fr,en,ar}.json`** (clé → texte) — servis à la racine (`i18n/…`) par Angular 19.
 - Langue par défaut `fr` ; détection à la connexion via `user.preferredLanguage` ; sélecteur de langue dans l'en-tête ; persistance en `localStorage` **et** via `PATCH /auth/me`.
 - **RTL** : au changement de langue, positionner `document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr')` et `lang`. Styles logiques CSS (`margin-inline-start`, `padding-inline-end`, Flexbox/Grid) plutôt que `left/right`. Vérifier icônes directionnelles (flèches « suivant / précédent ») et alignements.
 - Formats dates/nombres via l'API `Intl` du navigateur selon la locale active.
@@ -533,8 +552,8 @@ Deux niveaux distincts :
   AiReply ask(AiChatRequest request);        // chatbot
   List<GeneratedQuestion> generateQuiz(...);  // Should have
   ```
-- Implémentation `LlmAiAssistant` = seul point qui connaît le fournisseur (clé API, URL, modèle) — tout en configuration (`ai.provider`, `ai.model`, `ai.api-key`, `ai.timeout-ms`, `ai.enabled`).
-- Implémentation `DisabledAiAssistant` (repli) : renvoie un message neutre `"L'assistant est momentanément indisponible."` avec `degraded=true`. Activée si `ai.enabled=false` ou sur erreur/timeout.
+- Implémentation **`ClaudeAiAssistant`** (SDK officiel `com.anthropic:anthropic-java`) = seul point qui connaît le fournisseur — tout en configuration (`AI_ENABLED`, `ANTHROPIC_API_KEY`, `AI_MODEL` défaut `claude-sonnet-5`, `AI_TIMEOUT_MS`, `AI_MAX_CONTEXT_CHARS`). `AiConfig` choisit le bean selon `educa.ai.enabled` **et** la présence de la clé.
+- Implémentation **`DisabledAiAssistant`** (repli) : renvoie un message neutre avec `degraded=true`. Activée si l'IA est désactivée, la clé absente, ou **toute** erreur/timeout de l'appel (jamais d'exception propagée).
 
 ### 7.3 Prompt du chatbot (format)
 - **System** : rôle = tuteur pédagogique d'educa ; règles = répondre uniquement dans le périmètre du cours fourni, dire quand l'information n'est pas dans le cours, répondre dans la langue de l'apprenant, ton bienveillant et concis.
@@ -570,13 +589,13 @@ Deux niveaux distincts :
 | Frontend | **Angular** (standalone components) | Choix explicite ; framework structurant (routing, DI, formulaires, i18n) adapté à une app à rôles multiples | Next.js/React (brief initial) — remplacé sur consigne |
 | i18n frontend | **@ngx-translate/core** | Chargement dynamique des locales, changement de langue à chaud, gestion `dir` simple | i18n natif Angular (build par locale, moins souple pour bascule à chaud) |
 | Stockage fichiers | Interface `storage` — **dev : système de fichiers local** (`FileSystemStorageService`, dossier `backend/var/storage/`, gitignoré) ; **cible : S3-compatible** (impl. ajoutée plus tard) | Le module `storage` abstrait le fournisseur ; on démarre sans dépendance externe, on branche S3/MinIO ensuite sans toucher au métier | Coupler le métier au SDK S3 dès le début |
-| Génération PDF | **openhtmltopdf / OpenPDF** (à confirmer Phase 3) | Template HTML/CSS → PDF, gestion des polices arabes, licence libre | iText 7 (licence AGPL/commerciale), wkhtmltopdf (binaire externe) |
-| Conteneurisation | **Reportée** (pas de Docker pour l'instant) | Sera ajoutée plus tard : `docker-compose.yml` de confort en dev + image de déploiement | — |
-| Tests backend | **JUnit 5 + Spring Boot Test** sur une base `educa_test` **PostgreSQL locale** (profil `test`, Flyway rejoué) | Vraie PostgreSQL, sans Docker. Testcontainers réservé à la CI si Docker disponible | H2 en mémoire (comportement divergent de Postgres) |
-| Doc API | **springdoc-openapi (Swagger UI)** | Spec vivante générée depuis le code, utile pour le frontend et le mémoire | Doc manuelle |
+| Génération PDF | **`openhtmltopdf-pdfbox` 1.0.10** (figé en Phase 3) | Template HTML/CSS → PDF, licence libre ; polices PDF standard (Helvetica) → aucune police système requise dans le conteneur | iText 7 (licence AGPL/commerciale), wkhtmltopdf (binaire externe) |
+| Conteneurisation | **`docker-compose.yml` livré en Phase 6.6** : `backend/Dockerfile` (JRE 25), `frontend/Dockerfile` (Angular → nginx, reverse-proxy `/api`), `postgres:18` ; profil `prod` (`application-prod.yml`) | Cible de déploiement portable (VM Docker, base managée, PaaS). En dev, PostgreSQL reste local (poste sans Docker). Voir `docs/07-deploiement.md` | — |
+| Tests backend | **JUnit 5 + Spring Boot Test** sur une base `educa_test` **PostgreSQL locale** (profil `test`, Flyway rejoué) — 23 tests | Vraie PostgreSQL, sans Docker. Testcontainers réservé à la CI si Docker disponible | H2 en mémoire (comportement divergent de Postgres) |
+| Doc API | springdoc-openapi (Swagger UI) — **non intégré** (tâche 1.10) | Aucune version `springdoc` compatible Spring Boot 4 / Spring 7 au moment du développement ; à ajouter dès qu'une release compatible sort | Doc manuelle (les endpoints sont décrits en §4) |
 
-**Dépendances Maven à ajouter en Phase 1** : `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, `spring-boot-starter-validation`, `org.postgresql:postgresql`, `org.flywaydb:flyway-core` + `flyway-database-postgresql`, lib JWT (`io.jsonwebtoken:jjwt` ou `spring-security-oauth2-resource-server`), `springdoc-openapi-starter-webmvc-ui`. (`spring-boot-starter-security` déjà présent.)
-Reportées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — quand on branchera le stockage objet ; `spring-boot-testcontainers` + `org.testcontainers:postgresql` — si CI avec Docker.
+**Dépendances Maven effectivement ajoutées** (Phases 1→4) : `spring-boot-starter-web`, `-data-jpa`, `-validation`, `spring-boot-flyway` + `flyway-core` + `flyway-database-postgresql`, `org.postgresql:postgresql`, `io.jsonwebtoken:jjwt` 0.12.6, **Lombok** + **MapStruct** 1.6.3 (via `annotationProcessorPaths`), `spring-boot-starter-webmvc-test` (tests), `openhtmltopdf-pdfbox` 1.0.10 (certificats), `com.anthropic:anthropic-java` (chatbot). (`spring-boot-starter-security` déjà présent.)
+Non ajoutées : `springdoc-openapi` (pas de version compatible Spring Boot 4) ; client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — quand on branchera le stockage objet ; `spring-boot-testcontainers` + `org.testcontainers:postgresql` — si CI avec Docker.
 
 ---
 
@@ -695,7 +714,7 @@ Reportées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — quan
 
 1. **Un seul rôle actif** par utilisateur (`LEARNER` par défaut à l'inscription ; promotion `INSTRUCTOR` par l'admin). Table `user_roles` N–N conservée pour l'évolutivité.
 2. **Deux niveaux de quiz** : un **contrôle** (`CONTROL`) par chapitre + un **examen final** (`FINAL_EXAM`) par cours. Voir §3 « Règle de notation et de certification ».
-3. **Upload fichiers** : multipart via l'API ; le module `storage` écrit sur le **système de fichiers local** en dev (`FileSystemStorageService`), impl. S3-compatible + URL pré-signées = évolution ultérieure. **Pas de Docker pour l'instant** — PostgreSQL installé localement + pgAdmin ; `docker-compose.yml` reporté.
+3. **Upload fichiers** : multipart via l'API ; le module `storage` écrit sur le **système de fichiers local** en dev (`FileSystemStorageService`), impl. S3-compatible + URL pré-signées = évolution ultérieure. En dev : PostgreSQL local + pgAdmin (pas de Docker sur le poste) ; **`docker-compose.yml` de déploiement ajouté en Phase 6.6** (voir `docs/07-deploiement.md`).
 4. **Certification** : note finale pondérée **40 % contrôles / 60 % examen final** (`courses.control_weight` / `exam_weight`) ; seuil configurable par cours (`courses.pass_threshold`, défaut **70 %**) ; examen final déverrouillé à **100 % de progression** ; contrôles à tentatives **illimitées** (meilleur score retenu), examen final **limité** (défaut 3, meilleur score retenu).
 5. **Chatbot sans persistance** au MVP (historique conservé côté navigateur). Table `chat_messages` = *Should have*.
 6. **Fournisseur IA** : **API Claude / Anthropic** ; clé API avec plafond de dépense. Modèle exact et tarifs figés en Phase 4 (consulter la référence API Claude à ce moment-là).

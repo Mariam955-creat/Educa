@@ -565,3 +565,25 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 - Le profil `prod` ne seede rien : pour une démo cloud, `BACKEND_PROFILE=dev` dans `.env` (documenté dans `docs/07` §1).
 
 **Reste Phase 6** : 6.5 relecture UI au navigateur (checklist `docs/06` §4, avec l'utilisatrice), 6.1 passe finale `01-analyse.md` / `02-conception.md`.
+
+---
+
+## [2026-09-10] Phase 6 — Passe documentaire finale (6.1)
+
+**Fait**
+- **`docs/01-analyse.md`** : statut passé à « validée / MVP réalisé » ; date au 2026-09-10 ; **encadré « État de réalisation »** en tête (toutes les exigences *M* implémentées et testées → `docs/06` ; liste des *S* non réalisées : reset mot de passe, traductions de contenu, historique chat, génération de quiz IA, **module admin**). ENF-05 et ENF-09 mis à jour (Docker livré en 6.6, stockage via module `storage`).
+- **`docs/02-conception.md`** : statut/date ; **nouvelle §0 « État de réalisation — écarts conception ↔ implémentation »** (tableau) :
+  - IA : `LlmAiAssistant`/`ai.provider` → réel `ClaudeAiAssistant`/`DisabledAiAssistant` + vars `AI_*` ;
+  - **module admin non développé** (Should have) — pas de `/admin/**` ;
+  - `CHAR(2)` → **`VARCHAR(2)`** (`preferred_language`, `courses.language`) ; tables i18n de contenu & `chat_messages` absentes des migrations ;
+  - API : champ `isCorrect` → `correct` ; `verify` renvoie `finalGrade` (pas `score`) ; examen verrouillé → `403` (pas `409`) ;
+  - i18n : `src/assets/i18n/` → **`public/i18n/`** ;
+  - §8 : PDF figé (`openhtmltopdf-pdfbox` 1.0.10), **Swagger non intégré** (SB4), **conteneurisation livrée en 6.6** ;
+  - rate limiting = Should have non fait.
+  Corrections inline répercutées en §3 (types de colonnes), §6.1 (chemin + version ngx-translate), §7.2 (classes + config IA réelles), §8 (3 lignes : PDF / conteneurisation / doc API + liste des dépendances réellement ajoutées), §10 point 3 (Docker).
+- Le corps de `02` (MCD, schéma, API §4, sécurité, wireframes) est conservé tel quel : il décrit la cible et reste fidèle à ~95 % ; la §0 lève toute ambiguïté pour le jury.
+- `03-plan-implementation.md` : 6.1 coché `fait`, Phase 6 → `quasi terminée` (reste 6.5 relecture UI).
+
+**Bloquant** — aucun.
+
+**Reste (Phase 6)** : **6.5** — relecture visuelle au navigateur (checklist `docs/06-verification-mvp.md` §4), à faire avec l'utilisatrice sur base propre. Hors doc : `docker compose build` à lancer sur une machine dotée de Docker.

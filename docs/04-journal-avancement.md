@@ -457,3 +457,23 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Résiduel (hors MVP, avant déploiement public)** : `server.error.include-message: always` → `never` ; Apache Tika sur les uploads ; `pg_trgm` + GIN pour la recherche catalogue ; Swagger (tâche 1.10) ; clé Anthropic réelle pour le chatbot live.
 
 **Prochaine étape — Phase 6** : mise à jour finale `docs/01`→`04` + `README.md`, jeu de démo complet (script de seed), scénario de soutenance, diagrammes propres (archi + MCD), vérification bout-en-bout du périmètre « Must have », instructions de déploiement.
+
+---
+
+## [2026-09-10] Phase 6 — Démarrage : README réécrit + scénario de soutenance
+
+**Fait**
+- **`README.md` réécrit** (tâche 6.1, partiel) : il était resté figé à la Phase 0 (port 8080, « Swagger UI : /swagger-ui.html » inexistant, `npm test`, « en cours de mise en place »). Nouvelle version = état réel : stack complète (Angular 19.2, port **8081**, openhtmltopdf, SDK `anthropic-java`, RBAC), structure *package-by-feature*, table des 3 comptes de démo, commandes exactes (`./mvnw spring-boot:run`, `npm run test:ci`), section « État d'avancement » (Phases 0→5 terminées, Phase 6 en cours) + résiduel connu. Lien ajouté vers `docs/05`.
+- **`docs/05-demo-soutenance.md` créé** (tâche 6.3) : déroulé pas à pas ~15 min pour la soutenance — préparation/prérequis, parcours formateur (créer + publier un cours avec contrôle + examen), parcours apprenant (inscription → progression 100 % → déverrouillage), certification (note 40/60 → certificat PDF → vérification publique), volet multilingue (FR/EN/AR + RTL + persistance), volet chatbot (contexte borné + repli `degraded`), points sécurité/qualité, conclusion, et une annexe « Plan B » si un serveur ne démarre pas.
+- `03-plan-implementation.md` : Phase 6 passée à `en cours` ; 6.3 coché `fait`, 6.1 `en cours`, 6.2/6.4/6.5/6.6 annotées avec l'état de départ.
+
+**Décisions techniques** — aucune (documentation seule ; pas de changement de code).
+
+**Bloquant** — aucun.
+
+**Reste Phase 6**
+- 6.1 : passe finale sur `01-analyse.md` / `02-conception.md` (cohérence avec l'implémentation réelle) + `CLAUDE.md`.
+- 6.2 : enrichir `DevDataInitializer` — un 2ᵉ cours complet + un apprenant ayant déjà un certificat (pour montrer « Mes certificats » et la page de vérification sans dérouler tout le parcours).
+- 6.4 : exporter les diagrammes Mermaid de `02-conception.md` (archi + MCD) en PNG/SVG dans `docs/assets/`.
+- 6.5 : dérouler la checklist de `docs/05` sur l'appli lancée (avec l'utilisatrice).
+- 6.6 : `docker-compose` de déploiement — **cible à confirmer** avec l'utilisatrice (fournisseur cloud, avec ou sans conteneur pour PostgreSQL).

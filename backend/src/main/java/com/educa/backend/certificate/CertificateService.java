@@ -105,7 +105,9 @@ public class CertificateService {
         certificate.setUserId(userId);
         certificate.setCourseId(courseId);
         certificate.setFinalExamAttemptId(finalExamAttemptId);
-        certificate.setControlsAverage(controlsAverage);
+        // Un cours sans contrôle (seulement un examen final) donne une moyenne des
+        // contrôles nulle ; la colonne est NOT NULL, donc on la ramène à zéro.
+        certificate.setControlsAverage(controlsAverage == null ? BigDecimal.ZERO : controlsAverage);
         certificate.setFinalExamScore(finalExamScore);
         certificate.setFinalGrade(finalGrade);
         certificate.setVerificationCode(randomHex());

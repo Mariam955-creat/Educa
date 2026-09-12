@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { Certificate, CertificateApiService } from '../../core/certificates/certificate-api.service';
 
 @Component({
   selector: 'app-my-certificates',
-  imports: [DatePipe],
+  imports: [DatePipe, TranslatePipe],
   templateUrl: './my-certificates.component.html',
   styleUrl: './my-certificates.component.scss',
 })

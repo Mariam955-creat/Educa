@@ -1,13 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { QuestionType, QuizView } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-quiz-editor',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './quiz-editor.component.html',
   styleUrl: './quiz-editor.component.scss',
 })
@@ -15,6 +16,7 @@ export class QuizEditorComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(QuizApiService);
   private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
 
   readonly quiz = signal<QuizView | null>(null);
   readonly message = signal<string | null>(null);
@@ -70,15 +72,15 @@ export class QuizEditorComponent implements OnInit {
           this.options.clear();
           this.options.push(this.optionGroup());
           this.options.push(this.optionGroup());
-          this.flash('Question ajoutée.');
+          this.flash(this.translate.instant('quizEditor.added'));
         },
         error: (err: { error?: { message?: string } }) =>
-          this.error.set(err?.error?.message ?? "Échec de l'ajout."),
+          this.error.set(err?.error?.message ?? this.translate.instant('quizEditor.addFailed')),
       });
   }
 
   deleteQuestion(questionId: number): void {
-    if (!confirm('Supprimer cette question ?')) return;
+    if (!confirm(this.translate.instant('quizEditor.confirmDeleteQuestion'))) return;
     this.api.deleteQuestion(questionId).subscribe(() => this.reload());
   }
 
@@ -86,7 +88,7 @@ export class QuizEditorComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.api.view(id).subscribe({
       next: (quiz) => this.quiz.set(quiz),
-      error: () => this.error.set('Quiz introuvable ou accès refusé.'),
+      error: () => this.error.set(this.translate.instant('quizEditor.notFound')),
     });
   }
 

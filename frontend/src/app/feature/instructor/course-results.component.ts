@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
@@ -7,25 +8,25 @@ import { LearnerResult } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-course-results',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <section class="page">
-      <a class="back" routerLink="/instructor">‹ Mes cours</a>
-      <h1>Résultats — {{ title() }}</h1>
+      <a class="back" routerLink="/instructor">‹ {{ 'instructorDashboard.title' | translate }}</a>
+      <h1>{{ 'courseResults.title' | translate: { course: title() } }}</h1>
 
       @if (loading()) {
-        <p class="muted">Chargement…</p>
+        <p class="muted">{{ 'common.loading' | translate }}</p>
       } @else if (rows().length === 0) {
-        <p class="muted">Aucun apprenant inscrit.</p>
+        <p class="muted">{{ 'courseResults.noLearners' | translate }}</p>
       } @else {
         <table>
           <thead>
             <tr>
-              <th>Apprenant</th>
-              <th>Moy. contrôles</th>
-              <th>Examen final</th>
-              <th>Note finale</th>
-              <th>Certificat</th>
+              <th>{{ 'courseResults.headerLearner' | translate }}</th>
+              <th>{{ 'courseResults.headerControlsAvg' | translate }}</th>
+              <th>{{ 'courseResults.headerExam' | translate }}</th>
+              <th>{{ 'courseResults.headerFinalGrade' | translate }}</th>
+              <th>{{ 'courseResults.headerCertified' | translate }}</th>
             </tr>
           </thead>
           <tbody>

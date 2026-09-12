@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { CertificateApiService } from '../../core/certificates/certificate-api.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
@@ -11,7 +12,7 @@ import { CourseChatComponent } from './course-chat.component';
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent],
+  imports: [RouterLink, CourseChatComponent, TranslatePipe],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })
@@ -21,6 +22,7 @@ export class CourseDetailComponent implements OnInit {
   private readonly enrollmentApi = inject(EnrollmentApiService);
   private readonly quizApi = inject(QuizApiService);
   private readonly certificateApi = inject(CertificateApiService);
+  private readonly translate = inject(TranslateService);
 
   readonly course = signal<CourseDetail | null>(null);
   readonly completedIds = signal<number[]>([]);
@@ -119,7 +121,7 @@ export class CourseDetailComponent implements OnInit {
         }
       },
       error: (err: { status?: number }) => {
-        this.error.set(err?.status === 404 ? 'Cours introuvable.' : 'Erreur de chargement.');
+        this.error.set(this.translate.instant(err?.status === 404 ? 'course.notFound' : 'course.loadError'));
         this.loading.set(false);
       },
     });

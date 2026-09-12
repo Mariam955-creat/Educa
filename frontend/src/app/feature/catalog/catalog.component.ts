@@ -2,6 +2,7 @@ import { UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
@@ -9,7 +10,7 @@ import { CourseSummary } from '../../core/courses/course.models';
 
 @Component({
   selector: 'app-catalog',
-  imports: [ReactiveFormsModule, RouterLink, UpperCasePipe],
+  imports: [ReactiveFormsModule, RouterLink, UpperCasePipe, TranslatePipe],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss',
 })

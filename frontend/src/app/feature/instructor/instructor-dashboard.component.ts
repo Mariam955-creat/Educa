@@ -1,17 +1,19 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { CourseSummary } from '../../core/courses/course.models';
 
 @Component({
   selector: 'app-instructor-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './instructor-dashboard.component.html',
   styleUrl: './instructor-dashboard.component.scss',
 })
 export class InstructorDashboardComponent implements OnInit {
   private readonly api = inject(CourseApiService);
+  private readonly translate = inject(TranslateService);
 
   readonly courses = signal<CourseSummary[]>([]);
   readonly loading = signal(true);
@@ -25,7 +27,7 @@ export class InstructorDashboardComponent implements OnInit {
   }
 
   remove(course: CourseSummary): void {
-    if (!confirm(`Supprimer « ${course.title} » ? Cette action est définitive.`)) return;
+    if (!confirm(this.translate.instant('instructorDashboard.confirmDelete', { title: course.title }))) return;
     this.api.deleteCourse(course.id).subscribe(() => this.load());
   }
 

@@ -1,15 +1,17 @@
 import { Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
+  imports: [TranslatePipe],
   template: `
     <section class="page">
-      <h1>Administration</h1>
-      <p class="role">Connecté : {{ auth.user()?.email }}</p>
+      <h1>{{ 'admin.title' | translate }}</h1>
+      <p class="role">{{ 'admin.connectedAs' | translate: { email: auth.user()?.email } }}</p>
       <div class="placeholder">
-        <p>Gestion des utilisateurs, des rôles, des langues et registre des certificats (Phase 3 &amp; 4).</p>
+        <p>{{ 'admin.placeholder' | translate }}</p>
       </div>
     </section>
   `,

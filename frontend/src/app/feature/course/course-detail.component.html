@@ -1,15 +1,15 @@
 <section class="page">
-  <a class="back" routerLink="/catalog">‹ Catalogue</a>
+  <a class="back" routerLink="/catalog">{{ 'course.backToCatalog' | translate }}</a>
 
   @if (course(); as c) {
     <header class="course-head">
       <h1>{{ c.title }}</h1>
-      <p class="meta">Par {{ c.instructorName }} · {{ c.language }}</p>
+      <p class="meta">{{ 'course.by' | translate: { instructor: c.instructorName, language: c.language } }}</p>
       <p class="desc">{{ c.description }}</p>
 
       @if (canEnroll()) {
         <button type="button" (click)="enroll()" [disabled]="enrolling()">
-          {{ enrolling() ? 'Inscription…' : "S'inscrire à cette formation" }}
+          {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
         </button>
       } @else if (c.contentsVisible) {
         <div class="progress">
@@ -22,7 +22,7 @@
     </header>
 
     @if (!c.contentsVisible) {
-      <p class="muted">Inscrivez-vous pour accéder au contenu des chapitres.</p>
+      <p class="muted">{{ 'course.notEnrolledHint' | translate }}</p>
       <ol class="chapter-list">
         @for (ch of c.chapters; track ch.id) {
           <li>{{ ch.title }}</li>
@@ -35,17 +35,25 @@
           @for (content of ch.contents; track content.id) {
             <div class="content" [class.done]="isDone(content)">
               <div class="content-head">
-                <span class="type">{{ content.type }}</span>
+                <span class="type">
+                  {{
+                    (content.type === 'TEXT'
+                      ? 'courseEditor.typeText'
+                      : content.type === 'VIDEO'
+                        ? 'courseEditor.typeVideo'
+                        : 'courseEditor.typeDocument') | translate
+                  }}
+                </span>
                 <strong>{{ content.title }}</strong>
               </div>
               @if (content.type === 'TEXT') {
                 <p class="text-body">{{ content.textBody }}</p>
               } @else if (content.hasFile) {
                 <button type="button" class="link-btn" (click)="openFile(content)">
-                  Ouvrir {{ content.fileName }}
+                  {{ 'course.openFile' | translate: { name: content.fileName } }}
                 </button>
               } @else {
-                <p class="muted">Fichier non fourni.</p>
+                <p class="muted">{{ 'course.noFile' | translate }}</p>
               }
               <button
                 type="button"
@@ -53,7 +61,7 @@
                 [disabled]="isDone(content)"
                 (click)="markComplete(content)"
               >
-                {{ isDone(content) ? '✓ Terminé' : 'Marquer comme terminé' }}
+                {{ (isDone(content) ? 'course.completed' : 'course.markComplete') | translate }}
               </button>
             </div>
           }
@@ -62,9 +70,9 @@
             <div class="quiz-line">
               <span class="quiz-name">{{ ctrl.title }}</span>
               @if (controlBest(ctrl.quizId) !== null) {
-                <span class="best">meilleur : {{ controlBest(ctrl.quizId) }} %</span>
+                <span class="best">{{ 'course.controlBest' | translate: { score: controlBest(ctrl.quizId) } }}</span>
               }
-              <a class="btn-sm" [routerLink]="['/quizzes', ctrl.quizId]">Passer le contrôle</a>
+              <a class="btn-sm" [routerLink]="['/quizzes', ctrl.quizId]">{{ 'course.takeControl' | translate }}</a>
             </div>
           }
         </article>
@@ -74,11 +82,11 @@
 
       @if (grade(); as g) {
         <article class="grade-panel">
-          <h2>Évaluation</h2>
+          <h2>{{ 'course.evaluation' | translate }}</h2>
           <p>
-            Progression : <b>{{ g.progressPercent }} %</b>
+            {{ 'course.progress' | translate: { percent: g.progressPercent } }}
             @if (g.controlsAverage !== null) {
-              · Moyenne des contrôles : <b>{{ g.controlsAverage }} %</b>
+              {{ 'course.controlsAverage' | translate: { avg: g.controlsAverage } }}
             }
           </p>
 
@@ -87,24 +95,24 @@
               <div>
                 <strong>{{ exam.title }}</strong>
                 @if (g.finalExamBestScore !== null) {
-                  <span class="best"> · meilleur : {{ g.finalExamBestScore }} %</span>
+                  <span class="best">{{ 'course.finalExamBest' | translate: { score: g.finalExamBestScore } }}</span>
                 }
               </div>
               @if (g.finalExamUnlocked) {
-                <a class="btn-sm" [routerLink]="['/quizzes', exam.quizId]">Passer l'examen final</a>
+                <a class="btn-sm" [routerLink]="['/quizzes', exam.quizId]">{{ 'course.takeFinalExam' | translate }}</a>
               } @else {
-                <span class="locked">🔒 débloqué à 100 % de progression (contenus + tous les contrôles)</span>
+                <span class="locked">{{ 'course.finalExamLocked' | translate }}</span>
               }
             </div>
 
             @if (g.finalGrade !== null) {
               <p class="final-grade">
-                Note finale : <b>{{ g.finalGrade }} / 100</b> (seuil {{ g.passThreshold }})
+                {{ 'course.finalGrade' | translate: { grade: g.finalGrade, threshold: g.passThreshold } }}
               </p>
             }
             @if (g.certificateId) {
               <button type="button" class="cert-btn" (click)="downloadCertificate()">
-                🎓 Télécharger le certificat
+                {{ 'course.downloadCertificate' | translate }}
               </button>
             }
           }
@@ -112,8 +120,8 @@
       }
     }
   } @else if (loading()) {
-    <p class="muted">Chargement…</p>
+    <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else {
-    <p class="form-error">{{ error() ?? 'Cours indisponible.' }}</p>
+    <p class="form-error">{{ error() ?? ('course.unavailable' | translate) }}</p>
   }
 </section>

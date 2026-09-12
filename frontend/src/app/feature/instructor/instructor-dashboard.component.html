@@ -1,20 +1,20 @@
 <section class="page">
   <div class="head">
-    <h1>Espace formateur</h1>
-    <a class="btn" routerLink="/instructor/courses/new">+ Nouveau cours</a>
+    <h1>{{ 'instructorDashboard.title' | translate }}</h1>
+    <a class="btn" routerLink="/instructor/courses/new">{{ 'instructorDashboard.newCourse' | translate }}</a>
   </div>
 
   @if (loading()) {
-    <p class="muted">Chargement…</p>
+    <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (courses().length === 0) {
-    <p class="muted">Vous n'avez pas encore créé de cours.</p>
+    <p class="muted">{{ 'instructorDashboard.noCourses' | translate }}</p>
   } @else {
     <table>
       <thead>
         <tr>
-          <th>Titre</th>
-          <th>Chapitres</th>
-          <th>Statut</th>
+          <th>{{ 'instructorDashboard.headerTitle' | translate }}</th>
+          <th>{{ 'instructorDashboard.headerChapters' | translate }}</th>
+          <th>{{ 'instructorDashboard.headerStatus' | translate }}</th>
           <th></th>
         </tr>
       </thead>
@@ -25,16 +25,16 @@
             <td>{{ course.chapterCount }}</td>
             <td>
               <span class="badge" [class.on]="course.published">
-                {{ course.published ? 'Publié' : 'Brouillon' }}
+                {{ (course.published ? 'instructorDashboard.published' : 'instructorDashboard.draft') | translate }}
               </span>
             </td>
             <td class="actions">
-              <a [routerLink]="['/instructor/courses', course.slug, 'edit']">Éditer</a>
-              <a [routerLink]="['/instructor/courses', course.slug, 'results']">Résultats</a>
+              <a [routerLink]="['/instructor/courses', course.slug, 'edit']">{{ 'common.edit' | translate }}</a>
+              <a [routerLink]="['/instructor/courses', course.slug, 'results']">{{ 'instructorDashboard.results' | translate }}</a>
               <button type="button" (click)="togglePublish(course)">
-                {{ course.published ? 'Dépublier' : 'Publier' }}
+                {{ (course.published ? 'instructorDashboard.unpublish' : 'instructorDashboard.publish') | translate }}
               </button>
-              <button type="button" class="danger" (click)="remove(course)">Supprimer</button>
+              <button type="button" class="danger" (click)="remove(course)">{{ 'common.delete' | translate }}</button>
             </td>
           </tr>
         }

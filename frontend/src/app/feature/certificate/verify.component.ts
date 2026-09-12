@@ -1,27 +1,28 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { CertificateApiService, CertificateVerification } from '../../core/certificates/certificate-api.service';
 
 @Component({
   selector: 'app-verify',
-  imports: [DatePipe],
+  imports: [DatePipe, TranslatePipe],
   template: `
     <section class="page">
-      <h1>Vérification d'un certificat</h1>
+      <h1>{{ 'verify.title' | translate }}</h1>
       @let r = result();
       @if (loading()) {
-        <p class="muted">Vérification…</p>
+        <p class="muted">{{ 'verify.checking' | translate }}</p>
       } @else if (r && r.valid) {
         <div class="ok">
-          <p class="badge">✅ Certificat authentique</p>
-          <p><b>{{ r.holderName }}</b> a validé la formation <b>« {{ r.courseTitle }} »</b>.</p>
-          <p>Note finale : {{ r.finalGrade }} / 100</p>
-          <p class="meta">N° {{ r.serialNumber }} · délivré le {{ r.issuedAt | date: 'longDate' }}</p>
+          <p class="badge">{{ 'verify.valid' | translate }}</p>
+          <p>{{ 'verify.validated' | translate: { holder: r.holderName, course: r.courseTitle } }}</p>
+          <p>{{ 'verify.finalGrade' | translate: { grade: r.finalGrade } }}</p>
+          <p class="meta">{{ 'verify.meta' | translate: { serial: r.serialNumber, date: (r.issuedAt | date: 'longDate') } }}</p>
         </div>
       } @else {
-        <p class="ko">❌ Aucun certificat ne correspond à ce code.</p>
+        <p class="ko">{{ 'verify.invalid' | translate }}</p>
       }
     </section>
   `,

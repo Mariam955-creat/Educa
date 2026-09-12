@@ -1,12 +1,12 @@
 <section class="page">
-  <h1>Catalogue des formations</h1>
+  <h1>{{ 'catalog.title' | translate }}</h1>
 
-  <input class="search" type="search" [formControl]="search" placeholder="Rechercher un cours…" />
+  <input class="search" type="search" [formControl]="search" [placeholder]="'catalog.searchPlaceholder' | translate" />
 
   @if (loading()) {
-    <p class="muted">Chargement…</p>
+    <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (courses().length === 0) {
-    <p class="muted">Aucun cours ne correspond.</p>
+    <p class="muted">{{ 'catalog.empty' | translate }}</p>
   } @else {
     <div class="grid">
       @for (course of courses(); track course.id) {
@@ -14,8 +14,15 @@
           <h3>{{ course.title }}</h3>
           <p class="desc">{{ course.description }}</p>
           <p class="meta">
-            {{ course.instructorName }} · {{ course.chapterCount }} chapitre(s) ·
-            {{ course.language | uppercase }}
+            {{
+              'catalog.meta'
+                | translate
+                  : {
+                      instructor: course.instructorName,
+                      chapters: course.chapterCount,
+                      language: (course.language | uppercase),
+                    }
+            }}
           </p>
         </a>
       }

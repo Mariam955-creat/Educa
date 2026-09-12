@@ -1,12 +1,13 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { AnswerInput, AttemptResult, QuestionView, QuizView } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-quiz-take',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './quiz-take.component.html',
   styleUrl: './quiz-take.component.scss',
 })
@@ -14,6 +15,7 @@ export class QuizTakeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(QuizApiService);
+  private readonly translate = inject(TranslateService);
 
   readonly quiz = signal<QuizView | null>(null);
   readonly loading = signal(true);
@@ -34,7 +36,10 @@ export class QuizTakeComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err: { status?: number; error?: { message?: string } }) => {
-        this.error.set(err?.error?.message ?? (err?.status === 403 ? 'Accès refusé.' : 'Erreur de chargement.'));
+        this.error.set(
+          err?.error?.message ??
+            this.translate.instant(err?.status === 403 ? 'quizTake.accessDenied' : 'quizTake.loadError'),
+        );
         this.loading.set(false);
       },
     });
@@ -72,7 +77,7 @@ export class QuizTakeComponent implements OnInit {
         this.submitting.set(false);
       },
       error: (err: { error?: { message?: string } }) => {
-        this.error.set(err?.error?.message ?? "Échec de l'envoi.");
+        this.error.set(err?.error?.message ?? this.translate.instant('quizTake.submitFailed'));
         this.submitting.set(false);
       },
     });

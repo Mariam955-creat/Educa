@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentType, CourseDetail } from '../../core/courses/course.models';
@@ -9,7 +10,7 @@ import { CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 
 @Component({
   selector: 'app-course-editor',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './course-editor.component.html',
   styleUrl: './course-editor.component.scss',
 })
@@ -19,6 +20,7 @@ export class CourseEditorComponent implements OnInit {
   private readonly quizApi = inject(QuizApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   readonly course = signal<CourseDetail | null>(null);
   readonly quizzes = signal<CourseQuizzes | null>(null);
@@ -82,7 +84,7 @@ export class CourseEditorComponent implements OnInit {
       : this.api.createCourse(value);
 
     request$.subscribe((summary) => {
-      this.flash('Cours enregistré.');
+      this.flash(this.translate.instant('courseEditor.saved'));
       if (!current) {
         void this.router.navigate(['/instructor/courses', summary.slug, 'edit']);
       } else {
@@ -105,7 +107,7 @@ export class CourseEditorComponent implements OnInit {
 
   deleteChapter(chapterId: number): void {
     const c = this.course();
-    if (!c || !confirm('Supprimer ce chapitre et ses contenus ?')) return;
+    if (!c || !confirm(this.translate.instant('courseEditor.confirmDeleteChapter'))) return;
     this.api.deleteChapter(chapterId).subscribe(() => this.loadCourse(c.slug));
   }
 

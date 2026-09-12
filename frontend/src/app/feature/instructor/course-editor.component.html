@@ -1,6 +1,6 @@
 <section class="page">
-  <a class="back" routerLink="/instructor">‹ Mes cours</a>
-  <h1>{{ isNew() ? 'Nouveau cours' : 'Éditer le cours' }}</h1>
+  <a class="back" routerLink="/instructor">‹ {{ 'instructorDashboard.title' | translate }}</a>
+  <h1>{{ (isNew() ? 'courseEditor.newTitle' : 'courseEditor.editTitle') | translate }}</h1>
 
   @if (message()) {
     <p class="flash">{{ message() }}</p>
@@ -8,39 +8,48 @@
 
   <form class="card" [formGroup]="courseForm" (ngSubmit)="saveCourse()">
     <label>
-      Titre
+      {{ 'courseEditor.titleField' | translate }}
       <input type="text" formControlName="title" />
     </label>
     <label>
-      Description
+      {{ 'courseEditor.descriptionField' | translate }}
       <textarea formControlName="description" rows="3"></textarea>
     </label>
     <label>
-      Langue
+      {{ 'courseEditor.languageField' | translate }}
       <select formControlName="language">
         <option value="fr">Français</option>
         <option value="en">English</option>
         <option value="ar">العربية</option>
       </select>
     </label>
-    <button type="submit">{{ isNew() ? 'Créer le cours' : 'Enregistrer' }}</button>
+    <button type="submit">{{ (isNew() ? 'courseEditor.create' : 'courseEditor.save') | translate }}</button>
   </form>
 
   @if (course(); as c) {
-    <h2>Chapitres</h2>
+    <h2>{{ 'courseEditor.chapters' | translate }}</h2>
     @if (c.chapters.length === 0) {
-      <p class="muted">Aucun chapitre pour l'instant.</p>
+      <p class="muted">{{ 'courseEditor.noChapters' | translate }}</p>
     }
     @for (ch of c.chapters; track ch.id) {
       <article class="card chapter">
         <div class="chapter-head">
           <strong>{{ ch.position }}. {{ ch.title }}</strong>
-          <button type="button" class="danger" (click)="deleteChapter(ch.id)">Supprimer</button>
+          <button type="button" class="danger" (click)="deleteChapter(ch.id)">{{ 'common.delete' | translate }}</button>
         </div>
         <ul>
           @for (content of ch.contents; track content.id) {
             <li>
-              <span class="type">{{ content.type }}</span> {{ content.title }}
+              <span class="type">
+                {{
+                  (content.type === 'TEXT'
+                    ? 'courseEditor.typeText'
+                    : content.type === 'VIDEO'
+                      ? 'courseEditor.typeVideo'
+                      : 'courseEditor.typeDocument') | translate
+                }}
+              </span>
+              {{ content.title }}
               @if (content.hasFile) {
                 <em>({{ content.fileName }})</em>
               }
@@ -50,11 +59,11 @@
         </ul>
         <div class="quiz-row">
           @if (controlFor(ch.id); as ctrl) {
-            <span>Contrôle : {{ ctrl.questionCount }} question(s)</span>
-            <a class="ghost" [routerLink]="['/instructor/quizzes', ctrl.quizId, 'edit']">Éditer</a>
+            <span>{{ 'courseEditor.control' | translate: { count: ctrl.questionCount } }}</span>
+            <a class="ghost" [routerLink]="['/instructor/quizzes', ctrl.quizId, 'edit']">{{ 'common.edit' | translate }}</a>
           } @else {
-            <span class="muted">Aucun contrôle</span>
-            <button type="button" class="ghost" (click)="createControl(ch.id)">Créer un contrôle</button>
+            <span class="muted">{{ 'courseEditor.noControl' | translate }}</span>
+            <button type="button" class="ghost" (click)="createControl(ch.id)">{{ 'courseEditor.createControl' | translate }}</button>
           }
         </div>
       </article>
@@ -62,29 +71,29 @@
 
     <article class="card final">
       @if (quizzes()?.finalExam; as exam) {
-        <span>Examen final : {{ exam.questionCount }} question(s)</span>
-        <a class="ghost" [routerLink]="['/instructor/quizzes', exam.quizId, 'edit']">Éditer l'examen final</a>
+        <span>{{ 'courseEditor.finalExam' | translate: { count: exam.questionCount } }}</span>
+        <a class="ghost" [routerLink]="['/instructor/quizzes', exam.quizId, 'edit']">{{ 'courseEditor.editFinalExam' | translate }}</a>
       } @else {
-        <span class="muted">Aucun examen final</span>
-        <button type="button" class="ghost" (click)="createFinalExam()">Créer l'examen final</button>
+        <span class="muted">{{ 'courseEditor.noFinalExam' | translate }}</span>
+        <button type="button" class="ghost" (click)="createFinalExam()">{{ 'courseEditor.createFinalExam' | translate }}</button>
       }
     </article>
 
     <form class="card sub" [formGroup]="chapterForm" (ngSubmit)="addChapter()">
-      <h3>Ajouter un chapitre</h3>
+      <h3>{{ 'courseEditor.addChapterTitle' | translate }}</h3>
       <div class="row">
-        <label>Titre <input type="text" formControlName="title" /></label>
-        <label class="narrow">Position <input type="number" formControlName="position" min="1" /></label>
-        <button type="submit">Ajouter</button>
+        <label>{{ 'courseEditor.titleField' | translate }} <input type="text" formControlName="title" /></label>
+        <label class="narrow">{{ 'courseEditor.positionField' | translate }} <input type="number" formControlName="position" min="1" /></label>
+        <button type="submit">{{ 'courseEditor.add' | translate }}</button>
       </div>
     </form>
 
     @if (c.chapters.length > 0) {
       <form class="card sub" [formGroup]="contentForm" (ngSubmit)="addContent()">
-        <h3>Ajouter un contenu</h3>
+        <h3>{{ 'courseEditor.addContentTitle' | translate }}</h3>
         <div class="row">
           <label>
-            Chapitre
+            {{ 'courseEditor.chapterField' | translate }}
             <select formControlName="chapterId">
               @for (ch of c.chapters; track ch.id) {
                 <option [value]="ch.id">{{ ch.position }}. {{ ch.title }}</option>
@@ -92,22 +101,22 @@
             </select>
           </label>
           <label class="narrow">
-            Type
+            {{ 'courseEditor.typeField' | translate }}
             <select formControlName="type">
-              <option value="TEXT">Texte</option>
-              <option value="VIDEO">Vidéo</option>
-              <option value="DOCUMENT">Document</option>
+              <option value="TEXT">{{ 'courseEditor.typeText' | translate }}</option>
+              <option value="VIDEO">{{ 'courseEditor.typeVideo' | translate }}</option>
+              <option value="DOCUMENT">{{ 'courseEditor.typeDocument' | translate }}</option>
             </select>
           </label>
-          <label class="narrow">Position <input type="number" formControlName="position" min="1" /></label>
+          <label class="narrow">{{ 'courseEditor.positionField' | translate }} <input type="number" formControlName="position" min="1" /></label>
         </div>
-        <label>Titre <input type="text" formControlName="title" /></label>
+        <label>{{ 'courseEditor.titleField' | translate }} <input type="text" formControlName="title" /></label>
         @if (contentForm.controls.type.value === 'TEXT') {
-          <label>Contenu <textarea formControlName="textBody" rows="3"></textarea></label>
+          <label>{{ 'courseEditor.contentField' | translate }} <textarea formControlName="textBody" rows="3"></textarea></label>
         } @else {
-          <label>Fichier <input type="file" (change)="onFilePicked($event)" /></label>
+          <label>{{ 'courseEditor.fileField' | translate }} <input type="file" (change)="onFilePicked($event)" /></label>
         }
-        <button type="submit">Ajouter le contenu</button>
+        <button type="submit">{{ 'courseEditor.addContent' | translate }}</button>
       </form>
     }
   }

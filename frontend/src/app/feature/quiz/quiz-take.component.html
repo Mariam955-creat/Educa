@@ -3,34 +3,37 @@
   @let q = quiz();
 
   @if (loading()) {
-    <p class="muted">Chargement…</p>
+    <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (error() && !q) {
     <p class="form-error">{{ error() }}</p>
-    <a class="btn ghost" routerLink="/dashboard">Retour</a>
+    <a class="btn ghost" routerLink="/dashboard">{{ 'common.back' | translate }}</a>
   } @else if (r) {
     <div class="result">
-      <h1>{{ r.passed ? '✅ Réussi' : 'Résultat' }}</h1>
-      <p class="score">Score : <b>{{ r.score }} %</b> &nbsp;({{ r.correctCount }} / {{ r.total }} question(s))</p>
+      <h1>{{ (r.passed ? 'quizTake.passed' : 'quizTake.result') | translate }}</h1>
+      <p class="score">{{ 'quizTake.score' | translate: { score: r.score, correct: r.correctCount, total: r.total } }}</p>
       @if (isFinalExam()) {
         <p class="final">
-          Moyenne des contrôles : {{ r.controlsAverage ?? 0 }} %<br />
-          <b>Note finale : {{ r.finalGrade }} %</b>
+          {{ 'quizTake.controlsAverage' | translate: { avg: r.controlsAverage ?? 0 } }}<br />
+          <b>{{ 'quizTake.finalGrade' | translate: { grade: r.finalGrade } }}</b>
         </p>
         @if (r.certificateId) {
-          <p class="cert">🎓 Certificat délivré. <a routerLink="/certificates">Voir mes certificats</a></p>
+          <p class="cert">
+            {{ 'quizTake.certificateIssued' | translate }}
+            <a routerLink="/certificates">{{ 'quizTake.viewCertificates' | translate }}</a>
+          </p>
         }
       }
       <div class="actions">
         @if (!isFinalExam()) {
-          <button type="button" class="ghost" (click)="retry()">Recommencer</button>
+          <button type="button" class="ghost" (click)="retry()">{{ 'quizTake.retry' | translate }}</button>
         }
-        <button type="button" (click)="backToCourse()">Retour</button>
+        <button type="button" (click)="backToCourse()">{{ 'common.back' | translate }}</button>
       </div>
     </div>
   } @else if (q) {
-    <a class="back" routerLink="/dashboard">‹ Retour</a>
+    <a class="back" routerLink="/dashboard">‹ {{ 'common.back' | translate }}</a>
     <h1>{{ q.title }}</h1>
-    <p class="muted">{{ q.questions.length }} question(s) · seuil {{ q.passThreshold }} %</p>
+    <p class="muted">{{ 'quizTake.questionCount' | translate: { count: q.questions.length, threshold: q.passThreshold } }}</p>
 
     @for (question of q.questions; track question.id) {
       <article class="question">
@@ -55,7 +58,7 @@
       <p class="form-error">{{ error() }}</p>
     }
     <button type="button" (click)="submit()" [disabled]="submitting()">
-      {{ submitting() ? 'Envoi…' : 'Terminer et soumettre' }}
+      {{ (submitting() ? 'quizTake.submitting' : 'quizTake.submit') | translate }}
     </button>
   }
 </section>

@@ -605,4 +605,26 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 
 **Note** — la classe réelle `ClaudeAiAssistant` (try/catch → `degraded`) reste non couverte par un test unitaire dédié (mock du SDK Anthropic fragile) ; le contrat « jamais d'exception vers l'appelant » est garanti côté frontière par `AiChatTest` + le scénario E2E.
 
+---
+
+## [2026-09-13] Phase 6 — Relecture UI au navigateur (6.5) : 3 bugs trouvés et corrigés
+
+**Fait**
+- **6.5 terminée** : checklist `docs/06-verification-mvp.md` §4 rejouée à deux (base dev réinitialisée par `flyway:clean`) — parcours formateur (`course-editor`/`quiz-editor` + upload réel), parcours apprenant (inscription → progression → contrôle → examen final → certificat), `my-certificates` + `/verify/:code`, bascule FR/EN/AR + RTL, responsive 360/768 px, widget chatbot. Les 5 items sont validés ; 3 régressions/lacunes réelles détectées en cours de route et corrigées immédiatement :
+  1. **Certificat non délivré (`500`) pour un cours avec examen final mais sans contrôle** : `QuizAttemptService.controlsAverage()` renvoie `null` quand `controls.isEmpty()`, or `certificates.controls_average` est `NOT NULL` (`V1__init.sql`) → `ConstraintViolationException` à l'insertion, non catchée (le `try/catch` du rendu PDF ne couvre pas le `save()`). Corrigé dans `CertificateService.create()` : `controlsAverage == null ? BigDecimal.ZERO : controlsAverage`. Reproduit et vérifié par appel API direct avant/après correctif.
+  2. **i18n très incomplet** : seuls `nav`/`dashboard`/`auth` avaient des clés de traduction. **8 templates n'utilisaient jamais le pipe `translate`** (`catalog`, `my-certificates`, `course-chat`, `course-detail`, `course-editor`, `instructor-dashboard`, `quiz-editor`, `quiz-take`) + 3 templates inline (`course-results`, `verify`, `admin-dashboard`) — tout le texte hors login/nav/dashboard restait figé en français quel que soit la langue choisie. Rattrapé intégralement : nouvelles clés `catalog.*`, `certificates.*`, `verify.*`, `course.*`, `chat.*`, `courseEditor.*`, `instructorDashboard.*`, `quizEditor.*`, `quizTake.*`, `courseResults.*`, `admin.*` dans `public/i18n/{fr,en,ar}.json` ; les 11 composants basculés sur `TranslatePipe`/`TranslateService.instant()` (labels, boutons, en-têtes de tableau, `confirm()`, messages d'erreur/flash). Le badge de type de contenu (`TEXT`/`VIDEO`/`DOCUMENT`) était aussi affiché brut, désormais traduit. **Précision actée** : les titres de cours/chapitres/contenus restent en français (contenu saisi par le formateur, pas texte d'interface — cf. `course_translations` = Should have non fait, `docs/02` §0).
+  3. **Chatbot muet** (`CourseChatComponent`) : `<form (ngSubmit)="send()">` sans `[formGroup]`/`FormsModule` → aucune directive ne fournit la sortie `ngSubmit`, donc le clic sur « Envoyer » déclenchait une **vraie soumission HTML native** (rechargement de page, perte du fil de discussion) au lieu d'appeler `send()`. Jamais détecté avant faute de test bout-en-bout du widget. Corrigé : `(submit)="onSubmit($event)"` + `event.preventDefault()` explicite avant `send()`.
+- `npm run build` OK après chaque correctif frontend ; correctif backend vérifié par appel direct à `POST /quizzes/{id}/attempts` (avant : `500` reproductible à volonté ; après : `201` + certificat émis + PDF téléchargeable `200`).
+
+**Décisions techniques**
+- Le fix certificat traite « pas de contrôle sur ce cours » comme `controls_average = 0` en base (cohérent avec `weightedFinalGrade` qui pondère déjà 100 % sur l'examen dans ce cas) plutôt que de rendre la colonne nullable — évite une migration Flyway pour un cas limite.
+- i18n : paramètres d'interpolation (`{{ '...' | translate: { ... } }}`) pour toutes les valeurs dynamiques (scores, dates, noms), pas de concaténation de HTML traduit (évite tout risque XSS via `[innerHTML]`).
+
+**Écarts par rapport au plan**
+- `docs/03-plan-implementation.md` (tâche 4.1) et le README marquaient le multilingue « validé au navigateur » depuis le 2026-09-10 — en réalité seule une fraction de l'interface l'était. Statuts corrigés.
+
+**Bloquant** — aucun.
+
+**Reste (Phase 6)** : uniquement `docker compose build` sur une machine dotée de Docker (poste de dev toujours sans Docker). Phase 6 sinon **terminée**.
+
 **Bloquant** — aucun. **Reste Phase 6** : 6.5 relecture UI au navigateur.

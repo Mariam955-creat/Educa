@@ -91,16 +91,22 @@ Le scénario E2E rejoue le parcours complet contre l'API réelle (`:8081`), de f
 
 ---
 
-## 4. Reste à vérifier au navigateur (avec l'utilisatrice)
+## 4. Vérifié au navigateur (avec l'utilisatrice) — fait le 2026-09-13
 
-Le scénario ci-dessus couvre toute la logique métier côté API. La partie **UI** se vérifie à la main
+Le scénario ci-dessus couvre toute la logique métier côté API. La partie **UI** a été vérifiée à la main
 en suivant `docs/05-demo-soutenance.md`, sur une **base propre** (`flyway:clean` dev + redémarrage) :
 
-- [ ] Parcours formateur complet dans `course-editor` / `quiz-editor` (création + upload de fichier réel).
-- [ ] Parcours apprenant dans `course-detail` / `quiz-take` (inscription → progression → contrôle → examen → certificat).
-- [ ] Pages `my-certificates` et `/verify/:code` (publique).
-- [ ] Bascule de langue FR/EN/AR + RTL, aux largeurs 360 / 768 / 1280 px (responsive Phase 5).
-- [ ] Widget chatbot sur la page cours (fil de discussion + message de repli).
+- [x] Parcours formateur complet dans `course-editor` / `quiz-editor` (création + upload de fichier réel).
+- [x] Parcours apprenant dans `course-detail` / `quiz-take` (inscription → progression → contrôle → examen → certificat).
+- [x] Pages `my-certificates` et `/verify/:code` (publique).
+- [x] Bascule de langue FR/EN/AR + RTL, aux largeurs 360 / 768 px (responsive Phase 5).
+- [x] Widget chatbot sur la page cours (fil de discussion + message de repli).
+
+**3 bugs réels trouvés et corrigés pendant cette relecture** (détail : `docs/04-journal-avancement.md`, entrée 2026-09-13) :
+
+1. Certificat non délivré (`500`) pour un cours avec examen final mais sans contrôle — contrainte `NOT NULL` sur `certificates.controls_average` violée. Corrigé dans `CertificateService.create()`.
+2. i18n très incomplet : 8 templates + 3 templates inline n'utilisaient jamais le pipe `translate` (tout restait en français quelle que soit la langue). Rattrapé intégralement (clés FR/EN/AR ajoutées, 11 composants basculés sur `TranslatePipe`/`TranslateService`).
+3. Widget chatbot muet : `(ngSubmit)` sans directive de formulaire adéquate → soumission HTML native qui rechargeait la page au lieu d'envoyer le message. Corrigé (`(submit)` + `preventDefault()` explicite).
 
 ---
 

@@ -107,7 +107,7 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 4 — Multilingue & IA  ·  statut : `terminée (MVP) — multilingue validé au navigateur (2026-09-10) ; réponse IA réelle en attente d'une clé Anthropic`
+## Phase 4 — Multilingue & IA  ·  statut : `terminée (MVP) — multilingue validé au navigateur sur tout le périmètre (2026-09-13, cf. Phase 6/6.5) ; réponse IA réelle en attente d'une clé Anthropic`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
@@ -148,7 +148,7 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 6 — Rédaction finale & soutenance  ·  statut : `quasi terminée` (2026-09-10) — reste 6.5 (relecture UI navigateur)
+## Phase 6 — Rédaction finale & soutenance  ·  statut : `quasi terminée` (2026-09-13) — reste seulement `docker compose build`
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
@@ -156,7 +156,7 @@ Dernière mise à jour : 2026-09-08.
 | 6.2 | Jeu de données de démonstration (script de seed : utilisateurs, cours complets, quiz, 1 certificat) | `config/DevDataInitializer` | fait — **4 comptes** (+ `diplome@educa.dev` « Sara Diplômée »), **2 cours publiés** (« Introduction à Python » + « Les bases de Git », chacun 2 chapitres / 4 contenus / 1 contrôle / 1 examen final), et le **parcours complet du compte diplômé** rejoué via les services réels sur le cours Git → certificat émis. Idempotent, erreurs seulement loguées. Vérifié au boot dev : `/certificates/me`, `/certificates/verify/{code}`, PDF 200 | 2026-09-10 |
 | 6.3 | Script / scénario de démonstration pour la soutenance | `docs/05-demo-soutenance.md` | fait — déroulé pas à pas ~15 min (préparation, formateur, apprenant, certification, multilingue, IA, sécurité, plan B) | 2026-09-10 |
 | 6.4 | Diagrammes propres (archi, MCD) exportés pour le mémoire | `docs/assets/` | fait — `architecture.{mmd,svg,png}` et `mcd.{mmd,svg,png}` générés via `@mermaid-js/mermaid-cli` (Chrome du poste). Archi nettoyée (`<br/>`, libellés à jour) ; MCD réécrit avec les attributs des **15 tables MVP migrées** (les entités *_translation / chat_message restent Should have). `docs/assets/README.md` = mode d'emploi de régénération ; `02-conception.md` §1/§2 renvoient vers les exports | 2026-09-10 |
-| 6.5 | Vérification finale : tout le périmètre « Must have » est fonctionnel de bout en bout | `scripts/e2e-mvp.mjs`, `docs/06-verification-mvp.md` | fait (côté logique/API) — scénario E2E rejouant tout le parcours contre l'API réelle : **47/47 PASS** ; + backend `./mvnw test` **30/30**, frontend `test:ci` 13/13, `npm run build` OK. Reste la relecture **UI au navigateur** (checklist dans `docs/06` §4, à faire avec l'utilisatrice sur base propre) | 2026-09-10 |
+| 6.5 | Vérification finale : tout le périmètre « Must have » est fonctionnel de bout en bout | `scripts/e2e-mvp.mjs`, `docs/06-verification-mvp.md` | **fait** — logique/API : E2E **47/47 PASS** + backend `./mvnw test` **30/30** + frontend `test:ci` 13/13 + `npm run build` OK. **Relecture UI au navigateur faite** (checklist `docs/06` §4, avec l'utilisatrice, base propre) → **3 bugs réels trouvés et corrigés** : certificat `500` si cours sans contrôle (contrainte `NOT NULL`), i18n incomplet sur 8+ pages (tout en dur en français), formulaire du chatbot qui rechargeait la page au lieu d'envoyer le message. Détail : journal 2026-09-13 | 2026-09-13 |
 | 6.6 | Instructions de déploiement cloud (Docker) | `docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`, `application-prod.yml`, `.env.docker.example`, `docs/07-deploiement.md`, `README.md` | fait — stack 3 conteneurs (backend JRE 25 / frontend Angular→nginx avec reverse-proxy `/api` / `postgres:18`), profil `prod` (erreurs masquées, `flyway.clean` off), frontend basculé sur API relative `/api/v1` + proxy Angular en dev (`proxy.conf.json`). `docs/07` = déploiement local + cloud (VM, base managée, PaaS, TLS). ⚠️ **Dockerfiles non encore exécutés** (poste de dev sans Docker) — à `docker compose build` sur la cible | 2026-09-10 |
 
 **Livrable** : application MVP complète et démontrable, documentation à jour, support de soutenance prêt.
@@ -173,4 +173,4 @@ Dernière mise à jour : 2026-09-08.
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
 | 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |
 | 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
-| 6 — Rédaction finale & soutenance | quasi terminée — 6.1→6.6 faites (README + docs 01→07, jeu de démo enrichi, diagrammes `docs/assets/`, vérif E2E API 47/47, stack Docker). **Reste uniquement : relecture UI au navigateur** (6.5, checklist `docs/06` §4, avec l'utilisatrice) + `docker compose build` sur une machine avec Docker | 2026-09-10 | — |
+| 6 — Rédaction finale & soutenance | quasi terminée — 6.1→6.6 faites (README + docs 01→07, jeu de démo enrichi, diagrammes `docs/assets/`, vérif E2E API 47/47, stack Docker, **relecture UI au navigateur faite le 2026-09-13 → 3 bugs corrigés**). **Reste uniquement : `docker compose build`** sur une machine avec Docker | 2026-09-10 | — |

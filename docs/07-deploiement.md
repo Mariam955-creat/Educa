@@ -11,9 +11,14 @@ Le projet se déploie via **trois conteneurs** orchestrés par `docker-compose.y
 Seul le `frontend` publie un port (`${WEB_PORT}`, défaut **8080**). `db` et `backend` ne sont
 accessibles que sur le réseau interne Compose.
 
-> ⚠️ Les fichiers Docker ont été rédigés d'après la configuration du projet mais **n'ont pas encore
-> été exécutés** (poste de dev sans Docker). Vérifier `docker compose build` sur la cible avant la
-> soutenance / le rendu.
+> ⚠️ Les fichiers Docker ont été rédigés d'après la configuration du projet. Docker Desktop est
+> installé sur le poste de dev, mais `docker compose build` n'a pas pu être vérifié : le daemon
+> refuse de démarrer (« Prise en charge de la virtualisation non détectée » — confirmé en
+> PowerShell : `(Get-CimInstance Win32_Processor).VirtualizationFirmwareEnabled` → `False`). C'est
+> un blocage **BIOS/UEFI** (VT-x désactivé), pas un problème de configuration Docker/projet.
+> **À faire avant la soutenance / le rendu** : redémarrer → BIOS/UEFI → activer *Intel
+> Virtualization Technology* (VT-x, en général sous *Advanced → CPU Configuration*) → enregistrer
+> et quitter → relancer Docker Desktop → `docker compose --env-file .env.docker.example build`.
 
 ---
 

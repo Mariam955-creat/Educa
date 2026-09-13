@@ -628,3 +628,24 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Reste (Phase 6)** : uniquement `docker compose build` sur une machine dotée de Docker (poste de dev toujours sans Docker). Phase 6 sinon **terminée**.
 
 **Bloquant** — aucun. **Reste Phase 6** : 6.5 relecture UI au navigateur.
+
+---
+
+## [2026-09-13] Phase 6 — Tentative `docker compose build` (6.6) : bloquée par la virtualisation désactivée au BIOS
+
+**Fait**
+- Constat : **Docker Desktop 29.7.2 est maintenant installé** sur le poste de dev (n'était pas le cas lors de la rédaction de 6.6) — CLI présent, mais le daemon (moteur Linux, `dockerDesktopLinuxEngine`) ne répondait pas.
+- Lancement de Docker Desktop (`shell:AppsFolder\Docker.DockerForWindows.Settings`) : après démarrage, le pipe apparaît puis le daemon répond `500` de façon persistante sur `_ping`/`version`.
+- Docker Desktop affiche l'écran d'erreur explicite : **« Prise en charge de la virtualisation non détectée »**.
+- Diagnostic confirmé en PowerShell : `(Get-CimInstance Win32_Processor).VirtualizationFirmwareEnabled` → **`False`**. Machine physique (ASUS Vivobook 17 X1704VA, `Win32_ComputerSystem` confirme que ce n'est pas une VM). **VT-x est désactivé dans le BIOS/UEFI** — condition nécessaire à Docker Desktop (moteur WSL2/Hyper-V), non activable en logiciel ni à distance : nécessite un redémarrage + modification du firmware.
+- `docker compose --env-file .env.docker.example build` a donc échoué (`exited with code 1`, daemon injoignable), sans rapport avec le contenu des `Dockerfile`/`docker-compose.yml` eux-mêmes.
+
+**Décisions techniques**
+- Pas de contournement logiciel : la case à cocher est un vrai blocage matériel/firmware, à traiter par l'utilisatrice (redémarrage → BIOS/UEFI → activer *Intel Virtualization Technology* (VT-x) → sauvegarder/quitter). Documenté dans `docs/07-deploiement.md`.
+
+**Écarts par rapport au plan**
+- `03-plan-implementation.md` / `CLAUDE.md` disaient « poste sans Docker » : à corriger en « Docker installé, bloqué par VT-x désactivé au BIOS ».
+
+**Bloquant** — VT-x désactivé au BIOS/UEFI du poste de dev. Nécessite une action physique de l'utilisatrice (redémarrage + BIOS) hors de portée d'un agent logiciel.
+
+**Prochaine étape** — une fois VT-x activé et Docker Desktop opérationnel : relancer `docker compose --env-file .env.docker.example build` (ou `cp .env.docker.example .env` puis `docker compose up -d --build`) pour finir la 6.6.

@@ -26,7 +26,7 @@ Dernière mise à jour : 2026-09-08.
 | 0.12 | Config format : `.editorconfig` + `.gitattributes` (LF). ESLint/Prettier frontend = à l'init Angular (tâche 1.11) | `.editorconfig`, `.gitattributes` | fait | 2026-09-08 |
 | 0.13 | Premier commit + push vers `origin/main` (au nom de mariam Balde, sans trailer) | repo | fait | 2026-09-08 |
 
-> `docker-compose.yml` : différé en Phase 0, **ajouté en Phase 6.6** comme stack de déploiement (voir `docs/07-deploiement.md`). En dev, PostgreSQL reste local (pas de Docker sur le poste).
+> `docker-compose.yml` : différé en Phase 0, **ajouté et vérifié en Phase 6.6** comme stack de déploiement (voir `docs/07-deploiement.md`). En dev, PostgreSQL reste local par choix, pas de Docker au quotidien.
 
 **Livrable Phase 0** : documentation validée + PostgreSQL local opérationnel + repo poussé sur GitHub (git, `.gitignore`, `.gitattributes`, `.editorconfig`, `.env.example`) — sans fonctionnalité métier. **Reste : relecture humaine du MCD + matrice RBAC.**
 

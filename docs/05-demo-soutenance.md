@@ -2,7 +2,7 @@
 
 Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique l'acteur, l'action et le point à souligner devant le jury.
 
-> Dernière mise à jour : 2026-09-10.
+> Dernière mise à jour : 2026-09-14.
 
 ---
 
@@ -16,6 +16,9 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 | 0.4 | Frontend lancé : `cd frontend && npm start` | `http://localhost:4200` s'ouvre |
 | 0.5 | (Optionnel) Base propre : rejouer le seed en repartant d'une base vide (`flyway:clean` dev puis redémarrage backend) | 3 comptes + cours « Introduction à Python » recréés |
 | 0.6 | Onglets navigateur prêts : 1 fenêtre normale (formateur) + 1 fenêtre privée (apprenant) pour éviter les collisions de session | — |
+| 0.7 | *(Alternative)* Lancer toute la stack en un seul bloc via Docker au lieu de 0.3+0.4 : `cp .env.docker.example .env` (mettre `BACKEND_PROFILE=dev` pour avoir les comptes/cours de démo) puis `docker compose up -d --build` | Appli sur `http://localhost:8080` (frontend + reverse-proxy `/api`) ; `docker compose logs -f backend` → « Started BackendApplication » ; **build + démarrage vérifiés le 2026-09-14** |
+
+**Docker (repli tout-en-un)** : si PostgreSQL local ou les serveurs `mvnw`/`npm` posent problème le jour J, toute la stack (`db` + `backend` + `frontend`) démarre en une commande avec Docker (`docker compose up -d --build`, profil `dev` pour le seed) — voir `docs/07-deploiement.md`. Nécessite Docker Desktop **lancé** (pas seulement installé) ; sur ce poste, la virtualisation est bien active malgré un faux négatif observé en PowerShell (`VirtualizationFirmwareEnabled` reste à `False` même quand tout fonctionne, car l'hyperviseur Windows/WSL2 tourne déjà).
 
 **Comptes de démo** (mot de passe commun `password123`) :
 
@@ -120,7 +123,8 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 ## 8. Conclusion (30 s)
 
 - Périmètre MVP (« Must have ») **complet et démontré de bout en bout**.
-- Extensions identifiées et cadrées : traductions du contenu pédagogique, persistance de l'historique de chat, génération de quiz par IA, recommandations, déploiement Docker/cloud.
+- **Déploiement Docker** (3 conteneurs : `db`/`backend`/`frontend`, reverse-proxy nginx) écrit et **vérifié** (`docker compose build` + `up`, 2026-09-14) — voir `docs/07-deploiement.md`.
+- Extensions identifiées et cadrées (hors MVP) : traductions du contenu pédagogique, persistance de l'historique de chat, génération de quiz par IA, recommandations, déploiement cloud (VM/PaaS/base managée).
 - Renvoyer vers `docs/01`→`04` pour l'analyse, la conception et le journal de bord.
 
 ---
@@ -134,3 +138,4 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 | Frontend ne compile pas | `npm ci` dans `frontend/` ; vérifier Node ≥ 24.12 et Angular CLI 19.2 |
 | Chatbot muet | Comportement attendu sans clé réelle : montrer la réponse `degraded` et expliquer l'architecture de repli |
 | Démo « à froid » | Lancer `node scripts/e2e-mvp.mjs` (backend up) → 47 contrôles verts qui rejouent tout le parcours ; ou montrer `QuizFlowTest` (parcours complet contrôle → examen → certificat → vérification) |
+| PostgreSQL local capricieux / poste de secours | Basculer sur Docker : `docker compose up -d --build` (profil `dev` dans `.env`) démarre `db`+`backend`+`frontend` sans dépendre de l'install PostgreSQL locale ; appli sur `http://localhost:8080` |

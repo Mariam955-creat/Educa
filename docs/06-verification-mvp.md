@@ -17,6 +17,11 @@ Dernière exécution : **2026-09-10**.
 Le scénario E2E rejoue le parcours complet contre l'API réelle (`:8081`), de façon non destructive
 (formateur = compte de démo, apprenants créés à la volée, slug de cours unique).
 
+> Ce document couvre la vérification fonctionnelle du périmètre MVP (tâche 6.5, backend + frontend
+> lancés en local). La vérification du **déploiement Docker** (tâche 6.6 — build des images,
+> démarrage de la stack `db`/`backend`/`frontend`, reverse-proxy `/api`) est documentée séparément
+> dans [`docs/07-deploiement.md`](07-deploiement.md) — vérifiée le 2026-09-14.
+
 ---
 
 ## 2. Détail du scénario E2E (`scripts/e2e-mvp.mjs`)
@@ -114,6 +119,7 @@ en suivant `docs/05-demo-soutenance.md`, sur une **base propre** (`flyway:clean`
 
 - Réponse **IA live** : nécessite une vraie `ANTHROPIC_API_KEY` (compte payant) — rien à changer côté code.
 - Swagger UI (tâche 1.10) : springdoc pas encore compatible Spring Boot 4.
-- `server.error.include-message: always` → `never` avant un déploiement public.
 - Recherche catalogue : `pg_trgm` + index GIN à l'échelle.
 - Sniffing réel du contenu des uploads (Apache Tika).
+
+> `server.error.include-message: always → never avant un déploiement public` — **résolu** : le profil `prod` (`application-prod.yml`, utilisé par le conteneur `backend` en Docker) a `include-message: never` depuis la tâche 6.6. Le profil `dev`/`test` garde `always` (utile en développement).

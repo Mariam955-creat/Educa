@@ -689,3 +689,23 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — aucune tâche du MVP restante ; le plan d'implémentation (Phases 0 → 6) reste intégralement terminé. Résiduel hors MVP inchangé (voir entrée précédente).
+
+---
+
+## [2026-09-14] Phase 6 (résiduel) — Retest chatbot + côté formateur : 1 bug backend corrigé (405 au lieu de 500)
+
+**Fait**
+- **Chatbot IA rejoué via l'API** avec le vrai `.env` local (`AI_ENABLED=true`, clé placeholder) : sans jeton → `401` ; inscrit sur le cours → `200 {degraded:true, reply:"…"}` (jamais d'erreur malgré l'échec d'appel Anthropic) ; apprenant **non inscrit** → `403 "Inscrivez-vous au cours pour utiliser l'assistant"`. Conforme à `docs/06-verification-mvp.md` (AI-01/AI-02).
+- **Parcours formateur rejoué via l'API** (`formateur@educa.dev`) sur un cours créé pour l'occasion (« Découverte du Web ») : création (`201`), ajout chapitre + contenu `TEXT` (validation de position vérifiée), RBAC apprenant → `403` sur la création de cours, cours non publié absent du catalogue, publication puis présence au catalogue, ajout d'un contrôle + question (validation `position` requise sur question/options vérifiée par un `400`), ajout de l'examen final + question, vue « Résultats » formateur (`200`, vide) et RBAC apprenant dessus (`403`).
+- **1 bug réel trouvé pendant ce test** : en testant la publication avec le mauvais verbe HTTP (`PUT` au lieu de `POST` sur `/courses/{id}/publish`), l'API renvoyait **`500 "Erreur interne"`** au lieu du `405 Method Not Allowed` attendu — `GlobalExceptionHandler` n'avait pas de handler dédié pour `HttpRequestMethodNotSupportedException`, qui tombait donc dans le handler générique `Exception.class`. **Corrigé** : nouveau handler `@ExceptionHandler(HttpRequestMethodNotSupportedException.class)` → `405`, cohérent avec les autres mappings (`400`/`401`/`403`/`413`) déjà en place depuis la Phase 5.
+- Backend recompilé et redémarré avec le correctif ; revérifié : `PUT /courses/{id}/publish` → `405` (message clair, plus de `500`). `./mvnw test` → **30/30 verts**, `BUILD SUCCESS` (aucune régression).
+
+**Décisions techniques**
+- Handler ajouté au même niveau que les autres exceptions techniques mappées explicitement (pas de changement de la hiérarchie des exceptions applicatives `ApiException`).
+
+**Écarts par rapport au plan**
+- Aucun test automatisé existant ne couvrait ce cas (mauvais verbe HTTP) — resté invisible jusqu'à ce test manuel. Pas de nouveau test ajouté (bug de robustesse mineur, hors périmètre des suites `*FlowTest` orientées parcours métier).
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — aucune tâche du MVP restante. Résiduel hors MVP inchangé (voir entrées précédentes).

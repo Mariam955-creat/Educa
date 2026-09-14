@@ -24,7 +24,7 @@ Dépôt : https://github.com/Mariam955-creat/Educa
 | Fichiers | Module `storage` — système de fichiers local en dev, S3-compatible en cible |
 | PDF | openhtmltopdf (gabarit HTML → certificat A4 paysage) |
 | IA | SDK officiel `com.anthropic:anthropic-java`, isolé dans `com.educa.backend.ai`, repli `degraded` si clé absente |
-| Déploiement | `docker-compose.yml` (backend + frontend/nginx + PostgreSQL) — voir [`docs/07-deploiement.md`](docs/07-deploiement.md). En dev : PostgreSQL local, pas de Docker |
+| Déploiement | `docker-compose.yml` (backend + frontend/nginx + PostgreSQL) — **build et démarrage vérifiés**, voir [`docs/07-deploiement.md`](docs/07-deploiement.md). En dev : PostgreSQL local, pas de Docker |
 
 > Le détail et la justification des choix : [`docs/02-conception.md`](docs/02-conception.md) §8.
 
@@ -123,7 +123,7 @@ Détail (cloud, base managée, TLS, données de démo) : [`docs/07-deploiement.m
 
 ## État d'avancement
 
-**Phases 0 → 5 (MVP) terminées.** Phase 6 (rédaction finale & soutenance) quasi terminée — relecture visuelle au navigateur faite le 2026-09-13 (voir [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) §4) : reste uniquement `docker compose build` sur une machine avec Docker.
+**Phases 0 → 6 terminées** — plan d'implémentation complet. Relecture visuelle au navigateur faite le 2026-09-13 (voir [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) §4) ; déploiement Docker (`docker compose build` + `up`) vérifié le 2026-09-14 (voir [`docs/07-deploiement.md`](docs/07-deploiement.md)).
 Suivi détaillé : [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) et [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md).
 
-Résiduel connu (hors périmètre MVP) : Swagger UI (springdoc pas encore compatible Spring Boot 4), clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika). Les fichiers Docker sont rédigés mais pas encore exécutés (poste de dev sans Docker).
+Résiduel connu (hors périmètre MVP) : Swagger UI (springdoc pas encore compatible Spring Boot 4), clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika).

@@ -671,3 +671,21 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun. **Le plan d'implémentation est intégralement terminé (Phases 0 → 6).**
 
 **Prochaine étape** — aucune tâche du MVP restante. Résiduel hors MVP inchangé (cf. bilan Phase 5/6) : Swagger (1.10), `pg_trgm`/GIN catalogue, sniffing réel des uploads (Tika), clé Anthropic réelle pour des réponses IA live, module admin (Should have), traductions de contenu pédagogique.
+
+---
+
+## [2026-09-14] Phase 6 (résiduel) — Passe de cohérence Docker sur toute la doc + retest local complet + 1 bug UI corrigé
+
+**Fait**
+- **Cohérence documentaire Docker** : relecture ciblée de `CLAUDE.md`, `README.md`, `docs/01`, `docs/02`, `docs/03`, `docs/05`, `docs/06`, `docs/07` pour purger les mentions devenues fausses après la vérification Docker de ce même jour (« poste sans Docker », « reste `docker compose build` », résiduel `include-message` déjà résolu par le profil `prod`). Un vrai problème pratique trouvé au passage dans `docs/05-demo-soutenance.md` : le repli Docker de démo utilisait le port `8080` par défaut (déjà pris par `mysqld` local sur ce poste) et proposait `cp .env.docker.example .env`, qui aurait écrasé le `.env` local utilisé par `mvnw`/`npm` — corrigé en `WEB_PORT=8090` + `--env-file` (non destructif).
+- **Retest local** : backend (`./mvnw spring-boot:run`, profil `dev`) et frontend (`npm start`) relancés sans souci — Flyway OK, seed dev rejoué, `/api/v1/courses` → `200`, SPA → `200`.
+- **Parcours certifiant rejoué de bout en bout via l'API** avec `apprenant@educa.dev` sur « Introduction à Python » (cours différent de celui déjà certifié en seed, pour un test propre) : inscription (`201`) → doublon rejeté (`409`) → 4 contenus marqués vus → progression **100 %** → contrôle chapitre 1 (bonnes réponses relues côté formateur pour fiabiliser le test) → score **100** → examen final déverrouillé (`finalExamUnlocked:true`) → examen final → score **100** → note pondérée **100** (40 × 100 % + 60 × 100 %) → certificat émis automatiquement (`EDUCA-2026-000003`) → PDF téléchargeable (`200`, `application/pdf`, `nosniff`) → vérification publique par code → `valid:true` (et `valid:false` sur un code bidon).
+- **1 bug réel (gap UX) trouvé pendant ce test et corrigé** : la page publique `/verify/:code` fonctionne très bien une fois l'URL connue, mais **rien dans l'interface n'y renvoyait** — sur « Mes certificats », le code de vérification n'était affiché qu'en texte brut, sans lien. Une utilisatrice testant elle-même le parcours n'a pas su comment y accéder. Corrigé : lien **« Vérifier publiquement ↗ »** ajouté sur chaque carte de `my-certificates.component.html` (`routerLink="/verify/<code>"`, nouvel onglet), nouvelle clé i18n `certificates.verifyLink` en FR/EN/AR.
+- `npm run build` (frontend) → OK après le correctif.
+
+**Décisions techniques**
+- Test de contrôle/examen fiabilisé en relisant les bonnes réponses via le compte `formateur@educa.dev` (`answersVisible:true` pour le propriétaire du cours) plutôt qu'en devinant depuis l'énoncé — évite un score < 100 % par erreur de lecture.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — aucune tâche du MVP restante ; le plan d'implémentation (Phases 0 → 6) reste intégralement terminé. Résiduel hors MVP inchangé (voir entrée précédente).

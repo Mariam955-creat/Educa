@@ -148,7 +148,7 @@ et d'un chatbot pédagogique s'appuyant sur une API d'IA générative.
 - ENF-02 — **Performance** : réponse API < 400 ms en médiane pour les lectures courantes (catalogue, détail cours) sur un jeu de données de démonstration ; pagination obligatoire sur les listes.
 - ENF-03 — **Accessibilité** : contraste suffisant, navigation clavier, libellés ARIA sur les composants interactifs, support RTL complet.
 - ENF-04 — **Multilingue** : ajout d'une langue d'interface sans changement de code (fichiers de ressources) ; encodage UTF-8 de bout en bout.
-- ENF-05 — **Portabilité / repro** : migrations de base versionnées (Flyway) rejouables ; procédure d'installation documentée (PostgreSQL local + pgAdmin en dev ; **stack `docker-compose` de déploiement** livrée en Phase 6, voir `docs/07-deploiement.md`).
+- ENF-05 — **Portabilité / repro** : migrations de base versionnées (Flyway) rejouables ; procédure d'installation documentée (PostgreSQL local + pgAdmin en dev ; **stack `docker-compose` de déploiement** livrée et vérifiée en Phase 6 (2026-09-14), voir `docs/07-deploiement.md`).
 - ENF-06 — **Maintenabilité** : architecture en couches, séparation par domaine, couverture de tests sur les parcours critiques (auth, quiz, certification).
 - ENF-07 — **Observabilité** : logs structurés côté backend, gestion d'erreurs centralisée renvoyant un format d'erreur homogène.
 - ENF-08 — **Coût / dépendance IA** : appels IA encapsulés dans un seul module, quota/longueur de contexte bornés, possibilité de désactiver la fonctionnalité par configuration.

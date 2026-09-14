@@ -62,7 +62,8 @@
     "issuedOn": "N° {{serial}} · délivré le {{date}}",
     "gradeLine": "Note finale {{grade}} / 100 (contrôles {{controls}} · examen {{exam}})",
     "verificationCode": "Code de vérification :",
-    "download": "Télécharger le PDF"
+    "download": "Télécharger le PDF",
+    "verifyLink": "Vérifier publiquement"
   },
   "verify": {
     "title": "Vérification d'un certificat",

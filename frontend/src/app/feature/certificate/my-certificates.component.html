@@ -21,6 +21,9 @@
               }}
             </p>
             <p class="code">{{ 'certificates.verificationCode' | translate }} <code>{{ c.verificationCode }}</code></p>
+            <a class="verify-link" [routerLink]="['/verify', c.verificationCode]" target="_blank" rel="noopener">
+              {{ 'certificates.verifyLink' | translate }} ↗
+            </a>
           </div>
           <button type="button" (click)="download(c)">{{ 'certificates.download' | translate }}</button>
         </article>

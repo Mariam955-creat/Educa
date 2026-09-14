@@ -46,9 +46,19 @@ h1 {
 }
 
 .code {
-  margin: 0;
+  margin: 0 0 0.4rem;
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+.verify-link {
+  font-size: 0.8rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.verify-link:hover {
+  text-decoration: underline;
 }
 
 code {

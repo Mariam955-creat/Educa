@@ -62,7 +62,8 @@
     "issuedOn": "رقم {{serial}} · صدرت بتاريخ {{date}}",
     "gradeLine": "النتيجة النهائية {{grade}} / 100 (المراقبات {{controls}} · الامتحان {{exam}})",
     "verificationCode": "رمز التحقق:",
-    "download": "تحميل PDF"
+    "download": "تحميل PDF",
+    "verifyLink": "التحقق العلني"
   },
   "verify": {
     "title": "التحقق من شهادة",

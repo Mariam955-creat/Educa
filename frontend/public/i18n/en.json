@@ -62,7 +62,8 @@
     "issuedOn": "No. {{serial}} · issued on {{date}}",
     "gradeLine": "Final grade {{grade}} / 100 (controls {{controls}} · exam {{exam}})",
     "verificationCode": "Verification code:",
-    "download": "Download PDF"
+    "download": "Download PDF",
+    "verifyLink": "Verify publicly"
   },
   "verify": {
     "title": "Certificate verification",

@@ -649,3 +649,25 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — VT-x désactivé au BIOS/UEFI du poste de dev. Nécessite une action physique de l'utilisatrice (redémarrage + BIOS) hors de portée d'un agent logiciel.
 
 **Prochaine étape** — une fois VT-x activé et Docker Desktop opérationnel : relancer `docker compose --env-file .env.docker.example build` (ou `cp .env.docker.example .env` puis `docker compose up -d --build`) pour finir la 6.6.
+
+---
+
+## [2026-09-14] Phase 6 — `docker compose build`/`up` vérifiés (6.6 clôturée) : le blocage était un faux négatif, un vrai bug corrigé
+
+**Fait**
+- **Le diagnostic VT-x du 2026-09-13 était un faux négatif.** `(Get-CimInstance Win32_Processor).VirtualizationFirmwareEnabled` renvoie toujours `False`, mais `Win32_ComputerSystem.HypervisorPresent` = `True` : un hyperviseur (Hyper-V / Windows Hypervisor Platform, socle de WSL2) tourne déjà sur la machine, ce qui masque les indicateurs bruts de virtualisation vus depuis la partition racine — comportement WMI connu, sans rapport avec un VT-x réellement désactivé au BIOS. Le vrai blocage : **l'application Docker Desktop n'était simplement pas lancée** (aucun processus `Docker*`, pipe `dockerDesktopLinuxEngine` absent). Un `Start-Process "shell:AppsFolder\Docker.DockerForWindows.Settings"` suivi de l'attente du daemon (`docker info`) a suffi ; le moteur est monté sur un noyau `6.18…-microsoft-standard-WSL2`.
+- **`docker compose --env-file .env.docker.example build`** → **succès** : `educa-backend` (677 Mo, JRE 25) et `educa-frontend` (74 Mo, nginx + Angular) construits sans erreur.
+- **`docker compose up`** a révélé un **vrai bug** dans `docker-compose.yml` : `db` (health-check) restait `unhealthy`. Logs `educa-db-1` → l'image `postgres:18-alpine` a changé de convention de stockage en v18+ (structure façon `pg_ctlcluster`, sous-répertoire versionné) et refuse de démarrer si le volume est monté directement sur `/var/lib/postgresql/data`. **Corrigé** : volume remonté sur `/var/lib/postgresql` (racine attendue par l'image v18+, qui gère elle-même le sous-répertoire versionné).
+- Après correction : stack complète démarrée (`db` healthy, `backend` connecté — Flyway + Hibernate OK, log `Started BackendApplication` —, `frontend` up) ; vérifié en conditions réelles sur un port alternatif (`WEB_PORT=8090`, le `8080` étant pris par `mysqld` local comme `8081` le serait sans le remap déjà en place) : `GET http://localhost:8090/` → `200` (SPA), `GET http://localhost:8090/api/v1/courses` → `200` (reverse-proxy nginx → `backend:8081` fonctionnel).
+- Stack redescendue proprement (`docker compose down`, sans `-v`) après vérification — images conservées, volumes de test purgés lors du premier essai raté (avant le fix) puis re-créés sains lors du second.
+- Mise à jour doc : `docs/07-deploiement.md` (encart ⚠️ → ✅, note sur le volume `postgres:18`), `03-plan-implementation.md` (6.6 fait et vérifié, Phase 6 → **terminée**), ce journal.
+
+**Décisions techniques**
+- Pas de changement d'image PostgreSQL (rester sur `18-alpine`, cohérent avec `application-prod.yml` et le reste de la stack) : le fix est uniquement le point de montage du volume, conforme à la documentation officielle de l'image pour la v18+.
+
+**Écarts par rapport au plan**
+- Le blocage documenté le 2026-09-13 (« VT-x désactivé au BIOS, action physique requise ») était erroné dans son diagnostic final — corrigé ici. Aucune action BIOS n'a en réalité été nécessaire.
+
+**Bloquant** — aucun. **Le plan d'implémentation est intégralement terminé (Phases 0 → 6).**
+
+**Prochaine étape** — aucune tâche du MVP restante. Résiduel hors MVP inchangé (cf. bilan Phase 5/6) : Swagger (1.10), `pg_trgm`/GIN catalogue, sniffing réel des uploads (Tika), clé Anthropic réelle pour des réponses IA live, module admin (Should have), traductions de contenu pédagogique.

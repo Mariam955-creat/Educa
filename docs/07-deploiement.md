@@ -11,14 +11,15 @@ Le projet se déploie via **trois conteneurs** orchestrés par `docker-compose.y
 Seul le `frontend` publie un port (`${WEB_PORT}`, défaut **8080**). `db` et `backend` ne sont
 accessibles que sur le réseau interne Compose.
 
-> ⚠️ Les fichiers Docker ont été rédigés d'après la configuration du projet. Docker Desktop est
-> installé sur le poste de dev, mais `docker compose build` n'a pas pu être vérifié : le daemon
-> refuse de démarrer (« Prise en charge de la virtualisation non détectée » — confirmé en
-> PowerShell : `(Get-CimInstance Win32_Processor).VirtualizationFirmwareEnabled` → `False`). C'est
-> un blocage **BIOS/UEFI** (VT-x désactivé), pas un problème de configuration Docker/projet.
-> **À faire avant la soutenance / le rendu** : redémarrer → BIOS/UEFI → activer *Intel
-> Virtualization Technology* (VT-x, en général sous *Advanced → CPU Configuration*) → enregistrer
-> et quitter → relancer Docker Desktop → `docker compose --env-file .env.docker.example build`.
+> ✅ **`docker compose build` + `docker compose up` vérifiés** (2026-09-14) : les deux images
+> (`educa-backend`, `educa-frontend`) se construisent et démarrent (`db` healthy, `backend`
+> connecté, `frontend` répond, `/api/v1/courses` via le reverse-proxy nginx → `200`). Le blocage
+> précédemment diagnostiqué (« virtualisation non détectée », `VirtualizationFirmwareEnabled` →
+> `False`) était un faux négatif WMI : Windows a déjà un hyperviseur actif
+> (`Win32_ComputerSystem.HypervisorPresent` = `True`) qui masque ces indicateurs bruts vus depuis la
+> partition racine. Le vrai blocage était simplement que **l'application Docker Desktop n'était pas
+> lancée** — un `Start-Process "shell:AppsFolder\Docker.DockerForWindows.Settings"` a suffi.
+> Un vrai bug a par contre été trouvé et corrigé à cette occasion : voir §1 note sur `postgres:18`.
 
 ---
 
@@ -45,6 +46,12 @@ docker compose ps
 
 Application : <http://localhost:8080>
 API (via le proxy nginx) : <http://localhost:8080/api/v1/courses>
+
+> **Note `postgres:18`** : l'image `postgres:18-alpine` a changé de convention de répertoire de
+> données (structure `pg_ctlcluster`, sous-répertoire versionné). Le volume doit donc être monté sur
+> **`/var/lib/postgresql`** (et non plus `/var/lib/postgresql/data`) — sinon le conteneur refuse de
+> démarrer (« there appears to be PostgreSQL data in an unused mount/volume »). Déjà corrigé dans
+> `docker-compose.yml`.
 
 ### Cycle de vie
 

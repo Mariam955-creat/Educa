@@ -144,7 +144,7 @@ Dernière mise à jour : 2026-09-08.
 
 **Livrable démontrable** : ✅ suite de tests verte (backend 23 + frontend 13) ; revue RBAC endpoint par endpoint sans faille ; uploads/downloads durcis ; `/security-review` sans finding.
 
-**Résiduel (hors MVP, à faire avant un déploiement public)** : `server.error.include-message: always` → `never` ; sniffing réel du contenu des uploads (Apache Tika) ; extension `pg_trgm` + index GIN pour la recherche catalogue à l'échelle.
+**Résiduel (hors MVP, à faire avant un déploiement public)** : extension `pg_trgm` + index GIN pour la recherche catalogue à l'échelle. (`server.error.include-message: always` → `never` déjà couvert par le profil `prod`, `application-prod.yml`, Phase 6.6 ; sniffing réel du contenu des uploads fait le 2026-09-15, voir journal.)
 
 ---
 

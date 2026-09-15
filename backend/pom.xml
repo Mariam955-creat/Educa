@@ -123,6 +123,13 @@
 			<version>3.1.1</version>
 		</dependency>
 
+		<!-- Sniffing du contenu réel des fichiers téléversés (magic bytes, indépendant du Content-Type déclaré) -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

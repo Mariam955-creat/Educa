@@ -805,3 +805,25 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP : clé Anthropic réelle, `pg_trgm`/GIN, sniffing Tika des uploads, traductions de contenu pédagogique (`course_translations`/`chapter_translations`, Should have) ; régénération optionnelle de `docs/assets/mcd.*` pour inclure `languages`.
+
+---
+
+## [2026-09-15] Sécurité (résiduel Phase 5) — sniffing réel du contenu des uploads (Apache Tika)
+
+**Fait**
+- **Constat du problème** : `ContentService.validateUpload` (Phase 5) validait le type de fichier contre une liste blanche, mais à partir de `file.getContentType()` — l'en-tête `Content-Type` de la partie multipart, **déclaré par le client**, jamais vérifié contre le contenu réel. N'importe qui pouvait forger cet en-tête (curl, requête brute) pour faire passer un fichier dangereux comme « `application/pdf` » ou tout autre type whitelisté.
+- **Choix technique vérifié empiriquement avant implémentation** (probe jetable dans `src/test`, supprimée ensuite) : `org.apache.tika:tika-core` **seul** (sans le plus lourd `tika-parsers`) suffit pour ce projet. Vérifié avec de vrais octets de signature (« magic bytes ») : PDF, PNG, ZIP, MP4, WEBM détectés correctement par le seul contenu ; DOCX/PPTX/XLSX/DOC/XLS/PPT nécessitent en plus le nom de fichier comme indice (un ZIP quelconque renommé `.docx` est alors accepté comme faux-positif docx — limite acceptée, documentée) ; surtout, un contenu réellement dangereux (`MZ...` exécutable, `<script>` HTML) est **toujours** détecté pour ce qu'il est, même avec une extension et un `Content-Type` trompeurs — magic bytes prioritaires sur le nom de fichier en cas de conflit. C'est la propriété de sécurité qui compte réellement ici.
+- **Implémentation** : `com.educa.backend.storage.FileTypeDetector` (nouveau, `@Component`, façade `Tika` réutilisée) — `detect(MultipartFile)` lit le flux et renvoie le type détecté. `ContentService.validateUpload` appelle ce détecteur au lieu de lire `file.getContentType()`, et **renvoie** le type détecté (signature changée de `void` à `String`) ; `attachFile` stocke ce type détecté dans `Content.mimeType` (au lieu du type déclaré par le client) — cohérent avec le fait que ce champ pilote ensuite le `Content-Type` de réponse et la décision « inline vs pièce jointe » au téléchargement (`ContentController.downloadFile`).
+- **Tests** : 2 nouveaux dans `UploadSecurityTest` — (1) upload d'un vrai PNG faussement déclaré `.pdf`/`application/pdf` → accepté mais stocké **et servi** sous `image/png`, jamais `application/pdf` (démontre que le mensonge du client n'a plus d'effet) ; (2) upload d'un faux exécutable (`MZ...`) faussement déclaré `.pdf`/`application/pdf` → `415`, message révélant le vrai type détecté `application/x-msdownload`. Les 3 tests déjà existants passent toujours, mais désormais sur une détection réellement basée sur le contenu (vérifié qu'ils ne passaient pas « par coincidence » : le test de rejet HTML, par exemple, est confirmé rejeté parce que le nom `.html` + le contenu texte donnent bien `text/html`, absent de la liste blanche). `./mvnw test` → **48/48 verts** (46 précédents + 2 nouveaux).
+- **Vérifié en conditions réelles** (backend `dev`, `curl` avec de vrais octets) : PNG réel accepté ; PDF réel accepté ; faux exécutable `MZ` déclaré `.pdf` → `415` (`application/x-msdownload` révélé) ; PNG réel mais déclaré `.pdf` → `200`, stocké comme `image/png` ; script HTML déclaré `.pdf` → `415` (`text/html` révélé).
+
+**Décisions techniques**
+- `tika-core` seul plutôt que `tika-parsers-standard-package` : ce dernier tirerait Apache POI/PDFBox (déjà présent via `openhtmltopdf`) avec un risque de conflit de versions, pour un gain de précision marginal (distinguer un docx authentique d'un zip quelconque renommé) qui ne change rien à la propriété de sécurité réellement recherchée (rejeter le contenu actif/exécutable). Cohérent avec la discipline du projet (pas de dépendance pour un scénario hypothétique).
+- Pas de contrainte stricte « le type détecté doit correspondre au `Content-Type` déclaré » (rejet en cas de divergence) : le type détecté est simplement la seule source de vérité utilisée, le déclaré est ignoré — plus simple, et évite de rejeter à tort un navigateur qui déclarerait un `Content-Type` générique correct mais légèrement différent de la valeur canonique attendue.
+
+**Écarts par rapport au plan**
+- Aucun — résiduel déjà identifié depuis la Phase 5, simplement traité maintenant.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP : clé Anthropic réelle, `pg_trgm`/GIN pour la recherche catalogue à l'échelle, traductions de contenu pédagogique (`course_translations`/`chapter_translations`, Should have) ; régénération optionnelle de `docs/assets/mcd.*` pour inclure `languages`.

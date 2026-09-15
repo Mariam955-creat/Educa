@@ -76,7 +76,7 @@ cp .env.example .env      # renseigner au minimum POSTGRES_PASSWORD (mot de pass
 ```bash
 cd backend
 ./mvnw spring-boot:run    # http://localhost:8081/api/v1  — profil dev, données de démo seedées
-./mvnw test               # profil test → base educa_test (46 tests)
+./mvnw test               # profil test → base educa_test (48 tests)
 ```
 
 ### Frontend
@@ -126,6 +126,6 @@ Détail (cloud, base managée, TLS, données de démo) : [`docs/07-deploiement.m
 **Phases 0 → 6 terminées** — plan d'implémentation complet. Relecture visuelle au navigateur faite le 2026-09-13 (voir [`docs/06-verification-mvp.md`](docs/06-verification-mvp.md) §4) ; déploiement Docker (`docker compose build` + `up`) vérifié le 2026-09-14 (voir [`docs/07-deploiement.md`](docs/07-deploiement.md)).
 Suivi détaillé : [`docs/03-plan-implementation.md`](docs/03-plan-implementation.md) et [`docs/04-journal-avancement.md`](docs/04-journal-avancement.md).
 
-Résiduel connu (hors périmètre MVP) : clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, sniffing de contenu des uploads (Apache Tika), traductions du contenu des cours (`course_translations`/`chapter_translations`, pas de table).
+Résiduel connu (hors périmètre MVP) : clé Anthropic réelle pour le chatbot live, `pg_trgm` pour la recherche catalogue à l'échelle, traductions du contenu des cours (`course_translations`/`chapter_translations`, pas de table).
 
 Documentation API interactive (Swagger UI, profil `dev`) : `http://localhost:8081/swagger-ui.html` (spec JSON sur `/v3/api-docs`) — désactivée en profil `prod`.

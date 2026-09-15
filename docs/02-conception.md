@@ -101,7 +101,7 @@ com.educa.backend
 ├── enrollment/            # module : Enrollment + Progress
 ├── quiz/                  # module : Quiz + Question + AnswerOption + QuizAttempt + AttemptAnswer
 ├── certificate/          # module : Certificate + génération PDF + vérification publique
-├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible
+├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible ; FileTypeDetector (sniffing Tika)
 ├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
 └── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
 ```
@@ -527,7 +527,7 @@ Sécurité au niveau endpoint (`SecurityFilterChain` + `@PreAuthorize`) **et** a
 - **En-têtes** : `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` via config Spring Security.
 - **Secrets** : `.env` non versionné + variables d'environnement ; `.env.example` fourni.
 - **Rate limiting** (Should have) : sur `/auth/login` et `/ai/chat`.
-- **Uploads** : contrôle du type MIME et de la taille ; noms de fichiers régénérés (non exécutables) ; stockage hors du dossier servi statiquement (dossier `storage` dédié en dev, bucket privé en cible).
+- **Uploads** : contrôle du type réel du fichier par sniffing de contenu (`FileTypeDetector`, Apache Tika `tika-core`, magic bytes — jamais le `Content-Type` déclaré par le client, falsifiable, 2026-09-15) et de la taille ; noms de fichiers régénérés (non exécutables) ; stockage hors du dossier servi statiquement (dossier `storage` dédié en dev, bucket privé en cible).
 - **Journalisation** : logs structurés, jamais de secret ni de mot de passe ; trace des accès admin sensibles.
 
 ---
@@ -611,7 +611,7 @@ Deux niveaux distincts :
 | Tests backend | **JUnit 5 + Spring Boot Test** sur une base `educa_test` **PostgreSQL locale** (profil `test`, Flyway rejoué) — 30 tests | Vraie PostgreSQL, sans Docker. Testcontainers réservé à la CI si Docker disponible | H2 en mémoire (comportement divergent de Postgres) |
 | Doc API | **springdoc-openapi-starter-webmvc-ui 3.1.1** (Swagger UI) — intégré tâche 1.10 (2026-09-15) | Release 3.0.1+ compatible Spring Boot 4 ; `OpenApiConfig` (schéma `bearer-jwt`) ; désactivé en profil `prod` (`springdoc.*.enabled=false`), jamais exposé publiquement | Doc manuelle (les endpoints restent décrits en §4) |
 
-**Dépendances Maven effectivement ajoutées** (Phases 1→6) : `spring-boot-starter-web`, `-data-jpa`, `-validation`, `spring-boot-flyway` + `flyway-core` + `flyway-database-postgresql`, `org.postgresql:postgresql`, `io.jsonwebtoken:jjwt` 0.12.6, **Lombok** + **MapStruct** 1.6.3 (via `annotationProcessorPaths`), `spring-boot-starter-webmvc-test` (tests), `openhtmltopdf-pdfbox` 1.0.10 (certificats), `com.anthropic:anthropic-java` (chatbot), `springdoc-openapi-starter-webmvc-ui` 3.1.1 (Swagger UI). (`spring-boot-starter-security` déjà présent.)
+**Dépendances Maven effectivement ajoutées** (Phases 1→6) : `spring-boot-starter-web`, `-data-jpa`, `-validation`, `spring-boot-flyway` + `flyway-core` + `flyway-database-postgresql`, `org.postgresql:postgresql`, `io.jsonwebtoken:jjwt` 0.12.6, **Lombok** + **MapStruct** 1.6.3 (via `annotationProcessorPaths`), `spring-boot-starter-webmvc-test` (tests), `openhtmltopdf-pdfbox` 1.0.10 (certificats), `com.anthropic:anthropic-java` (chatbot), `springdoc-openapi-starter-webmvc-ui` 3.1.1 (Swagger UI), `org.apache.tika:tika-core` 3.3.0 (sniffing des uploads, 2026-09-15). (`spring-boot-starter-security` déjà présent.)
 Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — quand on branchera le stockage objet ; `spring-boot-testcontainers` + `org.testcontainers:postgresql` — si CI avec Docker.
 
 ---

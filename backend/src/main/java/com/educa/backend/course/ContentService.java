@@ -13,6 +13,7 @@ import com.educa.backend.common.error.ResourceNotFoundException;
 import com.educa.backend.config.EducaProperties;
 import com.educa.backend.course.dto.ContentDto;
 import com.educa.backend.course.dto.ContentRequest;
+import com.educa.backend.storage.FileTypeDetector;
 import com.educa.backend.storage.StorageService;
 
 @Service
@@ -39,14 +40,17 @@ public class ContentService {
     private final ChapterService chapterService;
     private final CourseMapper mapper;
     private final StorageService storageService;
+    private final FileTypeDetector fileTypeDetector;
     private final EducaProperties properties;
 
     public ContentService(ContentRepository contentRepository, ChapterService chapterService,
-                          CourseMapper mapper, StorageService storageService, EducaProperties properties) {
+                          CourseMapper mapper, StorageService storageService, FileTypeDetector fileTypeDetector,
+                          EducaProperties properties) {
         this.contentRepository = contentRepository;
         this.chapterService = chapterService;
         this.mapper = mapper;
         this.storageService = storageService;
+        this.fileTypeDetector = fileTypeDetector;
         this.properties = properties;
     }
 
@@ -88,14 +92,14 @@ public class ContentService {
         if (content.getType() == ContentType.TEXT) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Un contenu TEXT ne porte pas de fichier");
         }
-        validateUpload(file, content.getType());
+        String detectedMime = validateUpload(file, content.getType());
         if (content.hasFile()) {
             storageService.delete(content.getFileKey());
         }
         String key = storageService.store(file, "contents/" + contentId);
         content.setFileKey(key);
         content.setFileName(StringUtils.getFilename(file.getOriginalFilename()));
-        content.setMimeType(file.getContentType().toLowerCase());
+        content.setMimeType(detectedMime);
         return mapper.toContentDto(content);
     }
 
@@ -123,8 +127,14 @@ public class ContentService {
         return storageService.loadAsResource(content.getFileKey());
     }
 
-    /** Contrôle la taille et le type MIME du fichier téléversé avant écriture sur le stockage. */
-    private void validateUpload(MultipartFile file, ContentType type) {
+    /**
+     * Contrôle la taille et le type réel du fichier téléversé avant écriture sur le stockage.
+     * Le type est détecté à partir du contenu (magic bytes, {@link FileTypeDetector}) — jamais du
+     * {@code Content-Type} déclaré par le client, trivialement falsifiable.
+     *
+     * @return le type MIME détecté
+     */
+    private String validateUpload(MultipartFile file, ContentType type) {
         if (file == null || file.isEmpty()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Fichier vide");
         }
@@ -133,12 +143,13 @@ public class ContentService {
             throw new ApiException(HttpStatus.PAYLOAD_TOO_LARGE,
                     "Fichier trop volumineux (max " + properties.storage().maxFileSizeMb() + " Mo)");
         }
-        String mime = file.getContentType() == null ? "" : file.getContentType().toLowerCase();
+        String detected = fileTypeDetector.detect(file);
         Set<String> allowed = type == ContentType.VIDEO ? VIDEO_MIME_TYPES : DOCUMENT_MIME_TYPES;
-        if (!allowed.contains(mime)) {
+        if (!allowed.contains(detected)) {
             throw new ApiException(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-                    "Type de fichier non autorisé : " + (mime.isBlank() ? "inconnu" : mime));
+                    "Type de fichier non autorisé : " + detected);
         }
+        return detected;
     }
 
     private void apply(Content content, ContentRequest request) {

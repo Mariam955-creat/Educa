@@ -43,18 +43,20 @@ public class CourseController {
     public PageResponse<CourseSummaryDto> catalog(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String language,
+            @RequestParam(required = false) String displayLanguage,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         int safeSize = Math.min(Math.max(size, 1), 100);
-        return PageResponse.of(courseService.catalog(q, language, PageRequest.of(Math.max(page, 0), safeSize)));
+        return PageResponse.of(
+                courseService.catalog(q, language, displayLanguage, PageRequest.of(Math.max(page, 0), safeSize)));
     }
 
     @GetMapping("/courses/{slug}")
-    public CourseDetailDto detail(@PathVariable String slug) {
+    public CourseDetailDto detail(@PathVariable String slug, @RequestParam(required = false) String displayLanguage) {
         Long userId = CurrentUser.optionalId();
         Long courseId = courseService.publicIdBySlug(slug);
         boolean enrolled = userId != null && enrollmentService.isEnrolled(userId, courseId);
-        return courseService.getDetailBySlug(slug, enrolled);
+        return courseService.getDetailBySlug(slug, enrolled, displayLanguage);
     }
 
     // ---------- espace formateur ----------

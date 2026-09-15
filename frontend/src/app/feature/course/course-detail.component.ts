@@ -103,7 +103,7 @@ export class CourseDetailComponent implements OnInit {
 
   private reload(slug: string): void {
     this.loading.set(true);
-    this.api.detail(slug).subscribe({
+    this.api.detail(slug, true).subscribe({
       next: (course) => {
         this.course.set(course);
         this.loading.set(false);

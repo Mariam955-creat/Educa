@@ -119,5 +119,64 @@
         <button type="submit">{{ 'courseEditor.addContent' | translate }}</button>
       </form>
     }
+
+    <article class="card sub translations">
+      <h3>{{ 'courseEditor.translations.title' | translate }}</h3>
+      <label>
+        {{ 'courseEditor.translations.languageField' | translate }}
+        <select
+          [ngModel]="selectedTranslationLang()"
+          (ngModelChange)="selectTranslationLang($event)"
+          [ngModelOptions]="{ standalone: true }"
+        >
+          <option value="">{{ 'courseEditor.translations.pickLanguage' | translate }}</option>
+          @for (lang of languages(); track lang.code) {
+            <option [value]="lang.code">
+              {{ lang.name }}
+              @if (translationLanguages().includes(lang.code)) {
+                ✓
+              }
+            </option>
+          }
+        </select>
+      </label>
+
+      @if (translationLoading()) {
+        <p class="muted">{{ 'common.loading' | translate }}</p>
+      } @else {
+        @if (translationDraft(); as draft) {
+          <label>
+            {{ 'courseEditor.titleField' | translate }}
+            <input type="text" [(ngModel)]="draft.courseTitle" [ngModelOptions]="{ standalone: true }" />
+          </label>
+          <label>
+            {{ 'courseEditor.descriptionField' | translate }}
+            <textarea rows="3" [(ngModel)]="draft.courseDescription" [ngModelOptions]="{ standalone: true }"></textarea>
+          </label>
+
+          @if (draft.chapters.length > 0) {
+            <h4>{{ 'courseEditor.chapters' | translate }}</h4>
+            @for (ch of draft.chapters; track ch.chapterId) {
+              <label>
+                {{ ch.originalTitle }}
+                <input
+                  type="text"
+                  [(ngModel)]="ch.title"
+                  [ngModelOptions]="{ standalone: true }"
+                  [placeholder]="ch.originalTitle"
+                />
+              </label>
+            }
+          }
+
+          <div class="row">
+            <button type="button" (click)="saveTranslation()">{{ 'courseEditor.save' | translate }}</button>
+            <button type="button" class="danger" (click)="deleteTranslation()">
+              {{ 'courseEditor.translations.delete' | translate }}
+            </button>
+          </div>
+        }
+      }
+    </article>
   }
 </section>

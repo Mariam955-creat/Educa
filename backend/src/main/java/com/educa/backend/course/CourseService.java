@@ -1,5 +1,9 @@
 package com.educa.backend.course;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,14 +27,20 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final ContentRepository contentRepository;
+    private final CourseTranslationRepository courseTranslationRepository;
+    private final ChapterTranslationRepository chapterTranslationRepository;
     private final CourseMapper mapper;
     private final UserService userService;
     private final LanguageService languageService;
 
     public CourseService(CourseRepository courseRepository, ContentRepository contentRepository,
+                         CourseTranslationRepository courseTranslationRepository,
+                         ChapterTranslationRepository chapterTranslationRepository,
                          CourseMapper mapper, UserService userService, LanguageService languageService) {
         this.courseRepository = courseRepository;
         this.contentRepository = contentRepository;
+        this.courseTranslationRepository = courseTranslationRepository;
+        this.chapterTranslationRepository = chapterTranslationRepository;
         this.mapper = mapper;
         this.userService = userService;
         this.languageService = languageService;
@@ -69,10 +79,12 @@ public class CourseService {
     // ---------- lecture ----------
 
     @Transactional(readOnly = true)
-    public Page<CourseSummaryDto> catalog(String q, String language, Pageable pageable) {
+    public Page<CourseSummaryDto> catalog(String q, String language, String displayLanguage, Pageable pageable) {
         String normalizedQ = StringUtils.hasText(q) ? q.trim() : null;
         String normalizedLang = StringUtils.hasText(language) ? language : null;
-        return courseRepository.searchPublished(normalizedQ, normalizedLang, pageable).map(this::toSummary);
+        Page<Course> page = courseRepository.searchPublished(normalizedQ, normalizedLang, pageable);
+        Map<Long, CourseTranslation> translations = courseTranslationsFor(page.getContent(), displayLanguage);
+        return page.map(course -> toSummary(course, translations.get(course.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -94,7 +106,7 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public CourseDetailDto getDetailBySlug(String slug, boolean contentsVisible) {
+    public CourseDetailDto getDetailBySlug(String slug, boolean contentsVisible, String displayLanguage) {
         Course course = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Cours introuvable"));
         boolean privileged = isOwnerOrAdmin(course);
@@ -103,13 +115,24 @@ public class CourseService {
         }
         boolean showContents = contentsVisible || privileged;
 
-        java.util.List<ChapterDto> chapters = course.getChapters().stream()
-                .map(ch -> showContents
-                        ? mapper.toChapterDto(ch)
-                        : new ChapterDto(ch.getId(), ch.getTitle(), ch.getPosition(), java.util.List.of()))
+        CourseTranslation translation = StringUtils.hasText(displayLanguage)
+                ? courseTranslationRepository.findByCourseIdAndLanguageCode(course.getId(), displayLanguage).orElse(null)
+                : null;
+        Map<Long, String> chapterTitles = chapterTranslationTitlesFor(course.getChapters(), displayLanguage);
+
+        List<ChapterDto> chapters = course.getChapters().stream()
+                .map(ch -> {
+                    String title = chapterTitles.getOrDefault(ch.getId(), ch.getTitle());
+                    return showContents
+                            ? new ChapterDto(ch.getId(), title, ch.getPosition(), mapper.toContentDtos(ch.getContents()))
+                            : new ChapterDto(ch.getId(), title, ch.getPosition(), List.of());
+                })
                 .toList();
 
-        return new CourseDetailDto(course.getId(), course.getSlug(), course.getTitle(), course.getDescription(),
+        String title = translation != null ? translation.getTitle() : course.getTitle();
+        String description = translation != null ? translation.getDescription() : course.getDescription();
+
+        return new CourseDetailDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(), userService.displayNameById(course.getInstructorId()),
                 course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters);
     }
@@ -203,8 +226,34 @@ public class CourseService {
     }
 
     private CourseSummaryDto toSummary(Course course) {
-        return new CourseSummaryDto(course.getId(), course.getSlug(), course.getTitle(), course.getDescription(),
+        return toSummary(course, null);
+    }
+
+    private CourseSummaryDto toSummary(Course course, CourseTranslation translation) {
+        String title = translation != null ? translation.getTitle() : course.getTitle();
+        String description = translation != null ? translation.getDescription() : course.getDescription();
+        return new CourseSummaryDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(),
                 userService.displayNameById(course.getInstructorId()), course.getChapters().size());
+    }
+
+    /** Traductions (dans {@code displayLanguage}, si fourni) des cours d'une page, indexées par id de cours. */
+    private Map<Long, CourseTranslation> courseTranslationsFor(List<Course> courses, String displayLanguage) {
+        if (!StringUtils.hasText(displayLanguage) || courses.isEmpty()) {
+            return Map.of();
+        }
+        List<Long> ids = courses.stream().map(Course::getId).toList();
+        return courseTranslationRepository.findByCourseIdInAndLanguageCode(ids, displayLanguage).stream()
+                .collect(Collectors.toMap(CourseTranslation::getCourseId, t -> t));
+    }
+
+    /** Titres de chapitres traduits (dans {@code displayLanguage}, si fourni), indexés par id de chapitre. */
+    private Map<Long, String> chapterTranslationTitlesFor(List<Chapter> chapters, String displayLanguage) {
+        if (!StringUtils.hasText(displayLanguage) || chapters.isEmpty()) {
+            return Map.of();
+        }
+        List<Long> ids = chapters.stream().map(Chapter::getId).toList();
+        return chapterTranslationRepository.findByChapterIdInAndLanguageCode(ids, displayLanguage).stream()
+                .collect(Collectors.toMap(ChapterTranslation::getChapterId, ChapterTranslation::getTitle));
     }
 }

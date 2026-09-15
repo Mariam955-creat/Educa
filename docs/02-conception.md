@@ -14,7 +14,7 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 |---|---|---|
 | §1.1 / §7.2 | `LlmAiAssistant`, config `ai.provider` | classes réelles : `AiAssistant` → **`ClaudeAiAssistant`** (SDK `com.anthropic:anthropic-java`) / **`DisabledAiAssistant`** ; config `AI_ENABLED` / `ANTHROPIC_API_KEY` / `AI_MODEL` (pas de clé `ai.provider`) |
 | §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **développé** (2026-09-15) : `AdminUserController` (`GET /admin/users?q=`, `PATCH /admin/users/{id}/roles`, `PATCH /admin/users/{id}/status`) + `AdminCertificateController` (`GET /admin/certificates`, registre) + `AdminLanguageController` (`GET /admin/languages`, `PATCH /admin/languages/{code}`) + frontend `/admin` (onglets Utilisateurs/Certificats/Langues). Langue active/inactive répercutée en temps réel sur `GET /languages` (public) et validée à la création/au changement de langue d'un cours (`CourseService`) |
-| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; **`languages` migrée** (`V3__languages.sql`, 2026-09-15 — colonnes `code`/`name`/`active`, pas de colonne `rtl` : cette table ne régit que les **langues de contenu des cours**, pas la langue d'interface — le sens RTL de l'interface reste dérivé côté frontend à partir du code langue, indépendamment de cette table, cf. `frontend/src/app/core/i18n/language.service.ts`) ; `course_translations`/`chapter_translations`/`chat_messages` restent **hors migrations** — Should have |
+| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; **`languages` migrée** (`V3__languages.sql`, 2026-09-15 — colonnes `code`/`name`/`active`, pas de colonne `rtl` : cette table ne régit que les **langues de contenu des cours**, pas la langue d'interface — le sens RTL de l'interface reste dérivé côté frontend à partir du code langue, indépendamment de cette table, cf. `frontend/src/app/core/i18n/language.service.ts`) ; **`course_translations`/`chapter_translations` migrées** (`V5__content_translations.sql`, 2026-09-15, FK vers `languages(code)` contrairement à `courses.language`) ; `chat_messages` reste **hors migrations** — Should have |
 | §4 | `options:[{… isCorrect …}]` ; `verify` renvoie `score` ; `409` si examen verrouillé | champ JSON **`correct`** ; `verify` renvoie **`finalGrade`** ; examen verrouillé → **`403`** (le `409` reste pour « tentatives épuisées ») |
 | §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
 | §8 | PDF « à confirmer » ; Swagger UI ; conteneurisation « reportée » | PDF = **`openhtmltopdf-pdfbox` 1.0.10** (figé) ; **Swagger UI intégré** (`springdoc-openapi-starter-webmvc-ui` 3.1.1, compatible Spring Boot 4 — tâche 1.10, 2026-09-15) ; **stack Docker livrée et vérifiée** (`docker compose build`+`up`, 2026-09-14) en Phase 6.6 (`docs/07-deploiement.md`) |
@@ -92,11 +92,12 @@ com.educa.backend
 │   ├── AdminUserController.java  ( /api/v1/admin/users/** )
 │   ├── dto/                      (RegisterRequest, LoginResponse, UserDto, ...)
 │   └── UserMapper.java
-├── course/                 # module : Course + Chapter + Content (agrégat)
-│   ├── Course.java  Chapter.java  Content.java
+├── course/                 # module : Course + Chapter + Content (agrégat) + traductions
+│   ├── Course.java  Chapter.java  Content.java  CourseTranslation.java  ChapterTranslation.java
 │   ├── CourseRepository.java  ChapterRepository.java  ContentRepository.java
-│   ├── CourseService.java  ChapterService.java  ContentService.java
-│   ├── CourseController.java  ChapterController.java  ContentController.java
+│   │   CourseTranslationRepository.java  ChapterTranslationRepository.java
+│   ├── CourseService.java  ChapterService.java  ContentService.java  CourseTranslationService.java
+│   ├── CourseController.java  ChapterController.java  ContentController.java  CourseTranslationController.java
 │   ├── dto/          └── CourseMapper.java
 ├── enrollment/            # module : Enrollment + Progress
 ├── quiz/                  # module : Quiz + Question + AnswerOption + QuizAttempt + AttemptAnswer
@@ -360,13 +361,13 @@ inactive — sauf si la langue d'un cours existant reste inchangée, pour ne pas
 dont la langue a été désactivée après coup). Ne pilote **pas** la langue d'interface (fichiers `i18n/*.json`
 statiques, indépendants). Pas de colonne `rtl` (inutile ici, contrairement à l'idée de conception initiale).
 
-### Tables — traduction du contenu des cours (Should have, non migrées)
+### Tables — traduction du contenu des cours (migrées, `V5__content_translations.sql`, 2026-09-15)
 
 ```
 course_translations
   id PK
   course_id     FK -> courses(id) ON DELETE CASCADE
-  language_code CHAR(2) FK -> languages(code)
+  language_code VARCHAR(2) FK -> languages(code)
   title         VARCHAR(200) NOT NULL
   description   TEXT
   UNIQUE (course_id, language_code)
@@ -374,10 +375,19 @@ course_translations
 chapter_translations
   id PK
   chapter_id    FK -> chapters(id) ON DELETE CASCADE
-  language_code CHAR(2) FK -> languages(code)
+  language_code VARCHAR(2) FK -> languages(code)
   title         VARCHAR(200) NOT NULL
   UNIQUE (chapter_id, language_code)
 ```
+
+Traduit le titre/la description d'un cours et le titre de ses chapitres (pas les contenus TEXT/VIDEO/DOCUMENT
+eux-mêmes, hors périmètre). Gérées par le propriétaire du cours / un ADMIN via `com.educa.backend.course.
+CourseTranslationService` (`GET/PUT/DELETE /courses/{id}/translations[/​{lang}]`, module `course` — pas de
+module transverse séparé). Lecture : `GET /courses?displayLanguage=xx` et `GET /courses/{slug}?
+displayLanguage=xx` renvoient la traduction si elle existe, sinon le texte original (repli transparent,
+même forme de DTO). Non branché sur `GET /courses/{slug}` par défaut côté formateur (`course-editor` doit
+toujours éditer le texte source, jamais une traduction affichée) — seule la page de consultation publique
+(`course-detail`) passe `displayLanguage`.
 
 ### Tables — chatbot (Should have : persistance)
 
@@ -429,8 +439,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 ### Cours & chapitres & contenus
 | Méthode | Endpoint | Rôle | Notes |
 |---|---|---|---|
-| GET | `/courses` | public | catalogue des cours `published=true` ; filtres `?q=&language=` |
-| GET | `/courses/{slug}` | public | détail (chapitres + contenus si inscrit ou propriétaire/admin) |
+| GET | `/courses` | public | catalogue des cours `published=true` ; filtres `?q=&language=&displayLanguage=` |
+| GET | `/courses/{slug}` | public | détail (chapitres + contenus si inscrit ou propriétaire/admin) ; `?displayLanguage=` |
 | POST | `/courses` | INSTRUCTOR | crée un cours (propriétaire = utilisateur courant) |
 | PUT | `/courses/{id}` | INSTRUCTOR (propriétaire) / ADMIN | maj |
 | DELETE | `/courses/{id}` | INSTRUCTOR (propriétaire) / ADMIN | |
@@ -439,9 +449,13 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | POST | `/courses/{courseId}/chapters` | INSTRUCTOR (propriétaire) | `{title, position}` |
 | PUT/DELETE | `/chapters/{id}` | INSTRUCTOR (propriétaire) | |
 | POST | `/chapters/{chapterId}/contents` | INSTRUCTOR (propriétaire) | `{type, title, position, textBody?}` |
-| POST | `/contents/{id}/file` | INSTRUCTOR (propriétaire) | upload **multipart** (`file`) ; le module `storage` écrit le fichier et renvoie `fileKey` ; contrôle MIME + taille max |
+| POST | `/contents/{id}/file` | INSTRUCTOR (propriétaire) | upload **multipart** (`file`) ; le module `storage` écrit le fichier et renvoie `fileKey` ; contrôle du type réel du fichier par sniffing de contenu (`FileTypeDetector`) + taille max |
 | GET | `/contents/{id}/file` | inscrit / propriétaire / ADMIN | flux binaire du fichier (le module `storage` le lit ; en cible S3 : redirection vers URL pré-signée) |
 | PUT/DELETE | `/contents/{id}` | INSTRUCTOR (propriétaire) | |
+| GET | `/courses/{id}/translations` | INSTRUCTOR (propriétaire) / ADMIN | langues dans lesquelles le cours a déjà une traduction |
+| GET | `/courses/{id}/translations/{lang}` | INSTRUCTOR (propriétaire) / ADMIN | vue d'édition : titre/description traduits + titre original/traduit de chaque chapitre |
+| PUT | `/courses/{id}/translations/{lang}` | INSTRUCTOR (propriétaire) / ADMIN | `{courseTitle, courseDescription?, chapters:[{chapterId, title?}]}` — crée/maj ; `title` de chapitre vide = retire sa traduction ; `400` si langue inactive |
+| DELETE | `/courses/{id}/translations/{lang}` | INSTRUCTOR (propriétaire) / ADMIN | retire la traduction du cours + de tous ses chapitres dans cette langue |
 
 ### Inscription & progression
 | Méthode | Endpoint | Rôle | Notes |
@@ -552,12 +566,18 @@ Deux niveaux distincts :
 - Formats dates/nombres via l'API `Intl` du navigateur selon la locale active.
 - Police : famille compatible latin + arabe (ex. « Noto Sans » + « Noto Sans Arabic ») embarquée en local.
 
-### 6.2 i18n du contenu pédagogique (Should have)
-- Le contenu original d'un cours a une `language` (langue d'origine).
-- Tables `course_translations`, `chapter_translations` : le formateur saisit les traductions (EF-28).
-- À la lecture, l'API renvoie la traduction correspondant à `Accept-Language` / `?lang=` si elle existe, sinon la langue d'origine (fallback) + un indicateur `translated: false`.
+### 6.2 i18n du contenu pédagogique (Should have — **fait le 2026-09-15**, EF-28)
+- Le contenu original d'un cours a une `language` (langue d'origine, `courses.language`).
+- Tables `course_translations`, `chapter_translations` (§3) : le formateur saisit les traductions via un écran
+  dédié dans `course-editor` (un onglet « Traductions », une langue à la fois : titre + description du cours
+  + titre de chaque chapitre), `com.educa.backend.course.CourseTranslationController`.
+- À la lecture, l'API renvoie la traduction si elle existe pour le `?displayLanguage=xx` demandé, sinon la
+  langue d'origine (repli silencieux, même forme de DTO — pas d'indicateur `translated` séparé, écart avec
+  l'ébauche initiale qui envisageait `Accept-Language`). Le frontend passe automatiquement la langue
+  d'interface courante sur la page de consultation publique (`course-detail`, `catalog`) ; l'éditeur formateur
+  ne le fait jamais (il doit toujours éditer le texte source).
 - Les contenus riches (vidéos, documents) ne sont pas traduits automatiquement : le formateur peut fournir des contenus alternatifs par langue (hors périmètre MVP).
-- EF-29 (traduction assistée par IA) : Could have, réutilise le service IA.
+- EF-29 (traduction assistée par IA) : Could have, réutilise le service IA — non fait.
 
 ### 6.3 Langue des certificats
 - Le PDF est généré dans la langue de préférence de l'apprenant au moment de l'émission ; libellés depuis un bundle serveur `messages_{fr,en,ar}.properties`. Gabarit RTL dédié pour l'arabe.

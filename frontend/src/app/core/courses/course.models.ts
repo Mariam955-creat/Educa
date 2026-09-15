@@ -88,3 +88,27 @@ export interface ContentFormValue {
   position: number;
   textBody?: string;
 }
+
+export interface ChapterTranslationItem {
+  chapterId: number;
+  originalTitle: string;
+  translatedTitle?: string;
+}
+
+export interface CourseTranslationEdit {
+  languageCode: string;
+  courseTitle?: string;
+  courseDescription?: string;
+  chapters: ChapterTranslationItem[];
+}
+
+export interface ChapterTranslationInput {
+  chapterId: number;
+  title?: string;
+}
+
+export interface UpdateCourseTranslationRequest {
+  courseTitle: string;
+  courseDescription?: string;
+  chapters: ChapterTranslationInput[];
+}

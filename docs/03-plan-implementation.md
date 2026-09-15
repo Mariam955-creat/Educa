@@ -119,7 +119,7 @@ Dernière mise à jour : 2026-09-08.
 | 4.6 | Backend : `AiChatService` exige une inscription active (ou propriétaire/ADMIN) → `403` sinon ; `educa.ai.*` depuis l'env (`ANTHROPIC_API_KEY`, `AI_MODEL` défaut `claude-sonnet-5`, `AI_ENABLED`, `AI_TIMEOUT_MS`) | `com.educa.backend.ai` | fait | 2026-09-08 |
 | 4.7 | Frontend : `CourseChatComponent` (widget « Assistant du cours » sur la page cours, visible si inscrit) ; `AiApiService` ; historique local (7 derniers échanges) | `frontend/src/app/feature/course`, `core/ai` | fait | 2026-09-08 |
 | 4.8 | Tests backend : `AiChatTest` — `403` si non inscrit ; `{degraded:true}` quand `ai.enabled=false` (profil `test`). `./mvnw test` → **20 verts** | `backend/src/test/...` | fait | 2026-09-08 |
-| 4.9 | (S) Tables `languages`, `course_translations`, `chapter_translations` | migration `V?__i18n.sql` | à faire (Should have) | — |
+| 4.9 | (S) Tables `languages`, `course_translations`, `chapter_translations` | `V3__languages.sql`, `V5__content_translations.sql` | fait — `languages` (2026-09-15), `course_translations`/`chapter_translations` (2026-09-15, `CourseTranslationController` : gestion par le formateur, lecture via `?displayLanguage=` sur `/courses` et `/courses/{slug}`, repli sur l'original) | 2026-09-15 |
 | 4.10 | (S) Persistance `chat_messages` | `com.educa.backend.ai` | à faire (Should have) | — |
 | 4.11 | (S) Génération assistée de quiz par IA | — | à faire (Should have) | — |
 | 4.12 | (C) Recommandation de formations | — | à faire (Could have) | — |

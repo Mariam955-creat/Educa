@@ -138,7 +138,16 @@
     "contentField": "Content",
     "fileField": "File",
     "addContent": "Add content",
-    "confirmDeleteChapter": "Delete this chapter and its content?"
+    "confirmDeleteChapter": "Delete this chapter and its content?",
+    "translations": {
+      "title": "Translations",
+      "languageField": "Language",
+      "pickLanguage": "— Choose a language —",
+      "delete": "Remove this language",
+      "saved": "Translation saved.",
+      "saveError": "Could not save the translation.",
+      "confirmDelete": "Delete the translation in this language?"
+    }
   },
   "instructorDashboard": {
     "title": "Instructor area",

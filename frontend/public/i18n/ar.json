@@ -138,7 +138,16 @@
     "contentField": "المحتوى",
     "fileField": "الملف",
     "addContent": "إضافة المحتوى",
-    "confirmDeleteChapter": "هل تريد حذف هذا الفصل ومحتوياته؟"
+    "confirmDeleteChapter": "هل تريد حذف هذا الفصل ومحتوياته؟",
+    "translations": {
+      "title": "الترجمات",
+      "languageField": "اللغة",
+      "pickLanguage": "— اختر لغة —",
+      "delete": "حذف هذه اللغة",
+      "saved": "تم حفظ الترجمة.",
+      "saveError": "تعذر حفظ الترجمة.",
+      "confirmDelete": "حذف الترجمة بهذه اللغة؟"
+    }
   },
   "instructorDashboard": {
     "title": "فضاء المدرّب",

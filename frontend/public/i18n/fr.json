@@ -138,7 +138,16 @@
     "contentField": "Contenu",
     "fileField": "Fichier",
     "addContent": "Ajouter le contenu",
-    "confirmDeleteChapter": "Supprimer ce chapitre et ses contenus ?"
+    "confirmDeleteChapter": "Supprimer ce chapitre et ses contenus ?",
+    "translations": {
+      "title": "Traductions",
+      "languageField": "Langue",
+      "pickLanguage": "— Choisir une langue —",
+      "delete": "Supprimer cette langue",
+      "saved": "Traduction enregistrée.",
+      "saveError": "Impossible d'enregistrer la traduction.",
+      "confirmDelete": "Supprimer la traduction dans cette langue ?"
+    }
   },
   "instructorDashboard": {
     "title": "Espace formateur",

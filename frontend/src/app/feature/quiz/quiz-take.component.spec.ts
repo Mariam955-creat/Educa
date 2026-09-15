@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { QuizTakeComponent } from './quiz-take.component';
@@ -55,6 +56,7 @@ describe('QuizTakeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [QuizTakeComponent],
       providers: [
+        provideTranslateService({}),
         { provide: QuizApiService, useValue: apiStub },
         { provide: Router, useValue: routerStub },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: new Map([['id', '42']]) } } },

@@ -758,4 +758,23 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 
 **Bloquant** — aucun.
 
-**Prochaine étape** — résiduel hors MVP : clé Anthropic réelle, `pg_trgm`/GIN, sniffing Tika des uploads, gestion des langues actives (`/admin/languages`), traductions de contenu pédagogique (Should have) ; corriger si souhaité la régression pré-existante de `quiz-take.component.spec.ts` (hors scope de cette session).
+**Prochaine étape** — résiduel hors MVP : clé Anthropic réelle, `pg_trgm`/GIN, sniffing Tika des uploads, gestion des langues actives (`/admin/languages`), traductions de contenu pédagogique (Should have).
+
+---
+
+## [2026-09-15] Frontend — correctif de la régression `QuizTakeComponent` (test)
+
+**Fait**
+- Corrigé la régression signalée dans l'entrée précédente : `quiz-take.component.spec.ts` ne fournissait pas `TranslateService` à son `TestBed`, alors que `QuizTakeComponent` l'injecte (`inject(TranslateService)`) depuis le retrofit i18n du 2026-09-13 (`TranslatePipe` ajouté au template + `translate.instant(...)` dans les branches d'erreur). Les 4 tests concernés échouaient avec `NullInjectorError: No provider for TranslateService` dès `TestBed.createComponent()`, avant même tout rendu de template.
+- Correctif : ajout de `provideTranslateService({})` (import `@ngx-translate/core`) aux `providers` du `TestBed`, même patron déjà utilisé par `login.component.spec.ts` et `app.component.spec.ts`. Une ligne d'import + une ligne de provider, aucun changement du composant ni des autres tests.
+- Vérifié : `npm run test:ci` → **13/13 verts** (était 9/13). `./mvnw clean compile` toujours OK côté backend (non affecté, changement frontend uniquement).
+
+**Décisions techniques**
+- Aucune — fix minimal alignant le test sur le patron déjà établi ailleurs dans le projet, pas de nouvelle convention introduite.
+
+**Écarts par rapport au plan**
+- Aucun.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP inchangé : clé Anthropic réelle, `pg_trgm`/GIN, sniffing Tika des uploads, gestion des langues actives (`/admin/languages`), traductions de contenu pédagogique (Should have).

@@ -85,7 +85,7 @@ cd frontend
 npm install
 npm start                 # http://localhost:4200
 npm run build             # build de production
-npm run test:ci           # Karma headless (13 tests — 4 en échec pré-existant, voir CLAUDE.md)
+npm run test:ci           # Karma headless (13 tests)
 ```
 
 ### Vérification bout-en-bout

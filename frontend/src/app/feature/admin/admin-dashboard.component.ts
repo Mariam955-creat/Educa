@@ -1,22 +1,115 @@
-import { Component, inject } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
+import { AdminApiService } from '../../core/admin/admin-api.service';
+import { AdminUser, CertificateRegistryEntry } from '../../core/admin/admin.models';
 import { AuthService } from '../../core/auth/auth.service';
+import { RoleName } from '../../core/auth/auth.models';
+
+type Tab = 'users' | 'certificates';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [TranslatePipe],
-  template: `
-    <section class="page">
-      <h1>{{ 'admin.title' | translate }}</h1>
-      <p class="role">{{ 'admin.connectedAs' | translate: { email: auth.user()?.email } }}</p>
-      <div class="placeholder">
-        <p>{{ 'admin.placeholder' | translate }}</p>
-      </div>
-    </section>
-  `,
-  styleUrl: '../dashboard/dashboard.scss',
+  imports: [DatePipe, FormsModule, TranslatePipe],
+  templateUrl: './admin-dashboard.component.html',
+  styleUrl: './admin-dashboard.component.scss',
 })
-export class AdminDashboardComponent {
+export class AdminDashboardComponent implements OnInit {
+  private readonly api = inject(AdminApiService);
+  private readonly translate = inject(TranslateService);
   readonly auth = inject(AuthService);
+
+  readonly roleOptions: RoleName[] = ['LEARNER', 'INSTRUCTOR', 'ADMIN'];
+
+  readonly tab = signal<Tab>('users');
+  readonly currentUserId = computed(() => this.auth.user()?.id ?? null);
+  readonly message = signal<string | null>(null);
+
+  readonly q = signal('');
+  readonly users = signal<AdminUser[]>([]);
+  readonly usersLoading = signal(true);
+
+  readonly certificates = signal<CertificateRegistryEntry[]>([]);
+  readonly certificatesLoading = signal(true);
+  private certificatesLoaded = false;
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  selectTab(tab: Tab): void {
+    this.tab.set(tab);
+    if (tab === 'certificates' && !this.certificatesLoaded) {
+      this.loadCertificates();
+    }
+  }
+
+  search(): void {
+    this.loadUsers();
+  }
+
+  primaryRole(user: AdminUser): RoleName {
+    if (user.roles.includes('ADMIN')) return 'ADMIN';
+    if (user.roles.includes('INSTRUCTOR')) return 'INSTRUCTOR';
+    return 'LEARNER';
+  }
+
+  changeRole(user: AdminUser, role: string): void {
+    this.api.updateRoles(user.id, [role as RoleName]).subscribe({
+      next: (updated) => this.replaceUser(updated),
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('admin.users.updateError'));
+        this.loadUsers();
+      },
+    });
+  }
+
+  toggleEnabled(user: AdminUser): void {
+    const nextEnabled = !user.enabled;
+    const key = nextEnabled ? 'admin.users.confirmEnable' : 'admin.users.confirmDisable';
+    if (!confirm(this.translate.instant(key, { name: user.fullName }))) return;
+
+    this.api.updateStatus(user.id, nextEnabled).subscribe({
+      next: (updated) => this.replaceUser(updated),
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('admin.users.updateError'));
+        this.loadUsers();
+      },
+    });
+  }
+
+  private replaceUser(updated: AdminUser): void {
+    this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+  }
+
+  private loadUsers(): void {
+    this.usersLoading.set(true);
+    this.api.users(this.q().trim() || undefined).subscribe({
+      next: (page) => {
+        this.users.set(page.content);
+        this.usersLoading.set(false);
+      },
+      error: () => this.usersLoading.set(false),
+    });
+  }
+
+  private loadCertificates(): void {
+    this.certificatesLoading.set(true);
+    this.api.certificateRegistry().subscribe({
+      next: (page) => {
+        this.certificates.set(page.content);
+        this.certificatesLoading.set(false);
+        this.certificatesLoaded = true;
+      },
+      error: () => this.certificatesLoading.set(false),
+    });
+  }
+
+  private flash(text: string): void {
+    this.message.set(text);
+    setTimeout(() => this.message.set(null), 3500);
+  }
 }

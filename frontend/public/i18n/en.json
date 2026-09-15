@@ -200,6 +200,38 @@
   "admin": {
     "title": "Administration",
     "connectedAs": "Signed in: {{email}}",
-    "placeholder": "User, role and language management, and certificate registry (Phase 3 & 4)."
+    "tabs": {
+      "users": "Users",
+      "certificates": "Certificates"
+    },
+    "roles": {
+      "LEARNER": "Learner",
+      "INSTRUCTOR": "Instructor",
+      "ADMIN": "Administrator"
+    },
+    "users": {
+      "searchPlaceholder": "Search (name, email)…",
+      "search": "Search",
+      "empty": "No users found.",
+      "headerName": "Name",
+      "headerEmail": "Email",
+      "headerRole": "Role",
+      "headerStatus": "Status",
+      "enabled": "Active",
+      "disabled": "Disabled",
+      "enable": "Enable",
+      "disable": "Disable",
+      "confirmDisable": "Disable the account of \"{{name}}\"?",
+      "confirmEnable": "Re-enable the account of \"{{name}}\"?",
+      "updateError": "Action not allowed."
+    },
+    "certificates": {
+      "empty": "No certificate issued yet.",
+      "headerSerial": "Serial no.",
+      "headerHolder": "Holder",
+      "headerCourse": "Course",
+      "headerGrade": "Final grade",
+      "headerIssued": "Issued on"
+    }
   }
 }

@@ -200,6 +200,38 @@
   "admin": {
     "title": "Administration",
     "connectedAs": "Connecté : {{email}}",
-    "placeholder": "Gestion des utilisateurs, des rôles, des langues et registre des certificats (Phase 3 & 4)."
+    "tabs": {
+      "users": "Utilisateurs",
+      "certificates": "Certificats"
+    },
+    "roles": {
+      "LEARNER": "Apprenant",
+      "INSTRUCTOR": "Formateur",
+      "ADMIN": "Administrateur"
+    },
+    "users": {
+      "searchPlaceholder": "Rechercher (nom, email)…",
+      "search": "Rechercher",
+      "empty": "Aucun utilisateur trouvé.",
+      "headerName": "Nom",
+      "headerEmail": "Email",
+      "headerRole": "Rôle",
+      "headerStatus": "Statut",
+      "enabled": "Actif",
+      "disabled": "Désactivé",
+      "enable": "Activer",
+      "disable": "Désactiver",
+      "confirmDisable": "Désactiver le compte de « {{name}} » ?",
+      "confirmEnable": "Réactiver le compte de « {{name}} » ?",
+      "updateError": "Action impossible."
+    },
+    "certificates": {
+      "empty": "Aucun certificat délivré.",
+      "headerSerial": "N° de série",
+      "headerHolder": "Titulaire",
+      "headerCourse": "Cours",
+      "headerGrade": "Note finale",
+      "headerIssued": "Délivré le"
+    }
   }
 }

@@ -3,6 +3,8 @@ package com.educa.backend.certificate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
@@ -12,4 +14,6 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     Optional<Certificate> findByVerificationCode(String verificationCode);
 
     List<Certificate> findByUserIdOrderByIssuedAtDesc(Long userId);
+
+    Page<Certificate> findAllByOrderByIssuedAtDesc(Pageable pageable);
 }

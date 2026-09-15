@@ -13,7 +13,7 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 | § | Conception (ci-dessous) | Réalité du code livré |
 |---|---|---|
 | §1.1 / §7.2 | `LlmAiAssistant`, config `ai.provider` | classes réelles : `AiAssistant` → **`ClaudeAiAssistant`** (SDK `com.anthropic:anthropic-java`) / **`DisabledAiAssistant`** ; config `AI_ENABLED` / `ANTHROPIC_API_KEY` / `AI_MODEL` (pas de clé `ai.provider`) |
-| §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **non développé** (Should have) — pas de contrôleur `/admin/**`. La promotion `INSTRUCTOR` se fait en base |
+| §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **partiellement développé** (2026-09-15) : `AdminUserController` (`GET /admin/users?q=`, `PATCH /admin/users/{id}/roles`, `PATCH /admin/users/{id}/status`) + `AdminCertificateController` (`GET /admin/certificates`, registre) + frontend `/admin` (onglets Utilisateurs/Certificats) ; **gestion des langues actives non développée** (`GET/PATCH /admin/languages`, Should have — pas de table `languages`) |
 | §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; les tables i18n de contenu et `chat_messages` **ne sont pas** dans les migrations (`V1`/`V2`) — Should have |
 | §4 | `options:[{… isCorrect …}]` ; `verify` renvoie `score` ; `409` si examen verrouillé | champ JSON **`correct`** ; `verify` renvoie **`finalGrade`** ; examen verrouillé → **`403`** (le `409` reste pour « tentatives épuisées ») |
 | §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
@@ -457,11 +457,11 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 ### Administration
 | Méthode | Endpoint | Rôle | Notes |
 |---|---|---|---|
-| GET | `/admin/users` | ADMIN | liste + recherche `?q=` |
-| PATCH | `/admin/users/{id}/roles` | ADMIN | `{roles:["INSTRUCTOR"]}` |
-| PATCH | `/admin/users/{id}/status` | ADMIN | `{enabled: false}` |
-| GET | `/admin/certificates` | ADMIN | registre (Should have) |
-| GET/PATCH | `/admin/languages` | ADMIN | gestion langues actives (Should have) |
+| GET | `/admin/users` | ADMIN | liste + recherche `?q=`, paginée |
+| PATCH | `/admin/users/{id}/roles` | ADMIN | `{roles:["INSTRUCTOR"]}` — `400` si rôle inconnu, `409` si un ADMIN retire son propre rôle admin |
+| PATCH | `/admin/users/{id}/status` | ADMIN | `{enabled: false}` — `409` si un ADMIN tente de se désactiver lui-même ; un compte désactivé est bloqué au prochain `/auth/refresh` |
+| GET | `/admin/certificates` | ADMIN | registre paginé de tous les certificats délivrés |
+| GET/PATCH | `/admin/languages` | ADMIN | gestion langues actives — **non développé** (Should have, pas de table `languages`) |
 
 ---
 

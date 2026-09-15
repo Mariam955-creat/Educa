@@ -200,6 +200,38 @@
   "admin": {
     "title": "الإدارة",
     "connectedAs": "متصل: {{email}}",
-    "placeholder": "إدارة المستخدمين والأدوار واللغات وسجل الشهادات (المرحلة 3 و4)."
+    "tabs": {
+      "users": "المستخدمون",
+      "certificates": "الشهادات"
+    },
+    "roles": {
+      "LEARNER": "متعلم",
+      "INSTRUCTOR": "مُدرّب",
+      "ADMIN": "مشرف"
+    },
+    "users": {
+      "searchPlaceholder": "بحث (الاسم، البريد الإلكتروني)…",
+      "search": "بحث",
+      "empty": "لا يوجد مستخدمون.",
+      "headerName": "الاسم",
+      "headerEmail": "البريد الإلكتروني",
+      "headerRole": "الدور",
+      "headerStatus": "الحالة",
+      "enabled": "نشط",
+      "disabled": "معطّل",
+      "enable": "تفعيل",
+      "disable": "تعطيل",
+      "confirmDisable": "تعطيل حساب « {{name}} »؟",
+      "confirmEnable": "إعادة تفعيل حساب « {{name}} »؟",
+      "updateError": "الإجراء غير مسموح."
+    },
+    "certificates": {
+      "empty": "لم يتم إصدار أي شهادة بعد.",
+      "headerSerial": "الرقم التسلسلي",
+      "headerHolder": "صاحب الشهادة",
+      "headerCourse": "الدورة",
+      "headerGrade": "الدرجة النهائية",
+      "headerIssued": "تاريخ الإصدار"
+    }
   }
 }

@@ -1,0 +1,110 @@
+<section class="page">
+  <div class="head">
+    <div>
+      <h1>{{ 'admin.title' | translate }}</h1>
+      <p class="role">{{ 'admin.connectedAs' | translate: { email: auth.user()?.email } }}</p>
+    </div>
+  </div>
+
+  @if (message()) {
+    <p class="flash">{{ message() }}</p>
+  }
+
+  <nav class="tabs">
+    <button type="button" [class.active]="tab() === 'users'" (click)="selectTab('users')">
+      {{ 'admin.tabs.users' | translate }}
+    </button>
+    <button type="button" [class.active]="tab() === 'certificates'" (click)="selectTab('certificates')">
+      {{ 'admin.tabs.certificates' | translate }}
+    </button>
+  </nav>
+
+  @if (tab() === 'users') {
+    <div class="toolbar">
+      <input
+        type="search"
+        [ngModel]="q()"
+        (ngModelChange)="q.set($event)"
+        (keyup.enter)="search()"
+        [placeholder]="'admin.users.searchPlaceholder' | translate"
+      />
+      <button type="button" (click)="search()">{{ 'admin.users.search' | translate }}</button>
+    </div>
+
+    @if (usersLoading()) {
+      <p class="muted">{{ 'common.loading' | translate }}</p>
+    } @else if (users().length === 0) {
+      <p class="muted">{{ 'admin.users.empty' | translate }}</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'admin.users.headerName' | translate }}</th>
+            <th>{{ 'admin.users.headerEmail' | translate }}</th>
+            <th>{{ 'admin.users.headerRole' | translate }}</th>
+            <th>{{ 'admin.users.headerStatus' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>{{ user.fullName }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <select
+                  [ngModel]="primaryRole(user)"
+                  [disabled]="user.id === currentUserId()"
+                  (ngModelChange)="changeRole(user, $event)"
+                >
+                  @for (role of roleOptions; track role) {
+                    <option [value]="role">{{ 'admin.roles.' + role | translate }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <span class="badge" [class.on]="user.enabled">
+                  {{ (user.enabled ? 'admin.users.enabled' : 'admin.users.disabled') | translate }}
+                </span>
+              </td>
+              <td class="actions">
+                <button type="button" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
+                  {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  } @else {
+    @if (certificatesLoading()) {
+      <p class="muted">{{ 'common.loading' | translate }}</p>
+    } @else if (certificates().length === 0) {
+      <p class="muted">{{ 'admin.certificates.empty' | translate }}</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'admin.certificates.headerSerial' | translate }}</th>
+            <th>{{ 'admin.certificates.headerHolder' | translate }}</th>
+            <th>{{ 'admin.certificates.headerCourse' | translate }}</th>
+            <th>{{ 'admin.certificates.headerGrade' | translate }}</th>
+            <th>{{ 'admin.certificates.headerIssued' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cert of certificates(); track cert.id) {
+            <tr>
+              <td>{{ cert.serialNumber }}</td>
+              <td>{{ cert.holderName }}</td>
+              <td>{{ cert.courseTitle }}</td>
+              <td>{{ cert.finalGrade }}</td>
+              <td>{{ cert.issuedAt | date: 'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</section>

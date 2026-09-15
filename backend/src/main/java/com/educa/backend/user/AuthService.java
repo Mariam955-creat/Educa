@@ -90,6 +90,9 @@ public class AuthService {
         if (!stored.isActive()) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Jeton de rafraîchissement expiré ou révoqué");
         }
+        if (!stored.getUser().isEnabled()) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Compte désactivé");
+        }
         stored.setRevoked(true);
         refreshTokenRepository.save(stored);
 

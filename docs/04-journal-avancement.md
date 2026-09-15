@@ -900,3 +900,23 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code) ; régénération optionnelle de `docs/assets/mcd.*` pour refléter `languages`/`course_translations`/`chapter_translations`.
+
+---
+
+## [2026-09-15] Régénération des diagrammes MCD (tâche 6.4, résiduel R.8)
+
+**Fait**
+- `docs/assets/mcd.mmd` complété avec les 3 tables ajoutées cette session (`LANGUAGE`, `COURSE_TRANSLATION`, `CHAPTER_TRANSLATION`) et leurs attributs réels (`code`/`name`/`active` ; `course_id`/`language_code`/`title`/`description` ; `chapter_id`/`language_code`/`title`), plus les 4 relations correspondantes (`COURSE ||--o{ COURSE_TRANSLATION`, `LANGUAGE ||--o{ COURSE_TRANSLATION`, `CHAPTER ||--o{ CHAPTER_TRANSLATION`, `LANGUAGE ||--o{ CHAPTER_TRANSLATION`).
+- Régénéré `mcd.svg`/`mcd.png` avec la commande déjà documentée dans `docs/assets/README.md` (`@mermaid-js/mermaid-cli` + Chrome du poste) — vérifié après coup que les 3 nouvelles entités apparaissent bien dans le SVG généré (8 occurrences chacune, cohérent avec leur bloc d'attributs + leurs relations).
+- Mis à jour les mentions du nombre de tables (« 15 » → **« 18 »**) et « pas encore régénéré » → « régénéré le 2026-09-15 » dans `docs/assets/README.md` et `docs/02-conception.md` §2. `docs/03-plan-implementation.md` : nouvelle ligne R.8 dans le tableau « Résiduel post-plan », résiduel restant réduit à la seule clé Anthropic.
+- Fichier temporaire `puppeteer.json` (config Chrome pour `mermaid-cli`) supprimé après génération, comme documenté (non versionné).
+
+**Décisions techniques**
+- Aucune — tâche purement documentaire, suit le mode d'emploi déjà en place.
+
+**Écarts par rapport au plan**
+- Aucun.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code). Plus aucun autre résidu identifié.

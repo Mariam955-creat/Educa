@@ -117,6 +117,24 @@ erDiagram
         varchar  pdf_key
         timestamptz issued_at
     }
+    LANGUAGE {
+        varchar code PK "fr | en | ar"
+        varchar name
+        boolean active
+    }
+    COURSE_TRANSLATION {
+        bigint  id PK
+        bigint  course_id FK
+        varchar language_code FK
+        varchar title
+        text    description
+    }
+    CHAPTER_TRANSLATION {
+        bigint  id PK
+        bigint  chapter_id FK
+        varchar language_code FK
+        varchar title
+    }
 
     USER      ||--o{ USER_ROLE      : "possède"
     ROLE      ||--o{ USER_ROLE      : "attribué à"
@@ -139,3 +157,7 @@ erDiagram
     QUIZ_ATTEMPT ||--o| CERTIFICATE : "déclenche"
     USER      ||--o{ CERTIFICATE    : "détient"
     COURSE    ||--o{ CERTIFICATE    : "atteste"
+    COURSE    ||--o{ COURSE_TRANSLATION  : "traduit en"
+    LANGUAGE  ||--o{ COURSE_TRANSLATION  : "langue de"
+    CHAPTER   ||--o{ CHAPTER_TRANSLATION : "traduit en"
+    LANGUAGE  ||--o{ CHAPTER_TRANSLATION : "langue de"

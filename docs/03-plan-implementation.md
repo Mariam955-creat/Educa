@@ -178,8 +178,9 @@ Détail complet : `docs/04-journal-avancement.md` (entrées du 2026-09-15).
 | R.5 | Sécurité — sniffing réel du contenu des uploads (Apache Tika, remplace le `Content-Type` déclaré par le client) | `com.educa.backend.storage.FileTypeDetector` | fait | 2026-09-15 |
 | R.6 | Performance — `pg_trgm` + index GIN pour la recherche catalogue à l'échelle | `V4__catalog_search_trgm.sql` | fait | 2026-09-15 |
 | R.7 | Régression pré-existante — `quiz-take.component.spec.ts` cassé depuis le retrofit i18n du 2026-09-13 | `frontend/src/app/feature/quiz` | fait (découverte et corrigée au passage, sans lien avec R.1→R.6) | 2026-09-15 |
+| R.8 | Régénération des diagrammes MCD (tâche 6.4) pour refléter `languages`/`course_translations`/`chapter_translations` | `docs/assets/mcd.{mmd,svg,png}` | fait — **18 tables** (était 15) | 2026-09-15 |
 
-**Résiduel restant (hors MVP)** : clé Anthropic réelle pour des réponses de chatbot live (nécessite une vraie clé, pas une tâche de code) ; régénération optionnelle de `docs/assets/mcd.*` pour y refléter `languages`/`course_translations`/`chapter_translations`.
+**Résiduel restant (hors MVP)** : clé Anthropic réelle pour des réponses de chatbot live (nécessite une vraie clé, pas une tâche de code).
 
 ---
 

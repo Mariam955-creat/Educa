@@ -171,7 +171,7 @@ erDiagram
     COURSE ||--o{ CHAT_MESSAGE : contextualise
 ```
 
-> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des tables du MVP réellement migrées (Flyway `V1`/`V2`, **15 tables** ; export non encore régénéré depuis l'ajout de `LANGUAGE` en `V3` le 2026-09-15, voir `docs/assets/README.md`). Les entités `*_TRANSLATION` / `CHAT_MESSAGE` ci-dessus restent au stade conception (*Should have*) ; `LANGUAGE` est désormais réellement migrée (§3).
+> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des tables du MVP réellement migrées (Flyway `V1`→`V5`, **18 tables**, export régénéré le 2026-09-15, voir `docs/assets/README.md`). `LANGUAGE`, `COURSE_TRANSLATION`, `CHAPTER_TRANSLATION` y figurent désormais avec leurs attributs réels (§3) ; seule `CHAT_MESSAGE` ci-dessus reste au stade conception (*Should have*).
 
 ### Cardinalités et règles de gestion
 

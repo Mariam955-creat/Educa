@@ -13,8 +13,8 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 | § | Conception (ci-dessous) | Réalité du code livré |
 |---|---|---|
 | §1.1 / §7.2 | `LlmAiAssistant`, config `ai.provider` | classes réelles : `AiAssistant` → **`ClaudeAiAssistant`** (SDK `com.anthropic:anthropic-java`) / **`DisabledAiAssistant`** ; config `AI_ENABLED` / `ANTHROPIC_API_KEY` / `AI_MODEL` (pas de clé `ai.provider`) |
-| §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **partiellement développé** (2026-09-15) : `AdminUserController` (`GET /admin/users?q=`, `PATCH /admin/users/{id}/roles`, `PATCH /admin/users/{id}/status`) + `AdminCertificateController` (`GET /admin/certificates`, registre) + frontend `/admin` (onglets Utilisateurs/Certificats) ; **gestion des langues actives non développée** (`GET/PATCH /admin/languages`, Should have — pas de table `languages`) |
-| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; les tables i18n de contenu et `chat_messages` **ne sont pas** dans les migrations (`V1`/`V2`) — Should have |
+| §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **développé** (2026-09-15) : `AdminUserController` (`GET /admin/users?q=`, `PATCH /admin/users/{id}/roles`, `PATCH /admin/users/{id}/status`) + `AdminCertificateController` (`GET /admin/certificates`, registre) + `AdminLanguageController` (`GET /admin/languages`, `PATCH /admin/languages/{code}`) + frontend `/admin` (onglets Utilisateurs/Certificats/Langues). Langue active/inactive répercutée en temps réel sur `GET /languages` (public) et validée à la création/au changement de langue d'un cours (`CourseService`) |
+| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; **`languages` migrée** (`V3__languages.sql`, 2026-09-15 — colonnes `code`/`name`/`active`, pas de colonne `rtl` : cette table ne régit que les **langues de contenu des cours**, pas la langue d'interface — le sens RTL de l'interface reste dérivé côté frontend à partir du code langue, indépendamment de cette table, cf. `frontend/src/app/core/i18n/language.service.ts`) ; `course_translations`/`chapter_translations`/`chat_messages` restent **hors migrations** — Should have |
 | §4 | `options:[{… isCorrect …}]` ; `verify` renvoie `score` ; `409` si examen verrouillé | champ JSON **`correct`** ; `verify` renvoie **`finalGrade`** ; examen verrouillé → **`403`** (le `409` reste pour « tentatives épuisées ») |
 | §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
 | §8 | PDF « à confirmer » ; Swagger UI ; conteneurisation « reportée » | PDF = **`openhtmltopdf-pdfbox` 1.0.10** (figé) ; **Swagger UI intégré** (`springdoc-openapi-starter-webmvc-ui` 3.1.1, compatible Spring Boot 4 — tâche 1.10, 2026-09-15) ; **stack Docker livrée et vérifiée** (`docker compose build`+`up`, 2026-09-14) en Phase 6.6 (`docs/07-deploiement.md`) |
@@ -102,6 +102,7 @@ com.educa.backend
 ├── quiz/                  # module : Quiz + Question + AnswerOption + QuizAttempt + AttemptAnswer
 ├── certificate/          # module : Certificate + génération PDF + vérification publique
 ├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible
+├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
 └── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
 ```
 
@@ -169,7 +170,7 @@ erDiagram
     COURSE ||--o{ CHAT_MESSAGE : contextualise
 ```
 
-> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des **15 tables du MVP réellement migrées** (Flyway `V1`/`V2`). Les entités `*_TRANSLATION` / `LANGUAGE` / `CHAT_MESSAGE` ci-dessus restent au stade conception (*Should have*).
+> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des tables du MVP réellement migrées (Flyway `V1`/`V2`, **15 tables** ; export non encore régénéré depuis l'ajout de `LANGUAGE` en `V3` le 2026-09-15, voir `docs/assets/README.md`). Les entités `*_TRANSLATION` / `CHAT_MESSAGE` ci-dessus restent au stade conception (*Should have*) ; `LANGUAGE` est désormais réellement migrée (§3).
 
 ### Cardinalités et règles de gestion
 
@@ -343,15 +344,25 @@ certificates
 - **Délivrance du certificat** : dès qu'une tentative d'examen final porte la note finale à **≥ `courses.pass_threshold`** (défaut 70 %), un `certificate` est créé (si aucun n'existe pour ce couple utilisateur/cours), avec `controls_average`, `final_exam_score`, `final_grade`. L'enrollment passe à `COMPLETED`.
 - **Exemple** : contrôles [80, 60, 70] → moyenne 70 ; examen final 75 → note finale = 0,40 × 70 + 0,60 × 75 = **73** ≥ 70 → certificat délivré.
 
-### Tables — multilingue de contenu (Should have)
+### Table `languages` (migrée, `V3__languages.sql`, 2026-09-15)
 
 ```
 languages
-  code     CHAR(2) PK        -- fr | en | ar
-  name     VARCHAR(50) NOT NULL
-  rtl      BOOLEAN NOT NULL DEFAULT FALSE
-  enabled  BOOLEAN NOT NULL DEFAULT TRUE
+  code    VARCHAR(2) PK      -- fr | en | ar
+  name    VARCHAR(50) NOT NULL
+  active  BOOLEAN NOT NULL DEFAULT TRUE
+```
 
+Langues de **contenu des cours** (`courses.language`), gérées par un ADMIN (`GET/PATCH /admin/languages`) ;
+`GET /languages` (public) liste les langues actives, consommé par le sélecteur de langue de `course-editor`
+et validé côté serveur à la création/au changement de langue d'un cours (`CourseService`, `400` si langue
+inactive — sauf si la langue d'un cours existant reste inchangée, pour ne pas casser l'édition d'un cours
+dont la langue a été désactivée après coup). Ne pilote **pas** la langue d'interface (fichiers `i18n/*.json`
+statiques, indépendants). Pas de colonne `rtl` (inutile ici, contrairement à l'idée de conception initiale).
+
+### Tables — traduction du contenu des cours (Should have, non migrées)
+
+```
 course_translations
   id PK
   course_id     FK -> courses(id) ON DELETE CASCADE
@@ -401,6 +412,11 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | POST | `/auth/logout` | authentifié | `{refreshToken}` | `204` |
 | GET | `/auth/me` | authentifié | – | `200` `{id, email, fullName, roles, preferredLanguage}` |
 | PATCH | `/auth/me` | authentifié | `{fullName?, preferredLanguage?}` | `200` profil |
+
+### Langues (contenu des cours)
+| Méthode | Endpoint | Rôle | Notes |
+|---|---|---|---|
+| GET | `/languages` | public | langues actives (`{code, name, active}`), alimente le sélecteur de langue de `course-editor` |
 
 ### Cours & chapitres & contenus
 | Méthode | Endpoint | Rôle | Notes |
@@ -461,7 +477,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | PATCH | `/admin/users/{id}/roles` | ADMIN | `{roles:["INSTRUCTOR"]}` — `400` si rôle inconnu, `409` si un ADMIN retire son propre rôle admin |
 | PATCH | `/admin/users/{id}/status` | ADMIN | `{enabled: false}` — `409` si un ADMIN tente de se désactiver lui-même ; un compte désactivé est bloqué au prochain `/auth/refresh` |
 | GET | `/admin/certificates` | ADMIN | registre paginé de tous les certificats délivrés |
-| GET/PATCH | `/admin/languages` | ADMIN | gestion langues actives — **non développé** (Should have, pas de table `languages`) |
+| GET | `/admin/languages` | ADMIN | liste toutes les langues (actives et inactives) |
+| PATCH | `/admin/languages/{code}` | ADMIN | `{active: false}` — `404` si code inconnu, `409` si dernière langue active |
 
 ---
 

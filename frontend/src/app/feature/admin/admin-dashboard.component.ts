@@ -8,8 +8,9 @@ import { AdminApiService } from '../../core/admin/admin-api.service';
 import { AdminUser, CertificateRegistryEntry } from '../../core/admin/admin.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { RoleName } from '../../core/auth/auth.models';
+import { CourseLanguage } from '../../core/language/language-api.service';
 
-type Tab = 'users' | 'certificates';
+type Tab = 'users' | 'certificates' | 'languages';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -36,6 +37,10 @@ export class AdminDashboardComponent implements OnInit {
   readonly certificatesLoading = signal(true);
   private certificatesLoaded = false;
 
+  readonly languages = signal<CourseLanguage[]>([]);
+  readonly languagesLoading = signal(true);
+  private languagesLoaded = false;
+
   ngOnInit(): void {
     this.loadUsers();
   }
@@ -44,6 +49,9 @@ export class AdminDashboardComponent implements OnInit {
     this.tab.set(tab);
     if (tab === 'certificates' && !this.certificatesLoaded) {
       this.loadCertificates();
+    }
+    if (tab === 'languages' && !this.languagesLoaded) {
+      this.loadLanguages();
     }
   }
 
@@ -81,6 +89,17 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  toggleLanguage(lang: CourseLanguage): void {
+    this.api.setLanguageActive(lang.code, !lang.active).subscribe({
+      next: (updated) => {
+        this.languages.update((list) => list.map((l) => (l.code === updated.code ? updated : l)));
+      },
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('admin.users.updateError'));
+      },
+    });
+  }
+
   private replaceUser(updated: AdminUser): void {
     this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
   }
@@ -105,6 +124,18 @@ export class AdminDashboardComponent implements OnInit {
         this.certificatesLoaded = true;
       },
       error: () => this.certificatesLoading.set(false),
+    });
+  }
+
+  private loadLanguages(): void {
+    this.languagesLoading.set(true);
+    this.api.languages().subscribe({
+      next: (list) => {
+        this.languages.set(list);
+        this.languagesLoading.set(false);
+        this.languagesLoaded = true;
+      },
+      error: () => this.languagesLoading.set(false),
     });
   }
 

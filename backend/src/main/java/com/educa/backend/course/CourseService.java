@@ -14,6 +14,7 @@ import com.educa.backend.course.dto.ChapterDto;
 import com.educa.backend.course.dto.CourseDetailDto;
 import com.educa.backend.course.dto.CourseRequest;
 import com.educa.backend.course.dto.CourseSummaryDto;
+import com.educa.backend.language.LanguageService;
 import com.educa.backend.security.CurrentUser;
 import com.educa.backend.user.UserService;
 
@@ -24,13 +25,15 @@ public class CourseService {
     private final ContentRepository contentRepository;
     private final CourseMapper mapper;
     private final UserService userService;
+    private final LanguageService languageService;
 
     public CourseService(CourseRepository courseRepository, ContentRepository contentRepository,
-                         CourseMapper mapper, UserService userService) {
+                         CourseMapper mapper, UserService userService, LanguageService languageService) {
         this.courseRepository = courseRepository;
         this.contentRepository = contentRepository;
         this.mapper = mapper;
         this.userService = userService;
+        this.languageService = languageService;
     }
 
     // ---------- écriture (formateur propriétaire / admin) ----------
@@ -181,7 +184,15 @@ public class CourseService {
     private void applyRequest(Course course, CourseRequest request) {
         course.setTitle(request.title().trim());
         course.setDescription(request.description());
-        if (request.language() != null) course.setLanguage(request.language());
+        if (request.language() != null) {
+            // Une langue désactivée après coup ne doit pas bloquer l'édition d'un cours existant
+            // qui la garde inchangée — seule une sélection nouvelle/différente est validée.
+            boolean changingLanguage = course.getId() == null || !request.language().equals(course.getLanguage());
+            if (changingLanguage && !languageService.isActive(request.language())) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Langue indisponible : " + request.language());
+            }
+            course.setLanguage(request.language());
+        }
         if (request.controlWeight() != null) course.setControlWeight(request.controlWeight());
         if (request.examWeight() != null) course.setExamWeight(request.examWeight());
         if (request.passThreshold() != null) course.setPassThreshold(request.passThreshold());

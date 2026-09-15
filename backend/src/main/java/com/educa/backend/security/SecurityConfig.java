@@ -65,6 +65,9 @@ public class SecurityConfig {
                         // sont protégées par CurrentUser.id() / @PreAuthorize côté contrôleur.
                         .requestMatchers(HttpMethod.GET, "/api/v1/courses", "/api/v1/courses/**")
                         .permitAll()
+                        // Langues actives (pour peupler les sélecteurs de langue de cours/inscription).
+                        .requestMatchers(HttpMethod.GET, "/api/v1/languages")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) ->

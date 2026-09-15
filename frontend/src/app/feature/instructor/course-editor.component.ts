@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -5,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentType, CourseDetail } from '../../core/courses/course.models';
+import { CourseLanguage, LanguageApiService } from '../../core/language/language-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 
@@ -18,14 +20,24 @@ export class CourseEditorComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(CourseApiService);
   private readonly quizApi = inject(QuizApiService);
+  private readonly languageApi = inject(LanguageApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
   readonly course = signal<CourseDetail | null>(null);
   readonly quizzes = signal<CourseQuizzes | null>(null);
+  readonly languages = signal<CourseLanguage[]>([]);
   readonly isNew = computed(() => this.course() === null);
+  /** Langues actives + langue déjà choisie par ce cours, même si désactivée depuis (évite de perdre la sélection visuelle). */
+  readonly selectableLanguages = computed<CourseLanguage[]>(() => {
+    const active = this.languages();
+    const current = this.course()?.language;
+    if (!current || active.some((l) => l.code === current)) return active;
+    return [...active, { code: current, name: current.toUpperCase(), active: false }];
+  });
   readonly message = signal<string | null>(null);
+  readonly messageIsError = signal(false);
   readonly pickedFile = signal<File | null>(null);
 
   controlFor(chapterId: number): QuizRef | undefined {
@@ -66,6 +78,7 @@ export class CourseEditorComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.languageApi.active().subscribe({ next: (list) => this.languages.set(list), error: () => undefined });
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
       this.loadCourse(slug);
@@ -83,13 +96,18 @@ export class CourseEditorComponent implements OnInit {
       ? this.api.updateCourse(current.id, value)
       : this.api.createCourse(value);
 
-    request$.subscribe((summary) => {
-      this.flash(this.translate.instant('courseEditor.saved'));
-      if (!current) {
-        void this.router.navigate(['/instructor/courses', summary.slug, 'edit']);
-      } else {
-        this.loadCourse(summary.slug);
-      }
+    request$.subscribe({
+      next: (summary) => {
+        this.flash(this.translate.instant('courseEditor.saved'));
+        if (!current) {
+          void this.router.navigate(['/instructor/courses', summary.slug, 'edit']);
+        } else {
+          this.loadCourse(summary.slug);
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('courseEditor.saveError'), true);
+      },
     });
   }
 
@@ -170,8 +188,9 @@ export class CourseEditorComponent implements OnInit {
     });
   }
 
-  private flash(text: string): void {
+  private flash(text: string, isError = false): void {
     this.message.set(text);
-    setTimeout(() => this.message.set(null), 2500);
+    this.messageIsError.set(isError);
+    setTimeout(() => this.message.set(null), isError ? 4000 : 2500);
   }
 }

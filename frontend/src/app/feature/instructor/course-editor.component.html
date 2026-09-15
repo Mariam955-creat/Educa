@@ -3,7 +3,7 @@
   <h1>{{ (isNew() ? 'courseEditor.newTitle' : 'courseEditor.editTitle') | translate }}</h1>
 
   @if (message()) {
-    <p class="flash">{{ message() }}</p>
+    <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
   }
 
   <form class="card" [formGroup]="courseForm" (ngSubmit)="saveCourse()">
@@ -18,9 +18,9 @@
     <label>
       {{ 'courseEditor.languageField' | translate }}
       <select formControlName="language">
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
+        @for (lang of selectableLanguages(); track lang.code) {
+          <option [value]="lang.code" [disabled]="!lang.active">{{ lang.name }}</option>
+        }
       </select>
     </label>
     <button type="submit">{{ (isNew() ? 'courseEditor.create' : 'courseEditor.save') | translate }}</button>

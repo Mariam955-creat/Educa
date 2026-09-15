@@ -116,6 +116,7 @@
     "create": "إنشاء الدورة",
     "save": "حفظ",
     "saved": "تم حفظ الدورة.",
+    "saveError": "تعذر حفظ الدورة.",
     "chapters": "الفصول",
     "noChapters": "لا يوجد فصل حتى الآن.",
     "control": "مراقبة: {{count}} سؤال/أسئلة",
@@ -202,7 +203,8 @@
     "connectedAs": "متصل: {{email}}",
     "tabs": {
       "users": "المستخدمون",
-      "certificates": "الشهادات"
+      "certificates": "الشهادات",
+      "languages": "اللغات"
     },
     "roles": {
       "LEARNER": "متعلم",
@@ -232,6 +234,12 @@
       "headerCourse": "الدورة",
       "headerGrade": "الدرجة النهائية",
       "headerIssued": "تاريخ الإصدار"
+    },
+    "languages": {
+      "headerCode": "الرمز",
+      "headerName": "الاسم",
+      "activate": "تفعيل",
+      "deactivate": "تعطيل"
     }
   }
 }

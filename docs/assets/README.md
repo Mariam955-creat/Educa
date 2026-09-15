@@ -8,9 +8,10 @@ Diagrammes du projet **educa**, sous forme de sources Mermaid (`.mmd`) et d'imag
 | Architecture générale | `architecture.mmd` | `architecture.svg`, `architecture.png` | `../02-conception.md` §1 |
 | Modèle de données (MCD, périmètre MVP implémenté) | `mcd.mmd` | `mcd.svg`, `mcd.png` | `../02-conception.md` §2–§3 |
 
-> Le `mcd.mmd` reflète les **15 tables du MVP effectivement migrées** (Flyway `V1`/`V2`).
-> Les entités de traduction de contenu (`*_translation`, `language`) et `chat_message` restent
-> au stade conception (*Should have*, voir `../02-conception.md` §2) et ne sont pas dans le schéma.
+> Le `mcd.mmd` reflète les **15 tables** migrées jusqu'à `V2` (Flyway `V1`/`V2`) — **pas encore régénéré**
+> depuis l'ajout de `languages` en `V3` le 2026-09-15 (voir `../02-conception.md` §0/§3). Les entités de
+> traduction de contenu (`*_translation`) et `chat_message` restent au stade conception (*Should have*,
+> voir `../02-conception.md` §2) et ne sont pas dans le schéma.
 
 ## Régénérer les images
 

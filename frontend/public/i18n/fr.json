@@ -116,6 +116,7 @@
     "create": "Créer le cours",
     "save": "Enregistrer",
     "saved": "Cours enregistré.",
+    "saveError": "Impossible d'enregistrer le cours.",
     "chapters": "Chapitres",
     "noChapters": "Aucun chapitre pour l'instant.",
     "control": "Contrôle : {{count}} question(s)",
@@ -202,7 +203,8 @@
     "connectedAs": "Connecté : {{email}}",
     "tabs": {
       "users": "Utilisateurs",
-      "certificates": "Certificats"
+      "certificates": "Certificats",
+      "languages": "Langues"
     },
     "roles": {
       "LEARNER": "Apprenant",
@@ -232,6 +234,12 @@
       "headerCourse": "Cours",
       "headerGrade": "Note finale",
       "headerIssued": "Délivré le"
+    },
+    "languages": {
+      "headerCode": "Code",
+      "headerName": "Nom",
+      "activate": "Activer",
+      "deactivate": "Désactiver"
     }
   }
 }

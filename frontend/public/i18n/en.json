@@ -116,6 +116,7 @@
     "create": "Create course",
     "save": "Save",
     "saved": "Course saved.",
+    "saveError": "Could not save the course.",
     "chapters": "Chapters",
     "noChapters": "No chapter yet.",
     "control": "Control: {{count}} question(s)",
@@ -202,7 +203,8 @@
     "connectedAs": "Signed in: {{email}}",
     "tabs": {
       "users": "Users",
-      "certificates": "Certificates"
+      "certificates": "Certificates",
+      "languages": "Languages"
     },
     "roles": {
       "LEARNER": "Learner",
@@ -232,6 +234,12 @@
       "headerCourse": "Course",
       "headerGrade": "Final grade",
       "headerIssued": "Issued on"
+    },
+    "languages": {
+      "headerCode": "Code",
+      "headerName": "Name",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
     }
   }
 }

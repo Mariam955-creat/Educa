@@ -395,6 +395,14 @@ chat_messages
 `courses(slug)`, `courses(published)`, `enrollments(user_id)`, `enrollments(course_id)`,
 `quiz_attempts(user_id, quiz_id)`, `certificates(verification_code)`, `progress(enrollment_id)`.
 
+**Recherche catalogue à l'échelle** (`V4__catalog_search_trgm.sql`, 2026-09-15) : extension `pg_trgm` +
+index GIN `idx_courses_title_trgm` sur `lower(title)`, pour que le filtre `?q=` (`lower(title) LIKE
+lower('%...%')`, motif à joker en tête, inutilisable par un index B-tree classique) reste rapide au-delà
+de quelques dizaines de cours. Vérifié par `EXPLAIN ANALYZE` avec un jeu de données synthétique de 50 000
+lignes (transaction annulée ensuite, base dev inchangée) : le planificateur choisit bien un `Bitmap Index
+Scan` sur cet index dès que la recherche est sélective (17 ms contre un balayage séquentiel bien plus
+lent à cette volumétrie).
+
 ---
 
 ## 4. Spécification API (REST, périmètre MVP)

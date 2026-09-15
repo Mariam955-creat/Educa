@@ -827,3 +827,24 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP : clé Anthropic réelle, `pg_trgm`/GIN pour la recherche catalogue à l'échelle, traductions de contenu pédagogique (`course_translations`/`chapter_translations`, Should have) ; régénération optionnelle de `docs/assets/mcd.*` pour inclure `languages`.
+
+---
+
+## [2026-09-15] Performance (résiduel) — `pg_trgm` + index GIN pour la recherche catalogue à l'échelle
+
+**Fait**
+- **Constat** : `CourseRepository.searchPublished` filtre avec `lower(title) LIKE lower('%...%')` (Phase 2). Un motif à joker en tête (`%...`) ne peut jamais utiliser un index B-tree classique — chaque recherche fait un balayage séquentiel complet de `courses`, indolore aujourd'hui (5 cours de démo) mais qui dégraderait linéairement avec le catalogue.
+- **Migration `V4__catalog_search_trgm.sql`** : `CREATE EXTENSION IF NOT EXISTS pg_trgm;` puis `CREATE INDEX idx_courses_title_trgm ON courses USING GIN (lower(title) gin_trgm_ops);` — un index d'expression sur `lower(title)`, choisi pour correspondre exactement au prédicat existant sans toucher au code Java/JPQL.
+- **Vérifié que l'index est réellement utilisé** (pas seulement créé) : `EXPLAIN ANALYZE` en conditions synthétiques réalistes — 50 000 lignes insérées dans une transaction PostgreSQL, dont une fraction minoritaire correspond au terme recherché (`ANALYZE` puis requête), **`ROLLBACK`** ensuite (base `educa` dev revenue à son état d'origine, 5 cours, vérifié après coup). Le plan choisi est un `Bitmap Index Scan on idx_courses_title_trgm` (17 ms), pas un balayage séquentiel. Contre-vérifié qu'avec une sélectivité artificiellement à 100 % (chaque ligne matchant le terme, jeu de données non réaliste testé par erreur en premier), le planificateur choisit à raison un `Seq Scan` — comportement normal de PostgreSQL (un index n'aide que quand peu de lignes correspondent), pas un signe que l'index serait inutilisable.
+- `./mvnw test` → **48/48 verts** après application de `V4` sur `educa_test` (aucune régression, aucun changement de code Java).
+
+**Décisions techniques**
+- Index sur l'**expression** `lower(title)` plutôt que sur `title` brut, pour correspondre exactement à la requête JPQL existante (`lower(c.title) like lower(...)`) sans avoir à la réécrire en `ILIKE` natif — changement strictement additif côté base, zéro risque de régression fonctionnelle.
+- Recherche restée limitée au `title` (comme avant) — pas d'extension à `description`, hors périmètre de cette tâche (résiduelle Phase 2, purement performance, pas une nouvelle fonctionnalité de recherche).
+
+**Écarts par rapport au plan**
+- Aucun — résiduel déjà identifié depuis la Phase 5/6, simplement traité maintenant.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live, traductions de contenu pédagogique (`course_translations`/`chapter_translations`, Should have) ; régénération optionnelle de `docs/assets/mcd.*` pour inclure `languages`.

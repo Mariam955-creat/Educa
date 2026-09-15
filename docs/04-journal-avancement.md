@@ -873,3 +873,30 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live ; régénération optionnelle de `docs/assets/mcd.*` pour inclure `languages`/`course_translations`/`chapter_translations`.
+
+---
+
+## [2026-09-15] Clôture de session — push vers `origin/main` + mise à jour du tableau de bord
+
+**Fait**
+- **Récapitulatif de la session** (résidus hors MVP traités un par un, chacun testé et vérifié en conditions réelles avant commit) :
+  1. **Swagger UI** (tâche 1.10, résiduelle depuis la Phase 1) — `springdoc-openapi-starter-webmvc-ui` 3.1.1, désormais compatible Spring Boot 4.
+  2. **Module admin** — gestion des utilisateurs (recherche, rôles, statut, garde-fous anti-auto-verrouillage, fix du refresh token qui ignorait un compte désactivé) et registre des certificats délivrés.
+  3. **Régression pré-existante corrigée** — `quiz-take.component.spec.ts` (4 tests cassés depuis le retrofit i18n du 2026-09-13, `TranslateService` manquant au `TestBed`).
+  4. **Module admin — langues actives** (tâche 4.9, partie 1) — table `languages`, `GET /languages` public, `GET/PATCH /admin/languages`, validation appliquée à la création/au changement de langue d'un cours.
+  5. **Sécurité — sniffing réel des uploads** (résiduel Phase 5) — Apache Tika (`tika-core`) remplace la confiance aveugle dans le `Content-Type` déclaré par le client.
+  6. **Performance — `pg_trgm` + GIN** (résiduel Phase 5/2.13) pour la recherche catalogue à l'échelle.
+  7. **Traductions de contenu des cours** (tâche 4.9, partie 2) — `course_translations`/`chapter_translations`, édition par le formateur, lecture via `?displayLanguage=` avec repli sur l'original.
+- **Documentation mise à jour au fil de l'eau** à chaque étape (cette entrée + les 6 précédentes du 2026-09-15, `docs/02-conception.md` §0/§3/§4/§6, `docs/03-plan-implementation.md`, `CLAUDE.md`, `README.md`) — voir le nouveau tableau **« Résiduel post-plan (Should have) »** ajouté dans `docs/03-plan-implementation.md` juste avant « Suivi global », qui consolide ces 7 éléments (R.1→R.7) avec renvoi vers le détail de chaque entrée de journal.
+- **Poussé vers `origin/main`** : `git push` — 7 commits (`ab2e9c1`→`162e4e5`), `main` et `origin/main` synchronisés, arbre de travail propre.
+- **État final vérifié** : backend `./mvnw test` → **56/56 verts** ; frontend `npm run build` OK + `npm run test:ci` → **13/13 verts** (régression du 2026-09-13 comprise) ; migrations Flyway `V1`→`V5` appliquées sans erreur.
+
+**Décisions techniques**
+- Aucune nouvelle — session de traitement de résidus, pas de nouvelle décision d'architecture.
+
+**Écarts par rapport au plan**
+- Aucun nouveau — les écarts introduits par ces résidus sont déjà documentés dans leurs entrées de journal respectives et dans `docs/02-conception.md` §0.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code) ; régénération optionnelle de `docs/assets/mcd.*` pour refléter `languages`/`course_translations`/`chapter_translations`.

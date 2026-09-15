@@ -163,6 +163,26 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
+## Résiduel post-plan (Should have) — session du 2026-09-15
+
+Le plan d'implémentation (Phases 0→6) était intégralement terminé depuis le 2026-09-14. Cette session a traité
+les résidus hors MVP restants, chacun testé (backend/frontend) et vérifié en conditions réelles avant commit.
+Détail complet : `docs/04-journal-avancement.md` (entrées du 2026-09-15).
+
+| # | Tâche | Fichiers / modules | Statut | MàJ |
+|---|---|---|---|---|
+| R.1 | Tâche 1.10 — Swagger UI (springdoc) | `backend/pom.xml`, `com.educa.backend.config.OpenApiConfig` | fait — voir 1.10 ci-dessus | 2026-09-15 |
+| R.2 | Module admin — gestion des utilisateurs (recherche, rôles, statut, garde-fous anti-auto-verrouillage) | `com.educa.backend.user.AdminUserController`, `frontend/src/app/feature/admin` | fait | 2026-09-15 |
+| R.3 | Module admin — registre des certificats délivrés | `com.educa.backend.certificate.AdminCertificateController` | fait | 2026-09-15 |
+| R.4 | Tâche 4.9 — langues actives + traductions de contenu des cours | voir 4.9 ci-dessus | fait | 2026-09-15 |
+| R.5 | Sécurité — sniffing réel du contenu des uploads (Apache Tika, remplace le `Content-Type` déclaré par le client) | `com.educa.backend.storage.FileTypeDetector` | fait | 2026-09-15 |
+| R.6 | Performance — `pg_trgm` + index GIN pour la recherche catalogue à l'échelle | `V4__catalog_search_trgm.sql` | fait | 2026-09-15 |
+| R.7 | Régression pré-existante — `quiz-take.component.spec.ts` cassé depuis le retrofit i18n du 2026-09-13 | `frontend/src/app/feature/quiz` | fait (découverte et corrigée au passage, sans lien avec R.1→R.6) | 2026-09-15 |
+
+**Résiduel restant (hors MVP)** : clé Anthropic réelle pour des réponses de chatbot live (nécessite une vraie clé, pas une tâche de code) ; régénération optionnelle de `docs/assets/mcd.*` pour y refléter `languages`/`course_translations`/`chapter_translations`.
+
+---
+
 ## Suivi global
 
 | Phase | État | Début | Fin |
@@ -171,6 +191,6 @@ Dernière mise à jour : 2026-09-08.
 | 1 — Socle technique | terminée — backend + frontend Angular, parcours inscription/connexion validé au navigateur, Swagger UI intégré (1.10, 2026-09-15) | 2026-09-08 | 2026-09-15 |
 | 2 — Gestion des formations | terminée — backend (14 tests) + frontend, catalogue/inscription/progression | 2026-09-08 | 2026-09-08 |
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
-| 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |
+| 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic. **Résiduel Should have 4.9 fait le 2026-09-15** : tables `languages`/`course_translations`/`chapter_translations`, gestion admin des langues actives, traductions de contenu de cours par le formateur | 2026-09-08 | 2026-09-15 |
 | 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
 | 6 — Rédaction finale & soutenance | **terminée** — 6.1→6.6 faites (README + docs 01→07, jeu de démo enrichi, diagrammes `docs/assets/`, vérif E2E API 47/47, stack Docker, relecture UI au navigateur le 2026-09-13 → 3 bugs corrigés, **`docker compose build`+`up` vérifiés le 2026-09-14**) | 2026-09-10 | 2026-09-14 |

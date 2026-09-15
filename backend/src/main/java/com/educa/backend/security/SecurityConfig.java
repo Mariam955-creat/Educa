@@ -53,6 +53,14 @@ public class SecurityConfig {
                                 "/api/v1/certificates/verify/**",
                                 "/error")
                         .permitAll()
+                        // Doc API (dev/test uniquement — désactivée en prod par springdoc.*.enabled=false,
+                        // voir application-prod.yml ; les routes n'existent alors plus, permitAll ne fuite rien).
+                        .requestMatchers(
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**")
+                        .permitAll()
                         // Catalogue public. Les sous-ressources sensibles (progress, …)
                         // sont protégées par CurrentUser.id() / @PreAuthorize côté contrôleur.
                         .requestMatchers(HttpMethod.GET, "/api/v1/courses", "/api/v1/courses/**")

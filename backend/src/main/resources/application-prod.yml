@@ -18,6 +18,13 @@ server:
     include-message: never
     include-binding-errors: never
 
+springdoc:
+  # Documentation API réservée au dev/test — jamais exposée publiquement.
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 logging:
   level:
     root: INFO

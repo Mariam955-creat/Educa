@@ -32,12 +32,12 @@ Dernière mise à jour : 2026-09-08.
 
 ---
 
-## Phase 1 — Socle technique  ·  statut : `quasi terminée` (reste 1.10 Swagger)
+## Phase 1 — Socle technique  ·  statut : `terminée` (2026-09-15)
 
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
 | 1.0 | Squelette *package-by-feature* : `common/error`, `config`, `security`, `user` + `package-info.java` pour `course`/`enrollment`/`quiz`/`certificate`/`storage`/`ai`. Patron figé : **Lombok** sur les entités, **MapStruct** pour les mappers (`annotationProcessorPaths`), DTO en `record` | `com.educa.backend.*` | fait | 2026-09-08 |
-| 1.1 | Dépendances Maven : web, validation, data-jpa, **spring-boot-flyway** + flyway-core (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6, Lombok, MapStruct 1.6.3 (+ `annotationProcessorPaths`), **spring-boot-starter-webmvc-test** (tests). springdoc → tâche 1.10 | `backend/pom.xml` | fait | 2026-09-08 |
+| 1.1 | Dépendances Maven : web, validation, data-jpa, **spring-boot-flyway** + flyway-core (+`flyway-database-postgresql`), postgresql, security, jjwt 0.12.6, Lombok, MapStruct 1.6.3 (+ `annotationProcessorPaths`), **spring-boot-starter-webmvc-test** (tests), **springdoc-openapi-starter-webmvc-ui 3.1.1** (Swagger, tâche 1.10) | `backend/pom.xml` | fait | 2026-09-08 |
 | 1.2 | `application.yml` (+ `-dev` / `-test`), `spring.config.import` du `.env` racine, `ddl-auto: validate`, propriétés `educa.*` (`EducaProperties`), **port `8081`** (8080 pris par un `mysqld` local) | `backend/src/main/resources/` | fait | 2026-09-08 |
 | 1.3 | Migration Flyway `V1__init.sql` (15 tables + contraintes + index partiels quiz ; `VARCHAR(2)` pour les codes langue) et `V2__seed_roles.sql` — **appliquées et validées sur `educa`** | `backend/.../db/migration/` | fait | 2026-09-08 |
 | 1.4 | Entités JPA + repositories — **module `user`** (`User`, `Role`, `RefreshToken` + repos). Autres domaines : Phases 2–3 | `com.educa.backend.user` | fait | 2026-09-08 |
@@ -46,7 +46,7 @@ Dernière mise à jour : 2026-09-08.
 | 1.7 | RBAC : `RoleName` `LEARNER/INSTRUCTOR/ADMIN`, `@EnableMethodSecurity`, `CurrentUser.id()`. `@PreAuthorize` + helper « propriétaire » viendront avec les endpoints métier (Phase 2) | `com.educa.backend.security` | en cours | 2026-09-08 |
 | 1.8 | Gestion d'erreurs `@RestControllerAdvice` (`GlobalExceptionHandler`) + `ApiError` homogène + `ApiException`/`ResourceNotFoundException`/`ConflictException` | `com.educa.backend.common.error` | fait | 2026-09-08 |
 | 1.9 | Seed rôles (via `V2`) + `DevDataInitializer` (profil `dev`) : `admin@educa.dev`, `formateur@educa.dev`, `apprenant@educa.dev` — mot de passe `password123` | `com.educa.backend.config` | fait | 2026-09-08 |
-| 1.10 | Swagger UI (springdoc) accessible en dev — en attente d'une version compatible Spring Boot 4 | `backend/pom.xml`, config | à faire | — |
+| 1.10 | Swagger UI (springdoc) accessible en dev | `backend/pom.xml`, `com.educa.backend.config.OpenApiConfig`, `SecurityConfig` | fait — `springdoc-openapi-starter-webmvc-ui` 3.1.1 (compatible Spring Boot 4.1.1 depuis sa release 3.0.1) ; `OpenApiConfig` déclare le schéma de sécurité `bearer-jwt` (bouton *Authorize*) ; `/v3/api-docs` et `/swagger-ui.html` (→ `/swagger-ui/index.html`) ajoutés en `permitAll` dans `SecurityConfig` ; **désactivés en profil `prod`** (`springdoc.api-docs.enabled=false` / `swagger-ui.enabled=false` dans `application-prod.yml`) — jamais exposés publiquement. Vérifié : `/v3/api-docs` liste les 29 endpoints des 9 contrôleurs, `./mvnw test` → 30/30 verts | 2026-09-15 |
 | 1.11 | Projet **Angular 19.2** dans `frontend/` (Node 24.12 → CLI *latest* refusée, CLI 19.2 utilisée) ; standalone, `provideRouter` + `provideHttpClient(withInterceptors)` ; structure `core/` + `feature/` ; `ng build` OK | `frontend/` | fait | 2026-09-08 |
 | 1.12 | Frontend : shell `AppComponent` avec navigation conditionnée par rôle + déconnexion ; pages **login** / **register** (formulaires réactifs, connexion auto après inscription) | `frontend/src/app` | fait | 2026-09-08 |
 | 1.13 | Frontend : `AuthService` (signals, localStorage), `authInterceptor` (Bearer + refresh auto sur 401), `authGuard` + `roleGuard(...)` | `frontend/src/app/core/auth` | fait | 2026-09-08 |
@@ -144,7 +144,7 @@ Dernière mise à jour : 2026-09-08.
 
 **Livrable démontrable** : ✅ suite de tests verte (backend 23 + frontend 13) ; revue RBAC endpoint par endpoint sans faille ; uploads/downloads durcis ; `/security-review` sans finding.
 
-**Résiduel (hors MVP, à faire avant un déploiement public)** : `server.error.include-message: always` → `never` ; sniffing réel du contenu des uploads (Apache Tika) ; extension `pg_trgm` + index GIN pour la recherche catalogue à l'échelle ; tâche 1.10 Swagger (springdoc pas encore compatible Spring Boot 4).
+**Résiduel (hors MVP, à faire avant un déploiement public)** : `server.error.include-message: always` → `never` ; sniffing réel du contenu des uploads (Apache Tika) ; extension `pg_trgm` + index GIN pour la recherche catalogue à l'échelle.
 
 ---
 
@@ -168,7 +168,7 @@ Dernière mise à jour : 2026-09-08.
 | Phase | État | Début | Fin |
 |---|---|---|---|
 | 0 — Cadrage | terminée | 2026-09-08 | 2026-09-08 |
-| 1 — Socle technique | terminée — backend + frontend Angular, parcours inscription/connexion validé au navigateur. Reste 1.10 (Swagger, reporté) | 2026-09-08 | 2026-09-08 |
+| 1 — Socle technique | terminée — backend + frontend Angular, parcours inscription/connexion validé au navigateur, Swagger UI intégré (1.10, 2026-09-15) | 2026-09-08 | 2026-09-15 |
 | 2 — Gestion des formations | terminée — backend (14 tests) + frontend, catalogue/inscription/progression | 2026-09-08 | 2026-09-08 |
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
 | 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic | 2026-09-08 | 2026-09-10 |

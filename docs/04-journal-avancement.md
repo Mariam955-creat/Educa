@@ -709,3 +709,26 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — aucune tâche du MVP restante. Résiduel hors MVP inchangé (voir entrées précédentes).
+
+---
+
+## [2026-09-15] Phase 1 (résiduel) — Swagger UI intégré (1.10 clôturée)
+
+**Fait**
+- **Vérifié qu'une version de `springdoc-openapi` compatible Spring Boot 4 existe désormais** : `springdoc-openapi-starter-webmvc-ui` 3.1.1 (les releases majeures `3.x` suivent Spring Boot 4 en lockstep depuis la 3.0.1). Ajoutée au `pom.xml`.
+- **`com.educa.backend.config.OpenApiConfig`** : bean `OpenAPI` avec métadonnées (titre, description, version `v1`) et schéma de sécurité HTTP Bearer `bearer-jwt` — permet de coller un JWT dans le bouton *Authorize* de Swagger UI et d'appeler les endpoints protégés directement depuis l'interface.
+- **`SecurityConfig`** : `/v3/api-docs`, `/v3/api-docs/**`, `/swagger-ui.html`, `/swagger-ui/**` ajoutés en `permitAll` (à côté des routes déjà publiques) — nécessaire car la chaîne de sécurité est `authenticated()` par défaut.
+- **`application.yml`** : chemins `springdoc.api-docs.path` / `springdoc.swagger-ui.path` explicités. **`application-prod.yml`** : `springdoc.api-docs.enabled=false` + `springdoc.swagger-ui.enabled=false` — la doc interactive n'est **jamais** exposée en production (les routes `permitAll` de `SecurityConfig` ne fuitent donc rien : sans le bean springdoc actif, elles ne sont mappées à aucun contrôleur et répondent `404`).
+- **Vérifié en conditions réelles** : backend lancé en profil `dev`, `GET /swagger-ui.html` → `302` vers `/swagger-ui/index.html` → `200` ; `GET /v3/api-docs` → JSON OpenAPI 3.1 valide listant les **29 endpoints des 9 contrôleurs** (`auth`, `courses`, `chapters`, `contents`, `enrollments`, `quizzes`/`questions`, `certificates`, `ai`, `instructor`) avec le schéma `bearer-jwt` en sécurité globale. `./mvnw test` → **30/30 verts** (aucune régression).
+- Doc mise à jour : `docs/03-plan-implementation.md` (1.10 fait, Phase 1 → `terminée`, résiduel Phase 5 nettoyé), `docs/02-conception.md` (§0 écarts + tableau §Doc API + liste des dépendances), `README.md` (résiduel + URL Swagger), `CLAUDE.md` (§7).
+
+**Décisions techniques**
+- Doc interactive strictement réservée au dev/test (jamais en prod), cohérent avec la posture de sécurité déjà actée en Phase 5 (pas d'exposition d'informations internes en production).
+- Pas de génération de client à partir de la spec (hors périmètre MVP) ; la spec `/v3/api-docs` reste la source de vérité machine-lisible, les endpoints restent aussi décrits manuellement en `docs/02-conception.md §4`.
+
+**Écarts par rapport au plan**
+- Aucun — tâche 1.10 déjà identifiée comme résiduelle, simplement débloquée par la disponibilité d'une version springdoc compatible Spring Boot 4.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — aucune tâche du MVP restante ; le plan d'implémentation (Phases 0 → 6) reste intégralement terminé, résiduel hors MVP réduit à : clé Anthropic réelle pour le chatbot live, `pg_trgm`/GIN pour la recherche catalogue à l'échelle, sniffing réel des uploads (Apache Tika), module admin (Should have), traductions de contenu pédagogique (Should have).

@@ -14,6 +14,7 @@ import com.educa.backend.course.CourseService;
 import com.educa.backend.course.dto.CourseSummaryDto;
 import com.educa.backend.enrollment.dto.CourseProgressDto;
 import com.educa.backend.enrollment.dto.EnrollmentDto;
+import com.educa.backend.payment.SubscriptionService;
 
 @Service
 public class EnrollmentService {
@@ -22,17 +23,21 @@ public class EnrollmentService {
     private final ProgressRepository progressRepository;
     private final CourseService courseService;
     private final ContentService contentService;
+    private final SubscriptionService subscriptionService;
 
     public EnrollmentService(EnrollmentRepository enrollmentRepository, ProgressRepository progressRepository,
-                             CourseService courseService, ContentService contentService) {
+                             CourseService courseService, ContentService contentService,
+                             SubscriptionService subscriptionService) {
         this.enrollmentRepository = enrollmentRepository;
         this.progressRepository = progressRepository;
         this.courseService = courseService;
         this.contentService = contentService;
+        this.subscriptionService = subscriptionService;
     }
 
     @Transactional
     public EnrollmentDto enroll(Long userId, Long courseId) {
+        requireActiveSubscription(userId);
         Course course = courseService.requireCourse(courseId);
         if (!course.isPublished()) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Ce cours n'est pas publié");
@@ -75,8 +80,20 @@ public class EnrollmentService {
 
     @Transactional(readOnly = true)
     public boolean isEnrolled(Long userId, Long courseId) {
-        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.ACTIVE)
+        boolean enrolled = enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.ACTIVE)
                 || enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.COMPLETED);
+        return enrolled && subscriptionService.hasActiveAccess(userId);
+    }
+
+    /**
+     * Comme {@link #isEnrolled} mais lève l'erreur adaptée au lieu de renvoyer un booléen : {@code 403}
+     * si jamais inscrit (ou inscription annulée), {@code 402} si l'abonnement a expiré. À utiliser par
+     * les points d'accès qui n'ont pas besoin de l'entité {@link Enrollment} elle-même (celle-ci ne
+     * sort jamais du module).
+     */
+    @Transactional(readOnly = true)
+    public void requireCourseAccess(Long userId, Long courseId) {
+        requireActiveEnrollment(userId, courseId);
     }
 
     @Transactional(readOnly = true)
@@ -122,7 +139,15 @@ public class EnrollmentService {
         if (enrollment.getStatus() == EnrollmentStatus.CANCELLED) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Inscription annulée");
         }
+        requireActiveSubscription(userId);
         return enrollment;
+    }
+
+    /** Modèle « abonnement plateforme » : formateurs/admins exemptés (voir SubscriptionService.hasActiveAccess). */
+    private void requireActiveSubscription(Long userId) {
+        if (!subscriptionService.hasActiveAccess(userId)) {
+            throw new ApiException(HttpStatus.PAYMENT_REQUIRED, "Un abonnement actif est requis pour accéder aux cours");
+        }
     }
 
     private CourseProgressDto progressOf(Enrollment enrollment, Long courseId) {

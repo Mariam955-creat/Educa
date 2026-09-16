@@ -938,3 +938,53 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code). Plus aucun autre résidu identifié.
+
+---
+
+## [2026-09-16] Extension post-MVP — mise en forme CSS + paiements (abonnement plateforme)
+
+**Fait**
+1. **Mise en forme CSS** : accent du site passé du bleu générique (`#2563eb`) à un violet (`#7e22ce`, inspiré d'Udemy — leur `#a435f0` exact évité, contraste amélioré ~7:1 vs ~4.8:1) via la variable CSS `--accent` déjà centralisée (`styles.scss`) + les 2 fallbacks hardcodés. Couleur du cadre/titre du PDF de certificat alignée par la même occasion.
+2. **QR code de vérification sur le certificat** : `com.google.zxing:core` 3.5.3, généré en PNG embarqué (data URI) dans le HTML rendu en PDF par `CertificateService` — pointe vers `{publicBaseUrl}/verify/{code}`. Nouvelle propriété `educa.public-base-url` (`EducaProperties`). Vérifié visuellement (PDF régénéré pour le certificat de démo, QR lisible en bas à droite du cadre).
+3. **Paiements — abonnement plateforme (nouveau périmètre, hors MVP initial)** : educa passe d'un accès gratuit à un abonnement payant mensuel/annuel donnant accès à tous les cours. Décisions actées avec l'utilisatrice en cours de session : Stripe pour l'Europe (cartes/Apple Pay/Google Pay/SEPA) ; côté Afrique, **CinetPay envisagé puis écarté** au profit d'une **intégration directe Orange Money** (l'utilisatrice voulait explicitement éviter un agrégateur, malgré le fait que CinetPay inclue déjà Orange Money/Moov comme canaux — clarifié en session). Nouveau module backend `payment` (`Subscription`/`Payment`, migration `V6__payments.sql`), interface `PaymentGateway` + `StripePaymentGateway` (SDK `stripe-java` 33.4.2, Checkout mode `subscription`, `price_data` inline, webhooks signés) + `OrangeMoneyPaymentGateway` (REST direct via `RestClient`, pas de SDK officiel, ⚠️ champs à revérifier contre la doc Orange Developer live — inaccessible depuis cette session, 403/404) + repli `DisabledPaymentGateway` (503) si clé absente, même patron que `ai`. Gating centralisé dans `EnrollmentService` (`isEnrolled`/`requireActiveEnrollment`/`enroll`), `INSTRUCTOR`/`ADMIN` exemptés, certificats déjà délivrés toujours accessibles. `SubscriptionController`, `PaymentWebhookController` (public/permitAll, vérifié par signature Stripe ou revérification serveur Orange Money — jamais par JWT), `AdminPaymentController` (registre, patron `AdminCertificateController`, 4ᵉ onglet admin). Frontend : `core/payment`, `feature/billing` (tarifs + statut + retours succès/annulation), lien nav, message « abonnement requis » sur `course-detail`.
+4. **Effet de bord corrigé** : la contrainte d'abonnement cassait 3 tests existants (`AiChatTest`, `CourseFlowTest`, `QuizFlowTest` — tous enrôlent un apprenant) et aurait cassé le seed de démo (`DevDataInitializer` rejoue l'inscription du compte diplômé via les services réels). Corrigé en amont : les 3 tests seedent désormais un abonnement actif via `SubscriptionRepository` avant de créer leur token apprenant (même patron que l'attribution de rôle déjà utilisée) ; `DevDataInitializer` seed un abonnement actif pour `apprenant@educa.dev` et `diplome@educa.dev` au démarrage (profil `dev`).
+5. **Vérifié** : `./mvnw test` → **64/64 verts** (56 existants + 8 nouveaux : `SubscriptionFlowTest` 6, `AdminPaymentControllerTest` 2). `npm run build` + `npm run test:ci` (13/13) OK. Vérification API réelle bout-en-bout après redémarrage du backend (migration `V6` appliquée) : `/subscriptions/me` reflète l'abonnement seedé, `POST /subscriptions/checkout` → `503` (prestataires désactivés sans clé, comportement attendu), inscription à un cours → `402` sans abonnement / `201` avec (testé avec un compte apprenant jetable, nettoyé après coup).
+
+**Décisions techniques**
+- Accès abonnement vérifié à **chaque** accès au contenu (pas seulement à l'inscription) : `isEnrolled`/`requireActiveEnrollment` re-checkent `hasActiveAccess`, cohérent avec un modèle type Netflix (perdre l'accès si l'abonnement expire), pas seulement une porte d'entrée à l'inscription.
+- `educa.payment.webhook-base-url` distinct de `educa.public-base-url` : en dev les origines backend (`:8081`, joignable par les prestataires) et frontend (`:4200`, redirections navigateur) diffèrent ; en prod les deux valent la même origine publique (nginx expose `/api` dessus).
+- Stripe : abonnement créé avec `price_data` inline (pas de Produits/Prix pré-provisionnés dans le dashboard) pour rester buildable sans configuration manuelle préalable côté Stripe.
+
+**Écarts par rapport au plan**
+- Le plan approuvé initialement prévoyait CinetPay ; remplacé par Orange Money direct sur demande explicite de l'utilisatrice en cours d'implémentation (avant tout code CinetPay commité autre que le fichier de migration, vite corrigé).
+
+**Bloquant / limitation connue**
+- **Aucune clé de test réelle disponible dans cette session** : le paiement réel (checkout effectif, webhooks reçus) n'a pas pu être testé de bout en bout avec de vrais prestataires — seul le repli "désactivé" (503) a été vérifié. Nécessite que l'utilisatrice fournisse une clé Stripe de test (`sk_test_...`) et des identifiants marchand Orange Developer pour aller plus loin.
+- Les noms de champs exacts de l'API Orange Money Web Payment (endpoints, JSON) suivent la documentation publique connue mais n'ont pas pu être revérifiés contre la doc live (bloquée depuis cette session) — à confirmer à l'intégration réelle.
+
+**Prochaine étape** — obtenir des clés de test (Stripe + Orange Money sandbox) pour un test bout-en-bout réel du paiement ; envisager un tunnel (ngrok ou équivalent) pour recevoir les webhooks Orange Money en dev local.
+
+---
+
+## [2026-09-16] Revue de code (`/code-review`) sur le module paiement — 8 findings, 7 corrigés
+
+**Fait**
+- `/code-review` (effort medium, ~8 min sur le gros diff paiement) : **8 findings**, tous confirmés à la relecture.
+- **Corrigés (7)** :
+  1. `SubscriptionService.hasActiveAccess`/`mySubscription` ne vérifiaient que `current_period_end` sans re-vérifier `status == ACTIVE` — un abonnement `EXPIRED` (ex. Stripe `past_due` non mappé sur `CANCELLED`) gardait l'accès tant que la période calculée n'était pas dépassée. Extrait un helper unique `isActive(Subscription)` réutilisé aux deux endroits (corrige aussi la duplication signalée séparément).
+  2. `confirmStripeCheckout` : si l'appel Stripe pour lire `current_period_end` échouait (panne transitoire), l'abonnement était activé avec une période `null` → accès bloqué **définitivement** malgré un paiement réussi, sans rattrapage. Repli sur une période estimée (30/365 jours), corrigée au prochain `customer.subscription.updated`.
+  3. `EnrollmentService.isEnrolled` intègre désormais la vérification d'abonnement, mais `QuizService` (×2), `QuizAttemptService.submit` et `ContentController.downloadFile` levaient un `403` « non inscrit » générique sur `!isEnrolled(...)` — un apprenant réellement inscrit mais dont l'abonnement a expiré recevait ce message trompeur au lieu du `402` avec redirection facturation. Nouvelle méthode `EnrollmentService.requireCourseAccess(userId, courseId)` (réutilise `requireActiveEnrollment`, ne renvoie rien pour ne pas exposer l'entité `Enrollment` hors du module) branchée aux 4 points d'accès concernés.
+  4. `handleOrangeMoneyWebhook` ne comparait jamais le montant reçu dans la requête webhook (publique, non authentifiée) au montant du `Payment` enregistré au checkout avant de prolonger l'abonnement. Ajout d'une vérification stricte (`payment.getAmount() == amount`) avant tout appel à `isTransactionConfirmed`.
+  5. `syncStripeSubscription`/`confirmStripeCheckout` : en cas d'évènement Stripe reçu avant son prédécesseur (ordre de livraison des webhooks non garanti par Stripe), l'abonnement/paiement local introuvable était simplement logué puis ignoré — la mise à jour était perdue. Les deux méthodes lèvent désormais une `ApiException(409)` : le contrôleur ne renvoie plus `200`, ce qui déclenche le mécanisme de nouvelle tentative automatique de Stripe (jusqu'à 3 jours) — pattern standard pour ce problème, pas de réconciliation maison.
+  6. Doublon `hasActiveAccess`/`mySubscription` (même règle réimplémentée deux fois) — corrigé par le même helper `isActive` que le point 1.
+  7. Référence obsolète à `CinetPayPaymentGateway` dans les Javadoc de `PaymentGateway.java` et `package-info.java` (renommage Orange Money non propagé) — corrigée.
+- **Non corrigé, assumé** : duplication du helper de test `grantActiveSubscription` sur 4 classes de test (`AiChatTest`, `CourseFlowTest`, `QuizFlowTest`, `SubscriptionFlowTest`). Laissé tel quel : cohérent avec le patron déjà établi dans **toute** la suite de tests du projet (`register`/`login`/`instructorToken`/`adminToken` sont déjà dupliqués de la même façon dans 6+ fichiers existants, avant même cette session) — introduire une classe de base partagée juste pour ce helper créerait une incohérence stylistique plutôt que de la résoudre.
+- **Vérifié après corrections** : `./mvnw test` → **64/64 toujours verts**. Backend redémarré (migration inchangée), retest API réel : `/subscriptions/me` correct, `enroll` sans abonnement → toujours `402`.
+
+**Décisions techniques**
+- Retourner `409` (au lieu de `200` silencieux) quand un webhook Stripe référence un enregistrement local pas encore visible : laisse le mécanisme de retry de Stripe gérer le désordre de livraison plutôt que de construire une file de réconciliation.
+- `EnrollmentService.requireCourseAccess` ajouté plutôt que de rendre `requireActiveEnrollment` public : l'entité `Enrollment` ne doit jamais sortir du module (convention déjà en place), donc un point d'entrée `void` dédié pour les appelants externes qui n'ont besoin que de la garde d'accès.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — inchangée : clés de test réelles (Stripe + Orange Money) pour un test bout-en-bout du paiement effectif.

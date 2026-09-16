@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -32,6 +33,8 @@ export class CourseDetailComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly enrolling = signal(false);
+  readonly enrollError = signal<string | null>(null);
+  readonly subscriptionRequired = signal(false);
 
   readonly canEnroll = computed(() => {
     const c = this.course();
@@ -46,9 +49,19 @@ export class CourseDetailComponent implements OnInit {
     const c = this.course();
     if (!c) return;
     this.enrolling.set(true);
+    this.enrollError.set(null);
+    this.subscriptionRequired.set(false);
     this.enrollmentApi.enroll(c.id).subscribe({
       next: () => this.reload(c.slug),
-      error: () => this.enrolling.set(false),
+      error: (err: HttpErrorResponse) => {
+        this.enrolling.set(false);
+        this.subscriptionRequired.set(err.status === 402);
+        this.enrollError.set(
+          err.status === 402
+            ? this.translate.instant('course.subscriptionRequired')
+            : (err.error?.message ?? this.translate.instant('course.enrollError')),
+        );
+      },
     });
   }
 

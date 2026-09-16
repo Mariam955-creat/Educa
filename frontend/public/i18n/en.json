@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "catalog": "Catalog",
     "certificates": "My certificates",
+    "billing": "Subscription",
     "instructor": "Instructor",
     "admin": "Admin",
     "logout": "Sign out",
@@ -65,6 +66,28 @@
     "download": "Download PDF",
     "verifyLink": "Verify publicly"
   },
+  "billing": {
+    "title": "Subscription",
+    "subtitle": "A subscription gives access to every course on the platform.",
+    "plan": {
+      "MONTHLY": "Monthly",
+      "ANNUAL": "Annual"
+    },
+    "payStripe": "Pay by card (Europe)",
+    "payOrangeMoney": "Pay with Orange Money (Africa)",
+    "active": "Active subscription",
+    "activePlan": "Plan: {{plan}}",
+    "renewsOn": "Renews on {{date}}",
+    "cancelScheduled": "Cancellation scheduled for the end of the current period.",
+    "cancel": "Cancel renewal",
+    "confirmCancel": "Confirm cancelling the renewal?",
+    "error": "Something went wrong, try again later.",
+    "successTitle": "Payment received",
+    "successBody": "Thanks! Your subscription will be active shortly, once the provider confirms the payment.",
+    "cancelledTitle": "Payment cancelled",
+    "cancelledBody": "The payment was cancelled, nothing was charged.",
+    "backToBilling": "‹ Back to subscription"
+  },
   "verify": {
     "title": "Certificate verification",
     "checking": "Checking…",
@@ -96,7 +119,10 @@
     "downloadCertificate": "🎓 Download certificate",
     "notFound": "Course not found.",
     "loadError": "Loading error.",
-    "unavailable": "Course unavailable."
+    "unavailable": "Course unavailable.",
+    "enrollError": "Could not enroll right now.",
+    "subscriptionRequired": "An active subscription is required to access courses.",
+    "subscribeLink": "Subscribe"
   },
   "chat": {
     "title": "💬 Course assistant",
@@ -213,6 +239,7 @@
     "tabs": {
       "users": "Users",
       "certificates": "Certificates",
+      "payments": "Payments",
       "languages": "Languages"
     },
     "roles": {
@@ -243,6 +270,15 @@
       "headerCourse": "Course",
       "headerGrade": "Final grade",
       "headerIssued": "Issued on"
+    },
+    "payments": {
+      "empty": "No payment recorded.",
+      "headerUser": "User",
+      "headerProvider": "Provider",
+      "headerPlan": "Plan",
+      "headerAmount": "Amount",
+      "headerStatus": "Status",
+      "headerDate": "Date"
     },
     "languages": {
       "headerCode": "Code",

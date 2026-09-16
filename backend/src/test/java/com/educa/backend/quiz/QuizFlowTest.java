@@ -14,6 +14,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
+import com.educa.backend.payment.PaymentProvider;
+import com.educa.backend.payment.Subscription;
+import com.educa.backend.payment.SubscriptionPlan;
+import com.educa.backend.payment.SubscriptionRepository;
+import com.educa.backend.payment.SubscriptionStatus;
 import com.educa.backend.user.Role;
 import com.educa.backend.user.RoleName;
 import com.educa.backend.user.RoleRepository;
@@ -35,6 +43,9 @@ class QuizFlowTest {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
 
     @Test
     void quiz_non_visible_si_non_inscrit() throws Exception {
@@ -216,7 +227,20 @@ class QuizFlowTest {
 
     private String learnerToken(String email) throws Exception {
         register(email);
+        grantActiveSubscription(email);
         return login(email);
+    }
+
+    /** L'inscription à un cours exige désormais un abonnement actif (modèle « abonnement plateforme »). */
+    private void grantActiveSubscription(String email) {
+        User user = userRepository.findByEmailIgnoreCase(email).orElseThrow();
+        Subscription subscription = new Subscription();
+        subscription.setUserId(user.getId());
+        subscription.setPlan(SubscriptionPlan.MONTHLY);
+        subscription.setProvider(PaymentProvider.STRIPE);
+        subscription.setStatus(SubscriptionStatus.ACTIVE);
+        subscription.setCurrentPeriodEnd(Instant.now().plus(365, ChronoUnit.DAYS));
+        subscriptionRepository.save(subscription);
     }
 
     private String instructorToken(String email) throws Exception {

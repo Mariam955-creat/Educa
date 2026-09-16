@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/certificates/verify/**",
+                                "/api/v1/payments/webhooks/**",
                                 "/error")
                         .permitAll()
                         // Doc API (dev/test uniquement — désactivée en prod par springdoc.*.enabled=false,

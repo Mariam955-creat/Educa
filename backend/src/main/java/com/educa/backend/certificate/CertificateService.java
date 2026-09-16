@@ -1,11 +1,19 @@
 package com.educa.backend.certificate;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.Year;
+import java.util.Base64;
+import java.util.EnumMap;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +28,16 @@ import com.educa.backend.certificate.dto.CertificateDto;
 import com.educa.backend.certificate.dto.CertificateVerificationDto;
 import com.educa.backend.common.error.ApiException;
 import com.educa.backend.common.error.ResourceNotFoundException;
+import com.educa.backend.config.EducaProperties;
 import com.educa.backend.course.CourseService;
 import com.educa.backend.storage.StorageService;
 import com.educa.backend.user.UserService;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 @Service
@@ -35,13 +50,16 @@ public class CertificateService {
     private final UserService userService;
     private final CourseService courseService;
     private final StorageService storageService;
+    private final EducaProperties educaProperties;
 
     public CertificateService(CertificateRepository certificateRepository, UserService userService,
-                              CourseService courseService, StorageService storageService) {
+                              CourseService courseService, StorageService storageService,
+                              EducaProperties educaProperties) {
         this.certificateRepository = certificateRepository;
         this.userService = userService;
         this.courseService = courseService;
         this.storageService = storageService;
+        this.educaProperties = educaProperties;
     }
 
     /** Crée le certificat si absent pour ce couple (utilisateur, cours). Renvoie l'id du certificat. */
@@ -146,18 +164,24 @@ public class CertificateService {
     }
 
     private byte[] renderPdf(Certificate c, String holderName, String courseTitle) throws Exception {
+        String verificationUrl = educaProperties.publicBaseUrl() + "/verify/" + c.getVerificationCode();
+        String qrCodeImg = qrCodeDataUri(verificationUrl)
+                .map(dataUri -> "<img class=\"qr\" src=\"" + dataUri + "\"/>")
+                .orElse("");
+
         String html = """
                 <html><head><meta charset="utf-8"/><style>
                   @page { size: A4 landscape; margin: 0; }
                   body { font-family: sans-serif; color: #1f2937; }
-                  .frame { margin: 28px; border: 3px solid #2563eb; border-radius: 10px;
-                           padding: 60px 70px; text-align: center; }
-                  h1 { font-size: 34px; letter-spacing: 2px; color: #2563eb; margin: 0 0 8px; }
+                  .frame { margin: 28px; border: 3px solid #7e22ce; border-radius: 10px;
+                           padding: 60px 70px; text-align: center; position: relative; }
+                  h1 { font-size: 34px; letter-spacing: 2px; color: #7e22ce; margin: 0 0 8px; }
                   .sub { color: #6b7280; margin: 0 0 40px; }
                   .name { font-size: 30px; font-weight: bold; margin: 24px 0 6px; }
                   .course { font-size: 20px; margin: 0 0 28px; }
                   .grade { font-size: 18px; }
                   .meta { margin-top: 40px; color: #6b7280; font-size: 12px; }
+                  .qr { position: absolute; bottom: 24px; right: 32px; width: 84px; height: 84px; }
                 </style></head><body>
                 <div class="frame">
                   <h1>CERTIFICAT DE R&#201;USSITE</h1>
@@ -170,13 +194,14 @@ public class CertificateService {
                      (contr&#244;les : %s &#183; examen final : %s)</p>
                   <p class="meta">N&#176; %s &#183; d&#233;livr&#233; le %s<br/>
                      V&#233;rification : code %s</p>
+                  %s
                 </div>
                 </body></html>
                 """.formatted(escape(holderName), escape(courseTitle),
                 c.getFinalGrade().stripTrailingZeros().toPlainString(),
                 c.getControlsAverage().stripTrailingZeros().toPlainString(),
                 c.getFinalExamScore().stripTrailingZeros().toPlainString(),
-                c.getSerialNumber(), c.getIssuedAt(), c.getVerificationCode());
+                c.getSerialNumber(), c.getIssuedAt(), c.getVerificationCode(), qrCodeImg);
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -185,6 +210,29 @@ public class CertificateService {
             builder.toStream(out);
             builder.run();
             return out.toByteArray();
+        }
+    }
+
+    /** QR code pointant vers la page publique de vérification, encodé en data URI PNG pour l'embarquer dans le PDF. */
+    private static Optional<String> qrCodeDataUri(String content) {
+        try {
+            Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+            hints.put(EncodeHintType.MARGIN, 1);
+            BitMatrix matrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, 200, 200, hints);
+
+            BufferedImage image = new BufferedImage(matrix.getWidth(), matrix.getHeight(), BufferedImage.TYPE_INT_RGB);
+            for (int x = 0; x < matrix.getWidth(); x++) {
+                for (int y = 0; y < matrix.getHeight(); y++) {
+                    image.setRGB(x, y, matrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+                }
+            }
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", out);
+            return Optional.of("data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray()));
+        } catch (WriterException | IOException e) {
+            log.warn("Génération du QR code de vérification échouée, certificat généré sans QR code", e);
+            return Optional.empty();
         }
     }
 

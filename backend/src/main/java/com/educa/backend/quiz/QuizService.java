@@ -53,9 +53,7 @@ public class QuizService {
             return toView(quiz, true);
         }
         Long userId = CurrentUser.id();
-        if (!enrollmentService.isEnrolled(userId, quiz.getCourseId())) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Vous n'êtes pas inscrit à ce cours");
-        }
+        enrollmentService.requireCourseAccess(userId, quiz.getCourseId());
         if (quiz.getType() == QuizType.FINAL_EXAM
                 && !unlockService.isFinalExamUnlocked(userId, quiz.getCourseId())) {
             throw new ApiException(HttpStatus.FORBIDDEN,
@@ -172,9 +170,8 @@ public class QuizService {
     /** Liste des quiz d'un cours (contrôles + examen final) pour l'apprenant inscrit ou le propriétaire. */
     @Transactional(readOnly = true)
     public com.educa.backend.quiz.dto.CourseQuizzesDto listForCourse(Long courseId) {
-        if (!courseService.isOwnerOrAdmin(courseId)
-                && !enrollmentService.isEnrolled(CurrentUser.id(), courseId)) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Vous n'êtes pas inscrit à ce cours");
+        if (!courseService.isOwnerOrAdmin(courseId)) {
+            enrollmentService.requireCourseAccess(CurrentUser.id(), courseId);
         }
         var controls = quizRepository.findByCourseIdAndTypeOrderByIdAsc(courseId, QuizType.CONTROL).stream()
                 .map(this::toRef)

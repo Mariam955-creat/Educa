@@ -10,7 +10,7 @@
 .brand {
   font-weight: 800;
   font-size: 1.15rem;
-  color: var(--accent, #2563eb);
+  color: var(--accent, #7e22ce);
   text-decoration: none;
 }
 
@@ -30,8 +30,8 @@
 }
 
 .nav a.active {
-  color: var(--accent, #2563eb);
-  border-bottom-color: var(--accent, #2563eb);
+  color: var(--accent, #7e22ce);
+  border-bottom-color: var(--accent, #7e22ce);
 }
 
 .account {

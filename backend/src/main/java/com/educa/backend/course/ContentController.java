@@ -75,10 +75,8 @@ public class ContentController {
         Content content = contentService.requireForReading(id);
         Long courseId = contentService.courseIdOf(id);
 
-        boolean privileged = courseService.isOwnerOrAdmin(courseId);
-        boolean enrolled = enrollmentService.isEnrolled(CurrentUser.id(), courseId);
-        if (!privileged && !enrolled) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Inscrivez-vous au cours pour accéder à ce contenu");
+        if (!courseService.isOwnerOrAdmin(courseId)) {
+            enrollmentService.requireCourseAccess(CurrentUser.id(), courseId);
         }
         if (!content.hasFile()) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Aucun fichier associé à ce contenu");

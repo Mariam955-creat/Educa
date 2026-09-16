@@ -4,6 +4,7 @@
     "dashboard": "لوحة التحكم",
     "catalog": "الكتالوج",
     "certificates": "شهاداتي",
+    "billing": "الاشتراك",
     "instructor": "المدرّب",
     "admin": "المشرف",
     "logout": "تسجيل الخروج",
@@ -65,6 +66,28 @@
     "download": "تحميل PDF",
     "verifyLink": "التحقق العلني"
   },
+  "billing": {
+    "title": "الاشتراك",
+    "subtitle": "يمنحك الاشتراك الوصول إلى جميع دورات المنصة.",
+    "plan": {
+      "MONTHLY": "شهري",
+      "ANNUAL": "سنوي"
+    },
+    "payStripe": "الدفع بالبطاقة (أوروبا)",
+    "payOrangeMoney": "الدفع عبر أورنج موني (أفريقيا)",
+    "active": "اشتراك نشط",
+    "activePlan": "الخطة: {{plan}}",
+    "renewsOn": "التجديد في {{date}}",
+    "cancelScheduled": "تم جدولة الإلغاء في نهاية الفترة الحالية.",
+    "cancel": "إلغاء التجديد",
+    "confirmCancel": "تأكيد إلغاء التجديد؟",
+    "error": "حدث خطأ، حاول مرة أخرى لاحقًا.",
+    "successTitle": "تم استلام الدفع",
+    "successBody": "شكرًا! سيصبح اشتراكك نشطًا قريبًا بمجرد تأكيد الدفع من المزود.",
+    "cancelledTitle": "تم إلغاء الدفع",
+    "cancelledBody": "تم إلغاء الدفع، لم يتم خصم أي مبلغ.",
+    "backToBilling": "‹ العودة إلى الاشتراك"
+  },
   "verify": {
     "title": "التحقق من شهادة",
     "checking": "جارٍ التحقق…",
@@ -96,7 +119,10 @@
     "downloadCertificate": "🎓 تحميل الشهادة",
     "notFound": "الدورة غير موجودة.",
     "loadError": "خطأ في التحميل.",
-    "unavailable": "الدورة غير متاحة."
+    "unavailable": "الدورة غير متاحة.",
+    "enrollError": "تعذر التسجيل حاليًا.",
+    "subscriptionRequired": "يلزم اشتراك نشط للوصول إلى الدورات.",
+    "subscribeLink": "الاشتراك"
   },
   "chat": {
     "title": "💬 مساعد الدورة",
@@ -213,6 +239,7 @@
     "tabs": {
       "users": "المستخدمون",
       "certificates": "الشهادات",
+      "payments": "المدفوعات",
       "languages": "اللغات"
     },
     "roles": {
@@ -243,6 +270,15 @@
       "headerCourse": "الدورة",
       "headerGrade": "الدرجة النهائية",
       "headerIssued": "تاريخ الإصدار"
+    },
+    "payments": {
+      "empty": "لا يوجد أي دفع مسجل.",
+      "headerUser": "المستخدم",
+      "headerProvider": "المزود",
+      "headerPlan": "الخطة",
+      "headerAmount": "المبلغ",
+      "headerStatus": "الحالة",
+      "headerDate": "التاريخ"
     },
     "languages": {
       "headerCode": "الرمز",

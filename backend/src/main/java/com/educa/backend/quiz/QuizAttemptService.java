@@ -70,9 +70,7 @@ public class QuizAttemptService {
     public AttemptResultDto submit(Long userId, Long quizId, AttemptSubmission submission) {
         Quiz quiz = quizService.requireQuiz(quizId);
 
-        if (!enrollmentService.isEnrolled(userId, quiz.getCourseId())) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Vous n'êtes pas inscrit à ce cours");
-        }
+        enrollmentService.requireCourseAccess(userId, quiz.getCourseId());
         if (quiz.getType() == QuizType.FINAL_EXAM
                 && !unlockService.isFinalExamUnlocked(userId, quiz.getCourseId())) {
             throw new ApiException(HttpStatus.FORBIDDEN,

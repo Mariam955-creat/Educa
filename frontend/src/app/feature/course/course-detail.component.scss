@@ -72,6 +72,16 @@ button:disabled {
   color: #b91c1c;
 }
 
+.enroll-error {
+  color: #b91c1c;
+  margin-top: 0.5rem;
+}
+
+.enroll-error a {
+  color: var(--accent);
+  margin-left: 0.4rem;
+}
+
 .chapter-list li {
   margin: 0.4rem 0;
 }

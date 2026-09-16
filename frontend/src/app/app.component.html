@@ -6,6 +6,7 @@
       <a routerLink="/dashboard" routerLinkActive="active">{{ 'nav.dashboard' | translate }}</a>
       <a routerLink="/catalog" routerLinkActive="active">{{ 'nav.catalog' | translate }}</a>
       <a routerLink="/certificates" routerLinkActive="active">{{ 'nav.certificates' | translate }}</a>
+      <a routerLink="/billing" routerLinkActive="active">{{ 'nav.billing' | translate }}</a>
       @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
         <a routerLink="/instructor" routerLinkActive="active">{{ 'nav.instructor' | translate }}</a>
       }

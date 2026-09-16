@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api';
 import { RoleName } from '../auth/auth.models';
 import { CourseLanguage } from '../language/language-api.service';
-import { AdminUser, CertificateRegistryEntry, Page } from './admin.models';
+import { AdminUser, CertificateRegistryEntry, Page, PaymentRegistryEntry } from './admin.models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
@@ -29,6 +29,11 @@ export class AdminApiService {
   certificateRegistry(page = 0, size = 50): Observable<Page<CertificateRegistryEntry>> {
     const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<CertificateRegistryEntry>>(`${this.base}/admin/certificates`, { params });
+  }
+
+  paymentRegistry(page = 0, size = 50): Observable<Page<PaymentRegistryEntry>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<PaymentRegistryEntry>>(`${this.base}/admin/payments`, { params });
   }
 
   languages(): Observable<CourseLanguage[]> {

@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AdminApiService } from '../../core/admin/admin-api.service';
-import { AdminUser, CertificateRegistryEntry } from '../../core/admin/admin.models';
+import { AdminUser, CertificateRegistryEntry, PaymentRegistryEntry } from '../../core/admin/admin.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { RoleName } from '../../core/auth/auth.models';
 import { CourseLanguage } from '../../core/language/language-api.service';
 
-type Tab = 'users' | 'certificates' | 'languages';
+type Tab = 'users' | 'certificates' | 'payments' | 'languages';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -37,6 +37,10 @@ export class AdminDashboardComponent implements OnInit {
   readonly certificatesLoading = signal(true);
   private certificatesLoaded = false;
 
+  readonly payments = signal<PaymentRegistryEntry[]>([]);
+  readonly paymentsLoading = signal(true);
+  private paymentsLoaded = false;
+
   readonly languages = signal<CourseLanguage[]>([]);
   readonly languagesLoading = signal(true);
   private languagesLoaded = false;
@@ -49,6 +53,9 @@ export class AdminDashboardComponent implements OnInit {
     this.tab.set(tab);
     if (tab === 'certificates' && !this.certificatesLoaded) {
       this.loadCertificates();
+    }
+    if (tab === 'payments' && !this.paymentsLoaded) {
+      this.loadPayments();
     }
     if (tab === 'languages' && !this.languagesLoaded) {
       this.loadLanguages();
@@ -124,6 +131,18 @@ export class AdminDashboardComponent implements OnInit {
         this.certificatesLoaded = true;
       },
       error: () => this.certificatesLoading.set(false),
+    });
+  }
+
+  private loadPayments(): void {
+    this.paymentsLoading.set(true);
+    this.api.paymentRegistry().subscribe({
+      next: (page) => {
+        this.payments.set(page.content);
+        this.paymentsLoading.set(false);
+        this.paymentsLoaded = true;
+      },
+      error: () => this.paymentsLoading.set(false),
     });
   }
 

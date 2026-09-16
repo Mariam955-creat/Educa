@@ -184,6 +184,33 @@ Détail complet : `docs/04-journal-avancement.md` (entrées du 2026-09-15).
 
 ---
 
+## Extension post-MVP — paiements : abonnement plateforme (session du 2026-09-16)
+
+Hors périmètre du brief initial et du plan Phases 0→6 (qui prévoyait un accès gratuit à tous les cours).
+Demandé explicitement par l'utilisatrice en session : educa devient un abonnement payant (mensuel/annuel,
+accès à tous les cours), avec deux prestataires ciblant l'Europe et l'Afrique. Détail complet :
+`docs/02-conception.md §11`, `docs/04-journal-avancement.md` (entrée du 2026-09-16).
+
+| # | Tâche | Fichiers / modules | Statut |
+|---|---|---|---|
+| P.1 | Mise en forme CSS — nouvel accent (violet) | `frontend/src/styles.scss` + fallbacks | fait |
+| P.2 | QR code de vérification sur le certificat PDF | `com.educa.backend.certificate.CertificateService`, `EducaProperties.publicBaseUrl` | fait |
+| P.3 | Module `payment` — `Subscription`/`Payment`, migration `V6__payments.sql` | `com.educa.backend.payment.*` | fait |
+| P.4 | Prestataire Europe — Stripe (Checkout, webhooks signés, réabonnement auto) | `StripePaymentGateway` | fait (repli 503 sans clé — non testé avec de vraies clés) |
+| P.5 | Prestataire Afrique — Orange Money (intégration directe, pas d'agrégateur) | `OrangeMoneyPaymentGateway` | fait (repli 503 sans clé — champs API à revérifier contre la doc live, non testé avec de vraies clés) |
+| P.6 | Gating abonnement centralisé (accès aux cours) | `com.educa.backend.enrollment.EnrollmentService` | fait |
+| P.7 | Registre admin des paiements | `AdminPaymentController`, onglet `admin-dashboard` | fait |
+| P.8 | Frontend — page tarifs/abonnement + intégration `course-detail` | `frontend/src/app/feature/billing`, `core/payment` | fait |
+| P.9 | Correction des tests existants cassés par le nouveau gating + seed démo | `AiChatTest`, `CourseFlowTest`, `QuizFlowTest`, `DevDataInitializer` | fait |
+
+**Vérifié** : `./mvnw test` → 64/64 verts, `npm run build` + `test:ci` (13/13) OK, vérification API réelle
+bout-en-bout (checkout `503` sans clé, enroll `402`/`201` selon abonnement).
+
+**Résiduel restant** : clés de test réelles (Stripe + Orange Money sandbox) pour un test bout-en-bout du
+paiement effectif et des webhooks — nécessite que l'utilisatrice les fournisse, pas une tâche de code.
+
+---
+
 ## Suivi global
 
 | Phase | État | Début | Fin |

@@ -22,6 +22,17 @@ export interface CertificateRegistryEntry {
   issuedAt: string;
 }
 
+export interface PaymentRegistryEntry {
+  id: number;
+  userName: string;
+  provider: 'STRIPE' | 'ORANGE_MONEY';
+  plan: 'MONTHLY' | 'ANNUAL';
+  amount: number;
+  currency: string;
+  status: 'PENDING' | 'SUCCEEDED' | 'FAILED';
+  createdAt: string;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

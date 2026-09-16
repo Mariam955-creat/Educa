@@ -36,6 +36,9 @@ springdoc:
 educa:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+  # Origine publique du frontend, utilisée pour construire l'URL du QR code de vérification
+  # embarqué dans le PDF du certificat. Même valeur que l'origine CORS (un seul frontend public).
+  public-base-url: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
   jwt:
     # 32+ octets. En dev une valeur par défaut est fournie ; à surcharger via .env en réel.
     secret: ${JWT_SECRET:dev-only-insecure-change-me-0123456789-abcdefghijklmnop}
@@ -50,6 +53,27 @@ educa:
     model: ${AI_MODEL:claude-sonnet-5}
     timeout-ms: ${AI_TIMEOUT_MS:15000}
     max-context-chars: ${AI_MAX_CONTEXT_CHARS:4000}
+  payment:
+    # Origine où l'API est joignable par les prestataires (webhooks serveur-à-serveur).
+    # Distincte de public-base-url (origine du frontend) : en dev les deux diffèrent (:8081 vs :4200).
+    webhook-base-url: ${WEBHOOK_BASE_URL:http://localhost:8081}
+    stripe:
+      enabled: ${STRIPE_ENABLED:false}
+      secret-key: ${STRIPE_SECRET_KEY:}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+      monthly-amount-cents: ${STRIPE_MONTHLY_AMOUNT_CENTS:999}
+      annual-amount-cents: ${STRIPE_ANNUAL_AMOUNT_CENTS:9900}
+      currency: ${STRIPE_CURRENCY:eur}
+    orange-money:
+      # Intégration directe (pas d'agrégateur) — compte marchand Orange Developer pour un pays donné.
+      enabled: ${ORANGE_MONEY_ENABLED:false}
+      client-id: ${ORANGE_MONEY_CLIENT_ID:}
+      client-secret: ${ORANGE_MONEY_CLIENT_SECRET:}
+      merchant-key: ${ORANGE_MONEY_MERCHANT_KEY:}
+      country: ${ORANGE_MONEY_COUNTRY:civ}
+      monthly-amount: ${ORANGE_MONEY_MONTHLY_AMOUNT:5000}
+      annual-amount: ${ORANGE_MONEY_ANNUAL_AMOUNT:50000}
+      currency: ${ORANGE_MONEY_CURRENCY:XOF}
 
 logging:
   level:

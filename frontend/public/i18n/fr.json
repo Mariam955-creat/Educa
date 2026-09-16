@@ -4,6 +4,7 @@
     "dashboard": "Tableau de bord",
     "catalog": "Catalogue",
     "certificates": "Mes certificats",
+    "billing": "Abonnement",
     "instructor": "Formateur",
     "admin": "Admin",
     "logout": "Déconnexion",
@@ -65,6 +66,28 @@
     "download": "Télécharger le PDF",
     "verifyLink": "Vérifier publiquement"
   },
+  "billing": {
+    "title": "Abonnement",
+    "subtitle": "Un abonnement donne accès à tous les cours de la plateforme.",
+    "plan": {
+      "MONTHLY": "Mensuel",
+      "ANNUAL": "Annuel"
+    },
+    "payStripe": "Payer par carte (Europe)",
+    "payOrangeMoney": "Payer avec Orange Money (Afrique)",
+    "active": "Abonnement actif",
+    "activePlan": "Formule : {{plan}}",
+    "renewsOn": "Renouvellement le {{date}}",
+    "cancelScheduled": "Annulation programmée à la fin de la période en cours.",
+    "cancel": "Annuler le renouvellement",
+    "confirmCancel": "Confirmer l'annulation du renouvellement ?",
+    "error": "Une erreur est survenue, réessayez plus tard.",
+    "successTitle": "Paiement reçu",
+    "successBody": "Merci ! Ton abonnement sera actif sous peu (le temps que le prestataire confirme le paiement).",
+    "cancelledTitle": "Paiement annulé",
+    "cancelledBody": "Le paiement a été annulé, aucun montant n'a été débité.",
+    "backToBilling": "‹ Retour à l'abonnement"
+  },
   "verify": {
     "title": "Vérification d'un certificat",
     "checking": "Vérification…",
@@ -96,7 +119,10 @@
     "downloadCertificate": "🎓 Télécharger le certificat",
     "notFound": "Cours introuvable.",
     "loadError": "Erreur de chargement.",
-    "unavailable": "Cours indisponible."
+    "unavailable": "Cours indisponible.",
+    "enrollError": "Impossible de s'inscrire pour le moment.",
+    "subscriptionRequired": "Un abonnement actif est requis pour accéder aux cours.",
+    "subscribeLink": "S'abonner"
   },
   "chat": {
     "title": "💬 Assistant du cours",
@@ -213,6 +239,7 @@
     "tabs": {
       "users": "Utilisateurs",
       "certificates": "Certificats",
+      "payments": "Paiements",
       "languages": "Langues"
     },
     "roles": {
@@ -243,6 +270,15 @@
       "headerCourse": "Cours",
       "headerGrade": "Note finale",
       "headerIssued": "Délivré le"
+    },
+    "payments": {
+      "empty": "Aucun paiement enregistré.",
+      "headerUser": "Utilisateur",
+      "headerProvider": "Prestataire",
+      "headerPlan": "Formule",
+      "headerAmount": "Montant",
+      "headerStatus": "Statut",
+      "headerDate": "Date"
     },
     "languages": {
       "headerCode": "Code",

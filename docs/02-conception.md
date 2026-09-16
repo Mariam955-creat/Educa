@@ -104,7 +104,10 @@ com.educa.backend
 ├── certificate/          # module : Certificate + génération PDF + vérification publique
 ├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible ; FileTypeDetector (sniffing Tika)
 ├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
-└── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
+├── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
+└── payment/              # module : abonnement plateforme — Subscription + Payment, interface PaymentGateway
+                          #   (StripePaymentGateway Europe, OrangeMoneyPaymentGateway Afrique, DisabledPaymentGateway)
+                          #   SubscriptionController, PaymentWebhookController, AdminPaymentController — voir §11
 ```
 
 **Conventions de module (backend)**
@@ -130,7 +133,8 @@ frontend/src/app
     ├── instructor/       # espace formateur (cours, chapitres, contenus, quiz)
     ├── quiz/             # passage de quiz + résultats
     ├── certificate/      # mes certificats + vérification publique
-    └── admin/            # utilisateurs, rôles, langues, registre certificats
+    ├── billing/          # page tarifs, statut abonnement, retours checkout (succès/annulé)
+    └── admin/            # utilisateurs, rôles, langues, registre certificats + paiements
 ```
 
 Chaque dossier `feature/<x>/` est autonome : ses composants, son `‹x›-routing`, ses modèles TypeScript et
@@ -763,3 +767,57 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 4. **Certification** : note finale pondérée **40 % contrôles / 60 % examen final** (`courses.control_weight` / `exam_weight`) ; seuil configurable par cours (`courses.pass_threshold`, défaut **70 %**) ; examen final déverrouillé à **100 % de progression** ; contrôles à tentatives **illimitées** (meilleur score retenu), examen final **limité** (défaut 3, meilleur score retenu).
 5. **Chatbot sans persistance** au MVP (historique conservé côté navigateur). Table `chat_messages` = *Should have*.
 6. **Fournisseur IA** : **API Claude / Anthropic** ; clé API avec plafond de dépense. Modèle exact et tarifs figés en Phase 4 (consulter la référence API Claude à ce moment-là).
+
+---
+
+## 11. Paiements — abonnement plateforme (extension post-MVP, 2026-09-16)
+
+Extension hors périmètre MVP initial : educa passe d'un accès gratuit à tous les cours à un
+**abonnement plateforme payant** (mensuel ou annuel, accès à tous les cours — pas de prix par cours),
+avec deux prestataires ciblant les deux marchés visés par le projet.
+
+### 11.1 Prestataires
+
+- **Europe — Stripe** : cartes Visa/Mastercard, Apple Pay/Google Pay, SEPA. Stripe Checkout en mode
+  `subscription` avec `price_data` inline (pas besoin de Produits/Prix pré-créés dans le dashboard).
+  Stripe gère le **réabonnement automatique** ; webhooks (`checkout.session.completed`,
+  `customer.subscription.updated/deleted`) tiennent `current_period_end` à jour.
+- **Afrique — Orange Money** : intégration **directe** (pas d'agrégateur), un compte marchand Orange
+  Developer pour un pays donné (`educa.payment.orange-money.country`). ⚠️ **Limitation réelle du marché,
+  pas un raccourci d'implémentation** : Orange Money n'a pas de prélèvement récurrent automatique. Un
+  « abonnement » Orange Money est donc en pratique une **période d'accès qui expire** — chaque paiement
+  confirmé prolonge `current_period_end` de 30 ou 365 jours, mais rien ne débite l'utilisateur à
+  l'échéance : il doit repayer manuellement pour renouveler.
+- Aucun numéro de carte ne transite par nos serveurs : tout passe par les pages hébergées des deux
+  prestataires (Stripe Checkout, page de paiement Orange Money).
+
+### 11.2 Modèle d'accès
+
+Choke point unique déjà existant : `EnrollmentService.isEnrolled` / `requireActiveEnrollment` /
+`enroll`. Un abonnement actif (`SubscriptionService.hasActiveAccess`) y est désormais exigé pour tout
+apprenant (`LEARNER`) — `INSTRUCTOR` et `ADMIN` restent en accès libre. Les certificats déjà délivrés
+restent accessibles indéfiniment (module `certificate` indépendant de `isEnrolled`).
+
+### 11.3 Schéma (`V6__payments.sql`)
+
+- `subscriptions` : `user_id`, `plan` (MONTHLY/ANNUAL), `provider` (STRIPE/ORANGE_MONEY), `status`
+  (PENDING/ACTIVE/EXPIRED/CANCELLED), `provider_customer_id`, `provider_subscription_id`,
+  `current_period_end`, `cancel_at_period_end`.
+- `payments` : journal des transactions — `user_id`, `subscription_id`, `provider`,
+  `provider_reference` (unique par prestataire), `plan`, `amount`, `currency`, `status`
+  (PENDING/SUCCEEDED/FAILED).
+
+### 11.4 Config & repli
+
+Même patron que le module `ai` : `educa.payment.stripe.enabled` / `educa.payment.orange-money.enabled`
+(défaut `false`), repli propre sur `DisabledPaymentGateway` (503 explicite) si la clé du prestataire
+est absente — l'application démarre et fonctionne sans clés réelles, paiement juste indisponible.
+`educa.payment.webhook-base-url` (origine où l'API est joignable par les prestataires) est **distincte**
+de `educa.public-base-url` (origine du frontend, redirections navigateur) : en dev les deux diffèrent
+(`:8081` vs `:4200`).
+
+### 11.5 Écart de conception assumé
+
+Les comptes de démo apprenants (`DevDataInitializer`) reçoivent désormais un abonnement actif seedé
+directement en base au démarrage (profil `dev`), pour que le parcours de démonstration existant
+(inscription → progression → certificat) continue de fonctionner sans clé de paiement réelle.

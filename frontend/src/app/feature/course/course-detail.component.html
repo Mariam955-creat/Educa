@@ -11,6 +11,14 @@
         <button type="button" (click)="enroll()" [disabled]="enrolling()">
           {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
         </button>
+        @if (enrollError()) {
+          <p class="enroll-error">
+            {{ enrollError() }}
+            @if (subscriptionRequired()) {
+              <a routerLink="/billing">{{ 'course.subscribeLink' | translate }}</a>
+            }
+          </p>
+        }
       } @else if (c.contentsVisible) {
         <div class="progress">
           <div class="progress-track">

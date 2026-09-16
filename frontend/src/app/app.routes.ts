@@ -41,6 +41,22 @@ export const routes: Routes = [
       import('./feature/certificate/my-certificates.component').then((m) => m.MyCertificatesComponent),
   },
   {
+    path: 'billing',
+    canActivate: [authGuard],
+    loadComponent: () => import('./feature/billing/billing.component').then((m) => m.BillingComponent),
+  },
+  {
+    path: 'billing/success',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./feature/billing/billing-success.component').then((m) => m.BillingSuccessComponent),
+  },
+  {
+    path: 'billing/cancel',
+    canActivate: [authGuard],
+    loadComponent: () => import('./feature/billing/billing-cancel.component').then((m) => m.BillingCancelComponent),
+  },
+  {
     path: 'verify/:code',
     loadComponent: () => import('./feature/certificate/verify.component').then((m) => m.VerifyComponent),
   },

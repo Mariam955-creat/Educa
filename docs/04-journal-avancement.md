@@ -920,3 +920,21 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code). Plus aucun autre résidu identifié.
+
+---
+
+## [2026-09-16] Revue de code (`/code-review medium`) sur le dernier commit
+
+**Fait**
+- `/code-review` (effort `medium`) lancé sur l'état courant du dépôt (dernier commit `88d5b93`, arbre de travail propre, synchronisé avec `origin/main`).
+- **Aucun finding** : le commit ne touche que de la documentation/des diagrammes (`docs/02-conception.md`, `docs/03-plan-implementation.md`, `docs/04-journal-avancement.md`, `docs/assets/README.md`, `docs/assets/mcd.{mmd,svg,png}`) — pas de code applicatif dans le périmètre, donc rien à relever côté correction/simplification/efficacité.
+
+**Décisions techniques**
+- Aucune.
+
+**Écarts par rapport au plan**
+- Aucun.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — résiduel hors MVP restant : clé Anthropic réelle pour le chatbot live (nécessite une vraie clé, pas une tâche de code). Plus aucun autre résidu identifié.

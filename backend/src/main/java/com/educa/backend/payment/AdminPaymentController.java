@@ -16,10 +16,10 @@ import com.educa.backend.payment.dto.AdminPaymentDto;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminPaymentController {
 
-    private final SubscriptionService subscriptionService;
+    private final PaymentService paymentService;
 
-    public AdminPaymentController(SubscriptionService subscriptionService) {
-        this.subscriptionService = subscriptionService;
+    public AdminPaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -27,6 +27,6 @@ public class AdminPaymentController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         int safeSize = Math.min(Math.max(size, 1), 100);
-        return PageResponse.of(subscriptionService.registry(PageRequest.of(Math.max(page, 0), safeSize)));
+        return PageResponse.of(paymentService.registry(PageRequest.of(Math.max(page, 0), safeSize)));
     }
 }

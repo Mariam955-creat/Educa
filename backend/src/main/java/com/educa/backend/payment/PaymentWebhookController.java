@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/payments/webhooks")
 public class PaymentWebhookController {
 
-    private final SubscriptionService subscriptionService;
+    private final PaymentService paymentService;
 
-    public PaymentWebhookController(SubscriptionService subscriptionService) {
-        this.subscriptionService = subscriptionService;
+    public PaymentWebhookController(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
     @PostMapping("/stripe")
     public ResponseEntity<Void> stripe(@RequestBody String payload,
                                        @RequestHeader("Stripe-Signature") String signature) {
-        subscriptionService.handleStripeWebhook(payload, signature);
+        paymentService.handleStripeWebhook(payload, signature);
         return ResponseEntity.ok().build();
     }
 
@@ -34,7 +34,7 @@ public class PaymentWebhookController {
     public ResponseEntity<Void> orangeMoney(@RequestParam("order_id") String orderId,
                                             @RequestParam("amount") long amount,
                                             @RequestParam("pay_token") String payToken) {
-        subscriptionService.handleOrangeMoneyWebhook(orderId, amount, payToken);
+        paymentService.handleOrangeMoneyWebhook(orderId, amount, payToken);
         return ResponseEntity.ok().build();
     }
 }

@@ -9,6 +9,7 @@ export interface CourseSummary {
   published: boolean;
   instructorName: string;
   chapterCount: number;
+  price: number;
 }
 
 export interface ContentItem {
@@ -42,6 +43,7 @@ export interface CourseDetail {
   passThreshold: number;
   contentsVisible: boolean;
   chapters: ChapterItem[];
+  price: number;
 }
 
 export interface Page<T> {
@@ -75,6 +77,7 @@ export interface CourseFormValue {
   title: string;
   description?: string;
   language: string;
+  price: number;
 }
 
 export interface ChapterFormValue {

@@ -1,5 +1,7 @@
 package com.educa.backend.course.dto;
 
+import java.math.BigDecimal;
+
 public record CourseSummaryDto(
         Long id,
         String slug,
@@ -8,5 +10,6 @@ public record CourseSummaryDto(
         String language,
         boolean published,
         String instructorName,
-        int chapterCount) {
+        int chapterCount,
+        BigDecimal price) {
 }

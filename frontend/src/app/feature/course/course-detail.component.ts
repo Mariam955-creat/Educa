@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -7,13 +8,14 @@ import { CertificateApiService } from '../../core/certificates/certificate-api.s
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentItem, CourseDetail } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
+import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 import { CourseChatComponent } from './course-chat.component';
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent, TranslatePipe],
+  imports: [RouterLink, CourseChatComponent, TranslatePipe, DecimalPipe],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })
@@ -21,6 +23,7 @@ export class CourseDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(CourseApiService);
   private readonly enrollmentApi = inject(EnrollmentApiService);
+  private readonly paymentApi = inject(PaymentApiService);
   private readonly quizApi = inject(QuizApiService);
   private readonly certificateApi = inject(CertificateApiService);
   private readonly translate = inject(TranslateService);
@@ -34,7 +37,8 @@ export class CourseDetailComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly enrolling = signal(false);
   readonly enrollError = signal<string | null>(null);
-  readonly subscriptionRequired = signal(false);
+  readonly buying = signal<PaymentProvider | null>(null);
+  readonly paymentNotice = signal<'success' | 'cancelled' | null>(null);
 
   readonly canEnroll = computed(() => {
     const c = this.course();
@@ -42,7 +46,11 @@ export class CourseDetailComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.reload(this.route.snapshot.paramMap.get('slug')!);
+    const payment = this.route.snapshot.queryParamMap.get('payment');
+    if (payment === 'success' || payment === 'cancelled') {
+      this.paymentNotice.set(payment);
+    }
+    this.reload(this.route.snapshot.paramMap.get('slug')!, payment === 'success');
   }
 
   enroll(): void {
@@ -50,17 +58,27 @@ export class CourseDetailComponent implements OnInit {
     if (!c) return;
     this.enrolling.set(true);
     this.enrollError.set(null);
-    this.subscriptionRequired.set(false);
     this.enrollmentApi.enroll(c.id).subscribe({
       next: () => this.reload(c.slug),
       error: (err: HttpErrorResponse) => {
         this.enrolling.set(false);
-        this.subscriptionRequired.set(err.status === 402);
-        this.enrollError.set(
-          err.status === 402
-            ? this.translate.instant('course.subscriptionRequired')
-            : (err.error?.message ?? this.translate.instant('course.enrollError')),
-        );
+        this.enrollError.set(err.error?.message ?? this.translate.instant('course.enrollError'));
+      },
+    });
+  }
+
+  buy(provider: PaymentProvider): void {
+    const c = this.course();
+    if (!c) return;
+    this.buying.set(provider);
+    this.enrollError.set(null);
+    this.paymentApi.checkout(c.id, provider).subscribe({
+      next: (res) => {
+        window.location.href = res.checkoutUrl;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.buying.set(null);
+        this.enrollError.set(err.error?.message ?? this.translate.instant('course.enrollError'));
       },
     });
   }
@@ -114,13 +132,18 @@ export class CourseDetailComponent implements OnInit {
     }
   }
 
-  private reload(slug: string): void {
+  private reload(slug: string, autoEnrollAfterPayment = false): void {
     this.loading.set(true);
     this.api.detail(slug, true).subscribe({
       next: (course) => {
         this.course.set(course);
         this.loading.set(false);
         this.enrolling.set(false);
+        this.buying.set(null);
+        if (autoEnrollAfterPayment && !course.contentsVisible) {
+          this.enroll();
+          return;
+        }
         if (course.contentsVisible) {
           this.enrollmentApi.courseProgress(course.id).subscribe({
             next: (p) => {

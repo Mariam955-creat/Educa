@@ -188,23 +188,47 @@ Détail complet : `docs/04-journal-avancement.md` (entrées du 2026-09-15).
 
 Hors périmètre du brief initial et du plan Phases 0→6 (qui prévoyait un accès gratuit à tous les cours).
 Demandé explicitement par l'utilisatrice en session : educa devient un abonnement payant (mensuel/annuel,
-accès à tous les cours), avec deux prestataires ciblant l'Europe et l'Afrique. Détail complet :
-`docs/02-conception.md §11`, `docs/04-journal-avancement.md` (entrée du 2026-09-16).
+accès à tous les cours), avec deux prestataires ciblant l'Europe et l'Afrique.
+
+> ⚠️ **Ce modèle « abonnement plateforme » a été abandonné le 2026-09-22**, remplacé par un paiement par
+> cours (voir section suivante). Tableau conservé tel quel pour l'historique de la session.
 
 | # | Tâche | Fichiers / modules | Statut |
 |---|---|---|---|
 | P.1 | Mise en forme CSS — nouvel accent (violet) | `frontend/src/styles.scss` + fallbacks | fait |
 | P.2 | QR code de vérification sur le certificat PDF | `com.educa.backend.certificate.CertificateService`, `EducaProperties.publicBaseUrl` | fait |
-| P.3 | Module `payment` — `Subscription`/`Payment`, migration `V6__payments.sql` | `com.educa.backend.payment.*` | fait |
+| P.3 | Module `payment` — `Subscription`/`Payment`, migration `V6__payments.sql` | `com.educa.backend.payment.*` | fait, puis remplacé (V7) |
 | P.4 | Prestataire Europe — Stripe (Checkout, webhooks signés, réabonnement auto) | `StripePaymentGateway` | fait (repli 503 sans clé — non testé avec de vraies clés) |
 | P.5 | Prestataire Afrique — Orange Money (intégration directe, pas d'agrégateur) | `OrangeMoneyPaymentGateway` | fait (repli 503 sans clé — champs API à revérifier contre la doc live, non testé avec de vraies clés) |
-| P.6 | Gating abonnement centralisé (accès aux cours) | `com.educa.backend.enrollment.EnrollmentService` | fait |
+| P.6 | Gating abonnement centralisé (accès aux cours) | `com.educa.backend.enrollment.EnrollmentService` | fait, puis remplacé |
 | P.7 | Registre admin des paiements | `AdminPaymentController`, onglet `admin-dashboard` | fait |
-| P.8 | Frontend — page tarifs/abonnement + intégration `course-detail` | `frontend/src/app/feature/billing`, `core/payment` | fait |
+| P.8 | Frontend — page tarifs/abonnement + intégration `course-detail` | `frontend/src/app/feature/billing`, `core/payment` | fait, puis `billing/` supprimé |
 | P.9 | Correction des tests existants cassés par le nouveau gating + seed démo | `AiChatTest`, `CourseFlowTest`, `QuizFlowTest`, `DevDataInitializer` | fait |
 
-**Vérifié** : `./mvnw test` → 64/64 verts, `npm run build` + `test:ci` (13/13) OK, vérification API réelle
-bout-en-bout (checkout `503` sans clé, enroll `402`/`201` selon abonnement).
+**Vérifié à l'époque** : `./mvnw test` → 64/64 verts, `npm run build` + `test:ci` (13/13) OK, vérification
+API réelle bout-en-bout (checkout `503` sans clé, enroll `402`/`201` selon abonnement).
+
+---
+
+## Extension post-MVP — paiements : achat individuel de cours (session du 2026-09-22)
+
+Remplace le modèle d'abonnement plateforme ci-dessus par un **paiement par cours** (chaque formateur
+fixe le prix de son cours, `0` = gratuit ; achat unique, pas de récurrence). Détail complet :
+`docs/02-conception.md §11`, `docs/04-journal-avancement.md` (entrée du 2026-09-22).
+
+| # | Tâche | Fichiers / modules | Statut |
+|---|---|---|---|
+| Q.1 | `courses.price` + validation formateur | `Course`, `CourseService`, `CourseRequest` | fait |
+| Q.2 | Migration `V7__course_pricing.sql` — `payments` scindée sur `course_id`, `subscriptions` supprimée | `backend/src/main/resources/db/migration` | fait |
+| Q.3 | `PaymentGateway`/`StripePaymentGateway`/`OrangeMoneyPaymentGateway` adaptés au paiement unique | `com.educa.backend.payment.*` | fait |
+| Q.4 | `CourseCheckoutController` (`POST /courses/{id}/checkout`), gating dans `EnrollmentService.enroll` | `com.educa.backend.payment.CourseCheckoutController`, `EnrollmentService` | fait |
+| Q.5 | Factures — n° séquentiel + PDF à la Certificate, `PaymentController` (liste + téléchargement) | `PaymentService`, `PaymentController`, migration `V8__invoices.sql` | fait |
+| Q.6 | Frontend — achat intégré à `course-detail`, page « Mes achats » (`feature/payment`), suppression de `feature/billing` | `frontend/src/app/feature/course`, `feature/payment` | fait |
+| Q.7 | Admin — colonne cours + n° facture dans le registre paiements | `AdminPaymentController`, `admin-dashboard` | fait |
+| Q.8 | Seed démo — prix par cours au lieu d'abonnement | `DevDataInitializer` | fait |
+
+**Vérifié** : `./mvnw test` → 64/64 verts (dont `CoursePaymentFlowTest` 6, invoice comprise),
+`npm run build` + `test:ci` (13/13) OK.
 
 **Résiduel restant** : clés de test réelles (Stripe + Orange Money sandbox) pour un test bout-en-bout du
 paiement effectif et des webhooks — nécessite que l'utilisatrice les fournisse, pas une tâche de code.

@@ -28,6 +28,29 @@
   margin: 0 0 1.25rem;
 }
 
+.price {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+}
+
+.price.free {
+  color: #16a34a;
+}
+
+.buy-buttons {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.buy-buttons button.ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
 button {
   padding: 0.6rem 1rem;
   border: 0;

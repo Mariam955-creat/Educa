@@ -1,5 +1,7 @@
 package com.educa.backend.payment;
 
+import java.math.BigDecimal;
+
 /**
  * Prestataire de paiement. Seules {@link StripePaymentGateway} (Europe) et
  * {@link OrangeMoneyPaymentGateway} (Afrique) connaissent leur API respective ;
@@ -8,15 +10,14 @@ package com.educa.backend.payment;
  */
 public interface PaymentGateway {
 
-    /** Démarre un paiement d'abonnement, renvoie l'URL de paiement hébergée à laquelle rediriger l'utilisateur. */
-    CheckoutResult startCheckout(Long userId, String userEmail, SubscriptionPlan plan);
-
     /**
-     * Empêche le renouvellement automatique à la fin de la période en cours.
-     * Sans effet côté prestataires sans prélèvement récurrent natif (Orange Money).
+     * Démarre l'achat d'un cours (paiement unique), renvoie l'URL de paiement hébergée à laquelle
+     * rediriger l'utilisateur. {@code amount} vient du prix du cours ; la devise est celle configurée
+     * pour ce prestataire (voir {@code educa.payment.stripe.currency}/{@code orange-money.currency}).
      */
-    void cancelAtPeriodEnd(Subscription subscription);
+    CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug, String courseTitle,
+            BigDecimal amount);
 
-    record CheckoutResult(String checkoutUrl, String providerReference, java.math.BigDecimal amount, String currency) {
+    record CheckoutResult(String checkoutUrl, String providerReference, BigDecimal amount, String currency) {
     }
 }

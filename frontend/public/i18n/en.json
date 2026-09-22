@@ -4,7 +4,7 @@
     "dashboard": "Dashboard",
     "catalog": "Catalog",
     "certificates": "My certificates",
-    "billing": "Subscription",
+    "invoices": "My purchases",
     "instructor": "Instructor",
     "admin": "Admin",
     "logout": "Sign out",
@@ -66,27 +66,11 @@
     "download": "Download PDF",
     "verifyLink": "Verify publicly"
   },
-  "billing": {
-    "title": "Subscription",
-    "subtitle": "A subscription gives access to every course on the platform.",
-    "plan": {
-      "MONTHLY": "Monthly",
-      "ANNUAL": "Annual"
-    },
-    "payStripe": "Pay by card (Europe)",
-    "payOrangeMoney": "Pay with Orange Money (Africa)",
-    "active": "Active subscription",
-    "activePlan": "Plan: {{plan}}",
-    "renewsOn": "Renews on {{date}}",
-    "cancelScheduled": "Cancellation scheduled for the end of the current period.",
-    "cancel": "Cancel renewal",
-    "confirmCancel": "Confirm cancelling the renewal?",
-    "error": "Something went wrong, try again later.",
-    "successTitle": "Payment received",
-    "successBody": "Thanks! Your subscription will be active shortly, once the provider confirms the payment.",
-    "cancelledTitle": "Payment cancelled",
-    "cancelledBody": "The payment was cancelled, nothing was charged.",
-    "backToBilling": "‹ Back to subscription"
+  "invoices": {
+    "title": "My purchases",
+    "empty": "No purchase yet.",
+    "line": "{{invoiceNumber}} · {{date}}",
+    "download": "Download invoice"
   },
   "verify": {
     "title": "Certificate verification",
@@ -121,8 +105,11 @@
     "loadError": "Loading error.",
     "unavailable": "Course unavailable.",
     "enrollError": "Could not enroll right now.",
-    "subscriptionRequired": "An active subscription is required to access courses.",
-    "subscribeLink": "Subscribe"
+    "free": "Free",
+    "buyStripe": "Pay by card (Europe)",
+    "buyOrangeMoney": "Pay with Orange Money (Africa)",
+    "paymentSuccess": "Payment received, thanks! Enrolling…",
+    "paymentCancelled": "The payment was cancelled, nothing was charged."
   },
   "chat": {
     "title": "💬 Course assistant",
@@ -139,6 +126,7 @@
     "titleField": "Title",
     "descriptionField": "Description",
     "languageField": "Language",
+    "priceField": "Price (€, 0 = free)",
     "create": "Create course",
     "save": "Save",
     "saved": "Course saved.",
@@ -275,9 +263,10 @@
       "empty": "No payment recorded.",
       "headerUser": "User",
       "headerProvider": "Provider",
-      "headerPlan": "Plan",
+      "headerCourse": "Course",
       "headerAmount": "Amount",
       "headerStatus": "Status",
+      "headerInvoice": "Invoice no.",
       "headerDate": "Date"
     },
     "languages": {

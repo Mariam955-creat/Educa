@@ -25,11 +25,12 @@ export interface CertificateRegistryEntry {
 export interface PaymentRegistryEntry {
   id: number;
   userName: string;
+  courseTitle: string;
   provider: 'STRIPE' | 'ORANGE_MONEY';
-  plan: 'MONTHLY' | 'ANNUAL';
   amount: number;
   currency: string;
   status: 'PENDING' | 'SUCCEEDED' | 'FAILED';
+  invoiceNumber: string | null;
   createdAt: string;
 }
 

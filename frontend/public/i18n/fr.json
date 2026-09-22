@@ -4,7 +4,7 @@
     "dashboard": "Tableau de bord",
     "catalog": "Catalogue",
     "certificates": "Mes certificats",
-    "billing": "Abonnement",
+    "invoices": "Mes achats",
     "instructor": "Formateur",
     "admin": "Admin",
     "logout": "Déconnexion",
@@ -66,27 +66,11 @@
     "download": "Télécharger le PDF",
     "verifyLink": "Vérifier publiquement"
   },
-  "billing": {
-    "title": "Abonnement",
-    "subtitle": "Un abonnement donne accès à tous les cours de la plateforme.",
-    "plan": {
-      "MONTHLY": "Mensuel",
-      "ANNUAL": "Annuel"
-    },
-    "payStripe": "Payer par carte (Europe)",
-    "payOrangeMoney": "Payer avec Orange Money (Afrique)",
-    "active": "Abonnement actif",
-    "activePlan": "Formule : {{plan}}",
-    "renewsOn": "Renouvellement le {{date}}",
-    "cancelScheduled": "Annulation programmée à la fin de la période en cours.",
-    "cancel": "Annuler le renouvellement",
-    "confirmCancel": "Confirmer l'annulation du renouvellement ?",
-    "error": "Une erreur est survenue, réessayez plus tard.",
-    "successTitle": "Paiement reçu",
-    "successBody": "Merci ! Ton abonnement sera actif sous peu (le temps que le prestataire confirme le paiement).",
-    "cancelledTitle": "Paiement annulé",
-    "cancelledBody": "Le paiement a été annulé, aucun montant n'a été débité.",
-    "backToBilling": "‹ Retour à l'abonnement"
+  "invoices": {
+    "title": "Mes achats",
+    "empty": "Aucun achat pour l'instant.",
+    "line": "{{invoiceNumber}} · {{date}}",
+    "download": "Télécharger la facture"
   },
   "verify": {
     "title": "Vérification d'un certificat",
@@ -121,8 +105,11 @@
     "loadError": "Erreur de chargement.",
     "unavailable": "Cours indisponible.",
     "enrollError": "Impossible de s'inscrire pour le moment.",
-    "subscriptionRequired": "Un abonnement actif est requis pour accéder aux cours.",
-    "subscribeLink": "S'abonner"
+    "free": "Gratuit",
+    "buyStripe": "Payer par carte (Europe)",
+    "buyOrangeMoney": "Payer avec Orange Money (Afrique)",
+    "paymentSuccess": "Paiement reçu, merci ! Inscription en cours…",
+    "paymentCancelled": "Le paiement a été annulé, aucun montant n'a été débité."
   },
   "chat": {
     "title": "💬 Assistant du cours",
@@ -139,6 +126,7 @@
     "titleField": "Titre",
     "descriptionField": "Description",
     "languageField": "Langue",
+    "priceField": "Prix (€, 0 = gratuit)",
     "create": "Créer le cours",
     "save": "Enregistrer",
     "saved": "Cours enregistré.",
@@ -275,9 +263,10 @@
       "empty": "Aucun paiement enregistré.",
       "headerUser": "Utilisateur",
       "headerProvider": "Prestataire",
-      "headerPlan": "Formule",
+      "headerCourse": "Cours",
       "headerAmount": "Montant",
       "headerStatus": "Statut",
+      "headerInvoice": "N° facture",
       "headerDate": "Date"
     },
     "languages": {

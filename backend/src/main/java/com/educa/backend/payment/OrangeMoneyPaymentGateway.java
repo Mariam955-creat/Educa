@@ -1,6 +1,7 @@
 package com.educa.backend.payment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
@@ -45,21 +46,23 @@ public class OrangeMoneyPaymentGateway implements PaymentGateway {
 
     @Override
     @SuppressWarnings("unchecked")
-    public CheckoutResult startCheckout(Long userId, String userEmail, SubscriptionPlan plan) {
-        int amount = plan == SubscriptionPlan.MONTHLY ? config.monthlyAmount() : config.annualAmount();
+    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug,
+            String courseTitle, BigDecimal amount) {
+        String currency = config.currency();
+        long amountValue = amount.setScale(0, RoundingMode.HALF_UP).longValueExact();
         String orderId = "educa-" + userId + "-" + UUID.randomUUID();
         String accessToken = fetchAccessToken();
 
         Map<String, Object> body = Map.of(
                 "merchant_key", config.merchantKey(),
-                "currency", config.currency(),
+                "currency", currency,
                 "order_id", orderId,
-                "amount", amount,
-                "return_url", publicBaseUrl + "/billing/success",
-                "cancel_url", publicBaseUrl + "/billing/cancel",
+                "amount", amountValue,
+                "return_url", publicBaseUrl + "/courses/" + courseSlug + "?payment=success",
+                "cancel_url", publicBaseUrl + "/courses/" + courseSlug + "?payment=cancelled",
                 "notif_url", webhookBaseUrl + "/api/v1/payments/webhooks/orange-money",
                 "lang", "fr",
-                "reference", "Abonnement educa — " + (plan == SubscriptionPlan.MONTHLY ? "mensuel" : "annuel"));
+                "reference", courseTitle);
 
         try {
             Map<String, Object> response = restClient.post()
@@ -73,7 +76,7 @@ public class OrangeMoneyPaymentGateway implements PaymentGateway {
                 log.error("Réponse Orange Money sans payment_url : {}", response);
                 throw new ApiException(HttpStatus.BAD_GATEWAY, "Paiement Orange Money indisponible pour le moment");
             }
-            return new CheckoutResult(paymentUrl, orderId, BigDecimal.valueOf(amount), config.currency());
+            return new CheckoutResult(paymentUrl, orderId, BigDecimal.valueOf(amountValue), currency);
         } catch (ApiException e) {
             throw e;
         } catch (Exception e) {
@@ -102,12 +105,6 @@ public class OrangeMoneyPaymentGateway implements PaymentGateway {
             log.error("Vérification du statut Orange Money {} échouée", orderId, e);
             return false;
         }
-    }
-
-    @Override
-    public void cancelAtPeriodEnd(Subscription subscription) {
-        // Pas de prélèvement récurrent côté Orange Money : rien à annuler, l'accès expire
-        // naturellement à `current_period_end` si aucun nouveau paiement n'est effectué avant.
     }
 
     @SuppressWarnings("unchecked")

@@ -1,0 +1,24 @@
+<section class="page">
+  <h1>{{ 'invoices.title' | translate }}</h1>
+
+  @if (loading()) {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else if (invoices().length === 0) {
+    <p class="muted">{{ 'invoices.empty' | translate }}</p>
+  } @else {
+    <div class="list">
+      @for (i of invoices(); track i.id) {
+        <article class="invoice-card">
+          <div class="invoice-main">
+            <h3>{{ i.courseTitle }}</h3>
+            <p class="meta">
+              {{ 'invoices.line' | translate: { invoiceNumber: i.invoiceNumber, date: (i.createdAt | date: 'longDate') } }}
+            </p>
+            <p class="amount">{{ i.amount | number: '1.2-2' }} {{ i.currency }}</p>
+          </div>
+          <button type="button" (click)="download(i)">{{ 'invoices.download' | translate }}</button>
+        </article>
+      }
+    </div>
+  }
+</section>

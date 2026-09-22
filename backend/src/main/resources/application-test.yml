@@ -13,3 +13,8 @@ educa:
     refresh-ttl-seconds: 1209600
   ai:
     enabled: false
+  payment:
+    stripe:
+      enabled: false
+    orange-money:
+      enabled: false

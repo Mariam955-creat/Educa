@@ -105,9 +105,10 @@ com.educa.backend
 ├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible ; FileTypeDetector (sniffing Tika)
 ├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
 ├── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
-└── payment/              # module : abonnement plateforme — Subscription + Payment, interface PaymentGateway
+└── payment/              # module : achat individuel de cours — Payment (+ facture), interface PaymentGateway
                           #   (StripePaymentGateway Europe, OrangeMoneyPaymentGateway Afrique, DisabledPaymentGateway)
-                          #   SubscriptionController, PaymentWebhookController, AdminPaymentController — voir §11
+                          #   CourseCheckoutController, PaymentController (factures), PaymentWebhookController,
+                          #   AdminPaymentController — voir §11
 ```
 
 **Conventions de module (backend)**
@@ -133,7 +134,7 @@ frontend/src/app
     ├── instructor/       # espace formateur (cours, chapitres, contenus, quiz)
     ├── quiz/             # passage de quiz + résultats
     ├── certificate/      # mes certificats + vérification publique
-    ├── billing/          # page tarifs, statut abonnement, retours checkout (succès/annulé)
+    ├── payment/          # mes achats / factures (my-invoices) — achat lui-même intégré à course-detail
     └── admin/            # utilisateurs, rôles, langues, registre certificats + paiements
 ```
 
@@ -770,44 +771,62 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 
 ---
 
-## 11. Paiements — abonnement plateforme (extension post-MVP, 2026-09-16)
+## 11. Paiements — achat individuel de cours (extension post-MVP, 2026-09-16, remodelée le 2026-09-22)
 
-Extension hors périmètre MVP initial : educa passe d'un accès gratuit à tous les cours à un
-**abonnement plateforme payant** (mensuel ou annuel, accès à tous les cours — pas de prix par cours),
-avec deux prestataires ciblant les deux marchés visés par le projet.
+Extension hors périmètre MVP initial : educa passe d'un accès gratuit à tous les cours à un **achat
+unique par cours** — chaque cours a son propre prix (`courses.price`, fixé par le formateur, `0` =
+gratuit), payé une seule fois par l'apprenant, avec deux prestataires ciblant les deux marchés visés
+par le projet.
+
+> ⚠️ **Écart par rapport à la session du 2026-09-16** : le modèle initial était un **abonnement
+> plateforme** (mensuel/annuel, accès à tous les cours). Remplacé le 2026-09-22 par un **paiement par
+> cours** (patron marketplace, plus proche d'Udemy que de Netflix) — jugé plus adapté à un catalogue de
+> formations hétérogènes où chaque formateur fixe son propre prix. La table `subscriptions` et le module
+> `SubscriptionService`/`SubscriptionController` ont été supprimés (migration `V7__course_pricing.sql`
+> les remplace). Aucune trace de l'ancien modèle ne subsiste en base une fois `V7` appliquée.
 
 ### 11.1 Prestataires
 
 - **Europe — Stripe** : cartes Visa/Mastercard, Apple Pay/Google Pay, SEPA. Stripe Checkout en mode
-  `subscription` avec `price_data` inline (pas besoin de Produits/Prix pré-créés dans le dashboard).
-  Stripe gère le **réabonnement automatique** ; webhooks (`checkout.session.completed`,
-  `customer.subscription.updated/deleted`) tiennent `current_period_end` à jour.
+  `payment` (achat unique) avec `price_data` inline (pas besoin de Produits/Prix pré-créés dans le
+  dashboard) ; webhook `checkout.session.completed` confirme le paiement.
 - **Afrique — Orange Money** : intégration **directe** (pas d'agrégateur), un compte marchand Orange
-  Developer pour un pays donné (`educa.payment.orange-money.country`). ⚠️ **Limitation réelle du marché,
-  pas un raccourci d'implémentation** : Orange Money n'a pas de prélèvement récurrent automatique. Un
-  « abonnement » Orange Money est donc en pratique une **période d'accès qui expire** — chaque paiement
-  confirmé prolonge `current_period_end` de 30 ou 365 jours, mais rien ne débite l'utilisateur à
-  l'échéance : il doit repayer manuellement pour renouveler.
+  Developer pour un pays donné (`educa.payment.orange-money.country`). Paiement ponctuel : pas de
+  prélèvement récurrent à gérer (contrairement à l'ancien modèle d'abonnement), un webhook confirmé
+  suffit à débloquer le cours — le montant reçu est revérifié contre celui enregistré au checkout avant
+  toute confirmation (jamais de confiance aveugle en un webhook public non authentifié par JWT).
 - Aucun numéro de carte ne transite par nos serveurs : tout passe par les pages hébergées des deux
   prestataires (Stripe Checkout, page de paiement Orange Money).
 
 ### 11.2 Modèle d'accès
 
-Choke point unique déjà existant : `EnrollmentService.isEnrolled` / `requireActiveEnrollment` /
-`enroll`. Un abonnement actif (`SubscriptionService.hasActiveAccess`) y est désormais exigé pour tout
-apprenant (`LEARNER`) — `INSTRUCTOR` et `ADMIN` restent en accès libre. Les certificats déjà délivrés
-restent accessibles indéfiniment (module `certificate` indépendant de `isEnrolled`).
+Choke point unique déjà existant : `EnrollmentService.enroll`. Pour un cours payant
+(`course.price > 0`), un paiement `SUCCEEDED` pour ce cours précis est désormais exigé
+(`PaymentService.hasSucceededPayment`) — `INSTRUCTOR` et `ADMIN` restent exemptés. Un cours gratuit
+s'inscrit librement, sans paiement. Contrairement à l'ancien modèle d'abonnement, l'accès n'est **pas**
+re-vérifié à chaque consultation (`isEnrolled` ne dépend plus du paiement une fois l'inscription créée)
+— cohérent avec un achat définitif (type Udemy), pas un accès locatif (type Netflix). Les certificats
+déjà délivrés restent accessibles indéfiniment (module `certificate` indépendant de `isEnrolled`).
 
-### 11.3 Schéma (`V6__payments.sql`)
+### 11.3 Schéma (`V7__course_pricing.sql`, `V8__invoices.sql`)
 
-- `subscriptions` : `user_id`, `plan` (MONTHLY/ANNUAL), `provider` (STRIPE/ORANGE_MONEY), `status`
-  (PENDING/ACTIVE/EXPIRED/CANCELLED), `provider_customer_id`, `provider_subscription_id`,
-  `current_period_end`, `cancel_at_period_end`.
-- `payments` : journal des transactions — `user_id`, `subscription_id`, `provider`,
-  `provider_reference` (unique par prestataire), `plan`, `amount`, `currency`, `status`
-  (PENDING/SUCCEEDED/FAILED).
+- `courses.price` : `NUMERIC(10,2)`, défaut `0`.
+- `payments` (recréée par `V7`, scindée sur `course_id` au lieu de `subscription_id`) : `user_id`,
+  `course_id`, `provider` (STRIPE/ORANGE_MONEY), `provider_reference` (unique par prestataire),
+  `amount`, `currency`, `status` (PENDING/SUCCEEDED/FAILED), `invoice_number` (`V8`, unique, assigné à
+  la confirmation du paiement), `pdf_key` (`V8`, généré paresseusement au premier téléchargement).
+- Table `subscriptions` supprimée par `V7` (plus de récurrence à suivre).
 
-### 11.4 Config & repli
+### 11.4 Factures
+
+Un paiement réussi = une facture, même patron que les certificats (`CertificateService`) : numéro
+séquentiel par année (`INV-<année>-<séquence>`) assigné dès la confirmation du paiement (webhook Stripe
+ou Orange Money), PDF (openhtmltopdf) généré paresseusement au premier téléchargement et mis en cache
+via `StorageService` (`pdf_key`). `PaymentController` (`GET /payments/me`, `GET
+/payments/{id}/invoice/download`) — propriétaire ou ADMIN uniquement. Frontend :
+`feature/payment/my-invoices.component`, accessible depuis la nav (« Mes achats »).
+
+### 11.5 Config & repli
 
 Même patron que le module `ai` : `educa.payment.stripe.enabled` / `educa.payment.orange-money.enabled`
 (défaut `false`), repli propre sur `DisabledPaymentGateway` (503 explicite) si la clé du prestataire
@@ -816,8 +835,9 @@ est absente — l'application démarre et fonctionne sans clés réelles, paieme
 de `educa.public-base-url` (origine du frontend, redirections navigateur) : en dev les deux diffèrent
 (`:8081` vs `:4200`).
 
-### 11.5 Écart de conception assumé
+### 11.6 Écart de conception assumé
 
-Les comptes de démo apprenants (`DevDataInitializer`) reçoivent désormais un abonnement actif seedé
-directement en base au démarrage (profil `dev`), pour que le parcours de démonstration existant
-(inscription → progression → certificat) continue de fonctionner sans clé de paiement réelle.
+Les cours de démo (`DevDataInitializer`) ont chacun un prix distinct (« Introduction à Python » à
+29,99 €, « Les bases de Git » gratuit) pour que le parcours de démonstration existant (inscription →
+progression → certificat) continue de fonctionner sans clé de paiement réelle, en s'inscrivant au cours
+gratuit.

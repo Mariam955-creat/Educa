@@ -4,7 +4,7 @@
     "dashboard": "لوحة التحكم",
     "catalog": "الكتالوج",
     "certificates": "شهاداتي",
-    "billing": "الاشتراك",
+    "invoices": "مشترياتي",
     "instructor": "المدرّب",
     "admin": "المشرف",
     "logout": "تسجيل الخروج",
@@ -66,27 +66,11 @@
     "download": "تحميل PDF",
     "verifyLink": "التحقق العلني"
   },
-  "billing": {
-    "title": "الاشتراك",
-    "subtitle": "يمنحك الاشتراك الوصول إلى جميع دورات المنصة.",
-    "plan": {
-      "MONTHLY": "شهري",
-      "ANNUAL": "سنوي"
-    },
-    "payStripe": "الدفع بالبطاقة (أوروبا)",
-    "payOrangeMoney": "الدفع عبر أورنج موني (أفريقيا)",
-    "active": "اشتراك نشط",
-    "activePlan": "الخطة: {{plan}}",
-    "renewsOn": "التجديد في {{date}}",
-    "cancelScheduled": "تم جدولة الإلغاء في نهاية الفترة الحالية.",
-    "cancel": "إلغاء التجديد",
-    "confirmCancel": "تأكيد إلغاء التجديد؟",
-    "error": "حدث خطأ، حاول مرة أخرى لاحقًا.",
-    "successTitle": "تم استلام الدفع",
-    "successBody": "شكرًا! سيصبح اشتراكك نشطًا قريبًا بمجرد تأكيد الدفع من المزود.",
-    "cancelledTitle": "تم إلغاء الدفع",
-    "cancelledBody": "تم إلغاء الدفع، لم يتم خصم أي مبلغ.",
-    "backToBilling": "‹ العودة إلى الاشتراك"
+  "invoices": {
+    "title": "مشترياتي",
+    "empty": "لا توجد أي عملية شراء بعد.",
+    "line": "{{invoiceNumber}} · {{date}}",
+    "download": "تحميل الفاتورة"
   },
   "verify": {
     "title": "التحقق من شهادة",
@@ -121,8 +105,11 @@
     "loadError": "خطأ في التحميل.",
     "unavailable": "الدورة غير متاحة.",
     "enrollError": "تعذر التسجيل حاليًا.",
-    "subscriptionRequired": "يلزم اشتراك نشط للوصول إلى الدورات.",
-    "subscribeLink": "الاشتراك"
+    "free": "مجاني",
+    "buyStripe": "الدفع بالبطاقة (أوروبا)",
+    "buyOrangeMoney": "الدفع عبر أورنج موني (أفريقيا)",
+    "paymentSuccess": "تم استلام الدفع، شكرًا! جارٍ التسجيل…",
+    "paymentCancelled": "تم إلغاء الدفع، لم يتم خصم أي مبلغ."
   },
   "chat": {
     "title": "💬 مساعد الدورة",
@@ -139,6 +126,7 @@
     "titleField": "العنوان",
     "descriptionField": "الوصف",
     "languageField": "اللغة",
+    "priceField": "السعر (€، 0 = مجاني)",
     "create": "إنشاء الدورة",
     "save": "حفظ",
     "saved": "تم حفظ الدورة.",
@@ -275,9 +263,10 @@
       "empty": "لا يوجد أي دفع مسجل.",
       "headerUser": "المستخدم",
       "headerProvider": "المزود",
-      "headerPlan": "الخطة",
+      "headerCourse": "الدورة",
       "headerAmount": "المبلغ",
       "headerStatus": "الحالة",
+      "headerInvoice": "رقم الفاتورة",
       "headerDate": "التاريخ"
     },
     "languages": {

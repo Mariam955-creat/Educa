@@ -123,9 +123,10 @@
           <tr>
             <th>{{ 'admin.payments.headerUser' | translate }}</th>
             <th>{{ 'admin.payments.headerProvider' | translate }}</th>
-            <th>{{ 'admin.payments.headerPlan' | translate }}</th>
+            <th>{{ 'admin.payments.headerCourse' | translate }}</th>
             <th>{{ 'admin.payments.headerAmount' | translate }}</th>
             <th>{{ 'admin.payments.headerStatus' | translate }}</th>
+            <th>{{ 'admin.payments.headerInvoice' | translate }}</th>
             <th>{{ 'admin.payments.headerDate' | translate }}</th>
           </tr>
         </thead>
@@ -134,13 +135,14 @@
             <tr>
               <td>{{ payment.userName }}</td>
               <td>{{ payment.provider }}</td>
-              <td>{{ payment.plan }}</td>
+              <td>{{ payment.courseTitle }}</td>
               <td>{{ payment.amount }} {{ payment.currency }}</td>
               <td>
                 <span class="badge" [class.on]="payment.status === 'SUCCEEDED'">
                   {{ payment.status }}
                 </span>
               </td>
+              <td>{{ payment.invoiceNumber ?? '—' }}</td>
               <td>{{ payment.createdAt | date: 'short' }}</td>
             </tr>
           }

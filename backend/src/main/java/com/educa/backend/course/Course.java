@@ -1,5 +1,6 @@
 package com.educa.backend.course;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,10 @@ public class Course {
 
     @Column(name = "pass_threshold", nullable = false)
     private int passThreshold = 70;
+
+    /** Prix d'achat unique du cours, fixé par le formateur. {@code 0} = cours gratuit. */
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price = BigDecimal.ZERO;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

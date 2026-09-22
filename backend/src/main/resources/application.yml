@@ -61,8 +61,6 @@ educa:
       enabled: ${STRIPE_ENABLED:false}
       secret-key: ${STRIPE_SECRET_KEY:}
       webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
-      monthly-amount-cents: ${STRIPE_MONTHLY_AMOUNT_CENTS:999}
-      annual-amount-cents: ${STRIPE_ANNUAL_AMOUNT_CENTS:9900}
       currency: ${STRIPE_CURRENCY:eur}
     orange-money:
       # Intégration directe (pas d'agrégateur) — compte marchand Orange Developer pour un pays donné.
@@ -71,8 +69,6 @@ educa:
       client-secret: ${ORANGE_MONEY_CLIENT_SECRET:}
       merchant-key: ${ORANGE_MONEY_MERCHANT_KEY:}
       country: ${ORANGE_MONEY_COUNTRY:civ}
-      monthly-amount: ${ORANGE_MONEY_MONTHLY_AMOUNT:5000}
-      annual-amount: ${ORANGE_MONEY_ANNUAL_AMOUNT:50000}
       currency: ${ORANGE_MONEY_CURRENCY:XOF}
 
 logging:

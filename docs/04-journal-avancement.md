@@ -988,3 +988,48 @@ Reste à valider visuellement dans le navigateur (les endpoints backend correspo
 **Bloquant** — aucun.
 
 **Prochaine étape** — inchangée : clés de test réelles (Stripe + Orange Money) pour un test bout-en-bout du paiement effectif.
+
+---
+
+## [2026-09-22] Paiements — remplacement de l'abonnement plateforme par un achat par cours + factures
+
+**Contexte** : à la reprise de session, le dépôt contenait déjà (arbre de travail non commité) un remodelage
+substantiel du module `payment` : abandon de l'abonnement plateforme (mensuel/annuel) au profit d'un
+**paiement par cours** — chaque formateur fixe le prix de son cours (`courses.price`, `0` = gratuit),
+payé une seule fois par l'apprenant (`V7__course_pricing.sql` : `subscriptions` supprimée, `payments`
+recréée sur `course_id`). `EnrollmentService.enroll` exige un paiement `SUCCEEDED` pour un cours payant
+au lieu d'un abonnement actif ; `CourseCheckoutController` (`POST /courses/{id}/checkout`) remplace
+`SubscriptionController` ; `StripePaymentGateway` passe en mode `payment` (achat unique) ; frontend
+`feature/billing` supprimé, achat intégré directement à `course-detail` (boutons Stripe/Orange Money,
+redirection avec `?payment=success|cancelled`, auto-inscription au retour). Une seconde migration,
+`V8__invoices.sql`, ajoutait déjà `invoice_number`/`pdf_key` à `payments` et un DTO `InvoiceDto`, mais
+sans service ni contrôleur pour les exploiter — **le build ne compilait pas** (`PaymentService.registry()`
+appelait le constructeur `AdminPaymentDto` avec un argument manquant).
+
+**Fait**
+1. **Corrigé le blocage de compilation** et **terminé la fonctionnalité de facturation** laissée à moitié faite :
+   - `PaymentService.nextInvoiceNumber()` — numérotation séquentielle par année (`INV-<année>-<séquence>`,
+     même patron que le n° de série des certificats), assignée à la confirmation du paiement (webhook
+     Stripe `checkout.session.completed` et webhook Orange Money confirmé), pas à la génération du PDF.
+   - `PaymentService.downloadInvoice` — PDF (openhtmltopdf) généré **paresseusement** au premier
+     téléchargement et mis en cache via `StorageService` (`invoices/{id}.pdf`), exactement le patron déjà
+     utilisé par `CertificateService.download`. Contrôle d'accès : propriétaire du paiement ou `ADMIN`.
+   - `PaymentService.myInvoices(userId)` — liste des factures de l'apprenant connecté (paiements `SUCCEEDED`).
+   - Nouveau `PaymentController` (`GET /payments/me`, `GET /payments/{id}/invoice/download`).
+   - `AdminPaymentDto` complété (`invoiceNumber`) — c'est cet ajout de champ, fait sans mettre à jour
+     l'appelant, qui cassait la compilation.
+2. **Frontend** : `PaymentApiService.myInvoices()`/`downloadInvoice()` ; nouvelle page `feature/payment/my-invoices.component` (patron `my-certificates.component`), route `/invoices`, lien nav « Mes achats » (FR/EN/AR) ; colonne « N° facture » ajoutée au registre admin des paiements (`admin.models.ts`, `admin-dashboard.component.html`).
+3. **Test ajouté** : `CoursePaymentFlowTest.facture_generee_et_telechargeable_apres_paiement_reussi` — vérifie que `/payments/me` renvoie la facture, que le propriétaire peut la télécharger (`200`) et qu'un autre apprenant ne le peut pas (`403`).
+4. **Doc** : `docs/02-conception.md §11` réécrite (achat par cours + factures, avec un encart expliquant l'abandon du modèle d'abonnement du 2026-09-16), arborescence des modules mise à jour (`payment/`, `frontend feature/payment`) ; `docs/03-plan-implementation.md` — nouvelle section « achat individuel de cours » (tableau Q.1→Q.8), ancienne section « abonnement plateforme » conservée avec un encart d'abandon (historique de session, pas réécrite).
+5. **Vérifié** : `./mvnw test` → **64/64 verts** (`CoursePaymentFlowTest` 6 tests, dont la nouvelle facture ; `AdminPaymentControllerTest` 2), `npm run build` OK, `npm run test:ci` → **13/13 verts**.
+
+**Décisions techniques**
+- Numéro de facture assigné **à la confirmation du paiement**, pas à la génération du PDF (contrairement au `pdfKey`, généré paresseusement) : une facture doit avoir un numéro séquentiel stable dès l'instant du paiement, indépendamment de si/quand l'apprenant la télécharge — même raisonnement que le n° de série des certificats.
+- Pas de re-vérification de l'accès à chaque consultation de cours (contrairement à l'ancien modèle d'abonnement) : un achat par cours est définitif, cohérent avec le patron marketplace (Udemy) plutôt que locatif (Netflix).
+
+**Écarts par rapport au plan**
+- Le modèle d'abonnement plateforme du 2026-09-16 est abandonné (voir `docs/02-conception.md §11`, encart). Décision déjà actée dans le code trouvé au début de cette session ; cette session a fini le sous-chantier laissé incomplet (factures) et mis la documentation à jour en conséquence.
+
+**Bloquant** — aucun.
+
+**Prochaine étape** — inchangée : clés de test réelles (Stripe + Orange Money sandbox) pour un test bout-en-bout du paiement effectif et des webhooks.

@@ -79,6 +79,7 @@ export class CourseEditorComponent implements OnInit {
     title: ['', [Validators.required, Validators.maxLength(200)]],
     description: [''],
     language: ['fr', [Validators.required]],
+    price: [0, [Validators.required, Validators.min(0)]],
   });
 
   readonly chapterForm = this.fb.nonNullable.group({
@@ -265,6 +266,7 @@ export class CourseEditorComponent implements OnInit {
         title: course.title,
         description: course.description ?? '',
         language: course.language,
+        price: course.price,
       });
       if (course.chapters.length > 0 && this.contentForm.controls.chapterId.value === 0) {
         this.contentForm.patchValue({ chapterId: course.chapters[0].id });

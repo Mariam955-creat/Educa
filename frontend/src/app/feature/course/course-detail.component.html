@@ -6,18 +6,33 @@
       <h1>{{ c.title }}</h1>
       <p class="meta">{{ 'course.by' | translate: { instructor: c.instructorName, language: c.language } }}</p>
       <p class="desc">{{ c.description }}</p>
+      <p class="price" [class.free]="c.price === 0">
+        {{ c.price === 0 ? ('course.free' | translate) : (c.price | number: '1.2-2') + ' €' }}
+      </p>
+
+      @if (paymentNotice() === 'success') {
+        <p class="muted">{{ 'course.paymentSuccess' | translate }}</p>
+      } @else if (paymentNotice() === 'cancelled') {
+        <p class="muted">{{ 'course.paymentCancelled' | translate }}</p>
+      }
 
       @if (canEnroll()) {
-        <button type="button" (click)="enroll()" [disabled]="enrolling()">
-          {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
-        </button>
+        @if (c.price === 0) {
+          <button type="button" (click)="enroll()" [disabled]="enrolling()">
+            {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
+          </button>
+        } @else {
+          <div class="buy-buttons">
+            <button type="button" (click)="buy('STRIPE')" [disabled]="buying() !== null">
+              {{ 'course.buyStripe' | translate }}
+            </button>
+            <button type="button" class="ghost" (click)="buy('ORANGE_MONEY')" [disabled]="buying() !== null">
+              {{ 'course.buyOrangeMoney' | translate }}
+            </button>
+          </div>
+        }
         @if (enrollError()) {
-          <p class="enroll-error">
-            {{ enrollError() }}
-            @if (subscriptionRequired()) {
-              <a routerLink="/billing">{{ 'course.subscribeLink' | translate }}</a>
-            }
-          </p>
+          <p class="enroll-error">{{ enrollError() }}</p>
         }
       } @else if (c.contentsVisible) {
         <div class="progress">

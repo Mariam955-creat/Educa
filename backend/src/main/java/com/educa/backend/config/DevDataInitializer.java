@@ -1,7 +1,6 @@
 package com.educa.backend.config;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,11 +19,6 @@ import com.educa.backend.course.ContentType;
 import com.educa.backend.course.Course;
 import com.educa.backend.course.CourseRepository;
 import com.educa.backend.enrollment.EnrollmentService;
-import com.educa.backend.payment.PaymentProvider;
-import com.educa.backend.payment.Subscription;
-import com.educa.backend.payment.SubscriptionPlan;
-import com.educa.backend.payment.SubscriptionRepository;
-import com.educa.backend.payment.SubscriptionStatus;
 import com.educa.backend.quiz.AnswerOption;
 import com.educa.backend.quiz.Question;
 import com.educa.backend.quiz.QuestionType;
@@ -70,13 +64,11 @@ public class DevDataInitializer implements ApplicationRunner {
     private final EnrollmentService enrollmentService;
     private final QuizAttemptService quizAttemptService;
     private final CertificateService certificateService;
-    private final SubscriptionRepository subscriptionRepository;
 
     public DevDataInitializer(UserRepository userRepository, RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder, CourseRepository courseRepository,
                               QuizRepository quizRepository, EnrollmentService enrollmentService,
-                              QuizAttemptService quizAttemptService, CertificateService certificateService,
-                              SubscriptionRepository subscriptionRepository) {
+                              QuizAttemptService quizAttemptService, CertificateService certificateService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -85,7 +77,6 @@ public class DevDataInitializer implements ApplicationRunner {
         this.enrollmentService = enrollmentService;
         this.quizAttemptService = quizAttemptService;
         this.certificateService = certificateService;
-        this.subscriptionRepository = subscriptionRepository;
     }
 
     @Override
@@ -93,29 +84,13 @@ public class DevDataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         seedUser("admin@educa.dev", "Admin Démo", RoleName.ADMIN);
         User instructor = seedUser("formateur@educa.dev", "Karim Formateur", RoleName.INSTRUCTOR);
-        User learner = seedUser("apprenant@educa.dev", "Amina Apprenante", RoleName.LEARNER);
+        seedUser("apprenant@educa.dev", "Amina Apprenante", RoleName.LEARNER);
         User graduate = seedUser("diplome@educa.dev", "Sara Diplômée", RoleName.LEARNER);
-        seedActiveSubscription(learner);
-        seedActiveSubscription(graduate);
 
         seedPythonCourse(instructor);
         Course gitCourse = seedGitCourse(instructor);
 
         seedCertifiedLearner(graduate, gitCourse);
-    }
-
-    /** Modèle « abonnement plateforme » : les comptes de démo apprenants ont un abonnement actif. */
-    private void seedActiveSubscription(User learner) {
-        if (subscriptionRepository.findFirstByUserIdOrderByCreatedAtDesc(learner.getId()).isPresent()) {
-            return;
-        }
-        Subscription subscription = new Subscription();
-        subscription.setUserId(learner.getId());
-        subscription.setPlan(SubscriptionPlan.MONTHLY);
-        subscription.setProvider(PaymentProvider.STRIPE);
-        subscription.setStatus(SubscriptionStatus.ACTIVE);
-        subscription.setCurrentPeriodEnd(Instant.now().plus(365, ChronoUnit.DAYS));
-        subscriptionRepository.save(subscription);
     }
 
     private User seedUser(String email, String fullName, RoleName roleName) {
@@ -148,6 +123,7 @@ public class DevDataInitializer implements ApplicationRunner {
         course.setDescription("Un premier pas dans la programmation avec Python : installation, variables, types de base.");
         course.setLanguage("fr");
         course.setPublished(true);
+        course.setPrice(BigDecimal.valueOf(29.99));
 
         Chapter c1 = new Chapter();
         c1.setTitle("Prise en main");
@@ -223,6 +199,7 @@ public class DevDataInitializer implements ApplicationRunner {
         course.setDescription("Comprendre le suivi de versions et les commandes essentielles de Git au quotidien.");
         course.setLanguage("fr");
         course.setPublished(true);
+        // Gratuit (price = 0 par défaut) — permet de tester l'inscription libre en démo sans paiement.
 
         Chapter c1 = new Chapter();
         c1.setTitle("Démarrer avec Git");

@@ -32,8 +32,9 @@ public class Payment {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "subscription_id")
-    private Long subscriptionId;
+    /** Id du cours acheté (module {@code course}). Pas de relation JPA : couplage par id. */
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -41,10 +42,6 @@ public class Payment {
 
     @Column(name = "provider_reference", nullable = false)
     private String providerReference;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private SubscriptionPlan plan;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
@@ -55,6 +52,12 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private PaymentStatus status = PaymentStatus.PENDING;
+
+    @Column(name = "invoice_number", unique = true, length = 40)
+    private String invoiceNumber;
+
+    @Column(name = "pdf_key", length = 500)
+    private String pdfKey;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

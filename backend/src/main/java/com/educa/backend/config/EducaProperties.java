@@ -35,13 +35,12 @@ public record EducaProperties(
      */
     public record Payment(String webhookBaseUrl, Stripe stripe, OrangeMoney orangeMoney) {
 
-        public record Stripe(boolean enabled, String secretKey, String webhookSecret,
-                             int monthlyAmountCents, int annualAmountCents, String currency) {
+        public record Stripe(boolean enabled, String secretKey, String webhookSecret, String currency) {
         }
 
         /** Intégration directe (pas d'agrégateur) — un compte marchand Orange Developer, un pays donné. */
         public record OrangeMoney(boolean enabled, String clientId, String clientSecret, String merchantKey,
-                                  String country, int monthlyAmount, int annualAmount, String currency) {
+                                  String country, String currency) {
         }
     }
 }

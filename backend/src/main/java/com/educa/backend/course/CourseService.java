@@ -1,5 +1,6 @@
 package com.educa.backend.course;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -134,7 +135,8 @@ public class CourseService {
 
         return new CourseDetailDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(), userService.displayNameById(course.getInstructorId()),
-                course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters);
+                course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters,
+                course.getPrice());
     }
 
     // ---------- helpers inter-modules ----------
@@ -219,6 +221,7 @@ public class CourseService {
         if (request.controlWeight() != null) course.setControlWeight(request.controlWeight());
         if (request.examWeight() != null) course.setExamWeight(request.examWeight());
         if (request.passThreshold() != null) course.setPassThreshold(request.passThreshold());
+        course.setPrice(request.price() != null ? request.price() : BigDecimal.ZERO);
         if (course.getControlWeight() + course.getExamWeight() != 100) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "control_weight + exam_weight doit valoir 100");
@@ -234,7 +237,8 @@ public class CourseService {
         String description = translation != null ? translation.getDescription() : course.getDescription();
         return new CourseSummaryDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(),
-                userService.displayNameById(course.getInstructorId()), course.getChapters().size());
+                userService.displayNameById(course.getInstructorId()), course.getChapters().size(),
+                course.getPrice());
     }
 
     /** Traductions (dans {@code displayLanguage}, si fourni) des cours d'une page, indexées par id de cours. */

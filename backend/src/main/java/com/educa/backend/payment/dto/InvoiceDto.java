@@ -6,14 +6,13 @@ import java.time.Instant;
 import com.educa.backend.payment.PaymentProvider;
 import com.educa.backend.payment.PaymentStatus;
 
-public record AdminPaymentDto(
+public record InvoiceDto(
         Long id,
-        String userName,
+        String invoiceNumber,
         String courseTitle,
         PaymentProvider provider,
         BigDecimal amount,
         String currency,
         PaymentStatus status,
-        String invoiceNumber,
         Instant createdAt) {
 }

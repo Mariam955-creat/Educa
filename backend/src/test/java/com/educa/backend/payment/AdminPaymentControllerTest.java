@@ -55,12 +55,14 @@ class AdminPaymentControllerTest {
     void admin_peut_lister_le_registre() throws Exception {
         learnerToken("payer@example.com");
         User user = userRepository.findByEmailIgnoreCase("payer@example.com").orElseThrow();
+        String prof = instructorToken("payer-prof@example.com");
+        long courseId = createPublishedCourse(prof);
 
         Payment payment = new Payment();
         payment.setUserId(user.getId());
+        payment.setCourseId(courseId);
         payment.setProvider(PaymentProvider.STRIPE);
         payment.setProviderReference("cs_test_123");
-        payment.setPlan(SubscriptionPlan.MONTHLY);
         payment.setAmount(BigDecimal.valueOf(9.99));
         payment.setCurrency("EUR");
         payment.setStatus(PaymentStatus.SUCCEEDED);
@@ -70,7 +72,29 @@ class AdminPaymentControllerTest {
         mvc.perform(get(REGISTRY).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].provider").value("STRIPE"));
+                .andExpect(jsonPath("$.content[0].provider").value("STRIPE"))
+                .andExpect(jsonPath("$.content[0].courseTitle").value("Cours payant"));
+    }
+
+    private long createPublishedCourse(String token) throws Exception {
+        String body = mvc.perform(post("/api/v1/courses").header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"title\":\"Cours payant\",\"language\":\"fr\",\"price\":9.99}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        long id = ((Number) JsonPath.read(body, "$.id")).longValue();
+        mvc.perform(post("/api/v1/courses/" + id + "/publish").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        return id;
+    }
+
+    private String instructorToken(String email) throws Exception {
+        register(email);
+        User user = userRepository.findByEmailIgnoreCase(email).orElseThrow();
+        Role instructor = roleRepository.findByName(RoleName.INSTRUCTOR).orElseThrow();
+        user.getRoles().add(instructor);
+        userRepository.save(user);
+        return login(email);
     }
 
     private String learnerToken(String email) throws Exception {

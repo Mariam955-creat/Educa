@@ -1,5 +1,6 @@
 package com.educa.backend.course.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record CourseDetailDto(
@@ -14,5 +15,6 @@ public record CourseDetailDto(
         int examWeight,
         int passThreshold,
         boolean contentsVisible,
-        List<ChapterDto> chapters) {
+        List<ChapterDto> chapters,
+        BigDecimal price) {
 }

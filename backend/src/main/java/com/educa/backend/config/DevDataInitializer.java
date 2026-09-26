@@ -19,6 +19,7 @@ import com.educa.backend.course.ContentType;
 import com.educa.backend.course.Course;
 import com.educa.backend.course.CourseRepository;
 import com.educa.backend.enrollment.EnrollmentService;
+import com.educa.backend.payment.PaymentService;
 import com.educa.backend.quiz.AnswerOption;
 import com.educa.backend.quiz.Question;
 import com.educa.backend.quiz.QuestionType;
@@ -41,9 +42,9 @@ import com.educa.backend.user.UserRepository;
  * <ul>
  *   <li>4 comptes (mot de passe commun {@code password123}) : admin, formateur, apprenant, et un
  *       apprenant « diplômé » qui possède déjà un certificat ;</li>
- *   <li>2 cours publiés du formateur de démo, chacun avec chapitres, contenus, un contrôle et un
+ *   <li>2 cours publiés et payants du formateur de démo (Python 29,99 €, Git 19,99 €), chacun avec chapitres, contenus, un contrôle et un
  *       examen final ;</li>
- *   <li>le parcours complet du compte « diplômé » sur le 2ᵉ cours (inscription → 100 % → contrôle →
+ *   <li>le parcours complet du compte « diplômé » sur le 2ᵉ cours (achat enregistré → inscription → 100 % → contrôle →
  *       examen final réussi → certificat émis), joué via les services réels.</li>
  * </ul>
  */
@@ -64,11 +65,13 @@ public class DevDataInitializer implements ApplicationRunner {
     private final EnrollmentService enrollmentService;
     private final QuizAttemptService quizAttemptService;
     private final CertificateService certificateService;
+    private final PaymentService paymentService;
 
     public DevDataInitializer(UserRepository userRepository, RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder, CourseRepository courseRepository,
                               QuizRepository quizRepository, EnrollmentService enrollmentService,
-                              QuizAttemptService quizAttemptService, CertificateService certificateService) {
+                              QuizAttemptService quizAttemptService, CertificateService certificateService,
+                              PaymentService paymentService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -77,6 +80,7 @@ public class DevDataInitializer implements ApplicationRunner {
         this.enrollmentService = enrollmentService;
         this.quizAttemptService = quizAttemptService;
         this.certificateService = certificateService;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -199,7 +203,7 @@ public class DevDataInitializer implements ApplicationRunner {
         course.setDescription("Comprendre le suivi de versions et les commandes essentielles de Git au quotidien.");
         course.setLanguage("fr");
         course.setPublished(true);
-        // Gratuit (price = 0 par défaut) — permet de tester l'inscription libre en démo sans paiement.
+        course.setPrice(BigDecimal.valueOf(19.99));
 
         Chapter c1 = new Chapter();
         c1.setTitle("Démarrer avec Git");
@@ -276,6 +280,9 @@ public class DevDataInitializer implements ApplicationRunner {
         }
         try {
             if (!enrollmentService.isEnrolled(learner.getId(), course.getId())) {
+                if (course.getPrice().signum() > 0) {
+                    paymentService.recordDemoPurchase(learner.getId(), course.getId());
+                }
                 enrollmentService.enroll(learner.getId(), course.getId());
             }
             for (Chapter chapter : course.getChapters()) {

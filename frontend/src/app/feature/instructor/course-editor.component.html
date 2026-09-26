@@ -25,7 +25,10 @@
     </label>
     <label>
       {{ 'courseEditor.priceField' | translate }}
-      <input type="number" formControlName="price" min="0" step="0.01" />
+      <input type="number" formControlName="price" min="0" step="0.01" required />
+      @if (courseForm.controls.price.touched && courseForm.controls.price.invalid) {
+        <small class="field-error">{{ 'courseEditor.priceRequired' | translate }}</small>
+      }
     </label>
     <button type="submit">{{ (isNew() ? 'courseEditor.create' : 'courseEditor.save') | translate }}</button>
   </form>

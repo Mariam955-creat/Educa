@@ -230,8 +230,9 @@ fixe le prix de son cours, `0` = gratuit ; achat unique, pas de récurrence). D�
 **Vérifié** : `./mvnw test` → 64/64 verts (dont `CoursePaymentFlowTest` 6, invoice comprise),
 `npm run build` + `test:ci` (13/13) OK.
 
-**Résiduel restant** : clés de test réelles (Stripe + Orange Money sandbox) pour un test bout-en-bout du
-paiement effectif et des webhooks — nécessite que l'utilisatrice les fournisse, pas une tâche de code.
+**Stripe vérifié de bout en bout le 2026-09-26** (mode test : checkout → webhook signé relayé par `stripe listen` → `SUCCEEDED` → inscription → facture PDF). Cours de démo rendus tous payants, prix obligatoire dans `course-editor`, facture PDF mise en forme (voir journal 2026-09-26).
+
+**Résiduel restant** : identifiants sandbox Orange Money (compte Orange Developer) pour tester ce second prestataire — nécessite que l'utilisatrice les fournisse, pas une tâche de code.
 
 ---
 

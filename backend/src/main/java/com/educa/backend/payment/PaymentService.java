@@ -1,8 +1,14 @@
 package com.educa.backend.payment;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.Year;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.educa.backend.common.error.ApiException;
 import com.educa.backend.common.error.ResourceNotFoundException;
+import com.educa.backend.config.EducaProperties;
 import com.educa.backend.course.Course;
 import com.educa.backend.course.CourseService;
 import com.educa.backend.payment.dto.AdminPaymentDto;
@@ -31,6 +38,8 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 public class PaymentService {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
+    private static final DateTimeFormatter INVOICE_DATE =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH:mm", Locale.FRANCE).withZone(ZoneId.of("Europe/Paris"));
 
     private final PaymentRepository paymentRepository;
     private final UserService userService;
@@ -38,17 +47,20 @@ public class PaymentService {
     private final StorageService storageService;
     private final PaymentGateway stripeGateway;
     private final PaymentGateway orangeMoneyGateway;
+    private final EducaProperties educaProperties;
 
     public PaymentService(PaymentRepository paymentRepository, UserService userService, CourseService courseService,
                           StorageService storageService,
                           @Qualifier("stripeGateway") PaymentGateway stripeGateway,
-                          @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway) {
+                          @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway,
+                          EducaProperties educaProperties) {
         this.paymentRepository = paymentRepository;
         this.userService = userService;
         this.courseService = courseService;
         this.storageService = storageService;
         this.stripeGateway = stripeGateway;
         this.orangeMoneyGateway = orangeMoneyGateway;
+        this.educaProperties = educaProperties;
     }
 
     @Transactional
@@ -86,6 +98,28 @@ public class PaymentService {
             return true;
         }
         return paymentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, PaymentStatus.SUCCEEDED);
+    }
+
+    /**
+     * Jeu de démo uniquement : enregistre un achat réussi (sans passer par un prestataire) pour qu'un compte
+     * de démo puisse suivre un cours payant. Idempotent.
+     */
+    @Transactional
+    public void recordDemoPurchase(Long userId, Long courseId) {
+        if (paymentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, PaymentStatus.SUCCEEDED)) {
+            return;
+        }
+        Course course = courseService.requireCourse(courseId);
+        Payment payment = new Payment();
+        payment.setUserId(userId);
+        payment.setCourseId(courseId);
+        payment.setProvider(PaymentProvider.STRIPE);
+        payment.setProviderReference("demo-seed-" + userId + "-" + courseId);
+        payment.setAmount(course.getPrice());
+        payment.setCurrency("EUR");
+        payment.setStatus(PaymentStatus.SUCCEEDED);
+        payment.setInvoiceNumber(nextInvoiceNumber());
+        paymentRepository.save(payment);
     }
 
     @Transactional(readOnly = true)
@@ -222,20 +256,28 @@ public class PaymentService {
                   th, td { text-align: left; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
                   .total { font-weight: bold; font-size: 16px; }
                   .meta { margin-top: 32px; color: #6b7280; font-size: 12px; }
+                  .parties { width: 100%%; margin-bottom: 24px; }
+                  .parties td { border: none; vertical-align: top; width: 50%%; padding: 0; }
+                  .label { color: #6b7280; font-size: 12px; text-transform: uppercase; }
+                  .paid { color: #15803d; font-weight: bold; }
                 </style></head><body>
                 <h1>FACTURE</h1>
-                <p class="sub">Plateforme e-learning educa</p>
-                <p>N&#176; %s &#183; %s<br/>Facturé à : %s</p>
+                <p class="sub">N&#176; %s &#183; émise le %s</p>
+                <table class="parties"><tr>
+                  <td><div class="label">Vendeur</div><strong>educa</strong><br/>Plateforme e-learning<br/>%s</td>
+                  <td><div class="label">Facturé à</div><strong>%s</strong></td>
+                </tr></table>
                 <table>
-                  <tr><th>Description</th><th>Prestataire</th><th>Montant</th></tr>
-                  <tr><td>%s</td><td>%s</td><td class="total">%s %s</td></tr>
+                  <tr><th>Description</th><th>Moyen de paiement</th><th>Montant</th></tr>
+                  <tr><td>Accès au cours « %s »</td><td>%s</td><td class="total">%s</td></tr>
                 </table>
-                <p class="meta">Paiement %s &#183; référence %s</p>
+                <p>Statut : <span class="paid">%s</span></p>
+                <p class="meta">Référence de transaction : %s</p>
                 </body></html>
-                """.formatted(payment.getInvoiceNumber(), payment.getCreatedAt(), escape(buyerName),
-                escape(courseTitle), payment.getProvider(),
-                payment.getAmount().stripTrailingZeros().toPlainString(), payment.getCurrency(),
-                payment.getStatus(), payment.getProviderReference());
+                """.formatted(payment.getInvoiceNumber(), INVOICE_DATE.format(payment.getCreatedAt()),
+                escape(educaProperties.publicBaseUrl()), escape(buyerName), escape(courseTitle),
+                providerLabel(payment.getProvider()), formatAmount(payment.getAmount(), payment.getCurrency()),
+                statusLabel(payment.getStatus()), escape(payment.getProviderReference()));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -245,6 +287,25 @@ public class PaymentService {
             builder.run();
             return out.toByteArray();
         }
+    }
+
+    /** « 19,99 € », « 20 000 F CFA »… — espaces insécables normalisées (U+202F absent de la police PDF par défaut). */
+    static String formatAmount(BigDecimal amount, String currencyCode) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.FRANCE);
+        format.setCurrency(Currency.getInstance(currencyCode.toUpperCase(Locale.ROOT)));
+        return format.format(amount).replace(' ', ' ');
+    }
+
+    private static String providerLabel(PaymentProvider provider) {
+        return provider == PaymentProvider.STRIPE ? "Carte bancaire (Stripe)" : "Orange Money";
+    }
+
+    private static String statusLabel(PaymentStatus status) {
+        return switch (status) {
+            case SUCCEEDED -> "Payé";
+            case PENDING -> "En attente";
+            case FAILED -> "Échoué";
+        };
     }
 
     private static String escape(String value) {

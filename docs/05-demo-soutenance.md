@@ -29,10 +29,12 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 |---|---|---|
 | Administrateur | `admin@educa.dev` | espace admin |
 | Formateur | `formateur@educa.dev` | crée/publie les cours, consulte les résultats |
-| Apprenant | `apprenant@educa.dev` | déroule le parcours en direct (inscription → certificat) |
+| Apprenant | compte **neuf** créé via « Inscription » (les comptes seedés sur une base existante peuvent déjà être inscrits) | déroule le parcours en direct (achat → inscription → certificat) |
 | Apprenant certifié | `diplome@educa.dev` | « Sara Diplômée » a déjà terminé « Les bases de Git » — certificat prêt sans rien dérouler |
 
-**Cours seedés** (formateur de démo, publiés) : « Introduction à Python » et « Les bases de Git » — chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final.
+**Cours seedés** (formateur de démo, publiés) : « Introduction à Python » (29,99 €) et « Les bases de Git » (19,99 €), tous deux **payants** — chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final.
+
+**Paiement en démo** : les cours étant payants, lancer avant la démo (clé `sk_test_…` et `STRIPE_ENABLED=true` dans `.env`) : `stripe listen --api-key <sk_test_…> --forward-to localhost:8081/api/v1/payments/webhooks/stripe` — le secret `whsec_…` affiché doit être celui de `STRIPE_WEBHOOK_SECRET`. Sans ce relais, le paiement aboutit côté Stripe mais le cours n'est jamais débloqué.
 
 ---
 
@@ -67,7 +69,7 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 |---|---|---|---|
 | 3.1 | Apprenant (fenêtre privée) | Se connecter (`apprenant@educa.dev`) → **Catalogue** | Seuls les cours publiés apparaissent ; recherche avec debounce |
 | 3.2 | Apprenant | Ouvrir « Introduction à Python » → contenus **masqués** | Détail public mais corps des contenus caché tant que non inscrit |
-| 3.3 | Apprenant | **S'inscrire** → les contenus apparaissent | Unicité de l'inscription (une 2ᵉ tentative → 409) |
+| 3.3 | Apprenant | **Acheter** le cours (bouton Stripe, carte de test `4242 4242 4242 4242`, `12/34`, CVC `123`) → retour sur la page, inscription automatique → les contenus apparaissent | Inscription refusée (`402`) tant que le paiement n'est pas confirmé par le webhook Stripe signé ; facture PDF dans « Mes achats » ; unicité de l'inscription (une 2ᵉ tentative → 409) |
 | 3.4 | Apprenant | Lire les contenus, cliquer « Marquer comme terminé » sur chacun | Barre de progression = contenus vus / total |
 | 3.5 | Apprenant | Passer le **contrôle** du chapitre 1 | Correction automatique ; question juste = ensemble des options cochées == bonnes réponses ; score = points obtenus / total |
 | 3.6 | Apprenant | Revenir à la page cours → progression **100 %** | Examen final déverrouillé seulement quand : 100 % des contenus vus **ET** tous les contrôles tentés |

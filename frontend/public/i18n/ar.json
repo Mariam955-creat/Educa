@@ -127,6 +127,7 @@
     "descriptionField": "الوصف",
     "languageField": "اللغة",
     "priceField": "السعر (€، 0 = مجاني)",
+    "priceRequired": "أدخل سعرًا (0 لدورة مجانية).",
     "create": "إنشاء الدورة",
     "save": "حفظ",
     "saved": "تم حفظ الدورة.",

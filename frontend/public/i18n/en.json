@@ -127,6 +127,7 @@
     "descriptionField": "Description",
     "languageField": "Language",
     "priceField": "Price (€, 0 = free)",
+    "priceRequired": "Enter a price (0 for a free course).",
     "create": "Create course",
     "save": "Save",
     "saved": "Course saved.",

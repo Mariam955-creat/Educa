@@ -1033,3 +1033,33 @@ appelait le constructeur `AdminPaymentDto` avec un argument manquant).
 **Bloquant** — aucun.
 
 **Prochaine étape** — inchangée : clés de test réelles (Stripe + Orange Money sandbox) pour un test bout-en-bout du paiement effectif et des webhooks.
+
+---
+
+## 2026-09-26 — Test Stripe réel (mode test) + cours payants + facture lisible
+
+**Contexte** : premier test du paiement avec de vraies clés Stripe de test. En le préparant, l'utilisatrice
+a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'elle ne l'avait jamais demandé.
+
+**Cause trouvée**
+- `V7__course_pricing.sql` a ajouté `courses.price NUMERIC(10,2) NOT NULL DEFAULT 0` : tous les cours existants de la base locale sont passés à `0`.
+- `DevDataInitializer` ne touche pas un cours déjà présent : le prix 29,99 € prévu pour Python n'a jamais été appliqué ; Git avait été rendu gratuit exprès (session du 2026-09-22) pour la démo.
+- `course-editor` proposait `0` comme prix par défaut à la création.
+- `apprenant@educa.dev` s'était inscrit à tous les cours quand ils étaient gratuits → aucun bouton d'achat visible pour lui.
+
+**Fait**
+1. **Prix** (choix de l'utilisatrice : tous payants) — base locale : Python 29,99 €, Git 19,99 €, les autres 14,99 € (JavaScript reste 19,99 €). Seed : Git 19,99 € ; le compte `diplome@educa.dev` reçoit un achat `SUCCEEDED` avec facture (`PaymentService.recordDemoPurchase`, réservé au seed) avant son inscription, sinon son parcours pré-joué échouerait en `402` sur une base neuve (même correction appliquée à la main dans la base locale).
+2. **`course-editor`** : plus de prix par défaut — champ vide et obligatoire (`0` reste possible), message d'erreur FR/EN/AR (`courseEditor.priceRequired`).
+3. **Test Stripe réel (mode test)** : `stripe login` (le CLI est appairé au compte en mode *live*, donc `stripe listen` est lancé avec `--api-key <sk_test_…>` pour rester en test ; le secret `whsec_…` du relais correspond à `STRIPE_WEBHOOK_SECRET`). Parcours vérifié sur un compte neuf : inscription avant paiement → `402` ; Checkout payé avec `4242…` → `checkout.session.completed` relayé → `200` → paiement `SUCCEEDED` + `INV-2026-000002` → inscription active → `/payments/me` liste la facture → PDF `200 application/pdf`.
+4. **Facture PDF lisible** : date `dd/MM/yyyy à HH:mm` (Europe/Paris), montant au format français (`19,99 €`, `20 000 F CFA` ; espaces fines `U+202F` remplacées par des insécables, absentes de la police PDF par défaut), statut « Payé », moyen de paiement lisible, bloc vendeur (educa + `publicBaseUrl`). Tests `InvoiceFormatTest` (2).
+5. **Bug** : une route API inconnue renvoyait `500` (`NoResourceFoundException` attrapée par le catch-all de `GlobalExceptionHandler`) → désormais `404`.
+6. Doc : `CLAUDE.md`, `README.md`, `02-conception.md §11.6`, `05-demo-soutenance.md` (achat en étape 3.3 + lancement de `stripe listen` avant la démo), `03` (résiduel).
+
+**Vérifié** : `./mvnw test` → **66/66 verts** ; `npm run build` OK ; `npm run test:ci` → **13/13 verts**.
+
+**Non traité / à savoir**
+- La facture ne porte ni adresse légale du vendeur ni mention de TVA : à ajouter si educa devient une vraie activité commerciale (mentions dépendantes du statut juridique, non inventées ici).
+- La page « Mes achats » affiche encore le montant au format `19.99 EUR`.
+- Un ancien paiement `SUCCEEDED` de `apprenant@educa.dev` (antérieur aux factures) n'a pas de numéro de facture — donnée locale uniquement (V7 et V8 ont été livrées dans le même commit).
+
+**Prochaine étape** : Orange Money — nécessite des identifiants sandbox Orange Developer.

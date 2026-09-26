@@ -837,7 +837,11 @@ de `educa.public-base-url` (origine du frontend, redirections navigateur) : en d
 
 ### 11.6 Écart de conception assumé
 
-Les cours de démo (`DevDataInitializer`) ont chacun un prix distinct (« Introduction à Python » à
-29,99 €, « Les bases de Git » gratuit) pour que le parcours de démonstration existant (inscription →
-progression → certificat) continue de fonctionner sans clé de paiement réelle, en s'inscrivant au cours
-gratuit.
+Les cours de démo (`DevDataInitializer`) sont **tous payants** (« Introduction à Python » 29,99 €,
+« Les bases de Git » 19,99 €) — aucun cours n'est gratuit sans décision explicite du formateur (le
+formulaire de `course-editor` n'a plus de prix par défaut : le formateur doit le saisir, `0` restant
+possible). Pour que le parcours pré-joué du compte `diplome@educa.dev` (inscription → progression →
+certificat) fonctionne sans prestataire réel, le seed lui enregistre un achat `SUCCEEDED` avec facture
+(`PaymentService.recordDemoPurchase`, réservé au seed). *Historique : du 2026-09-22 au 2026-09-26, Git
+était gratuit et la migration `V7` avait mis à `0` le prix de tous les cours déjà existants (colonne
+`DEFAULT 0`) — corrigé à la demande de l'utilisatrice, qui n'avait jamais demandé de cours gratuits.*

@@ -79,7 +79,8 @@ export class CourseEditorComponent implements OnInit {
     title: ['', [Validators.required, Validators.maxLength(200)]],
     description: [''],
     language: ['fr', [Validators.required]],
-    price: [0, [Validators.required, Validators.min(0)]],
+    // Pas de prix par défaut : le formateur doit le saisir explicitement (0 = gratuit reste possible).
+    price: this.fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
   });
 
   readonly chapterForm = this.fb.nonNullable.group({
@@ -108,7 +109,8 @@ export class CourseEditorComponent implements OnInit {
       this.courseForm.markAllAsTouched();
       return;
     }
-    const value = this.courseForm.getRawValue();
+    const raw = this.courseForm.getRawValue();
+    const value = { ...raw, price: raw.price ?? 0 }; // non null ici : le formulaire est valide
     const current = this.course();
     const request$ = current
       ? this.api.updateCourse(current.id, value)

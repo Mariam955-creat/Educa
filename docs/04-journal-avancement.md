@@ -1080,3 +1080,24 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 **Vérifié** : `./mvnw test` → **67/67** ; `npm run build` OK ; `npm run test:ci` → **22/22**.
 
 **À savoir** : traductions rédigées sans relecture native — à faire relire avant une mise en production. Le certificat PDF et la facture restent en français, quelle que soit la langue (écart préexistant : `docs/02-conception.md §6` prévoyait des bundles `messages_{fr,en,ar}.properties` jamais implémentés). La base `educa` locale recevra `V9` au prochain démarrage du backend.
+
+---
+
+## 2026-09-26 (suite) — Certificat et facture traduits (6 langues, arabe RTL)
+
+**Demande** : traduire aussi le certificat et la facture (jusqu'ici en français quelle que soit la langue — `docs/02-conception.md §6.3` le prévoyait sans que ce soit réalisé).
+
+**Fait**
+- **`com.educa.backend.common.pdf.PdfDocuments`** (nouveau, partagé par `certificate` et `payment`) : résolution de langue, libellés via `MessageSource`, dates localisées, rendu HTML → PDF. Police **DejaVu Sans** (regular + bold) embarquée dans `resources/fonts/` avec sa licence — la police par défaut d'openhtmltopdf n'a aucun glyphe arabe. Dépendance **`openhtmltopdf-rtl-support` 1.0.10** (ICU4J) : ordre bidirectionnel + mise en forme des lettres arabes (sans elle, les lettres arabes s'afficheraient isolées et dans le mauvais ordre).
+- **Libellés** : `messages.properties` (fr, défaut) + `messages_{en,ar,es,pt,de}.properties` ; `spring.messages.fallback-to-system-locale: false` (sinon, sur une machine en anglais, une demande en français renverrait l'anglais, faute de `messages_fr`).
+- **Langue** : `GET /certificates/{id}/download?lang=` et `GET /payments/{id}/invoice/download?lang=` ; le frontend (`CertificateApiService`, `PaymentApiService`) envoie la langue de l'interface. Absente ou non supportée → langue de préférence du titulaire → français.
+- **Plus de cache PDF** : générés à chaque téléchargement (quelques ko). Un cache unique aurait figé la langue du premier téléchargement. Colonnes `pdf_key` supprimées (`V10__drop_pdf_cache.sql`) + champs retirés des entités ; le certificat n'est plus pré-rendu à l'émission. Les anciens fichiers `certificates/` et `invoices/` du stockage local sont orphelins (supprimables).
+- **Arabe** : `dir="rtl"`, colonnes de la facture inversées, QR code du certificat à gauche, pas de `letter-spacing` sur le titre (casserait les liaisons). Vérifié visuellement (certificat + facture de `diplome@educa.dev`).
+- **Montants** : `PaymentService.formatAmount` prend la locale (`19,99 €` fr, `€19.99` en, chiffres latins en ar).
+- Tests : `QuizFlowTest` télécharge le certificat en fr (défaut), de, en, ar et une langue inconnue (→ fr) et vérifie le texte extrait du PDF (PDFBox, `support/PdfText`) ; `CoursePaymentFlowTest` idem pour la facture ; `InvoiceFormatTest` +1.
+
+**Vérifié** : `./mvnw test` → **68/68** ; `npm run build` OK ; `npm run test:ci` → **22/22** ; backend relancé sur la base locale (V9 + V10 appliquées), PDF arabe et allemand contrôlés à l'œil.
+
+**Incident** : l'arrêt « mémoire faible » de Claude Code avait tué le shell mais pas le processus Java du backend, resté sur :8081 — le nouveau backend échouait au démarrage (`Port 8081 was already in use`) et c'est l'ancien code qui répondait. Processus orphelin arrêté, backend relancé.
+
+**À savoir** : traductions des PDF non relues par des locuteurs natifs (comme l'interface).

@@ -1,5 +1,6 @@
 package com.educa.backend.payment;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.educa.backend.support.PdfText;
 import com.educa.backend.user.Role;
 import com.educa.backend.user.RoleName;
 import com.educa.backend.user.RoleRepository;
@@ -128,6 +130,11 @@ class CoursePaymentFlowTest {
                         .header("Authorization", "Bearer " + eleve))
                 .andExpect(status().isOk());
 
+        assertThat(invoicePdf(eleve, payment.getId(), "")).contains("FACTURE", "INV-2026-000001", "29,99");
+        assertThat(invoicePdf(eleve, payment.getId(), "?lang=de")).contains("RECHNUNG", "Bezahlt", "29,99");
+        assertThat(invoicePdf(eleve, payment.getId(), "?lang=en")).contains("INVOICE", "Paid", "€29.99");
+        assertThat(invoicePdf(eleve, payment.getId(), "?lang=ar")).contains("INV-2026-000001").doesNotContain("FACTURE");
+
         String autreEleve = learnerToken("pay-eleve7@example.com");
         mvc.perform(get("/api/v1/payments/" + payment.getId() + "/invoice/download")
                         .header("Authorization", "Bearer " + autreEleve))
@@ -156,6 +163,14 @@ class CoursePaymentFlowTest {
         mvc.perform(post("/api/v1/courses/" + id + "/publish").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
         return id;
+    }
+
+    private String invoicePdf(String token, long paymentId, String query) throws Exception {
+        byte[] pdf = mvc.perform(get("/api/v1/payments/" + paymentId + "/invoice/download" + query)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsByteArray();
+        return PdfText.of(pdf);
     }
 
     private String learnerToken(String email) throws Exception {

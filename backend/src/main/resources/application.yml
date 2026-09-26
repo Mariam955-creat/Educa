@@ -6,6 +6,11 @@ spring:
   # Charge le fichier .env de la racine du dépôt (lancer mvn depuis backend/). Optionnel : en CI/prod on utilise de vraies variables d'env.
   config:
     import: "optional:file:../.env[.properties]"
+  # Libellés des PDF (messages*.properties). messages.properties = français : sans repli sur la langue du
+  # système, une langue absente retombe toujours sur le français, quelle que soit la machine.
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
   jpa:
     open-in-view: false
     hibernate:

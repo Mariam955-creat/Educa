@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
+import { LanguageService } from '../i18n/language.service';
 
 export type PaymentProvider = 'STRIPE' | 'ORANGE_MONEY';
 export type PaymentStatus = 'PENDING' | 'SUCCEEDED' | 'FAILED';
@@ -25,6 +26,7 @@ export interface Invoice {
 @Injectable({ providedIn: 'root' })
 export class PaymentApiService {
   private readonly http = inject(HttpClient);
+  private readonly lang = inject(LanguageService);
   private readonly base = API_BASE_URL;
 
   checkout(courseId: number, provider: PaymentProvider): Observable<CheckoutResponse> {
@@ -36,6 +38,9 @@ export class PaymentApiService {
   }
 
   downloadInvoice(id: number): Observable<Blob> {
-    return this.http.get(`${this.base}/payments/${id}/invoice/download`, { responseType: 'blob' });
+    return this.http.get(`${this.base}/payments/${id}/invoice/download`, {
+      params: { lang: this.lang.current() },
+      responseType: 'blob',
+    });
   }
 }

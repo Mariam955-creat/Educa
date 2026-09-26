@@ -56,9 +56,6 @@ public class Payment {
     @Column(name = "invoice_number", unique = true, length = 40)
     private String invoiceNumber;
 
-    @Column(name = "pdf_key", length = 500)
-    private String pdfKey;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

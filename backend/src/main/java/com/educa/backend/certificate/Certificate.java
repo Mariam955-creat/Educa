@@ -54,7 +54,4 @@ public class Certificate {
     @CreationTimestamp
     @Column(name = "issued_at", nullable = false, updatable = false)
     private Instant issuedAt;
-
-    @Column(name = "pdf_key", length = 500)
-    private String pdfKey;
 }

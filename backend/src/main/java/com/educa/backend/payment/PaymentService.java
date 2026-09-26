@@ -1,11 +1,8 @@
 package com.educa.backend.payment;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Year;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +10,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.educa.backend.common.error.ApiException;
 import com.educa.backend.common.error.ResourceNotFoundException;
+import com.educa.backend.common.pdf.PdfDocuments;
 import com.educa.backend.config.EducaProperties;
 import com.educa.backend.course.Course;
 import com.educa.backend.course.CourseService;
@@ -29,35 +28,31 @@ import com.educa.backend.payment.dto.AdminPaymentDto;
 import com.educa.backend.payment.dto.CheckoutRequest;
 import com.educa.backend.payment.dto.CheckoutResponse;
 import com.educa.backend.payment.dto.InvoiceDto;
-import com.educa.backend.storage.StorageService;
 import com.educa.backend.user.UserService;
 import com.educa.backend.user.dto.UserDto;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 @Service
 public class PaymentService {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
-    private static final DateTimeFormatter INVOICE_DATE =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH:mm", Locale.FRANCE).withZone(ZoneId.of("Europe/Paris"));
 
     private final PaymentRepository paymentRepository;
     private final UserService userService;
     private final CourseService courseService;
-    private final StorageService storageService;
+    private final PdfDocuments pdfDocuments;
     private final PaymentGateway stripeGateway;
     private final PaymentGateway orangeMoneyGateway;
     private final EducaProperties educaProperties;
 
     public PaymentService(PaymentRepository paymentRepository, UserService userService, CourseService courseService,
-                          StorageService storageService,
+                          PdfDocuments pdfDocuments,
                           @Qualifier("stripeGateway") PaymentGateway stripeGateway,
                           @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway,
                           EducaProperties educaProperties) {
         this.paymentRepository = paymentRepository;
         this.userService = userService;
         this.courseService = courseService;
-        this.storageService = storageService;
+        this.pdfDocuments = pdfDocuments;
         this.stripeGateway = stripeGateway;
         this.orangeMoneyGateway = orangeMoneyGateway;
         this.educaProperties = educaProperties;
@@ -140,9 +135,13 @@ public class PaymentService {
                 .toList();
     }
 
-    /** PDF de facture, généré paresseusement au premier téléchargement (même patron que CertificateService). */
-    @Transactional
-    public Resource downloadInvoice(Long paymentId, Long requesterId, boolean isAdmin) {
+    /**
+     * PDF de facture généré à chaque téléchargement dans la langue demandée (sinon celle de l'acheteur), même
+     * patron que CertificateService. Seuls les libellés changent d'une langue à l'autre : numéro, montant,
+     * date et référence viennent de la base et restent identiques.
+     */
+    @Transactional(readOnly = true)
+    public Resource downloadInvoice(Long paymentId, Long requesterId, boolean isAdmin, String lang) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Paiement introuvable"));
         if (!isAdmin && !payment.getUserId().equals(requesterId)) {
@@ -151,19 +150,15 @@ public class PaymentService {
         if (payment.getStatus() != PaymentStatus.SUCCEEDED) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Aucune facture pour un paiement non abouti");
         }
-        if (payment.getPdfKey() == null) {
-            String buyerName = userService.displayNameById(payment.getUserId());
-            String courseTitle = courseService.summary(payment.getCourseId()).title();
-            try {
-                byte[] pdf = renderInvoicePdf(payment, buyerName, courseTitle);
-                payment.setPdfKey(storageService.store(pdf, "invoices/" + payment.getId(), "pdf"));
-                paymentRepository.save(payment);
-            } catch (Exception e) {
-                log.error("Génération du PDF de la facture {} échouée", payment.getId(), e);
-                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Facture indisponible");
-            }
+        String resolvedLang = pdfDocuments.resolveLang(lang, userService.getById(payment.getUserId()).preferredLanguage());
+        String buyerName = userService.displayNameById(payment.getUserId());
+        String courseTitle = courseService.summary(payment.getCourseId()).title();
+        try {
+            return new ByteArrayResource(renderInvoicePdf(payment, buyerName, courseTitle, resolvedLang));
+        } catch (RuntimeException e) {
+            log.error("Génération du PDF de la facture {} échouée", payment.getId(), e);
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Facture indisponible");
         }
-        return storageService.loadAsResource(payment.getPdfKey());
     }
 
     // ---------- webhooks ----------
@@ -245,15 +240,16 @@ public class PaymentService {
         return "INV-" + Year.now().getValue() + "-" + String.format("%06d", sequence);
     }
 
-    private byte[] renderInvoicePdf(Payment payment, String buyerName, String courseTitle) throws Exception {
+    private byte[] renderInvoicePdf(Payment payment, String buyerName, String courseTitle, String lang) {
+        boolean rtl = pdfDocuments.isRtl(lang);
         String html = """
-                <html><head><meta charset="utf-8"/><style>
+                <html lang="%s" dir="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4; margin: 0; }
-                  body { font-family: sans-serif; color: #1f2937; margin: 48px; }
+                  body { font-family: '%s'; color: #1f2937; margin: 48px; direction: %s; }
                   h1 { font-size: 24px; color: #7e22ce; margin: 0 0 4px; }
                   .sub { color: #6b7280; margin: 0 0 32px; }
                   table { width: 100%%; border-collapse: collapse; margin-top: 16px; }
-                  th, td { text-align: left; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+                  th, td { text-align: %s; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
                   .total { font-weight: bold; font-size: 16px; }
                   .meta { margin-top: 32px; color: #6b7280; font-size: 12px; }
                   .parties { width: 100%%; margin-bottom: 24px; }
@@ -261,54 +257,43 @@ public class PaymentService {
                   .label { color: #6b7280; font-size: 12px; text-transform: uppercase; }
                   .paid { color: #15803d; font-weight: bold; }
                 </style></head><body>
-                <h1>FACTURE</h1>
-                <p class="sub">N&#176; %s &#183; émise le %s</p>
+                <h1>%s</h1>
+                <p class="sub">%s</p>
                 <table class="parties"><tr>
-                  <td><div class="label">Vendeur</div><strong>educa</strong><br/>Plateforme e-learning<br/>%s</td>
-                  <td><div class="label">Facturé à</div><strong>%s</strong></td>
+                  <td><div class="label">%s</div><strong>educa</strong><br/>%s<br/>%s</td>
+                  <td><div class="label">%s</div><strong>%s</strong></td>
                 </tr></table>
                 <table>
-                  <tr><th>Description</th><th>Moyen de paiement</th><th>Montant</th></tr>
-                  <tr><td>Accès au cours « %s »</td><td>%s</td><td class="total">%s</td></tr>
+                  <tr><th>%s</th><th>%s</th><th>%s</th></tr>
+                  <tr><td>%s</td><td>%s</td><td class="total">%s</td></tr>
                 </table>
-                <p>Statut : <span class="paid">%s</span></p>
-                <p class="meta">Référence de transaction : %s</p>
+                <p>%s <span class="paid">%s</span></p>
+                <p class="meta">%s</p>
                 </body></html>
-                """.formatted(payment.getInvoiceNumber(), INVOICE_DATE.format(payment.getCreatedAt()),
-                escape(educaProperties.publicBaseUrl()), escape(buyerName), escape(courseTitle),
-                providerLabel(payment.getProvider()), formatAmount(payment.getAmount(), payment.getCurrency()),
-                statusLabel(payment.getStatus()), escape(payment.getProviderReference()));
+                """.formatted(lang, rtl ? "rtl" : "ltr", PdfDocuments.FONT_FAMILY, rtl ? "rtl" : "ltr",
+                rtl ? "right" : "left",
+                pdfDocuments.text("invoice.title", lang),
+                pdfDocuments.text("invoice.meta", lang, payment.getInvoiceNumber(),
+                        pdfDocuments.dateTime(payment.getCreatedAt(), lang)),
+                pdfDocuments.text("invoice.seller", lang), pdfDocuments.text("invoice.platform", lang),
+                PdfDocuments.escape(educaProperties.publicBaseUrl()),
+                pdfDocuments.text("invoice.billedTo", lang), PdfDocuments.escape(buyerName),
+                pdfDocuments.text("invoice.description", lang), pdfDocuments.text("invoice.paymentMethod", lang),
+                pdfDocuments.text("invoice.amount", lang),
+                pdfDocuments.text("invoice.courseAccess", lang, PdfDocuments.escape(courseTitle)),
+                pdfDocuments.text("invoice.provider." + payment.getProvider().name(), lang),
+                formatAmount(payment.getAmount(), payment.getCurrency(), pdfDocuments.locale(lang)),
+                pdfDocuments.text("invoice.status", lang),
+                pdfDocuments.text("invoice.status." + payment.getStatus().name(), lang),
+                pdfDocuments.text("invoice.reference", lang, PdfDocuments.escape(payment.getProviderReference())));
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useFastMode();
-            builder.withHtmlContent(html, null);
-            builder.toStream(out);
-            builder.run();
-            return out.toByteArray();
-        }
+        return pdfDocuments.render(html, lang);
     }
 
-    /** « 19,99 € », « 20 000 F CFA »… — espaces insécables normalisées (U+202F absent de la police PDF par défaut). */
-    static String formatAmount(BigDecimal amount, String currencyCode) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.FRANCE);
+    /** « 19,99 € » (fr), « €19.99 » (en)… — espaces fines insécables (U+202F) ramenées à des insécables classiques. */
+    static String formatAmount(BigDecimal amount, String currencyCode, Locale locale) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(locale);
         format.setCurrency(Currency.getInstance(currencyCode.toUpperCase(Locale.ROOT)));
         return format.format(amount).replace(' ', ' ');
-    }
-
-    private static String providerLabel(PaymentProvider provider) {
-        return provider == PaymentProvider.STRIPE ? "Carte bancaire (Stripe)" : "Orange Money";
-    }
-
-    private static String statusLabel(PaymentStatus status) {
-        return switch (status) {
-            case SUCCEEDED -> "Payé";
-            case PENDING -> "En attente";
-            case FAILED -> "Échoué";
-        };
-    }
-
-    private static String escape(String value) {
-        return value == null ? "" : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 }

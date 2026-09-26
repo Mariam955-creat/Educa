@@ -1,5 +1,6 @@
 package com.educa.backend.quiz;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.educa.backend.support.PdfText;
 import com.educa.backend.user.Role;
 import com.educa.backend.user.RoleName;
 import com.educa.backend.user.RoleRepository;
@@ -129,6 +131,22 @@ class QuizFlowTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valid").value(true))
                 .andExpect(jsonPath("$.courseTitle").value("Cours quiz 4"));
+
+        // 8. le PDF suit la langue demandée ; sans langue, celle du titulaire (fr à l'inscription)
+        assertThat(certificatePdf(eleve, certId, "")).contains("CERTIFICAT DE RÉUSSITE", "Cours quiz 4");
+        assertThat(certificatePdf(eleve, certId, "?lang=de")).contains("ERFOLGSZERTIFIKAT", "Endnote");
+        assertThat(certificatePdf(eleve, certId, "?lang=en")).contains("CERTIFICATE OF ACHIEVEMENT");
+        assertThat(certificatePdf(eleve, certId, "?lang=xx")).contains("CERTIFICAT DE RÉUSSITE");
+        // Arabe : glyphes mis en forme (formes de présentation), on vérifie le rendu et les données non traduites.
+        assertThat(certificatePdf(eleve, certId, "?lang=ar")).contains("Cours quiz 4").doesNotContain("CERTIFICAT");
+    }
+
+    private String certificatePdf(String token, long certId, String query) throws Exception {
+        byte[] pdf = mvc.perform(get("/api/v1/certificates/" + certId + "/download" + query)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsByteArray();
+        return PdfText.of(pdf);
     }
 
     // ---------- fixtures / helpers ----------

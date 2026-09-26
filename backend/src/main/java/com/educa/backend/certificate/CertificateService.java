@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +29,9 @@ import com.educa.backend.certificate.dto.CertificateDto;
 import com.educa.backend.certificate.dto.CertificateVerificationDto;
 import com.educa.backend.common.error.ApiException;
 import com.educa.backend.common.error.ResourceNotFoundException;
+import com.educa.backend.common.pdf.PdfDocuments;
 import com.educa.backend.config.EducaProperties;
 import com.educa.backend.course.CourseService;
-import com.educa.backend.storage.StorageService;
 import com.educa.backend.user.UserService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -38,7 +39,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 @Service
 public class CertificateService {
@@ -49,16 +49,16 @@ public class CertificateService {
     private final CertificateRepository certificateRepository;
     private final UserService userService;
     private final CourseService courseService;
-    private final StorageService storageService;
+    private final PdfDocuments pdfDocuments;
     private final EducaProperties educaProperties;
 
     public CertificateService(CertificateRepository certificateRepository, UserService userService,
-                              CourseService courseService, StorageService storageService,
+                              CourseService courseService, PdfDocuments pdfDocuments,
                               EducaProperties educaProperties) {
         this.certificateRepository = certificateRepository;
         this.userService = userService;
         this.courseService = courseService;
-        this.storageService = storageService;
+        this.pdfDocuments = pdfDocuments;
         this.educaProperties = educaProperties;
     }
 
@@ -90,26 +90,28 @@ public class CertificateService {
         return certificateRepository.findAllByOrderByIssuedAtDesc(pageable).map(this::toDto);
     }
 
-    @Transactional
-    public Resource download(Long certificateId, Long requesterId, boolean isAdmin) {
+    /**
+     * PDF généré à chaque téléchargement (quelques ko, rendu rapide) dans la langue demandée — celle de
+     * l'interface du demandeur — ou, à défaut, la langue de préférence du titulaire. Pas de cache : un cache
+     * unique figerait la langue du premier téléchargement.
+     */
+    @Transactional(readOnly = true)
+    public Resource download(Long certificateId, Long requesterId, boolean isAdmin, String lang) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificat introuvable"));
         if (!isAdmin && !certificate.getUserId().equals(requesterId)) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Ce certificat ne vous appartient pas");
         }
-        if (certificate.getPdfKey() == null) {
-            // Génération paresseuse (ou re-tentative si l'émission avait échoué).
-            String holderName = userService.displayNameById(certificate.getUserId());
-            String courseTitle = courseService.summary(certificate.getCourseId()).title();
-            try {
-                byte[] pdf = renderPdf(certificate, holderName, courseTitle);
-                certificate.setPdfKey(storageService.store(pdf, "certificates/" + certificate.getId(), "pdf"));
-            } catch (Exception e) {
-                log.error("Génération du PDF du certificat {} échouée", certificate.getId(), e);
-                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "PDF du certificat indisponible");
-            }
+        String resolvedLang = pdfDocuments.resolveLang(lang,
+                userService.getById(certificate.getUserId()).preferredLanguage());
+        String holderName = userService.displayNameById(certificate.getUserId());
+        String courseTitle = courseService.summary(certificate.getCourseId()).title();
+        try {
+            return new ByteArrayResource(renderPdf(certificate, holderName, courseTitle, resolvedLang));
+        } catch (RuntimeException e) {
+            log.error("Génération du PDF du certificat {} échouée", certificate.getId(), e);
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "PDF du certificat indisponible");
         }
-        return storageService.loadAsResource(certificate.getPdfKey());
     }
 
     @Transactional(readOnly = true)
@@ -139,15 +141,6 @@ public class CertificateService {
         certificate.setVerificationCode(randomHex());
         certificate.setSerialNumber("EDUCA-" + Year.now().getValue() + "-" + String.format("%06d", sequence));
         certificateRepository.save(certificate);
-
-        String holderName = userService.displayNameById(userId);
-        String courseTitle = courseService.summary(courseId).title();
-        try {
-            byte[] pdf = renderPdf(certificate, holderName, courseTitle);
-            certificate.setPdfKey(storageService.store(pdf, "certificates/" + certificate.getId(), "pdf"));
-        } catch (Exception e) {
-            log.error("Génération du PDF du certificat {} échouée", certificate.getId(), e);
-        }
         return certificate.getId();
     }
 
@@ -163,54 +156,55 @@ public class CertificateService {
         return HexFormat.of().formatHex(bytes);
     }
 
-    private byte[] renderPdf(Certificate c, String holderName, String courseTitle) throws Exception {
+    private byte[] renderPdf(Certificate c, String holderName, String courseTitle, String lang) {
         String verificationUrl = educaProperties.publicBaseUrl() + "/verify/" + c.getVerificationCode();
         String qrCodeImg = qrCodeDataUri(verificationUrl)
                 .map(dataUri -> "<img class=\"qr\" src=\"" + dataUri + "\"/>")
                 .orElse("");
+        boolean rtl = pdfDocuments.isRtl(lang);
 
         String html = """
-                <html><head><meta charset="utf-8"/><style>
+                <html lang="%s" dir="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4 landscape; margin: 0; }
-                  body { font-family: sans-serif; color: #1f2937; }
+                  body { font-family: '%s'; color: #1f2937; direction: %s; }
                   .frame { margin: 28px; border: 3px solid #7e22ce; border-radius: 10px;
                            padding: 60px 70px; text-align: center; position: relative; }
-                  h1 { font-size: 34px; letter-spacing: 2px; color: #7e22ce; margin: 0 0 8px; }
+                  h1 { font-size: 34px; letter-spacing: %s; color: #7e22ce; margin: 0 0 8px; }
                   .sub { color: #6b7280; margin: 0 0 40px; }
                   .name { font-size: 30px; font-weight: bold; margin: 24px 0 6px; }
-                  .course { font-size: 20px; margin: 0 0 28px; }
+                  .course { font-size: 20px; font-weight: bold; margin: 0 0 28px; }
                   .grade { font-size: 18px; }
                   .meta { margin-top: 40px; color: #6b7280; font-size: 12px; }
-                  .qr { position: absolute; bottom: 24px; right: 32px; width: 84px; height: 84px; }
+                  .qr { position: absolute; bottom: 24px; %s: 32px; width: 84px; height: 84px; }
                 </style></head><body>
                 <div class="frame">
-                  <h1>CERTIFICAT DE R&#201;USSITE</h1>
-                  <p class="sub">Plateforme e-learning educa</p>
-                  <p>Ce certificat atteste que</p>
+                  <h1>%s</h1>
+                  <p class="sub">%s</p>
+                  <p>%s</p>
                   <p class="name">%s</p>
-                  <p>a valid&#233; avec succ&#232;s la formation</p>
-                  <p class="course">&#171; %s &#187;</p>
-                  <p class="grade">Note finale : <b>%s / 100</b>
-                     (contr&#244;les : %s &#183; examen final : %s)</p>
-                  <p class="meta">N&#176; %s &#183; d&#233;livr&#233; le %s<br/>
-                     V&#233;rification : code %s</p>
+                  <p>%s</p>
+                  <p class="course">%s</p>
+                  <p class="grade">%s</p>
+                  <p class="meta">%s<br/>%s</p>
                   %s
                 </div>
                 </body></html>
-                """.formatted(escape(holderName), escape(courseTitle),
-                c.getFinalGrade().stripTrailingZeros().toPlainString(),
-                c.getControlsAverage().stripTrailingZeros().toPlainString(),
-                c.getFinalExamScore().stripTrailingZeros().toPlainString(),
-                c.getSerialNumber(), c.getIssuedAt(), c.getVerificationCode(), qrCodeImg);
+                """.formatted(lang, rtl ? "rtl" : "ltr", PdfDocuments.FONT_FAMILY, rtl ? "rtl" : "ltr",
+                // L'espacement des lettres casserait les liaisons entre lettres arabes.
+                rtl ? "0" : "2px", rtl ? "left" : "right",
+                pdfDocuments.text("cert.title", lang), pdfDocuments.text("cert.platform", lang),
+                pdfDocuments.text("cert.attests", lang), PdfDocuments.escape(holderName),
+                pdfDocuments.text("cert.completed", lang), PdfDocuments.escape(courseTitle),
+                pdfDocuments.text("cert.grade", lang, plain(c.getFinalGrade()), plain(c.getControlsAverage()),
+                        plain(c.getFinalExamScore())),
+                pdfDocuments.text("cert.meta", lang, c.getSerialNumber(), pdfDocuments.date(c.getIssuedAt(), lang)),
+                pdfDocuments.text("cert.verification", lang, c.getVerificationCode()), qrCodeImg);
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useFastMode();
-            builder.withHtmlContent(html, null);
-            builder.toStream(out);
-            builder.run();
-            return out.toByteArray();
-        }
+        return pdfDocuments.render(html, lang);
+    }
+
+    private static String plain(BigDecimal value) {
+        return value.stripTrailingZeros().toPlainString();
     }
 
     /** QR code pointant vers la page publique de vérification, encodé en data URI PNG pour l'embarquer dans le PDF. */
@@ -234,9 +228,5 @@ public class CertificateService {
             log.warn("Génération du QR code de vérification échouée, certificat généré sans QR code", e);
             return Optional.empty();
         }
-    }
-
-    private static String escape(String value) {
-        return value == null ? "" : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 }

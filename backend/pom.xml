@@ -108,6 +108,12 @@
 			<artifactId>openhtmltopdf-pdfbox</artifactId>
 			<version>1.0.10</version>
 		</dependency>
+		<!-- Arabe dans les PDF : mise en forme des glyphes + ordre bidirectionnel (ICU4J) -->
+		<dependency>
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-rtl-support</artifactId>
+			<version>1.0.10</version>
+		</dependency>
 
 		<!-- Chatbot pédagogique — SDK officiel Anthropic -->
 		<dependency>

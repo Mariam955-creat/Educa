@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.educa.backend.payment.dto.InvoiceDto;
@@ -30,9 +31,10 @@ public class PaymentController {
         return paymentService.myInvoices(CurrentUser.id());
     }
 
+    /** {@code lang} : langue du PDF (celle de l'interface) ; absente ou non supportée → langue du titulaire. */
     @GetMapping("/{id}/invoice/download")
-    public ResponseEntity<Resource> downloadInvoice(@PathVariable Long id) {
-        Resource pdf = paymentService.downloadInvoice(id, CurrentUser.id(), CurrentUser.isAdmin());
+    public ResponseEntity<Resource> downloadInvoice(@PathVariable Long id, @RequestParam(required = false) String lang) {
+        Resource pdf = paymentService.downloadInvoice(id, CurrentUser.id(), CurrentUser.isAdmin(), lang);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"facture-" + id + ".pdf\"")

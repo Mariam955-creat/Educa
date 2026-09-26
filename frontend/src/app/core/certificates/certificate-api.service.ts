@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
+import { LanguageService } from '../i18n/language.service';
 
 export interface Certificate {
   id: number;
@@ -29,6 +30,7 @@ export interface CertificateVerification {
 @Injectable({ providedIn: 'root' })
 export class CertificateApiService {
   private readonly http = inject(HttpClient);
+  private readonly lang = inject(LanguageService);
   private readonly base = API_BASE_URL;
 
   mine(): Observable<Certificate[]> {
@@ -36,7 +38,11 @@ export class CertificateApiService {
   }
 
   download(id: number): Observable<Blob> {
-    return this.http.get(`${this.base}/certificates/${id}/download`, { responseType: 'blob' });
+    // PDF dans la langue de l'interface (le backend retombe sinon sur la langue du titulaire).
+    return this.http.get(`${this.base}/certificates/${id}/download`, {
+      params: { lang: this.lang.current() },
+      responseType: 'blob',
+    });
   }
 
   verify(code: string): Observable<CertificateVerification> {

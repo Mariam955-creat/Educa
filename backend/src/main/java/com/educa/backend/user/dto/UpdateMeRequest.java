@@ -5,5 +5,5 @@ import jakarta.validation.constraints.Size;
 
 public record UpdateMeRequest(
         @Size(max = 150) String fullName,
-        @Pattern(regexp = "fr|en|ar", message = "langue non supportée") String preferredLanguage) {
+        @Pattern(regexp = "fr|en|ar|es|pt|de", message = "langue non supportée") String preferredLanguage) {
 }

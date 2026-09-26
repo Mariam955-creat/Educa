@@ -1,5 +1,5 @@
 {
-  "lang": { "label": "اللغة", "fr": "Français", "en": "English", "ar": "العربية" },
+  "lang": { "label": "اللغة", "fr": "Français", "en": "English", "ar": "العربية", "es": "Español", "pt": "Português", "de": "Deutsch" },
   "nav": {
     "dashboard": "لوحة التحكم",
     "catalog": "الكتالوج",

@@ -559,13 +559,13 @@ Sécurité au niveau endpoint (`SecurityFilterChain` + `@PreAuthorize`) **et** a
 
 ---
 
-## 6. Stratégie multilingue (i18n) — FR / EN / AR
+## 6. Stratégie multilingue (i18n) — FR / EN / AR / ES / PT / DE
 
 Deux niveaux distincts :
 
 ### 6.1 i18n de l'interface (Must have)
 - Librairie : **`@ngx-translate/core` v18** + `@ngx-translate/http-loader` (`provideTranslateHttpLoader`).
-- Fichiers de traduction : **`frontend/public/i18n/{fr,en,ar}.json`** (clé → texte) — servis à la racine (`i18n/…`) par Angular 19.
+- Fichiers de traduction : **`frontend/public/i18n/{fr,en,ar,es,pt,de}.json`** (clé → texte ; espagnol, portugais et allemand ajoutés le 2026-09-26, avec les langues de contenu correspondantes via `V9__more_languages.sql`) — servis à la racine (`i18n/…`) par Angular 19.
 - Langue par défaut `fr` ; détection à la connexion via `user.preferredLanguage` ; sélecteur de langue dans l'en-tête ; persistance en `localStorage` **et** via `PATCH /auth/me`.
 - **RTL** : au changement de langue, positionner `document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr')` et `lang`. Styles logiques CSS (`margin-inline-start`, `padding-inline-end`, Flexbox/Grid) plutôt que `left/right`. Vérifier icônes directionnelles (flèches « suivant / précédent ») et alignements.
 - Formats dates/nombres via l'API `Intl` du navigateur selon la locale active.

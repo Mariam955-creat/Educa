@@ -1063,3 +1063,20 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 - Un ancien paiement `SUCCEEDED` de `apprenant@educa.dev` (antérieur aux factures) n'a pas de numéro de facture — donnée locale uniquement (V7 et V8 ont été livrées dans le même commit).
 
 **Prochaine étape** : Orange Money — nécessite des identifiants sandbox Orange Developer.
+
+---
+
+## 2026-09-26 (suite) — Trois langues supplémentaires : espagnol, portugais, allemand
+
+**Demande** : « ajoute 3 autres langues » — choix de l'utilisatrice : **es / pt / de**, pour l'**interface et le contenu des cours**.
+
+**Fait**
+- **Contenu des cours** : migration `V9__more_languages.sql` (es « Español », pt « Português », de « Deutsch », actives, `ON CONFLICT DO NOTHING`). Elles apparaissent donc automatiquement dans le sélecteur de langue de `course-editor`, l'onglet Traductions et l'admin des langues (tout lit déjà `GET /languages`).
+- **`CourseRequest.language`** : `@Pattern("fr|en|ar")` remplacé par le format seul `[a-z]{2}` — la liste réelle est déjà validée par `CourseService` contre la table `languages` (langue inconnue ou inactive → `400`). Le motif en dur aurait sinon refusé toute nouvelle langue ajoutée en base.
+- **Langue d'interface** : `RegisterRequest`/`UpdateMeRequest` acceptent `fr|en|ar|es|pt|de` ; frontend `AppLang` + `SUPPORTED` étendus, locales `Intl` `es-ES`/`pt-PT`/`de-DE` (dates et montants), le formulaire d'inscription liste désormais les langues depuis `LanguageService` au lieu de trois `<option>` en dur.
+- **Traductions** : `public/i18n/{es,pt,de}.json` complets (234 clés, parité vérifiée par script avec `fr.json`) ; noms des langues ajoutés dans `fr/en/ar.json`. Portugais au registre européen (« palavra-passe », « ficheiro »), allemand au vouvoiement (« Sie »).
+- Tests : `AdminLanguageControllerTest` adapté (6 langues ; « dernière langue active » désactive désormais en, ar, es, pt, de avant fr) + nouveau test « créer un cours en allemand → 201 ».
+
+**Vérifié** : `./mvnw test` → **67/67** ; `npm run build` OK ; `npm run test:ci` → **22/22**.
+
+**À savoir** : traductions rédigées sans relecture native — à faire relire avant une mise en production. Le certificat PDF et la facture restent en français, quelle que soit la langue (écart préexistant : `docs/02-conception.md §6` prévoyait des bundles `messages_{fr,en,ar}.properties` jamais implémentés). La base `educa` locale recevra `V9` au prochain démarrage du backend.

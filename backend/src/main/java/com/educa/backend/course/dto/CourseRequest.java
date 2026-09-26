@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Size;
 public record CourseRequest(
         @NotBlank @Size(max = 200) String title,
         @Size(max = 10_000) String description,
-        @Pattern(regexp = "fr|en|ar") String language,
+        @Pattern(regexp = "[a-z]{2}") String language,
         @Min(0) @Max(100) Integer controlWeight,
         @Min(0) @Max(100) Integer examWeight,
         @Min(0) @Max(100) Integer passThreshold,

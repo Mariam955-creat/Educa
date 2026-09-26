@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../auth/auth.service';
 
-export type AppLang = 'fr' | 'en' | 'ar';
-const SUPPORTED: AppLang[] = ['fr', 'en', 'ar'];
+export type AppLang = 'fr' | 'en' | 'ar' | 'es' | 'pt' | 'de';
+const SUPPORTED: AppLang[] = ['fr', 'en', 'ar', 'es', 'pt', 'de'];
 const RTL: AppLang[] = ['ar'];
 const STORAGE_KEY = 'educa.lang';
 

@@ -24,9 +24,9 @@
     <label>
       {{ 'auth.register.language' | translate }}
       <select formControlName="preferredLanguage">
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
+        @for (code of lang.supported; track code) {
+          <option [value]="code">{{ 'lang.' + code | translate }}</option>
+        }
       </select>
     </label>
 

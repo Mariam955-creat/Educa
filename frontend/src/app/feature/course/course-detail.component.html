@@ -7,7 +7,7 @@
       <p class="meta">{{ 'course.by' | translate: { instructor: c.instructorName, language: c.language } }}</p>
       <p class="desc">{{ c.description }}</p>
       <p class="price" [class.free]="c.price === 0">
-        {{ c.price === 0 ? ('course.free' | translate) : (c.price | number: '1.2-2') + ' €' }}
+        {{ c.price === 0 ? ('course.free' | translate) : (c.price | money: 'EUR' : lang.current()) }}
       </p>
 
       @if (paymentNotice() === 'success') {

@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -8,6 +7,8 @@ import { CertificateApiService } from '../../core/certificates/certificate-api.s
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentItem, CourseDetail } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
+import { LanguageService } from '../../core/i18n/language.service';
+import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
@@ -15,7 +16,7 @@ import { CourseChatComponent } from './course-chat.component';
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent, TranslatePipe, DecimalPipe],
+  imports: [RouterLink, CourseChatComponent, TranslatePipe, MoneyPipe],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })
@@ -27,6 +28,7 @@ export class CourseDetailComponent implements OnInit {
   private readonly quizApi = inject(QuizApiService);
   private readonly certificateApi = inject(CertificateApiService);
   private readonly translate = inject(TranslateService);
+  readonly lang = inject(LanguageService);
 
   readonly course = signal<CourseDetail | null>(null);
   readonly completedIds = signal<number[]>([]);

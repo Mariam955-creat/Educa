@@ -1,13 +1,14 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
+import { LanguageService } from '../../core/i18n/language.service';
 import { CertificateApiService, CertificateVerification } from '../../core/certificates/certificate-api.service';
 
 @Component({
   selector: 'app-verify',
-  imports: [DatePipe, TranslatePipe],
+  imports: [LocalDatePipe, TranslatePipe],
   template: `
     <section class="page">
       <h1>{{ 'verify.title' | translate }}</h1>
@@ -19,7 +20,7 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
           <p class="badge">{{ 'verify.valid' | translate }}</p>
           <p>{{ 'verify.validated' | translate: { holder: r.holderName, course: r.courseTitle } }}</p>
           <p>{{ 'verify.finalGrade' | translate: { grade: r.finalGrade } }}</p>
-          <p class="meta">{{ 'verify.meta' | translate: { serial: r.serialNumber, date: (r.issuedAt | date: 'longDate') } }}</p>
+          <p class="meta">{{ 'verify.meta' | translate: { serial: r.serialNumber, date: (r.issuedAt | localDate: 'long' : lang.current()) } }}</p>
         </div>
       } @else {
         <p class="ko">{{ 'verify.invalid' | translate }}</p>
@@ -65,6 +66,7 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
 export class VerifyComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(CertificateApiService);
+  readonly lang = inject(LanguageService);
 
   readonly result = signal<CertificateVerification | null>(null);
   readonly loading = signal(true);

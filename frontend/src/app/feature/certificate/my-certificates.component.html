@@ -12,7 +12,7 @@
           <div class="cert-main">
             <h3>{{ c.courseTitle }}</h3>
             <p class="meta">
-              {{ 'certificates.issuedOn' | translate: { serial: c.serialNumber, date: (c.issuedAt | date: 'longDate') } }}
+              {{ 'certificates.issuedOn' | translate: { serial: c.serialNumber, date: (c.issuedAt | localDate: 'long' : lang.current()) } }}
             </p>
             <p class="grade">
               {{

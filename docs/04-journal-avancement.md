@@ -1059,7 +1059,7 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 
 **Non traité / à savoir**
 - La facture ne porte ni adresse légale du vendeur ni mention de TVA : à ajouter si educa devient une vraie activité commerciale (mentions dépendantes du statut juridique, non inventées ici).
-- La page « Mes achats » affiche encore le montant au format `19.99 EUR`.
+- ~~La page « Mes achats » affiche encore le montant au format `19.99 EUR`.~~ **Corrigé le jour même** : pipe `money` (`core/i18n/money.pipe.ts`, `Intl.NumberFormat`, suit la langue de l'interface — `19,99 €` en fr, `€19.99` en en, chiffres latins en ar) appliqué à « Mes achats », au prix de `course-detail` et au registre admin des paiements. Même correction pour les **dates** : `DatePipe` suivait `LOCALE_ID` (en-US, aucune autre locale enregistrée), d'où « September 26, 2026 » même en français → pipe `localDate` (`Intl.DateTimeFormat`, locale partagée via `core/i18n/intl-locale.ts`) dans « Mes achats », « Mes certificats », la page publique `/verify/:code` et les registres admin ; `DatePipe` n'est plus utilisé nulle part. 9 tests ajoutés (`npm run test:ci` → **22/22**).)
 - Un ancien paiement `SUCCEEDED` de `apprenant@educa.dev` (antérieur aux factures) n'a pas de numéro de facture — donnée locale uniquement (V7 et V8 ont été livrées dans le même commit).
 
 **Prochaine étape** : Orange Money — nécessite des identifiants sandbox Orange Developer.

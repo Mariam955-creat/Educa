@@ -1,26 +1,29 @@
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
+import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { AdminApiService } from '../../core/admin/admin-api.service';
 import { AdminUser, CertificateRegistryEntry, PaymentRegistryEntry } from '../../core/admin/admin.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { RoleName } from '../../core/auth/auth.models';
+import { LanguageService } from '../../core/i18n/language.service';
+import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { CourseLanguage } from '../../core/language/language-api.service';
 
 type Tab = 'users' | 'certificates' | 'payments' | 'languages';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [DatePipe, FormsModule, TranslatePipe],
+  imports: [LocalDatePipe, FormsModule, MoneyPipe, TranslatePipe],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly api = inject(AdminApiService);
   private readonly translate = inject(TranslateService);
+  readonly lang = inject(LanguageService);
   readonly auth = inject(AuthService);
 
   readonly roleOptions: RoleName[] = ['LEARNER', 'INSTRUCTOR', 'ADMIN'];

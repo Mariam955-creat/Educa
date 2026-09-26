@@ -12,9 +12,9 @@
           <div class="invoice-main">
             <h3>{{ i.courseTitle }}</h3>
             <p class="meta">
-              {{ 'invoices.line' | translate: { invoiceNumber: i.invoiceNumber, date: (i.createdAt | date: 'longDate') } }}
+              {{ 'invoices.line' | translate: { invoiceNumber: i.invoiceNumber, date: (i.createdAt | localDate: 'long' : lang.current()) } }}
             </p>
-            <p class="amount">{{ i.amount | number: '1.2-2' }} {{ i.currency }}</p>
+            <p class="amount">{{ i.amount | money: i.currency : lang.current() }}</p>
           </div>
           <button type="button" (click)="download(i)">{{ 'invoices.download' | translate }}</button>
         </article>

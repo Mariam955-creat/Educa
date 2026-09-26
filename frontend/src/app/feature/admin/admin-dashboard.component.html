@@ -106,7 +106,7 @@
               <td>{{ cert.holderName }}</td>
               <td>{{ cert.courseTitle }}</td>
               <td>{{ cert.finalGrade }}</td>
-              <td>{{ cert.issuedAt | date: 'short' }}</td>
+              <td>{{ cert.issuedAt | localDate: 'short' : lang.current() }}</td>
             </tr>
           }
         </tbody>
@@ -136,14 +136,14 @@
               <td>{{ payment.userName }}</td>
               <td>{{ payment.provider }}</td>
               <td>{{ payment.courseTitle }}</td>
-              <td>{{ payment.amount }} {{ payment.currency }}</td>
+              <td>{{ payment.amount | money: payment.currency : lang.current() }}</td>
               <td>
                 <span class="badge" [class.on]="payment.status === 'SUCCEEDED'">
                   {{ payment.status }}
                 </span>
               </td>
               <td>{{ payment.invoiceNumber ?? '—' }}</td>
-              <td>{{ payment.createdAt | date: 'short' }}</td>
+              <td>{{ payment.createdAt | localDate: 'short' : lang.current() }}</td>
             </tr>
           }
         </tbody>

@@ -1,18 +1,20 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
+import { LanguageService } from '../../core/i18n/language.service';
 import { Certificate, CertificateApiService } from '../../core/certificates/certificate-api.service';
 
 @Component({
   selector: 'app-my-certificates',
-  imports: [DatePipe, TranslatePipe, RouterLink],
+  imports: [LocalDatePipe, TranslatePipe, RouterLink],
   templateUrl: './my-certificates.component.html',
   styleUrl: './my-certificates.component.scss',
 })
 export class MyCertificatesComponent implements OnInit {
   private readonly api = inject(CertificateApiService);
+  readonly lang = inject(LanguageService);
 
   readonly certificates = signal<Certificate[]>([]);
   readonly loading = signal(true);

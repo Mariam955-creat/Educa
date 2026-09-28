@@ -1101,3 +1101,20 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 **Incident** : l'arrêt « mémoire faible » de Claude Code avait tué le shell mais pas le processus Java du backend, resté sur :8081 — le nouveau backend échouait au démarrage (`Port 8081 was already in use`) et c'est l'ancien code qui répondait. Processus orphelin arrêté, backend relancé.
 
 **À savoir** : traductions des PDF non relues par des locuteurs natifs (comme l'interface).
+
+---
+
+## 2026-09-28 — Langues réduites à quatre : FR / EN / DE / NL
+
+**Demande** : « garde que 4 langues : fr, anglais, allemand, néerlandais » — arabe, espagnol et portugais retirés, néerlandais ajouté (interface **et** contenu des cours **et** PDF).
+
+**Fait**
+- **Base** : `V11__four_languages.sql` — ajoute `nl` (« Nederlands »), supprime les traductions de contenu en ar/es/pt, repasse en `fr` les cours et préférences utilisateur dans une langue retirée, puis supprime ar/es/pt de `languages`.
+- **Backend** : `RegisterRequest`/`UpdateMeRequest` → `fr|en|de|nl` ; `PdfDocuments` : locales fr/en/de/nl (`nl-NL`), **support RTL supprimé** (plus aucune langue RTL) — `isRtl`, bidi ICU4J et la dépendance `openhtmltopdf-rtl-support` retirés, gabarits certificat/facture simplifiés (plus de `dir`/colonnes inversées). `messages_{ar,es,pt}.properties` supprimés, `messages_nl.properties` créé (mêmes clés que `messages.properties`).
+- **Frontend** : `AppLang` = `fr|en|de|nl`, locale `Intl` `nl-NL`, `isRtl`/attribut `dir` et règles `[dir='rtl']` + police arabe retirés de `styles.scss` ; `public/i18n/{ar,es,pt}.json` supprimés, `nl.json` créé (parité des clés vérifiée par script avec `fr.json`).
+- **Tests** : arabe remplacé par le néerlandais (`AdminLanguageControllerTest`, `CourseTranslationControllerTest`, PDF `?lang=nl` dans `QuizFlowTest`/`CoursePaymentFlowTest` ; `?lang=ar` retombe désormais sur le français), specs des pipes `money`/`localDate` en `nl` ; `scripts/e2e-mvp.mjs` (AUTH-08) utilise `nl`.
+- Docs : `README.md`, `CLAUDE.md`, `02-conception.md` (§0 écart + §6), `05-demo-soutenance.md` (étape 5.2 EN → NL).
+
+**Vérifié** : `./mvnw clean test` → **68/68** ; `npm run build` OK ; `npm run test:ci` → **22/22**.
+
+**À savoir** : traductions néerlandaises non relues par un locuteur natif. La base `educa` locale recevra `V11` au prochain démarrage du backend. Les exigences d'origine de `01-analyse.md` (EF-26/27 : FR/EN/AR + RTL) sont conservées telles quelles comme trace de l'analyse ; l'écart est consigné dans `02-conception.md §0`.

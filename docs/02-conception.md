@@ -19,6 +19,7 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 | §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
 | §8 | PDF « à confirmer » ; Swagger UI ; conteneurisation « reportée » | PDF = **`openhtmltopdf-pdfbox` 1.0.10** (figé) ; **Swagger UI intégré** (`springdoc-openapi-starter-webmvc-ui` 3.1.1, compatible Spring Boot 4 — tâche 1.10, 2026-09-15) ; **stack Docker livrée et vérifiée** (`docker compose build`+`up`, 2026-09-14) en Phase 6.6 (`docs/07-deploiement.md`) |
 | §5 | rate limiting `/auth/login` & `/ai/chat` | Should have — non implémenté |
+| §6 / EF-26/27 | Interface FR/EN/AR avec RTL arabe | **FR/EN/DE/NL** depuis le 2026-09-28 (arabe, espagnol, portugais retirés à la demande ; plus de RTL) |
 
 Le reste du document correspond à ce qui a été construit.
 
@@ -559,17 +560,17 @@ Sécurité au niveau endpoint (`SecurityFilterChain` + `@PreAuthorize`) **et** a
 
 ---
 
-## 6. Stratégie multilingue (i18n) — FR / EN / AR / ES / PT / DE
+## 6. Stratégie multilingue (i18n) — FR / EN / DE / NL
 
 Deux niveaux distincts :
 
 ### 6.1 i18n de l'interface (Must have)
 - Librairie : **`@ngx-translate/core` v18** + `@ngx-translate/http-loader` (`provideTranslateHttpLoader`).
-- Fichiers de traduction : **`frontend/public/i18n/{fr,en,ar,es,pt,de}.json`** (clé → texte ; espagnol, portugais et allemand ajoutés le 2026-09-26, avec les langues de contenu correspondantes via `V9__more_languages.sql`) — servis à la racine (`i18n/…`) par Angular 19.
+- Fichiers de traduction : **`frontend/public/i18n/{fr,en,de,nl}.json`** (clé → texte). Historique : FR/EN/AR au MVP, ES/PT/DE ajoutés le 2026-09-26 (`V9`), puis **réduction à quatre langues le 2026-09-28** — arabe, espagnol, portugais retirés, néerlandais ajouté (`V11__four_languages.sql`, qui repasse en `fr` les préférences et cours dans une langue retirée et supprime leurs traductions) — servis à la racine (`i18n/…`) par Angular 19.
 - Langue par défaut `fr` ; détection à la connexion via `user.preferredLanguage` ; sélecteur de langue dans l'en-tête ; persistance en `localStorage` **et** via `PATCH /auth/me`.
-- **RTL** : au changement de langue, positionner `document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr')` et `lang`. Styles logiques CSS (`margin-inline-start`, `padding-inline-end`, Flexbox/Grid) plutôt que `left/right`. Vérifier icônes directionnelles (flèches « suivant / précédent ») et alignements.
+- **RTL** : *retiré le 2026-09-28 avec l'arabe* (aucune langue restante n'est RTL). Ce qui suit décrit la conception initiale : au changement de langue, positionner `document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr')` et `lang`. Styles logiques CSS (`margin-inline-start`, `padding-inline-end`, Flexbox/Grid) plutôt que `left/right`. Vérifier icônes directionnelles (flèches « suivant / précédent ») et alignements.
 - Formats dates/nombres via l'API `Intl` du navigateur selon la locale active.
-- Police : famille compatible latin + arabe (ex. « Noto Sans » + « Noto Sans Arabic ») embarquée en local.
+- Police : pile système (`system-ui`, `Noto Sans`…) — la police arabe a été retirée avec l'arabe.
 
 ### 6.2 i18n du contenu pédagogique (Should have — **fait le 2026-09-15**, EF-28)
 - Le contenu original d'un cours a une `language` (langue d'origine, `courses.language`).
@@ -586,8 +587,8 @@ Deux niveaux distincts :
 
 ### 6.3 Langue des certificats et des factures
 - *Implémenté le 2026-09-26* (auparavant : PDF en français uniquement, ce paragraphe n'était pas réalisé). Certificat **et** facture sont générés **à chaque téléchargement** dans la langue de l'interface du demandeur (`?lang=` envoyé par le frontend), à défaut dans la langue de préférence du titulaire, à défaut en français. Plus de cache : un PDF unique stocké aurait figé la langue du premier téléchargement — colonnes `pdf_key` supprimées (`V10__drop_pdf_cache.sql`). Seuls les libellés varient ; numéro, montant, date et référence viennent de la base.
-- Libellés : bundles serveur `messages.properties` (français, défaut) + `messages_{en,ar,es,pt,de}.properties` via le `MessageSource` de Spring (`spring.messages.fallback-to-system-locale: false` : une langue absente retombe toujours sur le français, quelle que soit la machine).
-- Rendu commun : `com.educa.backend.common.pdf.PdfDocuments` — police **DejaVu Sans** embarquée (`resources/fonts/`, licence libre, couvre les six langues dont l'arabe) + `openhtmltopdf-rtl-support` (ICU4J : ordre bidirectionnel et mise en forme des lettres arabes). Arabe : `dir="rtl"`, colonnes inversées, QR code à gauche, pas d'espacement de lettres (il casserait les liaisons). Dates et montants localisés (chiffres latins en arabe, comme le frontend).
+- Libellés : bundles serveur `messages.properties` (français, défaut) + `messages_{en,de,nl}.properties` via le `MessageSource` de Spring (`spring.messages.fallback-to-system-locale: false` : une langue absente retombe toujours sur le français, quelle que soit la machine).
+- Rendu commun : `com.educa.backend.common.pdf.PdfDocuments` — police **DejaVu Sans** embarquée (`resources/fonts/`, licence libre). Le support RTL (`openhtmltopdf-rtl-support`/ICU4J, mise en page inversée) a été retiré le 2026-09-28 avec l'arabe. Dates et montants localisés (chiffres latins en arabe, comme le frontend).
 
 ---
 

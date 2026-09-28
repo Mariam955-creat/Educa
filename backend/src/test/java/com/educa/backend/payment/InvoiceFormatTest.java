@@ -24,7 +24,7 @@ class InvoiceFormatTest {
     @Test
     void montant_suit_la_langue() {
         assertThat(PaymentService.formatAmount(new BigDecimal("19.99"), "EUR", Locale.UK)).isEqualTo("€19.99");
-        assertThat(PaymentService.formatAmount(new BigDecimal("19.99"), "EUR", Locale.forLanguageTag("ar-u-nu-latn")))
-                .contains("19.99");
+        assertThat(PaymentService.formatAmount(new BigDecimal("19.99"), "EUR", Locale.forLanguageTag("nl-NL")))
+                .contains("19,99");
     }
 }

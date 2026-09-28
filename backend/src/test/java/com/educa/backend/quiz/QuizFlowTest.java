@@ -137,8 +137,8 @@ class QuizFlowTest {
         assertThat(certificatePdf(eleve, certId, "?lang=de")).contains("ERFOLGSZERTIFIKAT", "Endnote");
         assertThat(certificatePdf(eleve, certId, "?lang=en")).contains("CERTIFICATE OF ACHIEVEMENT");
         assertThat(certificatePdf(eleve, certId, "?lang=xx")).contains("CERTIFICAT DE RÉUSSITE");
-        // Arabe : glyphes mis en forme (formes de présentation), on vérifie le rendu et les données non traduites.
-        assertThat(certificatePdf(eleve, certId, "?lang=ar")).contains("Cours quiz 4").doesNotContain("CERTIFICAT");
+        assertThat(certificatePdf(eleve, certId, "?lang=nl")).contains("CERTIFICAAT VAN VOLTOOIING", "Eindcijfer");
+        assertThat(certificatePdf(eleve, certId, "?lang=ar")).contains("CERTIFICAT DE RÉUSSITE");
     }
 
     private String certificatePdf(String token, long certId, String query) throws Exception {

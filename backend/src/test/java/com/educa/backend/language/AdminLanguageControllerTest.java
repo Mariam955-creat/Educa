@@ -45,7 +45,7 @@ class AdminLanguageControllerTest {
     void liste_publique_des_langues_actives_sans_authentification() throws Exception {
         mvc.perform(get(PUBLIC_LANGUAGES))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(6))
+                .andExpect(jsonPath("$.length()").value(4))
                 .andExpect(jsonPath("$[?(@.code=='fr')].active").value(true));
     }
 
@@ -61,22 +61,22 @@ class AdminLanguageControllerTest {
         String token = adminToken("admin-lang-list@example.com");
         mvc.perform(get(ADMIN_LANGUAGES).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(6));
+                .andExpect(jsonPath("$.length()").value(4));
     }
 
     @Test
     void admin_desactive_puis_reactive_une_langue() throws Exception {
         String token = adminToken("admin-lang-toggle@example.com");
-        mvc.perform(patch(ADMIN_LANGUAGES + "/ar").header("Authorization", "Bearer " + token)
+        mvc.perform(patch(ADMIN_LANGUAGES + "/nl").header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"active\":false}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(false));
 
         mvc.perform(get(PUBLIC_LANGUAGES))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5));
+                .andExpect(jsonPath("$.length()").value(3));
 
-        mvc.perform(patch(ADMIN_LANGUAGES + "/ar").header("Authorization", "Bearer " + token)
+        mvc.perform(patch(ADMIN_LANGUAGES + "/nl").header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"active\":true}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.active").value(true));
@@ -85,7 +85,7 @@ class AdminLanguageControllerTest {
     @Test
     void admin_ne_peut_pas_desactiver_la_derniere_langue_active() throws Exception {
         String token = adminToken("admin-lang-lastone@example.com");
-        for (String code : new String[] {"en", "ar", "es", "pt", "de"}) {
+        for (String code : new String[] {"en", "de", "nl"}) {
             mvc.perform(patch(ADMIN_LANGUAGES + "/" + code).header("Authorization", "Bearer " + token)
                             .contentType(APPLICATION_JSON).content("{\"active\":false}"))
                     .andExpect(status().isOk());
@@ -107,14 +107,14 @@ class AdminLanguageControllerTest {
     @Test
     void creer_un_cours_avec_une_langue_desactivee_renvoie400() throws Exception {
         String adminTok = adminToken("admin-lang-course@example.com");
-        mvc.perform(patch(ADMIN_LANGUAGES + "/ar").header("Authorization", "Bearer " + adminTok)
+        mvc.perform(patch(ADMIN_LANGUAGES + "/nl").header("Authorization", "Bearer " + adminTok)
                         .contentType(APPLICATION_JSON).content("{\"active\":false}"))
                 .andExpect(status().isOk());
 
         String instructorTok = instructorToken("prof-lang@example.com");
         mvc.perform(post("/api/v1/courses").header("Authorization", "Bearer " + instructorTok)
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\":\"Cours en arabe\",\"language\":\"ar\"}"))
+                        .content("{\"title\":\"Cursus in het Nederlands\",\"language\":\"nl\"}"))
                 .andExpect(status().isBadRequest());
     }
 

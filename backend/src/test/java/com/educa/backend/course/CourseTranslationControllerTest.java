@@ -144,7 +144,7 @@ class CourseTranslationControllerTest {
     @Test
     void langue_desactivee_refusee_a_lecriture() throws Exception {
         String admin = adminToken("trad-admin@example.com");
-        mvc.perform(patch("/api/v1/admin/languages/ar")
+        mvc.perform(patch("/api/v1/admin/languages/nl")
                         .header("Authorization", "Bearer " + admin)
                         .contentType(APPLICATION_JSON).content("{\"active\":false}"))
                 .andExpect(status().isOk());
@@ -152,7 +152,7 @@ class CourseTranslationControllerTest {
         String prof = instructorToken("trad-prof5@example.com");
         long courseId = createCourse(prof, "Cours langue désactivée");
 
-        mvc.perform(put("/api/v1/courses/" + courseId + "/translations/ar")
+        mvc.perform(put("/api/v1/courses/" + courseId + "/translations/nl")
                         .header("Authorization", "Bearer " + prof)
                         .contentType(APPLICATION_JSON)
                         .content("{\"courseTitle\":\"عنوان\"}"))

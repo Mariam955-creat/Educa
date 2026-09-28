@@ -13,8 +13,8 @@ describe('MoneyPipe', () => {
     expect(pipe.transform(19.99, 'eur', 'en')).toBe('€19.99');
   });
 
-  it('garde les chiffres latins en ar', () => {
-    expect(pipe.transform(19.99, 'EUR', 'ar')).toContain('19.99');
+  it('formate à la néerlandaise en nl', () => {
+    expect(pipe.transform(19.99, 'EUR', 'nl')).toContain('19,99');
   });
 
   it('renvoie une chaîne vide sans montant', () => {

@@ -41,7 +41,7 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 ## 1. Introduction (1 min — sans écran ou sur le README)
 
 - **Sujet** : plateforme e-learning, 3 rôles, parcours certifiant.
-- **Différenciateurs** : interface multilingue FR/EN/AR avec RTL, chatbot pédagogique borné au cours (API Claude).
+- **Différenciateurs** : interface multilingue FR/EN/DE/NL, chatbot pédagogique borné au cours (API Claude).
 - **Stack** : Angular 19 + Spring Boot 4 (Java 25) + PostgreSQL, architecture *package-by-feature*, sécurité JWT/RBAC.
 - Annoncer le plan de la démo : côté formateur → côté apprenant → certification → volets multilingue & IA → sécurité.
 
@@ -96,7 +96,7 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 | # | Action | À souligner |
 |---|---|---|
 | 5.1 | Sélecteur de langue (barre) : FR → EN | Libellés de navigation mis à jour **sans rechargement** |
-| 5.2 | EN → AR | Interface en arabe **et** passage en **RTL** (barre et alignements inversés) |
+| 5.2 | EN → NL | Interface en néerlandais ; montants et dates au format néerlandais (`€ 29,99`) |
 | 5.3 | Recharger la page (F5) | Langue conservée → persistance `localStorage` |
 | 5.4 | Se déconnecter / reconnecter | Langue conservée → persistance serveur (`PATCH /auth/me`, `preferredLanguage`) |
 

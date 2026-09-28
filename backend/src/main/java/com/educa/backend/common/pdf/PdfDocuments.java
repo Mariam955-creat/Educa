@@ -15,28 +15,22 @@ import java.util.Map;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import com.openhtmltopdf.bidi.support.ICUBidiReorderer;
-import com.openhtmltopdf.bidi.support.ICUBidiSplitter;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.FontStyle;
-import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.TextDirection;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 /**
  * Socle commun des PDF (certificats, factures) : langue, libellés traduits ({@code messages_*.properties}),
- * formats de date, et rendu HTML → PDF avec une police couvrant les six langues (DejaVu Sans, arabe compris)
- * et le support bidirectionnel/la mise en forme des glyphes arabes (ICU4J).
+ * formats de date, et rendu HTML → PDF avec une police embarquée (DejaVu Sans).
  */
 @Component
 public class PdfDocuments {
 
-    /** Langues d'interface. Chiffres latins aussi en arabe, comme dans le frontend (usage Maghreb / Afrique de l'Ouest). */
+    /** Langues d'interface. */
     private static final Map<String, Locale> LOCALES = Map.of(
             "fr", Locale.FRANCE,
             "en", Locale.UK,
-            "ar", Locale.forLanguageTag("ar-u-nu-latn"),
-            "es", Locale.forLanguageTag("es-ES"),
-            "pt", Locale.forLanguageTag("pt-PT"),
-            "de", Locale.GERMANY);
+            "de", Locale.GERMANY,
+            "nl", Locale.forLanguageTag("nl-NL"));
     private static final String DEFAULT_LANG = "fr";
     private static final ZoneId ZONE = ZoneId.of("Europe/Paris");
     public static final String FONT_FAMILY = "DejaVu Sans";
@@ -61,10 +55,6 @@ public class PdfDocuments {
         return LOCALES.getOrDefault(lang, Locale.FRANCE);
     }
 
-    public boolean isRtl(String lang) {
-        return "ar".equals(lang);
-    }
-
     public String text(String key, String lang, Object... args) {
         return messages.getMessage(key, args.length == 0 ? null : args, locale(lang));
     }
@@ -78,15 +68,12 @@ public class PdfDocuments {
                 .withLocale(locale(lang)).withZone(ZONE).format(instant);
     }
 
-    public byte[] render(String html, String lang) {
+    public byte[] render(String html) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFastMode();
             builder.useFont(() -> new ByteArrayInputStream(regularFont), FONT_FAMILY, 400, FontStyle.NORMAL, true);
             builder.useFont(() -> new ByteArrayInputStream(boldFont), FONT_FAMILY, 700, FontStyle.NORMAL, true);
-            builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
-            builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
-            builder.defaultTextDirection(isRtl(lang) ? TextDirection.RTL : TextDirection.LTR);
             builder.withHtmlContent(html, null);
             builder.toStream(out);
             builder.run();

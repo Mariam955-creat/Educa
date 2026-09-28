@@ -1,5 +1,5 @@
 {
-  "lang": { "label": "Sprache", "fr": "Français", "en": "English", "ar": "العربية", "es": "Español", "pt": "Português", "de": "Deutsch" },
+  "lang": { "label": "Sprache", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
   "nav": {
     "dashboard": "Übersicht",
     "catalog": "Katalog",

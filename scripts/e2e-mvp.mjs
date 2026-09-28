@@ -71,10 +71,10 @@ async function req(method, path, { token, body, raw } = {}) {
   r = await req('GET', '/auth/me', { token: learnerTok });
   check('AUTH-07 /me avec jeton → 200', r.status === 200 && r.json?.email === LEARNER_EMAIL, `HTTP ${r.status} email=${r.json?.email}`);
 
-  r = await req('PATCH', '/auth/me', { token: learnerTok, body: { preferredLanguage: 'ar' } });
+  r = await req('PATCH', '/auth/me', { token: learnerTok, body: { preferredLanguage: 'nl' } });
   const langOk = r.status === 200;
   r = await req('GET', '/auth/me', { token: learnerTok });
-  check('AUTH-08 PATCH /me preferredLanguage=ar persiste', langOk && r.json?.preferredLanguage === 'ar', `lang=${r.json?.preferredLanguage}`);
+  check('AUTH-08 PATCH /me preferredLanguage=nl persiste', langOk && r.json?.preferredLanguage === 'nl', `lang=${r.json?.preferredLanguage}`);
 
   // refresh rotation: new pair, ancien refresh révoqué
   r = await req('POST', '/auth/refresh', { body: { refreshToken: learnerRefresh } });

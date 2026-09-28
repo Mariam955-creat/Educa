@@ -6,7 +6,7 @@ Trois rôles (**apprenant**, **formateur**, **administrateur**). Parcours cœur 
 un formateur publie des formations (cours → chapitres → contenus), un **contrôle** par chapitre et un **examen final** par cours ;
 un apprenant s'inscrit, apprend à son rythme, atteint 100 % de progression, débloque et passe l'examen final.
 **Note finale pondérée = 40 % moyenne des contrôles + 60 % examen final** ; au-dessus du seuil du cours (défaut 70 %), un **certificat PDF vérifiable** est délivré.
-Volets différenciants : **interface multilingue FR / EN / AR / ES / PT / DE** (avec RTL pour l'arabe) et **chatbot pédagogique** (API Claude / Anthropic).
+Volets différenciants : **interface multilingue FR / EN / DE / NL** et **chatbot pédagogique** (API Claude / Anthropic).
 
 Dépôt : https://github.com/Mariam955-creat/Educa
 
@@ -16,7 +16,7 @@ Dépôt : https://github.com/Mariam955-creat/Educa
 
 | Couche | Techno |
 |---|---|
-| Frontend | Angular 19.2 (standalone) + TypeScript, i18n `@ngx-translate` (FR/EN/AR/ES/PT/DE + RTL arabe) |
+| Frontend | Angular 19.2 (standalone) + TypeScript, i18n `@ngx-translate` (FR/EN/DE/NL) |
 | Backend | Java 25 + Spring Boot 4.1.1 (Maven), API REST `/api/v1` sur le port **8081** |
 | Persistance | PostgreSQL + Spring Data JPA, migrations Flyway |
 | BDD (dev) | PostgreSQL installé en local + pgAdmin (pas de Docker pour l'instant) |

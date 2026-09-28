@@ -241,15 +241,14 @@ public class PaymentService {
     }
 
     private byte[] renderInvoicePdf(Payment payment, String buyerName, String courseTitle, String lang) {
-        boolean rtl = pdfDocuments.isRtl(lang);
         String html = """
-                <html lang="%s" dir="%s"><head><meta charset="utf-8"/><style>
+                <html lang="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4; margin: 0; }
-                  body { font-family: '%s'; color: #1f2937; margin: 48px; direction: %s; }
+                  body { font-family: '%s'; color: #1f2937; margin: 48px; }
                   h1 { font-size: 24px; color: #7e22ce; margin: 0 0 4px; }
                   .sub { color: #6b7280; margin: 0 0 32px; }
                   table { width: 100%%; border-collapse: collapse; margin-top: 16px; }
-                  th, td { text-align: %s; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+                  th, td { text-align: left; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
                   .total { font-weight: bold; font-size: 16px; }
                   .meta { margin-top: 32px; color: #6b7280; font-size: 12px; }
                   .parties { width: 100%%; margin-bottom: 24px; }
@@ -270,8 +269,7 @@ public class PaymentService {
                 <p>%s <span class="paid">%s</span></p>
                 <p class="meta">%s</p>
                 </body></html>
-                """.formatted(lang, rtl ? "rtl" : "ltr", PdfDocuments.FONT_FAMILY, rtl ? "rtl" : "ltr",
-                rtl ? "right" : "left",
+                """.formatted(lang, PdfDocuments.FONT_FAMILY,
                 pdfDocuments.text("invoice.title", lang),
                 pdfDocuments.text("invoice.meta", lang, payment.getInvoiceNumber(),
                         pdfDocuments.dateTime(payment.getCreatedAt(), lang)),
@@ -287,7 +285,7 @@ public class PaymentService {
                 pdfDocuments.text("invoice.status." + payment.getStatus().name(), lang),
                 pdfDocuments.text("invoice.reference", lang, PdfDocuments.escape(payment.getProviderReference())));
 
-        return pdfDocuments.render(html, lang);
+        return pdfDocuments.render(html);
     }
 
     /** « 19,99 € » (fr), « €19.99 » (en)… — espaces fines insécables (U+202F) ramenées à des insécables classiques. */

@@ -1,12 +1,11 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from '../auth/auth.service';
 
-export type AppLang = 'fr' | 'en' | 'ar' | 'es' | 'pt' | 'de';
-const SUPPORTED: AppLang[] = ['fr', 'en', 'ar', 'es', 'pt', 'de'];
-const RTL: AppLang[] = ['ar'];
+export type AppLang = 'fr' | 'en' | 'de' | 'nl';
+const SUPPORTED: AppLang[] = ['fr', 'en', 'de', 'nl'];
 const STORAGE_KEY = 'educa.lang';
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +17,6 @@ export class LanguageService {
   private readonly _current = signal<AppLang>('fr');
   readonly current = this._current.asReadonly();
   readonly supported = SUPPORTED;
-  readonly isRtl = computed(() => RTL.includes(this._current()));
 
   /** À appeler une fois au démarrage de l'application. */
   init(): void {
@@ -38,7 +36,6 @@ export class LanguageService {
 
     const html = this.document.documentElement;
     html.setAttribute('lang', lang);
-    html.setAttribute('dir', RTL.includes(lang) ? 'rtl' : 'ltr');
 
     try {
       localStorage.setItem(STORAGE_KEY, lang);

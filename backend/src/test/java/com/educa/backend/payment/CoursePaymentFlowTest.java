@@ -133,7 +133,8 @@ class CoursePaymentFlowTest {
         assertThat(invoicePdf(eleve, payment.getId(), "")).contains("FACTURE", "INV-2026-000001", "29,99");
         assertThat(invoicePdf(eleve, payment.getId(), "?lang=de")).contains("RECHNUNG", "Bezahlt", "29,99");
         assertThat(invoicePdf(eleve, payment.getId(), "?lang=en")).contains("INVOICE", "Paid", "€29.99");
-        assertThat(invoicePdf(eleve, payment.getId(), "?lang=ar")).contains("INV-2026-000001").doesNotContain("FACTURE");
+        assertThat(invoicePdf(eleve, payment.getId(), "?lang=nl")).contains("FACTUUR", "Betaald", "29,99");
+        assertThat(invoicePdf(eleve, payment.getId(), "?lang=ar")).contains("FACTURE");
 
         String autreEleve = learnerToken("pay-eleve7@example.com");
         mvc.perform(get("/api/v1/payments/" + payment.getId() + "/invoice/download")

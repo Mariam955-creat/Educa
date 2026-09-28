@@ -161,21 +161,20 @@ public class CertificateService {
         String qrCodeImg = qrCodeDataUri(verificationUrl)
                 .map(dataUri -> "<img class=\"qr\" src=\"" + dataUri + "\"/>")
                 .orElse("");
-        boolean rtl = pdfDocuments.isRtl(lang);
 
         String html = """
-                <html lang="%s" dir="%s"><head><meta charset="utf-8"/><style>
+                <html lang="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4 landscape; margin: 0; }
-                  body { font-family: '%s'; color: #1f2937; direction: %s; }
+                  body { font-family: '%s'; color: #1f2937; }
                   .frame { margin: 28px; border: 3px solid #7e22ce; border-radius: 10px;
                            padding: 60px 70px; text-align: center; position: relative; }
-                  h1 { font-size: 34px; letter-spacing: %s; color: #7e22ce; margin: 0 0 8px; }
+                  h1 { font-size: 34px; letter-spacing: 2px; color: #7e22ce; margin: 0 0 8px; }
                   .sub { color: #6b7280; margin: 0 0 40px; }
                   .name { font-size: 30px; font-weight: bold; margin: 24px 0 6px; }
                   .course { font-size: 20px; font-weight: bold; margin: 0 0 28px; }
                   .grade { font-size: 18px; }
                   .meta { margin-top: 40px; color: #6b7280; font-size: 12px; }
-                  .qr { position: absolute; bottom: 24px; %s: 32px; width: 84px; height: 84px; }
+                  .qr { position: absolute; bottom: 24px; right: 32px; width: 84px; height: 84px; }
                 </style></head><body>
                 <div class="frame">
                   <h1>%s</h1>
@@ -189,9 +188,7 @@ public class CertificateService {
                   %s
                 </div>
                 </body></html>
-                """.formatted(lang, rtl ? "rtl" : "ltr", PdfDocuments.FONT_FAMILY, rtl ? "rtl" : "ltr",
-                // L'espacement des lettres casserait les liaisons entre lettres arabes.
-                rtl ? "0" : "2px", rtl ? "left" : "right",
+                """.formatted(lang, PdfDocuments.FONT_FAMILY,
                 pdfDocuments.text("cert.title", lang), pdfDocuments.text("cert.platform", lang),
                 pdfDocuments.text("cert.attests", lang), PdfDocuments.escape(holderName),
                 pdfDocuments.text("cert.completed", lang), PdfDocuments.escape(courseTitle),
@@ -200,7 +197,7 @@ public class CertificateService {
                 pdfDocuments.text("cert.meta", lang, c.getSerialNumber(), pdfDocuments.date(c.getIssuedAt(), lang)),
                 pdfDocuments.text("cert.verification", lang, c.getVerificationCode()), qrCodeImg);
 
-        return pdfDocuments.render(html, lang);
+        return pdfDocuments.render(html);
     }
 
     private static String plain(BigDecimal value) {

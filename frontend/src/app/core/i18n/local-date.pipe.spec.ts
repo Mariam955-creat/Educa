@@ -13,8 +13,8 @@ describe('LocalDatePipe', () => {
     expect(pipe.transform(date, 'long', 'en')).toBe('26 September 2026');
   });
 
-  it('garde les chiffres latins en ar', () => {
-    expect(pipe.transform(date, 'long', 'ar')).toContain('2026');
+  it('écrit la date en néerlandais en nl', () => {
+    expect(pipe.transform(date, 'long', 'nl')).toBe('26 september 2026');
   });
 
   it('format court jour/mois/année en fr', () => {

@@ -176,7 +176,9 @@
     "results": "Ergebnisse",
     "publish": "Veröffentlichen",
     "unpublish": "Veröffentlichung zurückziehen",
-    "confirmDelete": "„{{title}}“ löschen? Diese Aktion ist endgültig."
+    "confirmDelete": "„{{title}}“ löschen? Diese Aktion ist endgültig.",
+    "deleteBlocked": "Dieser Kurs hat eingeschriebene Lernende und kann nicht gelöscht werden. Ziehen Sie die Veröffentlichung zurück, um ihn aus dem Katalog zu entfernen.",
+    "deleteError": "Der Kurs konnte nicht gelöscht werden."
   },
   "quizEditor": {
     "typeFinalExam": "Abschlussprüfung",

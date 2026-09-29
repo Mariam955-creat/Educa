@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.educa.backend.common.Slugs;
 import com.educa.backend.common.error.ApiException;
+import com.educa.backend.common.error.ConflictException;
 import com.educa.backend.common.error.ResourceNotFoundException;
 import com.educa.backend.course.dto.ChapterDto;
 import com.educa.backend.course.dto.CourseDetailDto;
@@ -33,11 +34,13 @@ public class CourseService {
     private final CourseMapper mapper;
     private final UserService userService;
     private final LanguageService languageService;
+    private final List<CourseDeletionGuard> deletionGuards;
 
     public CourseService(CourseRepository courseRepository, ContentRepository contentRepository,
                          CourseTranslationRepository courseTranslationRepository,
                          ChapterTranslationRepository chapterTranslationRepository,
-                         CourseMapper mapper, UserService userService, LanguageService languageService) {
+                         CourseMapper mapper, UserService userService, LanguageService languageService,
+                         List<CourseDeletionGuard> deletionGuards) {
         this.courseRepository = courseRepository;
         this.contentRepository = contentRepository;
         this.courseTranslationRepository = courseTranslationRepository;
@@ -45,6 +48,7 @@ public class CourseService {
         this.mapper = mapper;
         this.userService = userService;
         this.languageService = languageService;
+        this.deletionGuards = deletionGuards;
     }
 
     // ---------- écriture (formateur propriétaire / admin) ----------
@@ -67,7 +71,11 @@ public class CourseService {
 
     @Transactional
     public void delete(Long courseId) {
-        courseRepository.delete(requireOwned(courseId));
+        Course course = requireOwned(courseId);
+        if (deletionGuards.stream().anyMatch(guard -> guard.blocksDeletion(courseId))) {
+            throw new ConflictException("Ce cours a des apprenants inscrits : dépubliez-le plutôt que de le supprimer.");
+        }
+        courseRepository.delete(course);
     }
 
     @Transactional

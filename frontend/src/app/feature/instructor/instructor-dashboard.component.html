@@ -4,6 +4,10 @@
     <a class="btn" routerLink="/instructor/courses/new">{{ 'instructorDashboard.newCourse' | translate }}</a>
   </div>
 
+  @if (error()) {
+    <p class="flash error">{{ error() }}</p>
+  }
+
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (courses().length === 0) {

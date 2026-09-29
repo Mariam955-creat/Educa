@@ -176,7 +176,9 @@
     "results": "Résultats",
     "publish": "Publier",
     "unpublish": "Dépublier",
-    "confirmDelete": "Supprimer « {{title}} » ? Cette action est définitive."
+    "confirmDelete": "Supprimer « {{title}} » ? Cette action est définitive.",
+    "deleteBlocked": "Ce cours a des apprenants inscrits : il ne peut pas être supprimé. Dépubliez-le pour le retirer du catalogue.",
+    "deleteError": "Impossible de supprimer le cours."
   },
   "quizEditor": {
     "typeFinalExam": "Examen final",

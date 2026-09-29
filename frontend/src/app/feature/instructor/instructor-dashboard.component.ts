@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -17,6 +18,7 @@ export class InstructorDashboardComponent implements OnInit {
 
   readonly courses = signal<CourseSummary[]>([]);
   readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -28,7 +30,17 @@ export class InstructorDashboardComponent implements OnInit {
 
   remove(course: CourseSummary): void {
     if (!confirm(this.translate.instant('instructorDashboard.confirmDelete', { title: course.title }))) return;
-    this.api.deleteCourse(course.id).subscribe(() => this.load());
+    this.error.set(null);
+    this.api.deleteCourse(course.id).subscribe({
+      next: () => this.load(),
+      // 409 : le cours a des inscrits, sa suppression effacerait leurs certificats et paiements
+      error: (err: HttpErrorResponse) =>
+        this.error.set(
+          this.translate.instant(
+            err.status === 409 ? 'instructorDashboard.deleteBlocked' : 'instructorDashboard.deleteError',
+          ),
+        ),
+    });
   }
 
   private load(): void {

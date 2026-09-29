@@ -1,6 +1,7 @@
 package com.educa.backend.course;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -123,6 +124,24 @@ class CourseFlowTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contentsVisible").value(true))
                 .andExpect(jsonPath("$.chapters[0].contents.length()").value(1));
+    }
+
+    @Test
+    void suppression_refusee_si_apprenants_inscrits() throws Exception {
+        String prof = instructorToken("prof5@example.com");
+        long suivi = createCourse(prof, "Cours avec inscrits");
+        long vide = createCourse(prof, "Cours sans inscrits");
+        mvc.perform(post("/api/v1/courses/" + suivi + "/publish").header("Authorization", "Bearer " + prof))
+                .andExpect(status().isOk());
+        String eleve = learnerToken("eleve5@example.com");
+        mvc.perform(post("/api/v1/courses/" + suivi + "/enroll").header("Authorization", "Bearer " + eleve))
+                .andExpect(status().isCreated());
+
+        // supprimer effacerait en cascade inscriptions, certificats et paiements → 409
+        mvc.perform(delete("/api/v1/courses/" + suivi).header("Authorization", "Bearer " + prof))
+                .andExpect(status().isConflict());
+        mvc.perform(delete("/api/v1/courses/" + vide).header("Authorization", "Bearer " + prof))
+                .andExpect(status().isNoContent());
     }
 
     // ---------- helpers ----------

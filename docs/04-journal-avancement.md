@@ -1134,3 +1134,22 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 **Vérifié** : JSON valides, `QuizFlowTest` + `CoursePaymentFlowTest` (PDF de/nl) → 10/10.
 
 **À savoir** : relecture faite par Claude, pas par un locuteur natif — suffisante pour la soutenance, une relecture humaine reste conseillée avant une vraie mise en production.
+
+---
+
+## 2026-09-29 (suite) — Répétition de la démo : bug de suppression de cours
+
+**Demande** : répétition de la démo de soutenance (`docs/05-demo-soutenance.md`).
+
+**Constat**
+- Frontend ouvert sans backend lancé → catalogue vide (pas un bug : les deux serveurs sont nécessaires).
+- `scripts/e2e-mvp.mjs` → 47/47, mais il laissait son cours de test « E2E — Parcours vérif … » **publié** dans le catalogue de démo.
+- En voulant le supprimer : **`500`**. Cause : `attempt_answers → questions` n'a pas de `ON DELETE CASCADE`. Plus grave : toutes les autres FK vers `courses` (inscriptions, certificats, paiements…) **sont** en cascade — seule cette contrainte, par hasard, empêchait la suppression d'un cours d'effacer les certificats et factures de ses apprenants (un cours avec inscrits mais sans tentative de quiz aurait été supprimé avec tout ça).
+
+**Corrigé**
+- `CourseService.delete` : refus explicite **`409`** si le cours a des inscrits. Point d'extension `course.CourseDeletionGuard` implémenté par `enrollment.EnrollmentCourseDeletionGuard` (`existsByCourseId`) — inversion de dépendance, `enrollment` dépendant déjà de `course`.
+- Espace formateur : l'erreur de suppression était ignorée (clic sans effet) → message traduit (`instructorDashboard.deleteBlocked`/`deleteError`, fr/en/de/nl) invitant à dépublier.
+- `e2e-mvp.mjs` : vérifie le `409` puis **dépublie** son cours de test (`CAT-DEL-01/02`) → catalogue de démo propre ; cours de test existant dépublié.
+- `docs/05-demo-soutenance.md` : chiffres rafraîchis (tests, migrations `V1`→`V11`, compte apprenant neuf, extensions réalisées).
+
+**Vérifié** : `./mvnw test` → **69/69** (+1 `CourseFlowTest`) ; `npm run build` OK, `npm run test:ci` → **22/22** ; backend relancé, `node scripts/e2e-mvp.mjs` → **49/49**.

@@ -176,7 +176,9 @@
     "results": "Results",
     "publish": "Publish",
     "unpublish": "Unpublish",
-    "confirmDelete": "Delete « {{title}} »? This action is permanent."
+    "confirmDelete": "Delete « {{title}} »? This action is permanent.",
+    "deleteBlocked": "This course has enrolled learners and cannot be deleted. Unpublish it to remove it from the catalogue.",
+    "deleteError": "The course could not be deleted."
   },
   "quizEditor": {
     "typeFinalExam": "Final exam",

@@ -2,7 +2,7 @@
 
 Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique l'acteur, l'action et le point à souligner devant le jury.
 
-> Dernière mise à jour : 2026-09-14.
+> Dernière mise à jour : 2026-09-29 (répétition : parcours rejoué, 49/49).
 
 ---
 
@@ -12,9 +12,9 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 |---|---|---|
 | 0.1 | PostgreSQL local démarré (port 5432), bases `educa` et `educa_test` présentes | `psql -l` |
 | 0.2 | `.env` présent à la racine avec `POSTGRES_PASSWORD` renseigné | `cat .env` |
-| 0.3 | Backend lancé : `cd backend && ./mvnw spring-boot:run` | log « Started BackendApplication », Flyway `V1`+`V2`, API sur `:8081` |
+| 0.3 | Backend lancé : `cd backend && ./mvnw spring-boot:run` | log « Started BackendApplication », Flyway `V1`→`V11`, API sur `:8081` |
 | 0.4 | Frontend lancé : `cd frontend && npm start` | `http://localhost:4200` s'ouvre |
-| 0.5 | (Optionnel) Base propre : rejouer le seed en repartant d'une base vide (`flyway:clean` dev puis redémarrage backend) | 3 comptes + cours « Introduction à Python » recréés |
+| 0.5 | (Optionnel) Base propre : rejouer le seed en repartant d'une base vide (`flyway:clean` dev puis redémarrage backend) | 4 comptes + cours « Introduction à Python » et « Les bases de Git » recréés |
 | 0.6 | Onglets navigateur prêts : 1 fenêtre normale (formateur) + 1 fenêtre privée (apprenant) pour éviter les collisions de session | — |
 | 0.7 | *(Alternative)* Lancer toute la stack en un seul bloc via Docker au lieu de 0.3+0.4, **sans toucher au `.env` local** : `WEB_PORT=8090 BACKEND_PROFILE=dev docker compose --env-file .env.docker.example up -d --build` | Appli sur `http://localhost:8090` (frontend + reverse-proxy `/api`) ; `docker compose logs -f backend` → « Started BackendApplication » ; **build + démarrage vérifiés le 2026-09-14** |
 
@@ -67,7 +67,7 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 
 | # | Acteur | Action | À souligner |
 |---|---|---|---|
-| 3.1 | Apprenant (fenêtre privée) | Se connecter (`apprenant@educa.dev`) → **Catalogue** | Seuls les cours publiés apparaissent ; recherche avec debounce |
+| 3.1 | Apprenant (fenêtre privée) | Créer un compte **neuf** (« Inscription ») → **Catalogue** | Seuls les cours publiés apparaissent ; recherche avec debounce |
 | 3.2 | Apprenant | Ouvrir « Introduction à Python » → contenus **masqués** | Détail public mais corps des contenus caché tant que non inscrit |
 | 3.3 | Apprenant | **Acheter** le cours (bouton Stripe, carte de test `4242 4242 4242 4242`, `12/34`, CVC `123`) → retour sur la page, inscription automatique → les contenus apparaissent | Inscription refusée (`402`) tant que le paiement n'est pas confirmé par le webhook Stripe signé ; facture PDF dans « Mes achats » ; unicité de l'inscription (une 2ᵉ tentative → 409) |
 | 3.4 | Apprenant | Lire les contenus, cliquer « Marquer comme terminé » sur chacun | Barre de progression = contenus vus / total |
@@ -120,8 +120,9 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 - **RBAC** : `@PreAuthorize("hasAnyRole('INSTRUCTOR','ADMIN')")` sur les mutations **+** contrôle objet « propriétaire ou ADMIN » dans le service. Revue endpoint par endpoint (Phase 5) sans faille.
 - **Uploads** : taille bornée (`413`), liste blanche MIME (`415`), téléchargement en `attachment` par défaut + `X-Content-Type-Options: nosniff`.
 - **Erreurs** : `GlobalExceptionHandler` homogène (`400/401/403/404/409/413/415/500`).
-- **Tests** : backend **23** (`./mvnw test`), frontend **13** (`npm run test:ci`). `/security-review` → **0 finding**.
-- **Migrations** : Flyway append-only (`V1`, `V2`).
+- **Intégrité** : un cours qui a des inscrits ne peut pas être supprimé (`409`) — la suppression effacerait en cascade leurs certificats et factures ; le formateur le dépublie.
+- **Tests** : backend **69** (`./mvnw test`), frontend **22** (`npm run test:ci`), parcours bout-en-bout **49/49** (`node scripts/e2e-mvp.mjs`). `/security-review` → **0 finding**.
+- **Migrations** : Flyway append-only (`V1` → `V11`).
 
 ---
 
@@ -129,7 +130,8 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 
 - Périmètre MVP (« Must have ») **complet et démontré de bout en bout**.
 - **Déploiement Docker** (3 conteneurs : `db`/`backend`/`frontend`, reverse-proxy nginx) écrit et **vérifié** (`docker compose build` + `up`, 2026-09-14) — voir `docs/07-deploiement.md`.
-- Extensions identifiées et cadrées (hors MVP) : traductions du contenu pédagogique, persistance de l'historique de chat, génération de quiz par IA, recommandations, déploiement cloud (VM/PaaS/base managée).
+- Extensions déjà réalisées au-delà du MVP : module admin, traductions du contenu des cours, achat de cours (Stripe / Orange Money) + factures PDF, Swagger UI.
+- Extensions identifiées et cadrées : persistance de l'historique de chat, génération de quiz par IA, recommandations, déploiement cloud (VM/PaaS/base managée).
 - Renvoyer vers `docs/01`→`04` pour l'analyse, la conception et le journal de bord.
 
 ---
@@ -142,5 +144,5 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 | Port 8081 occupé | Adapter `SERVER_PORT` dans `.env` + `core/api.ts` côté frontend |
 | Frontend ne compile pas | `npm ci` dans `frontend/` ; vérifier Node ≥ 24.12 et Angular CLI 19.2 |
 | Chatbot muet | Comportement attendu sans clé réelle : montrer la réponse `degraded` et expliquer l'architecture de repli |
-| Démo « à froid » | Lancer `node scripts/e2e-mvp.mjs` (backend up) → 47 contrôles verts qui rejouent tout le parcours ; ou montrer `QuizFlowTest` (parcours complet contrôle → examen → certificat → vérification) |
+| Démo « à froid » | Lancer `node scripts/e2e-mvp.mjs` (backend up) → 49 contrôles verts qui rejouent tout le parcours ; ou montrer `QuizFlowTest` (parcours complet contrôle → examen → certificat → vérification) |
 | PostgreSQL local capricieux / poste de secours | Basculer sur Docker (voir 0.7) : `WEB_PORT=8090 BACKEND_PROFILE=dev docker compose --env-file .env.docker.example up -d --build` démarre `db`+`backend`+`frontend` sans dépendre de l'install PostgreSQL locale ; appli sur `http://localhost:8090` (le 8080 est pris par `mysqld` local) |

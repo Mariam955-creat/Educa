@@ -176,7 +176,9 @@
     "results": "Resultaten",
     "publish": "Publiceren",
     "unpublish": "Publicatie intrekken",
-    "confirmDelete": "‘{{title}}’ verwijderen? Deze actie is definitief."
+    "confirmDelete": "‘{{title}}’ verwijderen? Deze actie is definitief.",
+    "deleteBlocked": "Deze cursus heeft ingeschreven cursisten en kan niet worden verwijderd. Trek de publicatie in om hem uit de catalogus te halen.",
+    "deleteError": "De cursus kon niet worden verwijderd."
   },
   "quizEditor": {
     "typeFinalExam": "Eindexamen",

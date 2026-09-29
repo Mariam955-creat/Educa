@@ -9,6 +9,7 @@ import com.educa.backend.payment.PaymentStatus;
 public record InvoiceDto(
         Long id,
         String invoiceNumber,
+        Long courseId,
         String courseTitle,
         PaymentProvider provider,
         BigDecimal amount,

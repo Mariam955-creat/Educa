@@ -129,7 +129,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<InvoiceDto> myInvoices(Long userId) {
         return paymentRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, PaymentStatus.SUCCEEDED).stream()
-                .map(p -> new InvoiceDto(p.getId(), p.getInvoiceNumber(),
+                .map(p -> new InvoiceDto(p.getId(), p.getInvoiceNumber(), p.getCourseId(),
                         courseService.summary(p.getCourseId()).title(), p.getProvider(), p.getAmount(),
                         p.getCurrency(), p.getStatus(), p.getCreatedAt()))
                 .toList();

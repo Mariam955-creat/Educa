@@ -15,6 +15,7 @@ export interface CheckoutResponse {
 export interface Invoice {
   id: number;
   invoiceNumber: string;
+  courseId: number;
   courseTitle: string;
   provider: PaymentProvider;
   amount: number;

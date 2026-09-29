@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { CertificateApiService } from '../../core/certificates/certificate-api.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { ContentItem, CourseDetail } from '../../core/courses/course.models';
@@ -13,6 +14,9 @@ import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-a
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 import { CourseChatComponent } from './course-chat.component';
+
+const ENROLL_RETRY_DELAY_MS = 2000;
+const ENROLL_RETRIES_AFTER_PAYMENT = 5;
 
 @Component({
   selector: 'app-course-detail',
@@ -28,6 +32,7 @@ export class CourseDetailComponent implements OnInit {
   private readonly quizApi = inject(QuizApiService);
   private readonly certificateApi = inject(CertificateApiService);
   private readonly translate = inject(TranslateService);
+  private readonly auth = inject(AuthService);
   readonly lang = inject(LanguageService);
 
   readonly course = signal<CourseDetail | null>(null);
@@ -41,6 +46,8 @@ export class CourseDetailComponent implements OnInit {
   readonly enrollError = signal<string | null>(null);
   readonly buying = signal<PaymentProvider | null>(null);
   readonly paymentNotice = signal<'success' | 'cancelled' | null>(null);
+  /** Cours déjà payé mais pas encore inscrit (confirmation reçue après le retour de Stripe) → « S'inscrire ». */
+  readonly purchased = signal(false);
 
   readonly canEnroll = computed(() => {
     const c = this.course();
@@ -55,7 +62,7 @@ export class CourseDetailComponent implements OnInit {
     this.reload(this.route.snapshot.paramMap.get('slug')!, payment === 'success');
   }
 
-  enroll(): void {
+  enroll(retriesLeft = 0): void {
     const c = this.course();
     if (!c) return;
     this.enrolling.set(true);
@@ -63,6 +70,11 @@ export class CourseDetailComponent implements OnInit {
     this.enrollmentApi.enroll(c.id).subscribe({
       next: () => this.reload(c.slug),
       error: (err: HttpErrorResponse) => {
+        // 402 juste après le retour de Stripe : la confirmation (webhook) peut arriver quelques secondes après
+        if (err.status === 402 && retriesLeft > 0) {
+          setTimeout(() => this.enroll(retriesLeft - 1), ENROLL_RETRY_DELAY_MS);
+          return;
+        }
         this.enrolling.set(false);
         this.enrollError.set(err.error?.message ?? this.translate.instant('course.enrollError'));
       },
@@ -143,8 +155,14 @@ export class CourseDetailComponent implements OnInit {
         this.enrolling.set(false);
         this.buying.set(null);
         if (autoEnrollAfterPayment && !course.contentsVisible) {
-          this.enroll();
+          this.enroll(ENROLL_RETRIES_AFTER_PAYMENT);
           return;
+        }
+        if (!course.contentsVisible && course.price > 0 && this.auth.isAuthenticated()) {
+          this.paymentApi.myInvoices().subscribe({
+            next: (invoices) => this.purchased.set(invoices.some((i) => i.courseId === course.id)),
+            error: () => this.purchased.set(false),
+          });
         }
         if (course.contentsVisible) {
           this.enrollmentApi.courseProgress(course.id).subscribe({

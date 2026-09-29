@@ -124,7 +124,8 @@ class CoursePaymentFlowTest {
         mvc.perform(get("/api/v1/payments/me").header("Authorization", "Bearer " + eleve))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].invoiceNumber").value("INV-2026-000001"))
-                .andExpect(jsonPath("$[0].courseTitle").value("Cours payant"));
+                .andExpect(jsonPath("$[0].courseTitle").value("Cours payant"))
+                .andExpect(jsonPath("$[0].courseId").value(courseId));
 
         mvc.perform(get("/api/v1/payments/" + payment.getId() + "/invoice/download")
                         .header("Authorization", "Bearer " + eleve))

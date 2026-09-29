@@ -34,7 +34,7 @@ Déroulé pas à pas pour présenter **educa** en ~15 min. Chaque étape indique
 
 **Cours seedés** (formateur de démo, publiés) : « Introduction à Python » (29,99 €) et « Les bases de Git » (19,99 €), tous deux **payants** — chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final. Quatre autres cours payants complètent le catalogue — « SQL et bases de données relationnelles » (34,99 €), « Algorithmique : les fondamentaux » (24,99 €), « Cybersécurité : les bons réflexes » (14,99 €) et « Java : programmation orientée objet » (39,99 €) — chacun 3 chapitres, 6 contenus, un contrôle par chapitre et un examen final.
 
-**Paiement en démo** : les cours étant payants, lancer avant la démo (clé `sk_test_…` et `STRIPE_ENABLED=true` dans `.env`) : `stripe listen --api-key <sk_test_…> --forward-to localhost:8081/api/v1/payments/webhooks/stripe` — le secret `whsec_…` affiché doit être celui de `STRIPE_WEBHOOK_SECRET`. Sans ce relais, le paiement aboutit côté Stripe mais le cours n'est jamais débloqué.
+**Paiement en démo** : les cours étant payants, lancer avant la démo (clé `sk_test_…` et `STRIPE_ENABLED=true` dans `.env`) : `stripe listen --api-key <sk_test_…> --events checkout.session.completed --forward-to localhost:8081/api/v1/payments/webhooks/stripe` — le secret `whsec_…` affiché doit être celui de `STRIPE_WEBHOOK_SECRET`. Sans ce relais, le paiement aboutit côté Stripe mais le cours n'est jamais débloqué. (`--events` est obligatoire depuis Stripe CLI 1.51.) Si un paiement est resté « en attente » faute de relais : `stripe events resend <evt_…>` renvoie sa confirmation — la page du cours propose alors « S'inscrire » au lieu de faire repayer.
 
 ---
 

@@ -17,7 +17,7 @@
       }
 
       @if (canEnroll()) {
-        @if (c.price === 0) {
+        @if (c.price === 0 || purchased()) {
           <button type="button" (click)="enroll()" [disabled]="enrolling()">
             {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
           </button>

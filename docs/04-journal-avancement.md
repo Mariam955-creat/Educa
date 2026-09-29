@@ -1174,3 +1174,21 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : backend relancé sur la base `educa` locale → les 4 cours apparaissent au catalogue (9 cours publiés au total) avec 3 contrôles + 1 examen final chacun (`GET /courses/{id}/quizzes`).
 
 **À savoir** : une recompilation incrémentale a laissé une classe manquante (`NoClassDefFoundError: AnswerOption` au démarrage) → `./mvnw clean compile` a suffi.
+
+---
+
+## 2026-09-29 (suite) — Paiement du cours SQL bloqué : payé 3 fois, jamais débloqué
+
+**Symptôme** : « je n'arrive pas à faire le paiement pour un cours SQL ». Registre : 3 paiements Stripe `PENDING` d'`apprenant@educa.dev` pour « SQL et bases de données relationnelles ».
+
+**Causes**
+1. Le relais `stripe listen` n'était pas lancé → Stripe a bien encaissé les 3 sessions (mode test, `payment_status=paid`), mais aucun webhook `checkout.session.completed` n'a atteint le backend → paiements restés `PENDING`, cours jamais débloqué. De plus, depuis Stripe CLI 1.51, `stripe listen` refuse de démarrer sans `--events` (commande documentée obsolète).
+2. **Défaut UX** : au retour de Stripe, la page du cours tentait l'inscription **une seule fois** (→ `402` si le webhook n'était pas encore arrivé), puis réaffichait les boutons « Payer » — d'où les 2 paiements supplémentaires.
+
+**Corrigé**
+- `course-detail` : après `?payment=success`, l'inscription est retentée sur `402` (5 × 2 s) le temps que la confirmation arrive ; si le cours est **déjà payé** mais pas encore inscrit, la page affiche « S'inscrire » au lieu des boutons de paiement (détection via `GET /payments/me`, uniquement si connecté).
+- `InvoiceDto` expose désormais `courseId` (nécessaire à cette détection) ; assertion ajoutée dans `CoursePaymentFlowTest`.
+- Doc (`05-demo-soutenance.md`, `docs/cheat.md`) : `stripe listen … --events checkout.session.completed …` + procédure de rattrapage `stripe events resend <evt_…>`.
+- Données locales : relais relancé, confirmation de la dernière session renvoyée (`stripe events resend`) → paiement `SUCCEEDED`, facture `INV-2026-000003`. Les 2 autres sessions payées restent `PENDING` volontairement (mode test, pas d'argent réel ; éviter 3 factures pour le même cours).
+
+**Vérifié** : `./mvnw clean test` → **69/69** ; `npm run build` OK, `npm run test:ci` → **22/22** ; backend relancé, `GET /payments/me` renvoie `courseId`.

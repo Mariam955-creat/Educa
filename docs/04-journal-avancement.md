@@ -1118,3 +1118,19 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 **Vérifié** : `./mvnw clean test` → **68/68** ; `npm run build` OK ; `npm run test:ci` → **22/22**.
 
 **À savoir** : traductions néerlandaises non relues par un locuteur natif. La base `educa` locale recevra `V11` au prochain démarrage du backend. Les exigences d'origine de `01-analyse.md` (EF-26/27 : FR/EN/AR + RTL) sont conservées telles quelles comme trace de l'analyse ; l'écart est consigné dans `02-conception.md §0`.
+
+---
+
+## 2026-09-29 — Relecture des traductions DE / NL
+
+**Demande** : relire les traductions allemandes et néerlandaises (interface + PDF).
+
+**Constat** : traductions globalement correctes ; corrections de terminologie et de naturel.
+
+**Corrigé**
+- **Allemand** : seuil de réussite « Schwelle » → « Bestehensgrenze » ; « Echtes Zertifikat » → « Gültiges Zertifikat » ; « Einfachauswahl » → « Einzelauswahl » ; « Kein passender Kurs. » → « Keine passenden Kurse gefunden. » ; « Zurückziehen » → « Veröffentlichung zurückziehen » ; rôle « Kursleiter » → « Kursleiter/in » (cohérent avec « Lernende/r ») ; PDF : « Prüfung: Code » → « Verifizierung: Code » (« Prüfung » = examen, ambigu), « Bankkarte » → « Kartenzahlung ».
+- **Néerlandais** : « drempel » → « slaaggrens » ; « Echt certificaat » → « Geldig certificaat » ; « vraag/vragen » → « vraag(en) » (même forme que « hoofdstuk(ken) ») ; « Waar / Onwaar » → « Waar / Niet waar » ; « Markeren als afgerond » → « Als afgerond markeren » ; « Actie niet toegestaan » → « Actie niet mogelijk » ; guillemets droits → ‘…’ (cohérence) ; facture : « uitgegeven op » → « opgemaakt op », « Bankkaart » → « Betaalkaart ».
+
+**Vérifié** : JSON valides, `QuizFlowTest` + `CoursePaymentFlowTest` (PDF de/nl) → 10/10.
+
+**À savoir** : relecture faite par Claude, pas par un locuteur natif — suffisante pour la soutenance, une relecture humaine reste conseillée avant une vraie mise en production.

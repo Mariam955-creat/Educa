@@ -54,7 +54,7 @@
   "catalog": {
     "title": "Kurskatalog",
     "searchPlaceholder": "Kurs suchen…",
-    "empty": "Kein passender Kurs.",
+    "empty": "Keine passenden Kurse gefunden.",
     "meta": "{{instructor}} · {{chapters}} Kapitel · {{language}}"
   },
   "certificates": {
@@ -75,7 +75,7 @@
   "verify": {
     "title": "Zertifikatsprüfung",
     "checking": "Wird geprüft…",
-    "valid": "✅ Echtes Zertifikat",
+    "valid": "✅ Gültiges Zertifikat",
     "validated": "{{holder}} hat den Kurs „{{course}}“ erfolgreich abgeschlossen.",
     "finalGrade": "Endnote: {{grade}} / 100",
     "meta": "Nr. {{serial}} · ausgestellt am {{date}}",
@@ -99,7 +99,7 @@
     "finalExamBest": "· beste: {{score}} %",
     "takeFinalExam": "Abschlussprüfung ablegen",
     "finalExamLocked": "🔒 freigeschaltet bei 100 % Fortschritt (Inhalte + alle Tests)",
-    "finalGrade": "Endnote: {{grade}} / 100 (Schwelle {{threshold}})",
+    "finalGrade": "Endnote: {{grade}} / 100 (Bestehensgrenze {{threshold}})",
     "downloadCertificate": "🎓 Zertifikat herunterladen",
     "notFound": "Kurs nicht gefunden.",
     "loadError": "Fehler beim Laden.",
@@ -175,16 +175,16 @@
     "draft": "Entwurf",
     "results": "Ergebnisse",
     "publish": "Veröffentlichen",
-    "unpublish": "Zurückziehen",
+    "unpublish": "Veröffentlichung zurückziehen",
     "confirmDelete": "„{{title}}“ löschen? Diese Aktion ist endgültig."
   },
   "quizEditor": {
     "typeFinalExam": "Abschlussprüfung",
     "typeControl": "Test",
-    "questionCount": "{{count}} Frage(n) · Schwelle {{threshold}} %",
+    "questionCount": "{{count}} Frage(n) · Bestehensgrenze {{threshold}} %",
     "addQuestionTitle": "Frage hinzufügen",
     "statement": "Fragetext",
-    "choiceSingle": "Einfachauswahl",
+    "choiceSingle": "Einzelauswahl",
     "choiceMultiple": "Mehrfachauswahl",
     "choiceTrueFalse": "Richtig / Falsch",
     "points": "Punkte",
@@ -206,7 +206,7 @@
     "certificateIssued": "🎓 Zertifikat ausgestellt.",
     "viewCertificates": "Meine Zertifikate ansehen",
     "retry": "Erneut versuchen",
-    "questionCount": "{{count}} Frage(n) · Schwelle {{threshold}} %",
+    "questionCount": "{{count}} Frage(n) · Bestehensgrenze {{threshold}} %",
     "submit": "Beenden und absenden",
     "submitting": "Wird gesendet…",
     "accessDenied": "Zugriff verweigert.",
@@ -233,7 +233,7 @@
     },
     "roles": {
       "LEARNER": "Lernende/r",
-      "INSTRUCTOR": "Kursleiter",
+      "INSTRUCTOR": "Kursleiter/in",
       "ADMIN": "Administrator"
     },
     "users": {

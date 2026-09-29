@@ -44,6 +44,8 @@ import com.educa.backend.user.UserRepository;
  *       apprenant « diplômé » qui possède déjà un certificat ;</li>
  *   <li>2 cours publiés et payants du formateur de démo (Python 29,99 €, Git 19,99 €), chacun avec chapitres, contenus, un contrôle et un
  *       examen final ;</li>
+ *   <li>4 autres cours publiés et payants (SQL 34,99 €, algorithmique 24,99 €, cybersécurité 14,99 €, Java 39,99 €),
+ *       3 chapitres chacun, un contrôle par chapitre et un examen final ;</li>
  *   <li>le parcours complet du compte « diplômé » sur le 2ᵉ cours (achat enregistré → inscription → 100 % → contrôle →
  *       examen final réussi → certificat émis), joué via les services réels.</li>
  * </ul>
@@ -93,6 +95,7 @@ public class DevDataInitializer implements ApplicationRunner {
 
         seedPythonCourse(instructor);
         Course gitCourse = seedGitCourse(instructor);
+        catalogCourses().forEach(spec -> seedCatalogCourse(instructor, spec));
 
         seedCertifiedLearner(graduate, gitCourse);
     }
@@ -264,6 +267,236 @@ public class DevDataInitializer implements ApplicationRunner {
             quizRepository.save(exam);
         }
         log.info("Quiz de démo prêts pour « {} »", course.getTitle());
+    }
+
+    // ---------- Cours 3 à 6 : catalogue enrichi (un contrôle par chapitre + examen final) ----------
+
+    private record ChapterSpec(String title, List<Content> contents, List<Question> control) {
+    }
+
+    private record CourseSpec(String slug, String title, String description, String price,
+                              List<ChapterSpec> chapters, List<Question> finalExam) {
+    }
+
+    /**
+     * Crée le cours décrit par {@code spec} s'il n'existe pas, puis ajoute les quiz manquants
+     * (contrôle de chaque chapitre, examen final). Idempotent.
+     */
+    private void seedCatalogCourse(User instructor, CourseSpec spec) {
+        Course course = courseRepository.findBySlug(spec.slug()).orElse(null);
+        if (course == null) {
+            course = new Course();
+            course.setInstructorId(instructor.getId());
+            course.setTitle(spec.title());
+            course.setSlug(spec.slug());
+            course.setDescription(spec.description());
+            course.setLanguage("fr");
+            course.setPublished(true);
+            course.setPrice(new BigDecimal(spec.price()));
+            int position = 1;
+            for (ChapterSpec chapterSpec : spec.chapters()) {
+                Chapter chapter = new Chapter();
+                chapter.setTitle(chapterSpec.title());
+                chapter.setPosition(position++);
+                chapterSpec.contents().forEach(chapter::addContent);
+                course.addChapter(chapter);
+            }
+            course = courseRepository.save(course);
+            log.info("Cours de démo créé : « {} » ({} chapitres, {} €)",
+                    course.getTitle(), course.getChapters().size(), spec.price());
+        }
+
+        List<Chapter> chapters = course.getChapters();
+        for (int i = 0; i < chapters.size() && i < spec.chapters().size(); i++) {
+            Chapter chapter = chapters.get(i);
+            if (!quizRepository.existsByChapterIdAndType(chapter.getId(), QuizType.CONTROL)) {
+                Quiz control = new Quiz();
+                control.setType(QuizType.CONTROL);
+                control.setCourseId(course.getId());
+                control.setChapterId(chapter.getId());
+                control.setTitle("Contrôle — " + chapter.getTitle());
+                control.setPassThreshold(50);
+                spec.chapters().get(i).control().forEach(control::addQuestion);
+                quizRepository.save(control);
+            }
+        }
+        if (!quizRepository.existsByCourseIdAndType(course.getId(), QuizType.FINAL_EXAM)) {
+            Quiz exam = new Quiz();
+            exam.setType(QuizType.FINAL_EXAM);
+            exam.setCourseId(course.getId());
+            exam.setTitle("Examen final — " + course.getTitle());
+            exam.setPassThreshold(50);
+            exam.setMaxAttempts(3);
+            spec.finalExam().forEach(exam::addQuestion);
+            quizRepository.save(exam);
+        }
+    }
+
+    private static List<CourseSpec> catalogCourses() {
+        return List.of(sqlCourse(), algorithmsCourse(), securityCourse(), javaCourse());
+    }
+
+    private static CourseSpec sqlCourse() {
+        return new CourseSpec("sql-et-bases-de-donnees-relationnelles", "SQL et bases de données relationnelles",
+                "Modéliser des données en tables et les interroger avec SQL : SELECT, filtres, jointures et agrégations.",
+                "34.99",
+                List.of(
+                        new ChapterSpec("Le modèle relationnel", List.of(
+                                textContent("Tables, lignes et colonnes", 1,
+                                        "Une base relationnelle range les données dans des tables : chaque ligne est un enregistrement, chaque colonne un attribut typé (texte, nombre, date…)."),
+                                textContent("Clés primaires et étrangères", 2,
+                                        "La clé primaire identifie une ligne de façon unique ; une clé étrangère référence la clé primaire d'une autre table et relie ainsi les données.")),
+                                List.of(singleChoice("Une clé primaire…", 1,
+                                                "identifie chaque ligne de façon unique", true,
+                                                "peut contenir des doublons", false,
+                                                "relie deux bases de données différentes", false),
+                                        trueFalse("Une clé étrangère référence la clé primaire d'une autre table.", 2, true))),
+                        new ChapterSpec("Interroger avec SELECT", List.of(
+                                textContent("Sélectionner et filtrer", 1,
+                                        "`SELECT nom, ville FROM clients WHERE ville = 'Liège';` renvoie les colonnes demandées des seules lignes qui respectent la condition."),
+                                textContent("Trier et limiter", 2,
+                                        "`ORDER BY` trie le résultat (`ASC` ou `DESC`) et `LIMIT` restreint le nombre de lignes renvoyées.")),
+                                List.of(singleChoice("Quelle clause filtre les lignes d'une requête ?", 1,
+                                                "WHERE", true, "ORDER BY", false, "FROM", false),
+                                        trueFalse("`ORDER BY prix DESC` trie du plus cher au moins cher.", 2, true))),
+                        new ChapterSpec("Jointures et agrégations", List.of(
+                                textContent("Les jointures", 1,
+                                        "`INNER JOIN` combine les lignes de deux tables dont les clés correspondent : `SELECT * FROM commandes c JOIN clients k ON c.client_id = k.id;`"),
+                                textContent("GROUP BY et fonctions d'agrégat", 2,
+                                        "`COUNT`, `SUM`, `AVG`, `MIN` et `MAX` résument des groupes de lignes formés par `GROUP BY` ; `HAVING` filtre ces groupes.")),
+                                List.of(singleChoice("Quelle fonction compte le nombre de lignes ?", 1,
+                                                "COUNT", true, "SUM", false, "AVG", false),
+                                        trueFalse("`HAVING` filtre des groupes après un `GROUP BY`.", 2, true)))),
+                List.of(singleChoice("Quelle requête renvoie les clients de Namur ?", 1,
+                                "SELECT * FROM clients WHERE ville = 'Namur';", true,
+                                "SELECT clients WHERE Namur;", false,
+                                "GET * FROM clients = 'Namur';", false),
+                        singleChoice("Pour relier deux tables par leurs clés, on utilise…", 2,
+                                "une jointure (JOIN)", true, "un ORDER BY", false, "un LIMIT", false),
+                        trueFalse("`AVG` calcule la moyenne d'une colonne.", 3, true)));
+    }
+
+    private static CourseSpec algorithmsCourse() {
+        return new CourseSpec("algorithmique-les-fondamentaux", "Algorithmique : les fondamentaux",
+                "Apprendre à raisonner comme un programmeur : variables, conditions, boucles, puis premiers algorithmes de recherche et de tri.",
+                "24.99",
+                List.of(
+                        new ChapterSpec("Penser un algorithme", List.of(
+                                textContent("Qu'est-ce qu'un algorithme ?", 1,
+                                        "Un algorithme est une suite finie d'instructions précises qui transforme des données d'entrée en un résultat, comme une recette de cuisine."),
+                                textContent("Variables et affectation", 2,
+                                        "Une variable est une case nommée qui contient une valeur. `total ← total + prix` lit l'ancienne valeur, calcule, puis la remplace.")),
+                                List.of(singleChoice("Un algorithme est…", 1,
+                                                "une suite finie d'instructions précises", true,
+                                                "un langage de programmation", false,
+                                                "un composant matériel de l'ordinateur", false),
+                                        trueFalse("Une affectation remplace la valeur précédente de la variable.", 2, true))),
+                        new ChapterSpec("Conditions et boucles", List.of(
+                                textContent("Les conditions", 1,
+                                        "`SI note ≥ 10 ALORS afficher « réussi » SINON afficher « échoué »` : le programme choisit un chemin selon qu'une condition est vraie ou fausse."),
+                                textContent("Les boucles", 2,
+                                        "`POUR i DE 1 À 10` répète un bloc un nombre connu de fois ; `TANT QUE` répète tant qu'une condition reste vraie — attention aux boucles infinies.")),
+                                List.of(singleChoice("Quelle structure répète un bloc tant qu'une condition est vraie ?", 1,
+                                                "TANT QUE", true, "SI … ALORS", false, "une affectation", false),
+                                        trueFalse("Une boucle POUR s'utilise quand le nombre de répétitions est connu d'avance.", 2, true))),
+                        new ChapterSpec("Rechercher et trier", List.of(
+                                textContent("Recherche séquentielle et dichotomique", 1,
+                                        "La recherche séquentielle parcourt les éléments un à un ; la recherche dichotomique, sur une liste triée, divise l'intervalle de recherche par deux à chaque étape."),
+                                textContent("Le tri par sélection", 2,
+                                        "On cherche le plus petit élément, on l'échange avec le premier, puis on recommence sur le reste de la liste jusqu'à ce qu'elle soit triée.")),
+                                List.of(singleChoice("La recherche dichotomique exige une liste…", 1,
+                                                "triée", true, "vide", false, "de nombres pairs", false),
+                                        trueFalse("Le tri par sélection place à chaque étape le plus petit élément restant à sa place.", 2, true)))),
+                List.of(singleChoice("Sur 1 000 éléments triés, la recherche dichotomique fait au plus environ…", 1,
+                                "10 comparaisons", true, "500 comparaisons", false, "1 000 comparaisons", false),
+                        singleChoice("Que risque une boucle TANT QUE dont la condition ne devient jamais fausse ?", 2,
+                                "de tourner indéfiniment", true, "de s'arrêter immédiatement", false, "de trier la liste", false),
+                        trueFalse("Un algorithme doit se terminer après un nombre fini d'étapes.", 3, true)));
+    }
+
+    private static CourseSpec securityCourse() {
+        return new CourseSpec("cybersecurite-les-bons-reflexes", "Cybersécurité : les bons réflexes",
+                "Protéger ses comptes et ses données au quotidien : mots de passe, hameçonnage, mises à jour et sauvegardes.",
+                "14.99",
+                List.of(
+                        new ChapterSpec("Mots de passe et authentification", List.of(
+                                textContent("Un bon mot de passe", 1,
+                                        "Long (au moins 12 caractères), unique pour chaque site et difficile à deviner : une phrase de passe est plus sûre qu'un mot court et complexe."),
+                                textContent("Gestionnaire et double authentification", 2,
+                                        "Un gestionnaire de mots de passe retient pour vous des mots de passe uniques ; la double authentification (2FA) ajoute un code à usage unique.")),
+                                List.of(singleChoice("Quel est le meilleur choix ?", 1,
+                                                "un mot de passe long et unique par site", true,
+                                                "le même mot de passe partout", false,
+                                                "sa date de naissance", false),
+                                        trueFalse("La double authentification protège le compte même si le mot de passe a fuité.", 2, true))),
+                        new ChapterSpec("Reconnaître l'hameçonnage", List.of(
+                                textContent("Les signes d'alerte", 1,
+                                        "Urgence inhabituelle, expéditeur approximatif, fautes, lien qui ne mène pas au site officiel : autant d'indices d'un message d'hameçonnage (phishing)."),
+                                textContent("Les bons gestes", 2,
+                                        "Ne cliquez pas : rendez-vous vous-même sur le site officiel, ne communiquez jamais un mot de passe par e-mail et signalez le message.")),
+                                List.of(singleChoice("Un e-mail vous demande de « confirmer votre mot de passe sous 24 h ». Que faire ?", 1,
+                                                "ne pas cliquer et passer par le site officiel", true,
+                                                "répondre avec son mot de passe", false,
+                                                "cliquer vite pour éviter la suspension", false),
+                                        trueFalse("Une banque demande régulièrement votre mot de passe par e-mail.", 2, false))),
+                        new ChapterSpec("Mises à jour et sauvegardes", List.of(
+                                textContent("Mettre à jour", 1,
+                                        "Les mises à jour corrigent des failles de sécurité connues : activez les mises à jour automatiques du système et des applications."),
+                                textContent("La règle 3-2-1", 2,
+                                        "Trois copies des données, sur deux supports différents, dont une hors site : une sauvegarde protège aussi contre les rançongiciels.")),
+                                List.of(singleChoice("La règle de sauvegarde 3-2-1 prévoit…", 1,
+                                                "3 copies, 2 supports, 1 hors site", true,
+                                                "3 mots de passe, 2 comptes, 1 e-mail", false,
+                                                "une sauvegarde tous les 321 jours", false),
+                                        trueFalse("Les mises à jour corrigent souvent des failles de sécurité.", 2, true)))),
+                List.of(singleChoice("Qu'est-ce que l'hameçonnage ?", 1,
+                                "une tentative de vol d'informations par un faux message", true,
+                                "une mise à jour du système", false,
+                                "un type de sauvegarde", false),
+                        singleChoice("Quel outil aide à avoir un mot de passe unique par site ?", 2,
+                                "un gestionnaire de mots de passe", true, "un tableur partagé", false,
+                                "un post-it sur l'écran", false),
+                        trueFalse("Une sauvegarde hors site aide à récupérer ses données après un rançongiciel.", 3, true)));
+    }
+
+    private static CourseSpec javaCourse() {
+        return new CourseSpec("java-programmation-orientee-objet", "Java : programmation orientée objet",
+                "Classes, objets, encapsulation, héritage et polymorphisme : les piliers de la programmation orientée objet, illustrés en Java.",
+                "39.99",
+                List.of(
+                        new ChapterSpec("Classes et objets", List.of(
+                                textContent("Définir une classe", 1,
+                                        "Une classe est un plan : `class Compte { double solde; }`. Un objet est une instance de ce plan, créée avec `new Compte()`."),
+                                textContent("Constructeurs et méthodes", 2,
+                                        "Le constructeur initialise l'objet à sa création ; les méthodes (`deposer(double montant)`) décrivent son comportement.")),
+                                List.of(singleChoice("Quel mot-clé crée un objet en Java ?", 1,
+                                                "new", true, "class", false, "static", false),
+                                        trueFalse("Un constructeur porte le même nom que sa classe.", 2, true))),
+                        new ChapterSpec("Encapsulation", List.of(
+                                textContent("Visibilité", 1,
+                                        "`private` réserve un attribut à sa classe, `public` l'ouvre à tous : on cache l'état interne et on n'expose que le nécessaire."),
+                                textContent("Accesseurs", 2,
+                                        "Les getters et setters contrôlent l'accès : `setSolde` peut refuser une valeur négative, ce qu'un attribut public ne permettrait pas.")),
+                                List.of(singleChoice("Quel modificateur limite un attribut à sa propre classe ?", 1,
+                                                "private", true, "public", false, "protected", false),
+                                        trueFalse("Un setter peut valider une valeur avant de la stocker.", 2, true))),
+                        new ChapterSpec("Héritage et polymorphisme", List.of(
+                                textContent("Hériter d'une classe", 1,
+                                        "`class CompteEpargne extends Compte` reprend les attributs et méthodes de `Compte` et peut en ajouter ; `super(...)` appelle le constructeur parent."),
+                                textContent("Le polymorphisme", 2,
+                                        "Une sous-classe peut redéfinir une méthode (`@Override`) : le même appel `compte.calculerFrais()` s'adapte au type réel de l'objet.")),
+                                List.of(singleChoice("Quel mot-clé exprime l'héritage entre classes en Java ?", 1,
+                                                "extends", true, "implements", false, "import", false),
+                                        trueFalse("`@Override` indique qu'une méthode redéfinit celle de la classe parente.", 2, true)))),
+                List.of(singleChoice("L'encapsulation consiste à…", 1,
+                                "cacher l'état interne et contrôler son accès", true,
+                                "copier une classe dans une autre", false,
+                                "compiler plus vite le programme", false),
+                        singleChoice("Si `CompteEpargne extends Compte`, alors un CompteEpargne…", 2,
+                                "est aussi un Compte", true,
+                                "ne peut pas utiliser les méthodes de Compte", false,
+                                "doit redéclarer tous les attributs", false),
+                        trueFalse("Une classe Java peut hériter directement de plusieurs classes.", 3, false)));
     }
 
     // ---------- Parcours complet du compte « diplômé » ----------

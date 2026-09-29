@@ -1153,3 +1153,24 @@ a constaté que **tous les cours étaient gratuits** dans l'interface, alors qu'
 - `docs/05-demo-soutenance.md` : chiffres rafraîchis (tests, migrations `V1`→`V11`, compte apprenant neuf, extensions réalisées).
 
 **Vérifié** : `./mvnw test` → **69/69** (+1 `CourseFlowTest`) ; `npm run build` OK, `npm run test:ci` → **22/22** ; backend relancé, `node scripts/e2e-mvp.mjs` → **49/49**.
+
+---
+
+## 2026-09-29 (suite) — Catalogue de démo enrichi
+
+**Demande** : « ajoute des nouveaux cours et leur prix et des chapitres ».
+
+**Fait** : 4 cours publiés et payants ajoutés au seed `DevDataInitializer` (profil `dev`, idempotent par slug — recréés sur toute base neuve, poste de soutenance ou Docker compris) :
+
+| Cours | Prix | Chapitres |
+|---|---|---|
+| SQL et bases de données relationnelles | 34,99 € | Le modèle relationnel · Interroger avec SELECT · Jointures et agrégations |
+| Algorithmique : les fondamentaux | 24,99 € | Penser un algorithme · Conditions et boucles · Rechercher et trier |
+| Cybersécurité : les bons réflexes | 14,99 € | Mots de passe et authentification · Reconnaître l'hameçonnage · Mises à jour et sauvegardes |
+| Java : programmation orientée objet | 39,99 € | Classes et objets · Encapsulation · Héritage et polymorphisme |
+
+Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2 questions) et un examen final (3 questions, 3 tentatives). Décrits de façon déclarative (`CourseSpec`/`ChapterSpec`) et créés par une méthode générique `seedCatalogCourse` plutôt que par un bloc copié-collé par cours ; Python et Git restent inchangés.
+
+**Vérifié** : backend relancé sur la base `educa` locale → les 4 cours apparaissent au catalogue (9 cours publiés au total) avec 3 contrôles + 1 examen final chacun (`GET /courses/{id}/quizzes`).
+
+**À savoir** : une recompilation incrémentale a laissé une classe manquante (`NoClassDefFoundError: AnswerOption` au démarrage) → `./mvnw clean compile` a suffi.

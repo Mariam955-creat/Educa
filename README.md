@@ -105,7 +105,7 @@ node scripts/e2e-mvp.mjs   # rejoue tout le parcours MVP contre l'API — 47 con
 | Apprenant | `apprenant@educa.dev` | `password123` |
 | Apprenant (déjà certifié) | `diplome@educa.dev` | `password123` |
 
-Deux cours publiés du formateur de démo sont seedés — « Introduction à Python » (29,99 €) et « Les bases de Git » (19,99 €), tous deux payants (chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final). Le compte `diplome@educa.dev` a déjà acheté et suivi « Les bases de Git » de bout en bout : son certificat est disponible dans « Mes certificats » et vérifiable sur `/verify/<code>`.
+Deux cours publiés du formateur de démo sont seedés — « Introduction à Python » (29,99 €) et « Les bases de Git » (19,99 €), tous deux payants (chacun 2 chapitres, 4 contenus, 1 contrôle, 1 examen final). Quatre autres cours payants complètent le catalogue — « SQL et bases de données relationnelles » (34,99 €), « Algorithmique : les fondamentaux » (24,99 €), « Cybersécurité : les bons réflexes » (14,99 €) et « Java : programmation orientée objet » (39,99 €) — chacun 3 chapitres, 6 contenus, un contrôle par chapitre et un examen final. Le compte `diplome@educa.dev` a déjà acheté et suivi « Les bases de Git » de bout en bout : son certificat est disponible dans « Mes certificats » et vérifiable sur `/verify/<code>`.
 
 ---
 

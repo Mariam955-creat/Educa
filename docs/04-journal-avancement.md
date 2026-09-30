@@ -1192,3 +1192,16 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 - Données locales : relais relancé, confirmation de la dernière session renvoyée (`stripe events resend`) → paiement `SUCCEEDED`, facture `INV-2026-000003`. Les 2 autres sessions payées restent `PENDING` volontairement (mode test, pas d'argent réel ; éviter 3 factures pour le même cours).
 
 **Vérifié** : `./mvnw clean test` → **69/69** ; `npm run build` OK, `npm run test:ci` → **22/22** ; backend relancé, `GET /payments/me` renvoie `courseId`.
+
+## 2026-09-30 — Passe documentaire avant soutenance
+
+**Objectif** : aligner les docs sur le code livré (plusieurs passages dataient d'avant les paiements et du passage à FR/EN/DE/NL).
+
+**Mis à jour**
+- `03-plan-implementation.md` : 4.13 (certificat PDF localisé) passée à « fait » (2026-09-26) ; 4.2/4.3 (RTL, police arabe) marquées retirées le 2026-09-28 ; note sur les langues en Phase 4 et dans le suivi global ; nouvelle section **« Évolutions post-MVP et corrections »** (E.1→E.9, 2026-09-26 → 2026-09-30) avec le dernier état vérifié et ce qui reste avant la soutenance.
+- `02-conception.md` : §0 complété (suppression de `pdf_key`, achat par cours, `409` à la suppression d'un cours avec inscrits ; mention RTL obsolète retirée) ; §2 MCD avec `PAYMENT` ; §3 `courses.price`, `certificates.pdf_key` retirée, langues fr/en/de/nl ; §11.3/§11.4 : factures régénérées à chaque téléchargement (plus de `pdf_key`) ; §11.6 : les 6 cours de démo et leurs prix.
+- `docs/assets/mcd.*` régénérés : **19 tables** (ajout de `PAYMENT`, `courses.price`, `certificates.pdf_key` retirée, langues fr/en/de/nl). `architecture.*` régénérés : module `payment` + Stripe / Orange Money.
+- `01-analyse.md` : encadré « état de réalisation » à jour (EF-28 et module admin faits, certificat localisé fait, écarts langues et paiement).
+- `06-verification-mvp.md` : dernier état (69/69, 22/22, E2E 49/49) et note sur les langues.
+
+**Reste** : relecture humaine du MCD et de la matrice RBAC (0.7), clé Anthropic réelle, identifiants sandbox Orange Money.

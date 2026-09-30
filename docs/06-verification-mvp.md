@@ -14,6 +14,10 @@ Dernière exécution : **2026-09-10**.
 | Build frontend (`npm run build`) | **OK** |
 | Scénario E2E API (`node scripts/e2e-mvp.mjs`, backend dev lancé) | **47 / 47 PASS** |
 
+> **Dernier état (2026-09-29)**, après les extensions post-MVP (admin, traductions, paiements, langues) :
+> backend **69 / 69**, frontend **22 / 22**, build OK, E2E API **49 / 49 PASS**. Le tableau ci-dessus
+> reste le résultat de la vérification MVP du 2026-09-10.
+
 Le scénario E2E rejoue le parcours complet contre l'API réelle (`:8081`), de façon non destructive
 (formateur = compte de démo, apprenants créés à la volée, slug de cours unique).
 
@@ -91,7 +95,7 @@ Le scénario E2E rejoue le parcours complet contre l'API réelle (`:8081`), de f
 | Notation | Note pondérée **40 % contrôles + 60 % examen**, seuil de certification par cours | ✅ GRADE-01→05 |
 | Certification | Génération auto ≥ seuil, n° de série, PDF, vérification publique par code | ✅ CERT-01→05 |
 | Résultats formateur | Moyenne contrôles / examen / note finale / certifié, par apprenant | ✅ RES-01 |
-| Multilingue (interface) | FR / EN / AR + RTL, persistance `localStorage` + serveur | ✅ validé au navigateur le 2026-09-10 (journal) ; back : AUTH-08 |
+| Multilingue (interface) | FR / EN / AR + RTL, persistance `localStorage` + serveur | ✅ validé au navigateur le 2026-09-10 (journal) ; back : AUTH-08. *Depuis le 2026-09-28 : FR / EN / DE / NL, plus de RTL (arabe retiré)* |
 | Chatbot pédagogique | Contexte borné au cours, accès réservé aux inscrits, repli propre si IA indisponible | ✅ E2E AI-01/02 + **`AiChatTest` (9 tests)** : 401 sans jeton, 403 non inscrit, 200 dégradé (inscrit / propriétaire / ADMIN), historique accepté, validation `message` vide / > 2000 / `courseId` manquant → 400. Réponse **live** en attente d'une clé Anthropic réelle |
 
 ---
@@ -104,7 +108,7 @@ en suivant `docs/05-demo-soutenance.md`, sur une **base propre** (`flyway:clean`
 - [x] Parcours formateur complet dans `course-editor` / `quiz-editor` (création + upload de fichier réel).
 - [x] Parcours apprenant dans `course-detail` / `quiz-take` (inscription → progression → contrôle → examen → certificat).
 - [x] Pages `my-certificates` et `/verify/:code` (publique).
-- [x] Bascule de langue FR/EN/AR + RTL, aux largeurs 360 / 768 px (responsive Phase 5).
+- [x] Bascule de langue FR/EN/AR + RTL, aux largeurs 360 / 768 px (responsive Phase 5). *(Langues ramenées à FR/EN/DE/NL le 2026-09-28.)*
 - [x] Widget chatbot sur la page cours (fil de discussion + message de repli).
 
 **3 bugs réels trouvés et corrigés pendant cette relecture** (détail : `docs/04-journal-avancement.md`, entrée 2026-09-13) :

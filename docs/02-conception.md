@@ -14,12 +14,15 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 |---|---|---|
 | §1.1 / §7.2 | `LlmAiAssistant`, config `ai.provider` | classes réelles : `AiAssistant` → **`ClaudeAiAssistant`** (SDK `com.anthropic:anthropic-java`) / **`DisabledAiAssistant`** ; config `AI_ENABLED` / `ANTHROPIC_API_KEY` / `AI_MODEL` (pas de clé `ai.provider`) |
 | §1.1 / §4 / §5 | Module **admin** (`/admin/users`, rôles, statut, registre certificats, langues) | **développé** (2026-09-15) : `AdminUserController` (`GET /admin/users?q=`, `PATCH /admin/users/{id}/roles`, `PATCH /admin/users/{id}/status`) + `AdminCertificateController` (`GET /admin/certificates`, registre) + `AdminLanguageController` (`GET /admin/languages`, `PATCH /admin/languages/{code}`) + frontend `/admin` (onglets Utilisateurs/Certificats/Langues). Langue active/inactive répercutée en temps réel sur `GET /languages` (public) et validée à la création/au changement de langue d'un cours (`CourseService`) |
-| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; **`languages` migrée** (`V3__languages.sql`, 2026-09-15 — colonnes `code`/`name`/`active`, pas de colonne `rtl` : cette table ne régit que les **langues de contenu des cours**, pas la langue d'interface — le sens RTL de l'interface reste dérivé côté frontend à partir du code langue, indépendamment de cette table, cf. `frontend/src/app/core/i18n/language.service.ts`) ; **`course_translations`/`chapter_translations` migrées** (`V5__content_translations.sql`, 2026-09-15, FK vers `languages(code)` contrairement à `courses.language`) ; `chat_messages` reste **hors migrations** — Should have |
+| §3 | `preferred_language` / `courses.language` en `CHAR(2)` ; `languages`, `*_translations`, `chat_messages` | colonnes en **`VARCHAR(2)`** (validation Hibernate 7) ; **`languages` migrée** (`V3__languages.sql`, 2026-09-15 — colonnes `code`/`name`/`active`, pas de colonne `rtl` : cette table ne régit que les **langues de contenu des cours**, pas la langue d'interface ; langues présentes depuis `V11` : fr/en/de/nl) ; **`course_translations`/`chapter_translations` migrées** (`V5__content_translations.sql`, 2026-09-15, FK vers `languages(code)` contrairement à `courses.language`) ; `chat_messages` reste **hors migrations** — Should have |
 | §4 | `options:[{… isCorrect …}]` ; `verify` renvoie `score` ; `409` si examen verrouillé | champ JSON **`correct`** ; `verify` renvoie **`finalGrade`** ; examen verrouillé → **`403`** (le `409` reste pour « tentatives épuisées ») |
 | §6.1 | `frontend/src/assets/i18n/` | fichiers réellement servis depuis **`frontend/public/i18n/`** (Angular 19 + ngx-translate v18) |
 | §8 | PDF « à confirmer » ; Swagger UI ; conteneurisation « reportée » | PDF = **`openhtmltopdf-pdfbox` 1.0.10** (figé) ; **Swagger UI intégré** (`springdoc-openapi-starter-webmvc-ui` 3.1.1, compatible Spring Boot 4 — tâche 1.10, 2026-09-15) ; **stack Docker livrée et vérifiée** (`docker compose build`+`up`, 2026-09-14) en Phase 6.6 (`docs/07-deploiement.md`) |
 | §5 | rate limiting `/auth/login` & `/ai/chat` | Should have — non implémenté |
 | §6 / EF-26/27 | Interface FR/EN/AR avec RTL arabe | **FR/EN/DE/NL** depuis le 2026-09-28 (arabe, espagnol, portugais retirés à la demande ; plus de RTL) |
+| §3 / §6.3 | `certificates.pdf_key` / `payments.pdf_key` (PDF mis en cache) | colonnes **supprimées** (`V10__drop_pdf_cache.sql`, 2026-09-26) : certificat et facture régénérés à chaque téléchargement, dans la langue de l'interface |
+| §4 / §11 | Accès gratuit à tous les cours (brief initial) | **achat individuel par cours** (`courses.price`, table `payments`, Stripe + Orange Money, factures) — extension post-MVP, voir §11 |
+| §4 | Suppression d'un cours | refusée en **`409`** si le cours a des inscrits (`CourseDeletionGuard`, 2026-09-29) |
 
 Le reste du document correspond à ce qui a été construit.
 
@@ -127,7 +130,7 @@ com.educa.backend
 ```
 frontend/src/app
 ├── core/                 # singletons transverses : AuthService, HttpInterceptor, guards, ErrorHandler
-├── shared/               # composants/pipes/directives réutilisables (dont gestion RTL)
+├── shared/               # composants/pipes/directives réutilisables
 └── feature/
     ├── auth/             # login, register, pages + AuthApi service
     ├── catalog/          # catalogue public
@@ -173,11 +176,13 @@ erDiagram
     COURSE ||--o{ COURSE_TRANSLATION : "a pour traduction"
     LANGUAGE ||--o{ CHAPTER_TRANSLATION : traduit
     CHAPTER ||--o{ CHAPTER_TRANSLATION : "a pour traduction"
+    USER ||--o{ PAYMENT : achete
+    COURSE ||--o{ PAYMENT : "est paye par"
     USER ||--o{ CHAT_MESSAGE : echange
     COURSE ||--o{ CHAT_MESSAGE : contextualise
 ```
 
-> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des tables du MVP réellement migrées (Flyway `V1`→`V5`, **18 tables**, export régénéré le 2026-09-15, voir `docs/assets/README.md`). `LANGUAGE`, `COURSE_TRANSLATION`, `CHAPTER_TRANSLATION` y figurent désormais avec leurs attributs réels (§3) ; seule `CHAT_MESSAGE` ci-dessus reste au stade conception (*Should have*).
+> Version exportée pour le mémoire : [`assets/mcd.mmd`](assets/mcd.mmd) · [`assets/mcd.svg`](assets/mcd.svg) — avec les attributs des tables réellement migrées (Flyway `V1`→`V11`, **19 tables**, export régénéré le 2026-09-30, voir `docs/assets/README.md`). `LANGUAGE`, `COURSE_TRANSLATION`, `CHAPTER_TRANSLATION` et `PAYMENT` (§11) y figurent avec leurs attributs réels (§3) ; seule `CHAT_MESSAGE` ci-dessus reste au stade conception (*Should have*).
 
 ### Cardinalités et règles de gestion
 
@@ -213,7 +218,7 @@ users
   email               VARCHAR(255) UNIQUE NOT NULL
   password_hash       VARCHAR(255) NOT NULL
   full_name           VARCHAR(150) NOT NULL
-  preferred_language  VARCHAR(2) NOT NULL DEFAULT 'fr'   -- fr | en | ar  (CHAR(2) en conception, VARCHAR(2) au final : validation Hibernate 7)
+  preferred_language  VARCHAR(2) NOT NULL DEFAULT 'fr'   -- fr | en | de | nl  (CHAR(2) en conception, VARCHAR(2) au final : validation Hibernate 7)
   enabled             BOOLEAN NOT NULL DEFAULT TRUE
   created_at, updated_at
 
@@ -245,6 +250,7 @@ courses
   control_weight  INT NOT NULL DEFAULT 40        -- % des contrôles dans la note finale
   exam_weight     INT NOT NULL DEFAULT 60        -- % de l'examen final  (control_weight + exam_weight = 100)
   pass_threshold  INT NOT NULL DEFAULT 70        -- note finale pondérée minimale pour obtenir le certificat
+  price           NUMERIC(10,2) NOT NULL DEFAULT 0  -- prix d'achat, 0 = gratuit (V7, voir §11)
   created_at, updated_at
 
 chapters
@@ -337,7 +343,7 @@ certificates
   serial_number         VARCHAR(40) UNIQUE NOT NULL      -- ex. EDUCA-2026-000123
   verification_code     VARCHAR(64) UNIQUE NOT NULL      -- token public de vérification
   issued_at             TIMESTAMPTZ NOT NULL DEFAULT now()
-  pdf_key               VARCHAR(500)                     -- clé objet du PDF généré
+  -- (pdf_key supprimée par V10 : PDF régénéré à chaque téléchargement, voir §6.3)
   UNIQUE (user_id, course_id)
 ```
 
@@ -355,7 +361,7 @@ certificates
 
 ```
 languages
-  code    VARCHAR(2) PK      -- fr | en | ar
+  code    VARCHAR(2) PK      -- fr | en | de | nl (V11)
   name    VARCHAR(50) NOT NULL
   active  BOOLEAN NOT NULL DEFAULT TRUE
 ```
@@ -817,15 +823,15 @@ déjà délivrés restent accessibles indéfiniment (module `certificate` indép
 - `payments` (recréée par `V7`, scindée sur `course_id` au lieu de `subscription_id`) : `user_id`,
   `course_id`, `provider` (STRIPE/ORANGE_MONEY), `provider_reference` (unique par prestataire),
   `amount`, `currency`, `status` (PENDING/SUCCEEDED/FAILED), `invoice_number` (`V8`, unique, assigné à
-  la confirmation du paiement), `pdf_key` (`V8`, généré paresseusement au premier téléchargement).
+  la confirmation du paiement). La colonne `pdf_key` ajoutée par `V8` a été supprimée par `V10` (voir §11.4).
 - Table `subscriptions` supprimée par `V7` (plus de récurrence à suivre).
 
 ### 11.4 Factures
 
 Un paiement réussi = une facture, même patron que les certificats (`CertificateService`) : numéro
 séquentiel par année (`INV-<année>-<séquence>`) assigné dès la confirmation du paiement (webhook Stripe
-ou Orange Money), PDF (openhtmltopdf) généré paresseusement au premier téléchargement et mis en cache
-via `StorageService` (`pdf_key`). `PaymentController` (`GET /payments/me`, `GET
+ou Orange Money), PDF (openhtmltopdf) généré **à chaque téléchargement**, dans la langue de l'interface (depuis le
+2026-09-26, `V10__drop_pdf_cache.sql` — auparavant mis en cache via `StorageService`/`pdf_key`). `PaymentController` (`GET /payments/me`, `GET
 /payments/{id}/invoice/download`) — propriétaire ou ADMIN uniquement. Frontend :
 `feature/payment/my-invoices.component`, accessible depuis la nav (« Mes achats »).
 
@@ -841,7 +847,8 @@ de `educa.public-base-url` (origine du frontend, redirections navigateur) : en d
 ### 11.6 Écart de conception assumé
 
 Les cours de démo (`DevDataInitializer`) sont **tous payants** (« Introduction à Python » 29,99 €,
-« Les bases de Git » 19,99 €) — aucun cours n'est gratuit sans décision explicite du formateur (le
+« Les bases de Git » 19,99 € ; depuis le 2026-09-29 aussi SQL 34,99 €, algorithmique 24,99 €,
+cybersécurité 14,99 €, Java 39,99 €) — aucun cours n'est gratuit sans décision explicite du formateur (le
 formulaire de `course-editor` n'a plus de prix par défaut : le formateur doit le saisir, `0` restant
 possible). Pour que le parcours pré-joué du compte `diplome@educa.dev` (inscription → progression →
 certificat) fonctionne sans prestataire réel, le seed lui enregistre un achat `SUCCEEDED` avec facture

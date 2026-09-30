@@ -112,8 +112,8 @@ Dernière mise à jour : 2026-09-08.
 | # | Tâche | Fichiers / modules | Statut | MàJ |
 |---|---|---|---|---|
 | 4.1 | Frontend : `@ngx-translate/core` v18 + `provideTranslateHttpLoader` ; `public/i18n/{fr,en,ar}.json` ; `LanguageService` (init depuis `user.preferredLanguage` ou `localStorage`) ; sélecteur de langue dans la barre ; persistance `localStorage` + `PATCH /auth/me` (`updatePreferredLanguage`) | `frontend/public/i18n`, `core/i18n` | fait | 2026-09-08 |
-| 4.2 | Frontend : `document.documentElement.dir = rtl` pour l'arabe (+ `lang`) ; overrides `[dir='rtl']` dans `styles.scss` (le reste en flexbox/grid se retourne seul) | `frontend/src/styles`, `LanguageService` | fait | 2026-09-08 |
-| 4.3 | Frontend : police avec fallback arabe (`'Noto Sans Arabic'` dans la stack `body`) | `frontend/src/styles.scss` | fait | 2026-09-08 |
+| 4.2 | Frontend : `document.documentElement.dir = rtl` pour l'arabe (+ `lang`) ; overrides `[dir='rtl']` dans `styles.scss` (le reste en flexbox/grid se retourne seul) | `frontend/src/styles`, `LanguageService` | fait, puis **retiré le 2026-09-28** avec l'arabe (aucune langue restante n'est RTL) | 2026-09-28 |
+| 4.3 | Frontend : police avec fallback arabe (`'Noto Sans Arabic'` dans la stack `body`) | `frontend/src/styles.scss` | fait, puis **retiré le 2026-09-28** avec l'arabe | 2026-09-28 |
 | 4.4 | Backend : module `ai` — interface `AiAssistant`, `ClaudeAiAssistant` (SDK officiel `com.anthropic:anthropic-java` 2.34), `DisabledAiAssistant` (repli) ; `AiConfig` choisit le bean selon `educa.ai.enabled` + clé présente | `com.educa.backend.ai` | fait | 2026-09-08 |
 | 4.5 | Backend : `POST /ai/chat` — contexte cours borné (`CourseService.aiContext`, `max-context-chars`), system prompt séparé de la question, historique transmis par le client, **toute erreur/timeout → `{reply, degraded:true}`** (jamais d'exception) | `com.educa.backend.ai` | fait | 2026-09-08 |
 | 4.6 | Backend : `AiChatService` exige une inscription active (ou propriétaire/ADMIN) → `403` sinon ; `educa.ai.*` depuis l'env (`ANTHROPIC_API_KEY`, `AI_MODEL` défaut `claude-sonnet-5`, `AI_ENABLED`, `AI_TIMEOUT_MS`) | `com.educa.backend.ai` | fait | 2026-09-08 |
@@ -123,7 +123,9 @@ Dernière mise à jour : 2026-09-08.
 | 4.10 | (S) Persistance `chat_messages` | `com.educa.backend.ai` | à faire (Should have) | — |
 | 4.11 | (S) Génération assistée de quiz par IA | — | à faire (Should have) | — |
 | 4.12 | (C) Recommandation de formations | — | à faire (Could have) | — |
-| 4.13 | (C) Certificat PDF localisé | — | à faire (Could have) | — |
+| 4.13 | (C) Certificat PDF localisé | `common.pdf.PdfDocuments`, `CertificateService`, `PaymentService`, `V10__drop_pdf_cache.sql` | fait — certificat **et** facture générés à chaque téléchargement dans la langue de l'interface (`?lang=`), plus de cache PDF | 2026-09-26 |
+
+> **Langues (mise à jour 2026-09-28)** : l'interface est désormais en **FR / EN / DE / NL** (`V11__four_languages.sql`) — l'arabe (et donc le RTL, tâches 4.2/4.3), l'espagnol et le portugais ont été retirés. Le livrable ci-dessous décrit l'état validé le 2026-09-08.
 
 **Livrable démontrable** : ✅ le sélecteur de langue bascule l'interface FR/EN/AR (avec passage en RTL pour l'arabe, préférence persistée). Le widget chatbot sur la page cours envoie la question à `POST /ai/chat` ; sans clé API réelle il renvoie proprement un message de repli (`degraded`), avec une vraie clé il répond dans le périmètre du cours. Reste la validation au navigateur (et une clé Claude réelle pour des réponses live).
 
@@ -236,6 +238,28 @@ fixe le prix de son cours, `0` = gratuit ; achat unique, pas de récurrence). D�
 
 ---
 
+## Évolutions post-MVP et corrections — 2026-09-26 → 2026-09-30
+
+Hors plan initial. Détail de chaque ligne : entrée correspondante de `docs/04-journal-avancement.md`.
+
+| # | Évolution / correction | Fichiers / modules | Statut | MàJ |
+|---|---|---|---|---|
+| E.1 | Stripe vérifié de bout en bout (mode test), cours de démo tous payants, prix obligatoire dans `course-editor` | `payment`, `DevDataInitializer`, `course-editor` | fait | 2026-09-26 |
+| E.2 | Montants et dates localisés (pipes `money` / `localDate`, `Intl`) | `frontend/src/app/core/i18n` | fait | 2026-09-26 |
+| E.3 | Certificat et facture PDF traduits, générés à chaque téléchargement (tâche 4.13) | `common.pdf`, `V10__drop_pdf_cache.sql` | fait | 2026-09-26 |
+| E.4 | Langues ES/PT/DE ajoutées (`V9`), puis **réduction à FR/EN/DE/NL** (arabe, espagnol, portugais retirés, néerlandais ajouté, RTL supprimé) | `V9__more_languages.sql`, `V11__four_languages.sql`, `public/i18n` | fait | 2026-09-28 |
+| E.5 | Relecture des traductions DE / NL | `public/i18n/{de,nl}.json` | fait | 2026-09-29 |
+| E.6 | Bug : suppression d'un cours avec inscrits → désormais refusée en `409` (`CourseDeletionGuard`) | `course`, `enrollment` | fait | 2026-09-29 |
+| E.7 | Catalogue de démo enrichi : 4 cours payants supplémentaires (SQL, algorithmique, cybersécurité, Java), 3 chapitres + 1 contrôle par chapitre chacun ; vérif E2E **49/49** | `DevDataInitializer.catalogCourses()`, `scripts/e2e-mvp.mjs` | fait | 2026-09-29 |
+| E.8 | Bug : inscription après paiement retentée (attente du webhook), plus de double paiement ; `InvoiceDto.courseId` | `course-detail`, `PaymentService` | fait | 2026-09-29 |
+| E.9 | Passe documentaire : plan, conception (§0, §2, §3, §11), MCD exporté (table `payments`, `courses.price`), analyse, rapport de vérification | `docs/`, `docs/assets/mcd.*` | fait | 2026-09-30 |
+
+**Vérifié (dernier état)** : `./mvnw test` → **69/69**, `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49**.
+
+**Reste avant la soutenance** : relecture humaine du MCD et de la matrice RBAC (0.7) ; clé Anthropic réelle pour un chatbot live ; identifiants sandbox Orange Money (non testé avec de vraies clés).
+
+---
+
 ## Suivi global
 
 | Phase | État | Début | Fin |
@@ -244,6 +268,6 @@ fixe le prix de son cours, `0` = gratuit ; achat unique, pas de récurrence). D�
 | 1 — Socle technique | terminée — backend + frontend Angular, parcours inscription/connexion validé au navigateur, Swagger UI intégré (1.10, 2026-09-15) | 2026-09-08 | 2026-09-15 |
 | 2 — Gestion des formations | terminée — backend (14 tests) + frontend, catalogue/inscription/progression | 2026-09-08 | 2026-09-08 |
 | 3 — Évaluation & certification | terminée — backend (18 tests, parcours certificat complet) + frontend | 2026-09-08 | 2026-09-08 |
-| 4 — Multilingue & IA (MVP) | terminée — i18n FR/EN/AR + RTL validé au navigateur ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic. **Résiduel Should have 4.9 fait le 2026-09-15** : tables `languages`/`course_translations`/`chapter_translations`, gestion admin des langues actives, traductions de contenu de cours par le formateur | 2026-09-08 | 2026-09-15 |
+| 4 — Multilingue & IA (MVP) | terminée — i18n validé au navigateur (FR/EN/AR + RTL au MVP, **FR/EN/DE/NL depuis le 2026-09-28**) ; certificat/facture PDF localisés (4.13, 2026-09-26) ; chatbot (SDK Anthropic + repli) ; réponse IA live en attente d'une clé Anthropic. **Résiduel Should have 4.9 fait le 2026-09-15** : tables `languages`/`course_translations`/`chapter_translations`, gestion admin des langues actives, traductions de contenu de cours par le formateur | 2026-09-08 | 2026-09-15 |
 | 5 — Tests & durcissement | terminée — backend 23 tests + frontend 13 ; revue RBAC ; uploads/downloads durcis ; `/security-review` 0 finding | 2026-09-09 | 2026-09-10 |
 | 6 — Rédaction finale & soutenance | **terminée** — 6.1→6.6 faites (README + docs 01→07, jeu de démo enrichi, diagrammes `docs/assets/`, vérif E2E API 47/47, stack Docker, relecture UI au navigateur le 2026-09-13 → 3 bugs corrigés, **`docker compose build`+`up` vérifiés le 2026-09-14**) | 2026-09-10 | 2026-09-14 |

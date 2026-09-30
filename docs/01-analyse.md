@@ -2,13 +2,19 @@
 
 Projet **educa** — plateforme e-learning (Projet de Fin d'Études).
 Statut : *validée (Phase 0) ; périmètre MVP « Must have » réalisé et vérifié bout-en-bout (Phases 1→6)*.
-Dernière mise à jour : 2026-09-10.
+Dernière mise à jour : 2026-09-30.
 
-> **État de réalisation** — toutes les exigences **Must have (M)** ci-dessous sont implémentées et testées
-> (voir `docs/06-verification-mvp.md`). Les exigences **Should have (S)** non réalisées au MVP : réinitialisation
-> de mot de passe (EF-05), traductions du contenu pédagogique (EF-28), historique de chat persistant (EF-32),
-> génération de quiz par IA (EF-33), et le **module d'administration** (EF-35→39, US-D*) — cadré mais non
-> développé. Aucune exigence **Could have (C)**.
+> **État de réalisation (2026-09-30)** — toutes les exigences **Must have (M)** ci-dessous sont implémentées et
+> testées (voir `docs/06-verification-mvp.md`). **Should have (S) réalisées après le MVP** : traductions du
+> contenu pédagogique (EF-28) et **module d'administration** (EF-35→39, US-D*), le 2026-09-15.
+> **Could have (C) réalisée** : certificat PDF dans la langue de l'interface (2026-09-26).
+> **Non réalisées** : réinitialisation de mot de passe (EF-05), historique de chat persistant (EF-32),
+> génération de quiz par IA (EF-33), recommandation de formations.
+> **Écarts par rapport à cette analyse** :
+> - **Langues** : l'interface est livrée en **FR / EN / DE / NL** (décision du 2026-09-28). L'arabe, et avec lui le
+>   RTL (EF-27, ENF-03, persona arabophone, risques R2/R6), a été retiré ; ces passages décrivent l'analyse initiale.
+> - **Paiement** : hors brief initial, ajout d'un **achat individuel par cours** (Stripe, Orange Money, factures PDF)
+>   — voir `docs/02-conception.md` §11.
 
 ---
 

@@ -8,8 +8,9 @@ Diagrammes du projet **educa**, sous forme de sources Mermaid (`.mmd`) et d'imag
 | Architecture générale | `architecture.mmd` | `architecture.svg`, `architecture.png` | `../02-conception.md` §1 |
 | Modèle de données (MCD, périmètre MVP implémenté) | `mcd.mmd` | `mcd.svg`, `mcd.png` | `../02-conception.md` §2–§3 |
 
-> Le `mcd.mmd` reflète les **18 tables** migrées jusqu'à `V5` (Flyway `V1`→`V5`, régénéré le 2026-09-15) —
-> `languages`, `course_translations`, `chapter_translations` incluses avec leurs attributs réels. Seule
+> Le `mcd.mmd` reflète les **19 tables** migrées jusqu'à `V11` (Flyway `V1`→`V11`, régénéré le 2026-09-30) —
+> `languages`, `course_translations`, `chapter_translations` et `payments` (achat par cours, factures)
+> incluses avec leurs attributs réels ; `courses.price` ajouté, `certificates.pdf_key` retiré (`V10`). Seule
 > `chat_messages` reste au stade conception (*Should have*, voir `../02-conception.md` §2) et n'est pas
 > dans le schéma.
 

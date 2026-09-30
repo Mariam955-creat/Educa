@@ -34,6 +34,7 @@ erDiagram
         int      control_weight "défaut 40"
         int      exam_weight "défaut 60"
         int      pass_threshold "défaut 70"
+        numeric  price "0 = gratuit"
     }
     CHAPTER {
         bigint id PK
@@ -114,11 +115,10 @@ erDiagram
         numeric  controls_average
         numeric  final_exam_score
         numeric  final_grade
-        varchar  pdf_key
         timestamptz issued_at
     }
     LANGUAGE {
-        varchar code PK "fr | en | ar"
+        varchar code PK "fr | en | de | nl"
         varchar name
         boolean active
     }
@@ -134,6 +134,18 @@ erDiagram
         bigint  chapter_id FK
         varchar language_code FK
         varchar title
+    }
+    PAYMENT {
+        bigint   id PK
+        bigint   user_id FK
+        bigint   course_id FK
+        varchar  provider "STRIPE | ORANGE_MONEY"
+        varchar  provider_reference
+        numeric  amount
+        varchar  currency
+        varchar  status "PENDING | SUCCEEDED | FAILED"
+        varchar  invoice_number UK "INV-AAAA-000001"
+        timestamptz created_at
     }
 
     USER      ||--o{ USER_ROLE      : "possède"
@@ -161,3 +173,5 @@ erDiagram
     LANGUAGE  ||--o{ COURSE_TRANSLATION  : "langue de"
     CHAPTER   ||--o{ CHAPTER_TRANSLATION : "traduit en"
     LANGUAGE  ||--o{ CHAPTER_TRANSLATION : "langue de"
+    USER      ||--o{ PAYMENT        : "achète"
+    COURSE    ||--o{ PAYMENT        : "est payé par"

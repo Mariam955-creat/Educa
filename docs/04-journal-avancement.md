@@ -1205,3 +1205,15 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 - `06-verification-mvp.md` : dernier état (69/69, 22/22, E2E 49/49) et note sur les langues.
 
 **Reste** : relecture humaine du MCD et de la matrice RBAC (0.7), clé Anthropic réelle, identifiants sandbox Orange Money.
+
+## 2026-10-01 — Répétition de la démo + diagnostic du chatbot
+
+**Répétition (API, via le proxy Angular)** : `node scripts/e2e-mvp.mjs` → **49/49** ; catalogue, langues fr/en/de/nl, certificat du compte diplômé (vérification publique + PDF FR/NL), onglets admin, `402` sans paiement et checkout Stripe OK. Interface non déroulée au navigateur.
+
+**Données locales nettoyées** : 4 paiements `PENDING` supprimés (2 SQL, 2 JavaScript) — le registre ne contient plus que des paiements réussis ; le paiement n° 1 (antérieur aux factures) a reçu le n° `INV-2026-000004` ; cours « Decouverte du Web » et « Anglais pour debutant » (restes d'une répétition, doublon avec l'étape 2.2) dépubliés.
+
+**Chatbot** : réponse dégradée alors qu'une clé est configurée. Cause trouvée dans les logs : **`401 authentication_error — API key is invalid`** → clé à remplacer dans `.env`. Correction préventive au passage dans `ClaudeAiAssistant` : `max_tokens` 1024 → 4096 (la réflexion des modèles récents compte dans la limite et pouvait laisser une réponse vide), effort `LOW` (chat court, réponse sous `AI_TIMEOUT_MS`), et log de `stop_reason` quand la réponse n'a pas de texte.
+
+**Vérifié** : `./mvnw test` → **69/69**. Appel réel à Claude non vérifié (clé invalide).
+
+**Reste** : clé Anthropic valide dans `.env` ; lancer `stripe listen` avant l'étape 3.3 de la démo.

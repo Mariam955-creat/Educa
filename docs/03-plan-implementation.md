@@ -258,8 +258,9 @@ Hors plan initial. Détail de chaque ligne : entrée correspondante de `docs/04-
 | E.12 | Notes 1–5 et avis écrits des inscrits ayant suivi au moins 70 % du cours (page cours), modération admin (onglet « Avis ») | module `rating`, `V12`/`V13`, `course-reviews`, `admin-dashboard` | fait | 2026-10-04 |
 
 | E.13 | En-tête réorganisé : navigation réduite (Catalogue, Formateur, Admin) + avatar à initiales ouvrant un menu (identité, Mon compte, Mes cours, Mes certificats, Mes achats, langues, déconnexion) ; nouvelle page « Mon compte » (`/account`) | `core/layout/user-menu`, `feature/account`, `AuthService.updateFullName` | fait | 2026-10-04 |
+| E.14 | Espace « Mon compte » (`/account`) : tiroir gauche (tableau de bord à KPI apprenant + formateur, profil modifiable, mes cours, certificats, achats, avis) ; « Mes avis » (`GET/DELETE /me/reviews`) ; anciennes adresses `/dashboard`, `/certificates`, `/invoices` redirigées | `feature/account`, module `rating` (`MyReviewController`) | fait | 2026-10-04 |
 
-**Vérifié (dernier état)** : `./mvnw test` → **80/80** (2026-10-04, dont `CourseCardTest` 11), `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49** (2026-09-29, non rejoué depuis).
+**Vérifié (dernier état)** : `./mvnw test` → **81/81** (2026-10-04, dont `CourseCardTest` 12), `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49** (2026-09-29, non rejoué depuis).
 
 **Reste avant la soutenance** : relecture humaine du MCD et de la matrice RBAC (0.7) ; clé Anthropic réelle pour un chatbot live ; identifiants sandbox Orange Money (non testé avec de vraies clés).
 

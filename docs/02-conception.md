@@ -546,6 +546,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | GET | `/admin/certificates` | ADMIN | registre paginé de tous les certificats délivrés |
 | GET | `/admin/languages` | ADMIN | liste toutes les langues (actives et inactives) |
 | PATCH | `/admin/languages/{code}` | ADMIN | `{active: false}` — `404` si code inconnu, `409` si dernière langue active |
+| GET | `/me/reviews` | authentifié | avis de l'utilisateur courant (`{id, courseId, courseTitle, courseSlug, stars, comment?, updatedAt}`), espace « Mon compte » |
+| DELETE | `/me/reviews/{id}` | authentifié | retire son propre avis ; `404` pour l'avis d'un autre (pas de fuite d'existence) |
 | GET | `/admin/reviews` | ADMIN | registre paginé de toutes les notes (avec ou sans texte), cours et auteur compris |
 | DELETE | `/admin/reviews/{id}` | ADMIN | modération : supprime l'avis entier (note + texte), la moyenne du cours est recalculée ; `404` si inconnu |
 
@@ -800,6 +802,22 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 │                                          └──────────────────┘ │
 └───────────────────────────────────────────────────────────────┘
 ```
+
+### 9.4 ter Espace « Mon compte » (`/account`, depuis le 2026-10-04)
+```
+┌──────────────────┬────────────────────────────────────────────┐
+│ (AB) Amina Bah   │ Bonjour, Amina                              │
+│ 📊 Tableau de bord│ Mon apprentissage                           │
+│ 👤 Mon profil     │ [3 cours] [1 terminé] [64 %] [1 🎓] [49 €] [2 ⭐] │
+│ 📚 Mes cours      │ Mon enseignement (formateur/admin)          │
+│ 🎓 Mes certificats│ [cours créés] [apprenants] [note moyenne]   │
+│ 🧾 Mes achats     │ ┌ Reprendre mes cours ┐ ┌ Derniers certificats ┐ │
+│ ⭐ Mes avis       │ │ SQL ▓▓▓▓░ 80 %       │ │ 🎓 Python 88/100     │ │
+│ ───────────────  │ └─────────────────────┘ └──────────────────────┘ │
+│ ⎋ Déconnexion     │                                             │
+└──────────────────┴────────────────────────────────────────────┘
+```
+Tiroir fixe au-delà de 900 px, escamotable (bouton « ☰ Mon compte », fond assombri) en dessous. Les pages Mes cours / certificats / achats existantes sont des routes enfants ; `/dashboard`, `/certificates`, `/invoices` redirigent vers elles.
 
 ### 9.5 Dashboard administrateur (`/admin`)
 ```

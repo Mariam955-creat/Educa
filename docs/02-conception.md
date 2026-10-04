@@ -784,6 +784,23 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 └───────────────────────────────────────────────────────────────┘
 ```
 
+### 9.4 bis En-tête (depuis le 2026-10-04)
+```
+┌───────────────────────────────────────────────────────────────┐
+│ educa   Catalogue  Formateur  Admin                     ( KF ) │
+│                                          ┌──────────────────┐ │
+│                                          │ Karim Formateur  │ │
+│                                          │ karim@… [Formateur]│ │
+│                                          │ 👤 Mon compte     │ │
+│                                          │ 📚 Mes cours      │ │
+│                                          │ 🎓 Mes certificats│ │
+│                                          │ 🧾 Mes achats     │ │
+│                                          │ 🌐 FR EN DE NL    │ │
+│                                          │ ⎋ Déconnexion     │ │
+│                                          └──────────────────┘ │
+└───────────────────────────────────────────────────────────────┘
+```
+
 ### 9.5 Dashboard administrateur (`/admin`)
 ```
 ┌───────────────────────────────────────────────────────────────┐

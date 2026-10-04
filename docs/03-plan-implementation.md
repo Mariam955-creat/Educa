@@ -238,7 +238,7 @@ fixe le prix de son cours, `0` = gratuit ; achat unique, pas de récurrence). D�
 
 ---
 
-## Évolutions post-MVP et corrections — 2026-09-26 → 2026-09-30
+## Évolutions post-MVP et corrections — 2026-09-26 → 2026-10-04
 
 Hors plan initial. Détail de chaque ligne : entrée correspondante de `docs/04-journal-avancement.md`.
 
@@ -253,8 +253,11 @@ Hors plan initial. Détail de chaque ligne : entrée correspondante de `docs/04-
 | E.7 | Catalogue de démo enrichi : 4 cours payants supplémentaires (SQL, algorithmique, cybersécurité, Java), 3 chapitres + 1 contrôle par chapitre chacun ; vérif E2E **49/49** | `DevDataInitializer.catalogCourses()`, `scripts/e2e-mvp.mjs` | fait | 2026-09-29 |
 | E.8 | Bug : inscription après paiement retentée (attente du webhook), plus de double paiement ; `InvoiceDto.courseId` | `course-detail`, `PaymentService` | fait | 2026-09-29 |
 | E.9 | Passe documentaire : plan, conception (§0, §2, §3, §11), MCD exporté (table `payments`, `courses.price`), analyse, rapport de vérification | `docs/`, `docs/assets/mcd.*` | fait | 2026-09-30 |
+| E.10 | Pied de page (marque, liens selon le rôle, atouts, choix de langue, copyright) | `app.component`, `public/i18n` | fait | 2026-10-04 |
+| E.11 | Cartes de cours refaites : image de couverture (upload formateur, repli en dégradé), nombre d'apprenants, note moyenne, prix | `course` (`CourseCoverService`), `enrollment`, `V12`, `catalog`, `course-editor` | fait | 2026-10-04 |
+| E.12 | Notes 1–5 et avis écrits des inscrits (page cours), modération admin (onglet « Avis ») | module `rating`, `V12`/`V13`, `course-reviews`, `admin-dashboard` | fait | 2026-10-04 |
 
-**Vérifié (dernier état)** : `./mvnw test` → **69/69**, `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49**.
+**Vérifié (dernier état)** : `./mvnw test` → **79/79** (2026-10-04, dont `CourseCardTest` 10), `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49** (2026-09-29, non rejoué depuis).
 
 **Reste avant la soutenance** : relecture humaine du MCD et de la matrice RBAC (0.7) ; clé Anthropic réelle pour un chatbot live ; identifiants sandbox Orange Money (non testé avec de vraies clés).
 

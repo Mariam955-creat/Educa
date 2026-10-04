@@ -23,6 +23,7 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 | §3 / §6.3 | `certificates.pdf_key` / `payments.pdf_key` (PDF mis en cache) | colonnes **supprimées** (`V10__drop_pdf_cache.sql`, 2026-09-26) : certificat et facture régénérés à chaque téléchargement, dans la langue de l'interface |
 | §4 / §11 | Accès gratuit à tous les cours (brief initial) | **achat individuel par cours** (`courses.price`, table `payments`, Stripe + Orange Money, factures) — extension post-MVP, voir §11 |
 | §4 | Suppression d'un cours | refusée en **`409`** si le cours a des inscrits (`CourseDeletionGuard`, 2026-09-29) |
+| §1.1 / §3 / §4 | Pas d'image de cours ni de notes | **ajoutés le 2026-10-04** : image de couverture téléversée par le formateur (`courses.cover_image_key`/`cover_image_type`, `V12`), notes 1 à 5 + avis écrit facultatif des inscrits (nouveau module `rating`, table `course_ratings`, `V12`/`V13`), modération admin ; les cartes du catalogue affichent couverture, nombre d'inscrits et note moyenne |
 
 Le reste du document correspond à ce qui a été construit.
 
@@ -109,6 +110,7 @@ com.educa.backend
 ├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible ; FileTypeDetector (sniffing Tika)
 ├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
 ├── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
+├── rating/               # module : notes 1–5 + avis écrits des inscrits (CourseRating), RatingController (public en lecture), AdminReviewController (modération)
 └── payment/              # module : achat individuel de cours — Payment (+ facture), interface PaymentGateway
                           #   (StripePaymentGateway Europe, OrangeMoneyPaymentGateway Afrique, DisabledPaymentGateway)
                           #   CourseCheckoutController, PaymentController (factures), PaymentWebhookController,
@@ -401,6 +403,31 @@ même forme de DTO). Non branché sur `GET /courses/{slug}` par défaut côté f
 toujours éditer le texte source, jamais une traduction affichée) — seule la page de consultation publique
 (`course-detail`) passe `displayLanguage`.
 
+### Couverture et notes des cours (migrées, `V12__course_cover_and_ratings.sql` + `V13__course_review_comments.sql`, 2026-10-04)
+
+```
+courses (colonnes ajoutées)
+  cover_image_key   VARCHAR(500) NULL        -- clé du module storage (covers/{courseId}/…)
+  cover_image_type  VARCHAR(100) NULL        -- type MIME détecté (png, jpeg, webp, gif)
+
+course_ratings
+  id PK
+  course_id  FK -> courses(id) ON DELETE CASCADE
+  user_id    FK -> users(id)   ON DELETE CASCADE
+  stars      SMALLINT NOT NULL CHECK (stars BETWEEN 1 AND 5)
+  comment    TEXT NULL                       -- avis écrit facultatif (V13), 2 000 caractères max côté API
+  created_at, updated_at TIMESTAMPTZ
+  UNIQUE (course_id, user_id)                -- une note par apprenant et par cours, modifiable
+```
+
+Règles : seul un apprenant **inscrit** note (`403` sinon) ; une nouvelle note remplace la précédente ;
+une note sans texte compte dans la moyenne mais n'apparaît pas dans la liste des avis. Le nombre
+d'apprenants affiché est le nombre d'inscriptions (un cours payant n'est accessible qu'après achat).
+Le module `course` lit ces chiffres via deux interfaces qu'il déclare, `CourseAudienceProvider`
+(implémentée par `enrollment`) et `CourseRatingProvider` (implémentée par `rating`) — même
+inversion de dépendance que `CourseDeletionGuard`, sans cycle entre modules ; chargement groupé
+(deux requêtes par page de catalogue, pas de N+1).
+
 ### Tables — chatbot (Should have : persistance)
 
 ```
@@ -502,6 +529,12 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | Méthode | Endpoint | Rôle | Notes |
 |---|---|---|---|
 | POST | `/ai/chat` | LEARNER (inscrit au cours) | `{courseId, message, history?}` → `{reply, degraded?}` ; `degraded=true` si repli |
+| POST | `/courses/{id}/cover` | INSTRUCTOR (propriétaire) / ADMIN | upload **multipart** (`file`) de l'image de couverture — PNG/JPEG/WEBP/GIF (type réel détecté par `FileTypeDetector`, `415` sinon), 5 Mo max (`413`) ; renvoie le résumé du cours |
+| DELETE | `/courses/{id}/cover` | INSTRUCTOR (propriétaire) / ADMIN | retire l'image |
+| GET | `/courses/{id}/cover` | public (cours publié) / propriétaire / ADMIN | l'image (une balise `<img>` n'envoie pas de JWT) ; `404` pour un brouillon vu par un tiers ; URL versionnée `?v=` dans `coverImageUrl` → cache 7 jours |
+| GET | `/courses/{id}/rating` | public | `{average, count, myStars?, myComment?, canRate}` |
+| PUT | `/courses/{id}/rating` | inscrit | `{stars: 1..5, comment?}` — crée ou remplace ; `403` si non inscrit, `400` hors bornes ou avis > 2 000 caractères |
+| GET | `/courses/{id}/reviews` | public | avis écrits paginés (`{id, authorName, stars, comment, updatedAt}`), du plus récent au plus ancien |
 | GET | `/ai/chat/{courseId}/history` | LEARNER | Should have (si persistance activée) |
 
 ### Administration
@@ -513,6 +546,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | GET | `/admin/certificates` | ADMIN | registre paginé de tous les certificats délivrés |
 | GET | `/admin/languages` | ADMIN | liste toutes les langues (actives et inactives) |
 | PATCH | `/admin/languages/{code}` | ADMIN | `{active: false}` — `404` si code inconnu, `409` si dernière langue active |
+| GET | `/admin/reviews` | ADMIN | registre paginé de toutes les notes (avec ou sans texte), cours et auteur compris |
+| DELETE | `/admin/reviews/{id}` | ADMIN | modération : supprime l'avis entier (note + texte), la moyenne du cours est recalculée ; `404` si inconnu |
 
 ---
 
@@ -756,7 +791,8 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 ├──────────────┬────────────────────────────────────────────────┤
 │ [Utilisateurs]│  Utilisateurs           [Rechercher: ______ ]  │
 │ [Certificats] │  Nom          Email            Rôles     Actif │
-│ [Langues]     │  Amina B.     amina@...        LEARNER    ✅    │
+│ [Avis]        │  Amina B.     amina@...        LEARNER    ✅    │
+│ [Langues]     │                                               │
 │               │    [Rôles ▾] [Désactiver]                      │
 │               │  Karim K.     karim@...        INSTRUCTOR ✅    │
 │               │    [Rôles ▾] [Désactiver]                      │

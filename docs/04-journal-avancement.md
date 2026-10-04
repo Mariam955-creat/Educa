@@ -1217,3 +1217,21 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `./mvnw test` → **69/69**. Appel réel à Claude non vérifié (clé invalide).
 
 **Reste** : clé Anthropic valide dans `.env` ; lancer `stripe listen` avant l'étape 3.3 de la démo.
+
+## 2026-10-04 — Pied de page, cartes de cours, notes et avis, modération
+
+**Pied de page** (`app.component`) : marque + slogan, pastilles FR/EN/DE/NL qui changent la langue, liens « Apprendre » selon la connexion et le rôle (formateur, admin), atouts de la plateforme, barre de copyright ; collé en bas de page (`:host` en colonne flex), responsive. Aucun lien vers une page inexistante (pas de mentions légales/contact).
+
+**Cartes de cours** (catalogue) : couverture 16:9 (ou dégradé coloré + initiale), badge de langue, titre, formateur, note moyenne en étoiles + nombre d'avis (« Nouveau » sans note), nombre d'apprenants et de chapitres, prix.
+- Couverture : `POST/DELETE/GET /courses/{id}/cover` (`CourseCoverService`), PNG/JPEG/WEBP/GIF détectés par Tika, 5 Mo max, publique pour un cours publié (une balise `<img>` n'envoie pas le JWT), privée pour un brouillon ; `coverImageUrl` versionnée (`?v=` dérivé de la clé de stockage) pour un cache long sans image périmée. Aperçu dans `course-editor` lu en blob avec le jeton.
+- Statistiques : `CourseAudienceProvider` (`enrollment`) et `CourseRatingProvider` (`rating`) déclarées dans `course` — inversion de dépendance, pas de cycle ; chargées en deux requêtes groupées par page.
+
+**Notes et avis** : nouveau module `rating` (`course_ratings`, `V12` ; colonne `comment` ajoutée en `V13` car `V12` était déjà appliquée sur la base locale). Inscrits uniquement, une note par apprenant (modifiable), avis écrit facultatif (2 000 caractères). Page cours : section « Avis des apprenants » (`course-reviews`, composant à part comme `course-chat` — ce qui a aussi réglé un dépassement du budget de style de `course-detail`), formulaire pré-rempli, liste paginée par 5. Composant partagé `shared/star-rating` (lecture avec remplissage partiel, ou saisie).
+
+**Modération** : onglet « Avis » de `/admin` (`GET /admin/reviews`, `DELETE /admin/reviews/{id}`, ADMIN seulement) ; la suppression retire note et texte, la moyenne est recalculée.
+
+**Incident** : le premier affichage des cartes montrait `{{count}} apprenants` — le backend lancé tournait encore sur l'ancien code (pas de `learnerCount` dans la réponse) ; réglé par un redémarrage.
+
+**Vérifié** : `./mvnw test` → **79/79** (`CourseCardTest` : 10 tests — notes réservées aux inscrits, moyenne et remplacement, bornes, avis écrit publié et trop long, couverture publique/privée/non-image/autre formateur, modération RBAC + recalcul) ; `npm run build` sans avertissement, `npm run test:ci` → **22/22**. Pas encore déroulé au navigateur de bout en bout ; `scripts/e2e-mvp.mjs` non rejoué.
+
+**Reste** : les cours de démo n'ont ni couverture ni avis (à ajouter à la main pour la soutenance) ; registre admin des avis limité aux 50 plus récents.

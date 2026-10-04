@@ -55,7 +55,12 @@
     "title": "Catalogue des formations",
     "searchPlaceholder": "Rechercher un cours…",
     "empty": "Aucun cours ne correspond.",
-    "meta": "{{instructor}} · {{chapters}} chapitre(s) · {{language}}"
+    "newCourse": "Nouveau",
+    "learners": "{{count}} apprenants",
+    "learnerOne": "1 apprenant",
+    "chapters": "{{count}} chapitres",
+    "chapterOne": "1 chapitre",
+    "ratingLabel": "Note : {{value}} sur 5"
   },
   "certificates": {
     "title": "Mes certificats",
@@ -109,7 +114,20 @@
     "buyStripe": "Payer par carte (Europe)",
     "buyOrangeMoney": "Payer avec Orange Money (Afrique)",
     "paymentSuccess": "Paiement reçu, merci ! Inscription en cours…",
-    "paymentCancelled": "Le paiement a été annulé, aucun montant n'a été débité."
+    "paymentCancelled": "Le paiement a été annulé, aucun montant n'a été débité.",
+    "reviews": "({{count}} avis)",
+    "reviewOne": "(1 avis)",
+    "rateThisCourse": "Notez ce cours",
+    "yourRating": "Votre note",
+    "ratingThanks": "Merci pour votre avis !",
+    "reviewsTitle": "Avis des apprenants",
+    "ratings": "{{count}} notes",
+    "ratingOne": "1 note",
+    "reviewPlaceholder": "Partagez votre expérience avec ce cours (facultatif)",
+    "publishReview": "Publier mon avis",
+    "updateReview": "Modifier mon avis",
+    "noReviews": "Aucun avis écrit pour l'instant.",
+    "moreReviews": "Voir plus d'avis"
   },
   "chat": {
     "title": "💬 Assistant du cours",
@@ -162,7 +180,15 @@
       "saved": "Traduction enregistrée.",
       "saveError": "Impossible d'enregistrer la traduction.",
       "confirmDelete": "Supprimer la traduction dans cette langue ?"
-    }
+    },
+    "cover": "Image de couverture",
+    "noCover": "Aucune image",
+    "coverHint": "PNG, JPEG, WEBP ou GIF, 5 Mo max. Format conseillé : 16:9 (ex. 1280 × 720).",
+    "coverUpload": "Choisir une image",
+    "coverReplace": "Remplacer l'image",
+    "coverRemove": "Retirer l'image",
+    "coverSaved": "Image de couverture enregistrée.",
+    "coverError": "Impossible d'enregistrer l'image."
   },
   "instructorDashboard": {
     "title": "Espace formateur",
@@ -231,7 +257,8 @@
       "users": "Utilisateurs",
       "certificates": "Certificats",
       "payments": "Paiements",
-      "languages": "Langues"
+      "languages": "Langues",
+      "reviews": "Avis"
     },
     "roles": {
       "LEARNER": "Apprenant",
@@ -277,6 +304,16 @@
       "headerName": "Nom",
       "activate": "Activer",
       "deactivate": "Désactiver"
+    },
+    "reviews": {
+      "empty": "Aucun avis pour le moment.",
+      "headerCourse": "Cours",
+      "headerAuthor": "Auteur",
+      "headerRating": "Note",
+      "headerComment": "Avis",
+      "headerDate": "Date",
+      "confirmDelete": "Supprimer l'avis de {{name}} ? Sa note sera retirée de la moyenne du cours.",
+      "deleteError": "Impossible de supprimer l'avis."
     }
   },
   "footer": {

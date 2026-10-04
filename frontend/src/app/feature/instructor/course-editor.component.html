@@ -34,6 +34,27 @@
   </form>
 
   @if (course(); as c) {
+    <h2>{{ 'courseEditor.cover' | translate }}</h2>
+    <div class="card cover-card">
+      <div class="cover-preview">
+        @if (coverPreview(); as preview) {
+          <img [src]="preview" alt="" />
+        } @else {
+          <span class="muted">{{ 'courseEditor.noCover' | translate }}</span>
+        }
+      </div>
+      <div class="cover-actions">
+        <p class="muted">{{ 'courseEditor.coverHint' | translate }}</p>
+        <label class="file-btn">
+          {{ (c.coverImageUrl ? 'courseEditor.coverReplace' : 'courseEditor.coverUpload') | translate }}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="onCoverPicked($event)" hidden />
+        </label>
+        @if (c.coverImageUrl) {
+          <button type="button" class="danger" (click)="removeCover()">{{ 'courseEditor.coverRemove' | translate }}</button>
+        }
+      </div>
+    </div>
+
     <h2>{{ 'courseEditor.chapters' | translate }}</h2>
     @if (c.chapters.length === 0) {
       <p class="muted">{{ 'courseEditor.noChapters' | translate }}</p>

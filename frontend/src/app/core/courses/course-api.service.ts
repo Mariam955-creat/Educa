@@ -11,6 +11,8 @@ import {
   ContentItem,
   CourseDetail,
   CourseFormValue,
+  CourseRating,
+  CourseReview,
   CourseSummary,
   CourseTranslationEdit,
   Page,
@@ -116,5 +118,39 @@ export class CourseApiService {
 
   downloadFile(contentId: number): Observable<Blob> {
     return this.http.get(`${this.base}/contents/${contentId}/file`, { responseType: 'blob' });
+  }
+
+  /** URL affichable d'une couverture : le backend renvoie un chemin `/api/v1/...`, rebasé sur `API_BASE_URL`. */
+  coverSrc(coverImageUrl: string | null | undefined): string | null {
+    return coverImageUrl ? this.base + coverImageUrl.replace(/^\/api\/v1/, '') : null;
+  }
+
+  /** Couverture lue avec le jeton (aperçu de l'éditeur : un cours non publié n'a pas de couverture publique). */
+  coverBlob(courseId: number): Observable<Blob> {
+    return this.http.get(`${this.base}/courses/${courseId}/cover`, { responseType: 'blob' });
+  }
+
+  uploadCover(courseId: number, file: File): Observable<CourseSummary> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<CourseSummary>(`${this.base}/courses/${courseId}/cover`, form);
+  }
+
+  removeCover(courseId: number): Observable<CourseSummary> {
+    return this.http.delete<CourseSummary>(`${this.base}/courses/${courseId}/cover`);
+  }
+
+  rating(courseId: number): Observable<CourseRating> {
+    return this.http.get<CourseRating>(`${this.base}/courses/${courseId}/rating`);
+  }
+
+  /** @param comment avis écrit facultatif (vide = note seule) */
+  rate(courseId: number, stars: number, comment?: string): Observable<CourseRating> {
+    return this.http.put<CourseRating>(`${this.base}/courses/${courseId}/rating`, { stars, comment });
+  }
+
+  reviews(courseId: number, page = 0, size = 5): Observable<Page<CourseReview>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<CourseReview>>(`${this.base}/courses/${courseId}/reviews`, { params });
   }
 }

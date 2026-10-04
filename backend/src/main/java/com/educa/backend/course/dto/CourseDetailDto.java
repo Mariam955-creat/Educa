@@ -16,5 +16,9 @@ public record CourseDetailDto(
         int passThreshold,
         boolean contentsVisible,
         List<ChapterDto> chapters,
-        BigDecimal price) {
+        BigDecimal price,
+        String coverImageUrl,
+        long learnerCount,
+        Double averageRating,
+        long ratingCount) {
 }

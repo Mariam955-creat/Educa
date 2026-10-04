@@ -3,8 +3,20 @@
 
   @if (course(); as c) {
     <header class="course-head">
+      @if (api.coverSrc(c.coverImageUrl); as src) {
+        <img class="cover" [src]="src" alt="" />
+      }
       <h1>{{ c.title }}</h1>
       <p class="meta">{{ 'course.by' | translate: { instructor: c.instructorName, language: c.language } }}</p>
+      <p class="stats">
+        @if (c.averageRating != null) {
+          <strong class="rating-value">{{ formatRating(c.averageRating) }}</strong>
+          <app-star-rating [value]="c.averageRating" size="small" [label]="'catalog.ratingLabel' | translate: { value: formatRating(c.averageRating) }" />
+          <span>{{ (c.ratingCount === 1 ? 'course.reviewOne' : 'course.reviews') | translate: { count: c.ratingCount } }}</span>
+          <span aria-hidden="true">·</span>
+        }
+        <span>{{ (c.learnerCount === 1 ? 'catalog.learnerOne' : 'catalog.learners') | translate: { count: c.learnerCount } }}</span>
+      </p>
       <p class="desc">{{ c.description }}</p>
       <p class="price" [class.free]="c.price === 0">
         {{ c.price === 0 ? ('course.free' | translate) : (c.price | money: 'EUR' : lang.current()) }}
@@ -142,6 +154,8 @@
         </article>
       }
     }
+
+    <app-course-reviews [courseId]="c.id" (ratingChange)="onRatingChange($event)" />
   } @else if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else {

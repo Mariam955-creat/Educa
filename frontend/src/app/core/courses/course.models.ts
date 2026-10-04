@@ -10,6 +10,12 @@ export interface CourseSummary {
   instructorName: string;
   chapterCount: number;
   price: number;
+  /** URL de l'image de couverture (chemin API), absente si le formateur n'en a pas mis. */
+  coverImageUrl?: string;
+  learnerCount: number;
+  /** Note moyenne sur 5, absente tant que personne n'a noté. */
+  averageRating?: number;
+  ratingCount: number;
 }
 
 export interface ContentItem {
@@ -44,6 +50,28 @@ export interface CourseDetail {
   contentsVisible: boolean;
   chapters: ChapterItem[];
   price: number;
+  /** URL de l'image de couverture (chemin API), absente si le formateur n'en a pas mis. */
+  coverImageUrl?: string;
+  learnerCount: number;
+  /** Note moyenne sur 5, absente tant que personne n'a noté. */
+  averageRating?: number;
+  ratingCount: number;
+}
+
+export interface CourseRating {
+  average?: number;
+  count: number;
+  myStars?: number;
+  myComment?: string;
+  canRate: boolean;
+}
+
+export interface CourseReview {
+  id: number;
+  authorName: string;
+  stars: number;
+  comment: string;
+  updatedAt: string;
 }
 
 export interface Page<T> {

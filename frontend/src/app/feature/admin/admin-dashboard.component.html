@@ -20,6 +20,9 @@
     <button type="button" [class.active]="tab() === 'payments'" (click)="selectTab('payments')">
       {{ 'admin.tabs.payments' | translate }}
     </button>
+    <button type="button" [class.active]="tab() === 'reviews'" (click)="selectTab('reviews')">
+      {{ 'admin.tabs.reviews' | translate }}
+    </button>
     <button type="button" [class.active]="tab() === 'languages'" (click)="selectTab('languages')">
       {{ 'admin.tabs.languages' | translate }}
     </button>
@@ -144,6 +147,41 @@
               </td>
               <td>{{ payment.invoiceNumber ?? '—' }}</td>
               <td>{{ payment.createdAt | localDate: 'short' : lang.current() }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  } @else if (tab() === 'reviews') {
+    @if (reviewsLoading()) {
+      <p class="muted">{{ 'common.loading' | translate }}</p>
+    } @else if (reviews().length === 0) {
+      <p class="muted">{{ 'admin.reviews.empty' | translate }}</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'admin.reviews.headerCourse' | translate }}</th>
+            <th>{{ 'admin.reviews.headerAuthor' | translate }}</th>
+            <th>{{ 'admin.reviews.headerRating' | translate }}</th>
+            <th>{{ 'admin.reviews.headerComment' | translate }}</th>
+            <th>{{ 'admin.reviews.headerDate' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (review of reviews(); track review.id) {
+            <tr>
+              <td><a [routerLink]="['/courses', review.courseSlug]">{{ review.courseTitle }}</a></td>
+              <td>{{ review.authorName }}</td>
+              <td><app-star-rating [value]="review.stars" size="small" [label]="review.stars + ' / 5'" /></td>
+              <td class="review-comment">{{ review.comment ?? '—' }}</td>
+              <td>{{ review.updatedAt | localDate: 'short' : lang.current() }}</td>
+              <td class="actions">
+                <button type="button" class="danger" (click)="deleteReview(review)">
+                  {{ 'common.delete' | translate }}
+                </button>
+              </td>
             </tr>
           }
         </tbody>

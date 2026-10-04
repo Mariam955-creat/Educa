@@ -55,7 +55,12 @@
     "title": "Cursuscatalogus",
     "searchPlaceholder": "Een cursus zoeken…",
     "empty": "Geen cursus gevonden.",
-    "meta": "{{instructor}} · {{chapters}} hoofdstuk(ken) · {{language}}"
+    "newCourse": "Nieuw",
+    "learners": "{{count}} cursisten",
+    "learnerOne": "1 cursist",
+    "chapters": "{{count}} hoofdstukken",
+    "chapterOne": "1 hoofdstuk",
+    "ratingLabel": "Beoordeling: {{value}} van 5"
   },
   "certificates": {
     "title": "Mijn certificaten",
@@ -109,7 +114,20 @@
     "buyStripe": "Betalen met kaart (Europa)",
     "buyOrangeMoney": "Betalen met Orange Money (Afrika)",
     "paymentSuccess": "Betaling ontvangen, bedankt! Bezig met inschrijven…",
-    "paymentCancelled": "De betaling is geannuleerd, er is niets afgeschreven."
+    "paymentCancelled": "De betaling is geannuleerd, er is niets afgeschreven.",
+    "reviews": "({{count}} beoordelingen)",
+    "reviewOne": "(1 beoordeling)",
+    "rateThisCourse": "Beoordeel deze cursus",
+    "yourRating": "Jouw beoordeling",
+    "ratingThanks": "Bedankt voor je beoordeling!",
+    "reviewsTitle": "Beoordelingen van cursisten",
+    "ratings": "{{count}} beoordelingen",
+    "ratingOne": "1 beoordeling",
+    "reviewPlaceholder": "Deel je ervaring met deze cursus (optioneel)",
+    "publishReview": "Beoordeling plaatsen",
+    "updateReview": "Beoordeling wijzigen",
+    "noReviews": "Nog geen geschreven beoordelingen.",
+    "moreReviews": "Meer beoordelingen tonen"
   },
   "chat": {
     "title": "💬 Cursusassistent",
@@ -162,7 +180,15 @@
       "saved": "Vertaling opgeslagen.",
       "saveError": "De vertaling kon niet worden opgeslagen.",
       "confirmDelete": "De vertaling in deze taal verwijderen?"
-    }
+    },
+    "cover": "Omslagafbeelding",
+    "noCover": "Geen afbeelding",
+    "coverHint": "PNG, JPEG, WEBP of GIF, max. 5 MB. Aanbevolen formaat: 16:9 (bv. 1280 × 720).",
+    "coverUpload": "Afbeelding kiezen",
+    "coverReplace": "Afbeelding vervangen",
+    "coverRemove": "Afbeelding verwijderen",
+    "coverSaved": "Omslagafbeelding opgeslagen.",
+    "coverError": "De afbeelding kon niet worden opgeslagen."
   },
   "instructorDashboard": {
     "title": "Docentenruimte",
@@ -231,7 +257,8 @@
       "users": "Gebruikers",
       "certificates": "Certificaten",
       "payments": "Betalingen",
-      "languages": "Talen"
+      "languages": "Talen",
+      "reviews": "Beoordelingen"
     },
     "roles": {
       "LEARNER": "Cursist",
@@ -277,6 +304,16 @@
       "headerName": "Naam",
       "activate": "Activeren",
       "deactivate": "Deactiveren"
+    },
+    "reviews": {
+      "empty": "Nog geen beoordelingen.",
+      "headerCourse": "Cursus",
+      "headerAuthor": "Auteur",
+      "headerRating": "Score",
+      "headerComment": "Beoordeling",
+      "headerDate": "Datum",
+      "confirmDelete": "Beoordeling van {{name}} verwijderen? De score wordt uit het cursusgemiddelde gehaald.",
+      "deleteError": "De beoordeling kon niet worden verwijderd."
     }
   },
   "footer": {

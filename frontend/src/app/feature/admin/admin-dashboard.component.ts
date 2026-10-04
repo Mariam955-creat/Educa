@@ -1,22 +1,29 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { AdminApiService } from '../../core/admin/admin-api.service';
-import { AdminUser, CertificateRegistryEntry, PaymentRegistryEntry } from '../../core/admin/admin.models';
+import {
+  AdminUser,
+  CertificateRegistryEntry,
+  PaymentRegistryEntry,
+  ReviewRegistryEntry,
+} from '../../core/admin/admin.models';
 import { AuthService } from '../../core/auth/auth.service';
 import { RoleName } from '../../core/auth/auth.models';
 import { LanguageService } from '../../core/i18n/language.service';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { CourseLanguage } from '../../core/language/language-api.service';
+import { StarRatingComponent } from '../../shared/star-rating/star-rating.component';
 
-type Tab = 'users' | 'certificates' | 'payments' | 'languages';
+type Tab = 'users' | 'certificates' | 'payments' | 'reviews' | 'languages';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [LocalDatePipe, FormsModule, MoneyPipe, TranslatePipe],
+  imports: [LocalDatePipe, FormsModule, RouterLink, MoneyPipe, TranslatePipe, StarRatingComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })
@@ -44,6 +51,10 @@ export class AdminDashboardComponent implements OnInit {
   readonly paymentsLoading = signal(true);
   private paymentsLoaded = false;
 
+  readonly reviews = signal<ReviewRegistryEntry[]>([]);
+  readonly reviewsLoading = signal(true);
+  private reviewsLoaded = false;
+
   readonly languages = signal<CourseLanguage[]>([]);
   readonly languagesLoading = signal(true);
   private languagesLoaded = false;
@@ -59,6 +70,9 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (tab === 'payments' && !this.paymentsLoaded) {
       this.loadPayments();
+    }
+    if (tab === 'reviews' && !this.reviewsLoaded) {
+      this.loadReviews();
     }
     if (tab === 'languages' && !this.languagesLoaded) {
       this.loadLanguages();
@@ -95,6 +109,17 @@ export class AdminDashboardComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.flash(err.error?.message ?? this.translate.instant('admin.users.updateError'));
         this.loadUsers();
+      },
+    });
+  }
+
+  deleteReview(review: ReviewRegistryEntry): void {
+    if (!confirm(this.translate.instant('admin.reviews.confirmDelete', { name: review.authorName }))) return;
+    this.api.deleteReview(review.id).subscribe({
+      next: () => this.reviews.update((list) => list.filter((r) => r.id !== review.id)),
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('admin.reviews.deleteError'));
+        this.loadReviews();
       },
     });
   }
@@ -146,6 +171,18 @@ export class AdminDashboardComponent implements OnInit {
         this.paymentsLoaded = true;
       },
       error: () => this.paymentsLoading.set(false),
+    });
+  }
+
+  private loadReviews(): void {
+    this.reviewsLoading.set(true);
+    this.api.reviewRegistry().subscribe({
+      next: (page) => {
+        this.reviews.set(page.content);
+        this.reviewsLoading.set(false);
+        this.reviewsLoaded = true;
+      },
+      error: () => this.reviewsLoading.set(false),
     });
   }
 

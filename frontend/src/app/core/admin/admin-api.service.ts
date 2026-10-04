@@ -5,7 +5,13 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api';
 import { RoleName } from '../auth/auth.models';
 import { CourseLanguage } from '../language/language-api.service';
-import { AdminUser, CertificateRegistryEntry, Page, PaymentRegistryEntry } from './admin.models';
+import {
+  AdminUser,
+  CertificateRegistryEntry,
+  Page,
+  PaymentRegistryEntry,
+  ReviewRegistryEntry,
+} from './admin.models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
@@ -34,6 +40,15 @@ export class AdminApiService {
   paymentRegistry(page = 0, size = 50): Observable<Page<PaymentRegistryEntry>> {
     const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<PaymentRegistryEntry>>(`${this.base}/admin/payments`, { params });
+  }
+
+  reviewRegistry(page = 0, size = 50): Observable<Page<ReviewRegistryEntry>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<ReviewRegistryEntry>>(`${this.base}/admin/reviews`, { params });
+  }
+
+  deleteReview(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/admin/reviews/${id}`);
   }
 
   languages(): Observable<CourseLanguage[]> {

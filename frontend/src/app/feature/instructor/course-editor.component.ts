@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -28,7 +28,7 @@ interface TranslationDraft {
   templateUrl: './course-editor.component.html',
   styleUrl: './course-editor.component.scss',
 })
-export class CourseEditorComponent implements OnInit {
+export class CourseEditorComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(CourseApiService);
   private readonly quizApi = inject(QuizApiService);
@@ -38,6 +38,8 @@ export class CourseEditorComponent implements OnInit {
   private readonly translate = inject(TranslateService);
 
   readonly course = signal<CourseDetail | null>(null);
+  /** Aperçu de la couverture (URL objet) : lu avec le jeton, la couverture d'un brouillon n'est pas publique. */
+  readonly coverPreview = signal<string | null>(null);
   readonly quizzes = signal<CourseQuizzes | null>(null);
   readonly languages = signal<CourseLanguage[]>([]);
   readonly isNew = computed(() => this.course() === null);
@@ -102,6 +104,33 @@ export class CourseEditorComponent implements OnInit {
     if (slug) {
       this.loadCourse(slug);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.setCoverPreview(null);
+  }
+
+  onCoverPicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const c = this.course();
+    input.value = '';
+    if (!file || !c) return;
+    this.api.uploadCover(c.id, file).subscribe({
+      next: () => {
+        this.flash(this.translate.instant('courseEditor.coverSaved'));
+        this.loadCourse(c.slug);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.flash(err.error?.message ?? this.translate.instant('courseEditor.coverError'), true);
+      },
+    });
+  }
+
+  removeCover(): void {
+    const c = this.course();
+    if (!c) return;
+    this.api.removeCover(c.id).subscribe(() => this.loadCourse(c.slug));
   }
 
   saveCourse(): void {
@@ -264,6 +293,7 @@ export class CourseEditorComponent implements OnInit {
   private loadCourse(slug: string): void {
     this.api.detail(slug).subscribe((course) => {
       this.course.set(course);
+      this.loadCoverPreview(course);
       this.courseForm.patchValue({
         title: course.title,
         description: course.description ?? '',
@@ -281,6 +311,23 @@ export class CourseEditorComponent implements OnInit {
       this.translationDraft.set(null);
       this.loadTranslationLanguages(course.id);
     });
+  }
+
+  private loadCoverPreview(course: CourseDetail): void {
+    if (!course.coverImageUrl) {
+      this.setCoverPreview(null);
+      return;
+    }
+    this.api.coverBlob(course.id).subscribe({
+      next: (blob) => this.setCoverPreview(URL.createObjectURL(blob)),
+      error: () => this.setCoverPreview(null),
+    });
+  }
+
+  private setCoverPreview(url: string | null): void {
+    const previous = this.coverPreview();
+    if (previous) URL.revokeObjectURL(previous);
+    this.coverPreview.set(url);
   }
 
   private flash(text: string, isError = false): void {

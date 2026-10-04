@@ -55,7 +55,12 @@
     "title": "Kurskatalog",
     "searchPlaceholder": "Kurs suchen…",
     "empty": "Keine passenden Kurse gefunden.",
-    "meta": "{{instructor}} · {{chapters}} Kapitel · {{language}}"
+    "newCourse": "Neu",
+    "learners": "{{count}} Lernende",
+    "learnerOne": "1 Lernende(r)",
+    "chapters": "{{count}} Kapitel",
+    "chapterOne": "1 Kapitel",
+    "ratingLabel": "Bewertung: {{value}} von 5"
   },
   "certificates": {
     "title": "Meine Zertifikate",
@@ -109,7 +114,20 @@
     "buyStripe": "Mit Karte bezahlen (Europa)",
     "buyOrangeMoney": "Mit Orange Money bezahlen (Afrika)",
     "paymentSuccess": "Zahlung erhalten, danke! Einschreibung läuft…",
-    "paymentCancelled": "Die Zahlung wurde abgebrochen, es wurde nichts abgebucht."
+    "paymentCancelled": "Die Zahlung wurde abgebrochen, es wurde nichts abgebucht.",
+    "reviews": "({{count}} Bewertungen)",
+    "reviewOne": "(1 Bewertung)",
+    "rateThisCourse": "Diesen Kurs bewerten",
+    "yourRating": "Ihre Bewertung",
+    "ratingThanks": "Danke für Ihre Bewertung!",
+    "reviewsTitle": "Bewertungen der Lernenden",
+    "ratings": "{{count}} Bewertungen",
+    "ratingOne": "1 Bewertung",
+    "reviewPlaceholder": "Teilen Sie Ihre Erfahrung mit diesem Kurs (optional)",
+    "publishReview": "Bewertung veröffentlichen",
+    "updateReview": "Bewertung ändern",
+    "noReviews": "Noch keine schriftlichen Bewertungen.",
+    "moreReviews": "Weitere Bewertungen anzeigen"
   },
   "chat": {
     "title": "💬 Kursassistent",
@@ -162,7 +180,15 @@
       "saved": "Übersetzung gespeichert.",
       "saveError": "Übersetzung konnte nicht gespeichert werden.",
       "confirmDelete": "Übersetzung in dieser Sprache löschen?"
-    }
+    },
+    "cover": "Titelbild",
+    "noCover": "Kein Bild",
+    "coverHint": "PNG, JPEG, WEBP oder GIF, max. 5 MB. Empfohlenes Format: 16:9 (z. B. 1280 × 720).",
+    "coverUpload": "Bild auswählen",
+    "coverReplace": "Bild ersetzen",
+    "coverRemove": "Bild entfernen",
+    "coverSaved": "Titelbild gespeichert.",
+    "coverError": "Das Bild konnte nicht gespeichert werden."
   },
   "instructorDashboard": {
     "title": "Kursleiterbereich",
@@ -231,7 +257,8 @@
       "users": "Benutzer",
       "certificates": "Zertifikate",
       "payments": "Zahlungen",
-      "languages": "Sprachen"
+      "languages": "Sprachen",
+      "reviews": "Bewertungen"
     },
     "roles": {
       "LEARNER": "Lernende/r",
@@ -277,6 +304,16 @@
       "headerName": "Name",
       "activate": "Aktivieren",
       "deactivate": "Deaktivieren"
+    },
+    "reviews": {
+      "empty": "Noch keine Bewertungen.",
+      "headerCourse": "Kurs",
+      "headerAuthor": "Verfasser",
+      "headerRating": "Note",
+      "headerComment": "Bewertung",
+      "headerDate": "Datum",
+      "confirmDelete": "Bewertung von {{name}} löschen? Die Note wird aus dem Kursdurchschnitt entfernt.",
+      "deleteError": "Die Bewertung konnte nicht gelöscht werden."
     }
   },
   "footer": {

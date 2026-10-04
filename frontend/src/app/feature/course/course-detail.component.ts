@@ -6,27 +6,30 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/auth.service';
 import { CertificateApiService } from '../../core/certificates/certificate-api.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
-import { ContentItem, CourseDetail } from '../../core/courses/course.models';
+import { ContentItem, CourseDetail, CourseRating } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
+import { intlLocale } from '../../core/i18n/intl-locale';
 import { LanguageService } from '../../core/i18n/language.service';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
+import { StarRatingComponent } from '../../shared/star-rating/star-rating.component';
 import { CourseChatComponent } from './course-chat.component';
+import { CourseReviewsComponent } from './course-reviews.component';
 
 const ENROLL_RETRY_DELAY_MS = 2000;
 const ENROLL_RETRIES_AFTER_PAYMENT = 5;
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent, TranslatePipe, MoneyPipe],
+  imports: [RouterLink, CourseChatComponent, CourseReviewsComponent, TranslatePipe, MoneyPipe, StarRatingComponent],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })
 export class CourseDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(CourseApiService);
+  readonly api = inject(CourseApiService);
   private readonly enrollmentApi = inject(EnrollmentApiService);
   private readonly paymentApi = inject(PaymentApiService);
   private readonly quizApi = inject(QuizApiService);
@@ -95,6 +98,20 @@ export class CourseDetailComponent implements OnInit {
         this.enrollError.set(err.error?.message ?? this.translate.instant('course.enrollError'));
       },
     });
+  }
+
+  /** Note moyenne dans la langue de l'interface : « 4,5 » (fr), « 4.5 » (en). */
+  formatRating(value: number): string {
+    return new Intl.NumberFormat(intlLocale(this.lang.current()), {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(value);
+  }
+
+  /** Après publication d'un avis : met à jour la note affichée en tête de page. */
+  onRatingChange(rating: CourseRating): void {
+    const c = this.course();
+    if (c) this.course.set({ ...c, averageRating: rating.average, ratingCount: rating.count });
   }
 
   markComplete(content: ContentItem): void {

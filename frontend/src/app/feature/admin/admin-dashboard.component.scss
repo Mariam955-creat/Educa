@@ -157,3 +157,13 @@ select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.actions button.danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.review-comment {
+  max-width: 28rem;
+  white-space: pre-line;
+}

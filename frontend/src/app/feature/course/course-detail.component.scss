@@ -242,3 +242,39 @@ button:disabled {
   margin-top: 0.85rem;
   background: #16a34a;
 }
+
+/* --- Couverture, statistiques et note --- */
+.cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: -0.5rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.rating-value {
+  color: #b45309;
+}
+
+
+.rate-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.rate-thanks {
+  color: #15803d;
+  font-size: 0.85rem;
+}
+

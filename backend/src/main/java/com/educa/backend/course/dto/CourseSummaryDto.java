@@ -2,6 +2,10 @@ package com.educa.backend.course.dto;
 
 import java.math.BigDecimal;
 
+/**
+ * @param coverImageUrl  URL de l'image de couverture ({@code null} si aucune) — versionnée pour le cache navigateur
+ * @param averageRating  note moyenne sur 5, {@code null} tant que personne n'a noté
+ */
 public record CourseSummaryDto(
         Long id,
         String slug,
@@ -11,5 +15,9 @@ public record CourseSummaryDto(
         boolean published,
         String instructorName,
         int chapterCount,
-        BigDecimal price) {
+        BigDecimal price,
+        String coverImageUrl,
+        long learnerCount,
+        Double averageRating,
+        long ratingCount) {
 }

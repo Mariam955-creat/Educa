@@ -11,19 +11,43 @@
     <div class="grid">
       @for (course of courses(); track course.id) {
         <a class="course-card" [routerLink]="['/courses', course.slug]">
-          <h3>{{ course.title }}</h3>
-          <p class="desc">{{ course.description }}</p>
-          <p class="meta">
-            {{
-              'catalog.meta'
-                | translate
-                  : {
-                      instructor: course.instructorName,
-                      chapters: course.chapterCount,
-                      language: (course.language | uppercase),
-                    }
-            }}
-          </p>
+          <div class="cover" [style.background]="course.coverImageUrl ? null : fallbackCover(course.id)">
+            @if (api.coverSrc(course.coverImageUrl); as src) {
+              <img [src]="src" alt="" loading="lazy" />
+            } @else {
+              <span class="cover-initial" aria-hidden="true">{{ course.title.charAt(0) }}</span>
+            }
+            <span class="lang-badge">{{ course.language | uppercase }}</span>
+          </div>
+
+          <div class="body">
+            <h3>{{ course.title }}</h3>
+            <p class="instructor">{{ course.instructorName }}</p>
+
+            <div class="rating">
+              @if (course.averageRating != null) {
+                <strong class="rating-value">{{ formatRating(course.averageRating) }}</strong>
+                <app-star-rating
+                  [value]="course.averageRating"
+                  size="small"
+                  [label]="'catalog.ratingLabel' | translate: { value: formatRating(course.averageRating) }"
+                />
+                <span class="rating-count">({{ course.ratingCount }})</span>
+              } @else {
+                <span class="new-badge">{{ 'catalog.newCourse' | translate }}</span>
+              }
+            </div>
+
+            <p class="stats">
+              <span>{{ (course.learnerCount === 1 ? 'catalog.learnerOne' : 'catalog.learners') | translate: { count: course.learnerCount } }}</span>
+              <span aria-hidden="true">·</span>
+              <span>{{ (course.chapterCount === 1 ? 'catalog.chapterOne' : 'catalog.chapters') | translate: { count: course.chapterCount } }}</span>
+            </p>
+
+            <p class="price" [class.free]="course.price === 0">
+              {{ course.price === 0 ? ('course.free' | translate) : (course.price | money: 'EUR' : lang.current()) }}
+            </p>
+          </div>
         </a>
       }
     </div>

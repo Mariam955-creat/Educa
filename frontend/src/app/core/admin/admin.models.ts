@@ -34,6 +34,18 @@ export interface PaymentRegistryEntry {
   createdAt: string;
 }
 
+export interface ReviewRegistryEntry {
+  id: number;
+  courseId: number;
+  courseTitle: string;
+  courseSlug: string;
+  authorName: string;
+  stars: number;
+  /** Absent pour une note sans avis écrit. */
+  comment: string | null;
+  updatedAt: string;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

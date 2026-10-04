@@ -1,0 +1,63 @@
+<section class="reviews">
+  <h2>{{ 'course.reviewsTitle' | translate }}</h2>
+
+  @if (rating()?.average; as average) {
+    <div class="summary">
+      <span class="big-rating">{{ formatRating(average) }}</span>
+      <div>
+        <app-star-rating [value]="average" [label]="'catalog.ratingLabel' | translate: { value: formatRating(average) }" />
+        <p class="muted">{{ (rating()!.count === 1 ? 'course.ratingOne' : 'course.ratings') | translate: { count: rating()!.count } }}</p>
+      </div>
+    </div>
+  }
+
+  @if (rating()?.canRate) {
+    <form class="review-form" (ngSubmit)="submit()">
+      <span class="form-title">{{ (rating()?.myStars ? 'course.yourRating' : 'course.rateThisCourse') | translate }}</span>
+      <app-star-rating
+        [value]="draftStars()"
+        [editable]="!saving()"
+        [label]="'course.rateThisCourse' | translate"
+        (rate)="draftStars.set($event)"
+      />
+      <textarea
+        name="comment"
+        rows="3"
+        maxlength="2000"
+        [ngModel]="draftComment()"
+        (ngModelChange)="draftComment.set($event)"
+        [placeholder]="'course.reviewPlaceholder' | translate"
+      ></textarea>
+      <div class="actions">
+        <button type="submit" [disabled]="!draftStars() || saving()">
+          {{ (rating()?.myStars ? 'course.updateReview' : 'course.publishReview') | translate }}
+        </button>
+        @if (saved()) {
+          <span class="thanks">{{ 'course.ratingThanks' | translate }}</span>
+        }
+      </div>
+    </form>
+  }
+
+  @for (review of reviews(); track review.id) {
+    <article class="review">
+      <div class="review-head">
+        <span class="avatar" aria-hidden="true">{{ review.authorName.charAt(0) }}</span>
+        <div>
+          <strong>{{ review.authorName }}</strong>
+          <div class="review-meta">
+            <app-star-rating [value]="review.stars" size="small" [label]="review.stars + ' / 5'" />
+            <span>{{ review.updatedAt | localDate: 'long' : lang.current() }}</span>
+          </div>
+        </div>
+      </div>
+      <p class="review-text">{{ review.comment }}</p>
+    </article>
+  } @empty {
+    <p class="muted">{{ 'course.noReviews' | translate }}</p>
+  }
+
+  @if (hasMore()) {
+    <button type="button" class="more" (click)="loadMore()">{{ 'course.moreReviews' | translate }}</button>
+  }
+</section>

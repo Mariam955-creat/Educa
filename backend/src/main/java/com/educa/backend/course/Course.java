@@ -64,6 +64,14 @@ public class Course {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price = BigDecimal.ZERO;
 
+    /** Clé de stockage de l'image de couverture (module {@code storage}), {@code null} si aucune. */
+    @Column(name = "cover_image_key", length = 500)
+    private String coverImageKey;
+
+    /** Type MIME détecté de l'image de couverture. */
+    @Column(name = "cover_image_type", length = 100)
+    private String coverImageType;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

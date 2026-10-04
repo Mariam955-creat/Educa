@@ -35,12 +35,15 @@ public class CourseService {
     private final UserService userService;
     private final LanguageService languageService;
     private final List<CourseDeletionGuard> deletionGuards;
+    private final CourseAudienceProvider audienceProvider;
+    private final CourseRatingProvider ratingProvider;
 
     public CourseService(CourseRepository courseRepository, ContentRepository contentRepository,
                          CourseTranslationRepository courseTranslationRepository,
                          ChapterTranslationRepository chapterTranslationRepository,
                          CourseMapper mapper, UserService userService, LanguageService languageService,
-                         List<CourseDeletionGuard> deletionGuards) {
+                         List<CourseDeletionGuard> deletionGuards, CourseAudienceProvider audienceProvider,
+                         CourseRatingProvider ratingProvider) {
         this.courseRepository = courseRepository;
         this.contentRepository = contentRepository;
         this.courseTranslationRepository = courseTranslationRepository;
@@ -49,6 +52,8 @@ public class CourseService {
         this.userService = userService;
         this.languageService = languageService;
         this.deletionGuards = deletionGuards;
+        this.audienceProvider = audienceProvider;
+        this.ratingProvider = ratingProvider;
     }
 
     // ---------- écriture (formateur propriétaire / admin) ----------
@@ -93,14 +98,15 @@ public class CourseService {
         String normalizedLang = StringUtils.hasText(language) ? language : null;
         Page<Course> page = courseRepository.searchPublished(normalizedQ, normalizedLang, pageable);
         Map<Long, CourseTranslation> translations = courseTranslationsFor(page.getContent(), displayLanguage);
-        return page.map(course -> toSummary(course, translations.get(course.getId())));
+        CourseStats stats = statsFor(page.getContent());
+        return page.map(course -> toSummary(course, translations.get(course.getId()), stats));
     }
 
     @Transactional(readOnly = true)
     public java.util.List<CourseSummaryDto> listByInstructor(Long instructorId) {
-        return courseRepository.findByInstructorIdOrderByCreatedAtDesc(instructorId).stream()
-                .map(this::toSummary)
-                .toList();
+        List<Course> courses = courseRepository.findByInstructorIdOrderByCreatedAtDesc(instructorId);
+        CourseStats stats = statsFor(courses);
+        return courses.stream().map(course -> toSummary(course, null, stats)).toList();
     }
 
     /** Id d'un cours visible (publié, ou propriétaire/ADMIN) — 404 sinon. */
@@ -140,11 +146,14 @@ public class CourseService {
 
         String title = translation != null ? translation.getTitle() : course.getTitle();
         String description = translation != null ? translation.getDescription() : course.getDescription();
+        CourseStats stats = statsFor(List.of(course));
+        CourseRatingProvider.RatingStats rating = stats.rating(course.getId());
 
         return new CourseDetailDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(), userService.displayNameById(course.getInstructorId()),
                 course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters,
-                course.getPrice());
+                course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
+                rating != null ? rating.average() : null, rating != null ? rating.count() : 0);
     }
 
     // ---------- helpers inter-modules ----------
@@ -237,16 +246,50 @@ public class CourseService {
     }
 
     private CourseSummaryDto toSummary(Course course) {
-        return toSummary(course, null);
+        return toSummary(course, null, statsFor(List.of(course)));
     }
 
-    private CourseSummaryDto toSummary(Course course, CourseTranslation translation) {
+    private CourseSummaryDto toSummary(Course course, CourseTranslation translation, CourseStats stats) {
         String title = translation != null ? translation.getTitle() : course.getTitle();
         String description = translation != null ? translation.getDescription() : course.getDescription();
+        CourseRatingProvider.RatingStats rating = stats.rating(course.getId());
         return new CourseSummaryDto(course.getId(), course.getSlug(), title, description,
                 course.getLanguage(), course.isPublished(),
                 userService.displayNameById(course.getInstructorId()), course.getChapters().size(),
-                course.getPrice());
+                course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
+                rating != null ? rating.average() : null, rating != null ? rating.count() : 0);
+    }
+
+    /**
+     * URL publique de la couverture, ou {@code null}. Le paramètre {@code v} change à chaque nouvelle image
+     * (la clé de stockage est unique) : le navigateur peut la garder en cache sans jamais servir l'ancienne.
+     */
+    static String coverImageUrl(Course course) {
+        if (course.getCoverImageKey() == null) {
+            return null;
+        }
+        return "/api/v1/courses/" + course.getId() + "/cover?v="
+                + Integer.toHexString(course.getCoverImageKey().hashCode());
+    }
+
+    /** Inscrits et notes d'un lot de cours, chargés en deux requêtes groupées (pas de N+1 sur le catalogue). */
+    private CourseStats statsFor(List<Course> courses) {
+        if (courses.isEmpty()) {
+            return new CourseStats(Map.of(), Map.of());
+        }
+        List<Long> ids = courses.stream().map(Course::getId).toList();
+        return new CourseStats(audienceProvider.learnerCounts(ids), ratingProvider.ratingStats(ids));
+    }
+
+    private record CourseStats(Map<Long, Long> learnerCounts, Map<Long, CourseRatingProvider.RatingStats> ratings) {
+
+        long learners(Long courseId) {
+            return learnerCounts.getOrDefault(courseId, 0L);
+        }
+
+        CourseRatingProvider.RatingStats rating(Long courseId) {
+            return ratings.get(courseId);
+        }
     }
 
     /** Traductions (dans {@code displayLanguage}, si fourni) des cours d'une page, indexées par id de cours. */

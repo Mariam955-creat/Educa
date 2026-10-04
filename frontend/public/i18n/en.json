@@ -55,7 +55,12 @@
     "title": "Course catalog",
     "searchPlaceholder": "Search a course…",
     "empty": "No course matches.",
-    "meta": "{{instructor}} · {{chapters}} chapter(s) · {{language}}"
+    "newCourse": "New",
+    "learners": "{{count}} learners",
+    "learnerOne": "1 learner",
+    "chapters": "{{count}} chapters",
+    "chapterOne": "1 chapter",
+    "ratingLabel": "Rating: {{value}} out of 5"
   },
   "certificates": {
     "title": "My certificates",
@@ -109,7 +114,20 @@
     "buyStripe": "Pay by card (Europe)",
     "buyOrangeMoney": "Pay with Orange Money (Africa)",
     "paymentSuccess": "Payment received, thanks! Enrolling…",
-    "paymentCancelled": "The payment was cancelled, nothing was charged."
+    "paymentCancelled": "The payment was cancelled, nothing was charged.",
+    "reviews": "({{count}} reviews)",
+    "reviewOne": "(1 review)",
+    "rateThisCourse": "Rate this course",
+    "yourRating": "Your rating",
+    "ratingThanks": "Thanks for your feedback!",
+    "reviewsTitle": "Learner reviews",
+    "ratings": "{{count}} ratings",
+    "ratingOne": "1 rating",
+    "reviewPlaceholder": "Share your experience with this course (optional)",
+    "publishReview": "Post my review",
+    "updateReview": "Update my review",
+    "noReviews": "No written reviews yet.",
+    "moreReviews": "Show more reviews"
   },
   "chat": {
     "title": "💬 Course assistant",
@@ -162,7 +180,15 @@
       "saved": "Translation saved.",
       "saveError": "Could not save the translation.",
       "confirmDelete": "Delete the translation in this language?"
-    }
+    },
+    "cover": "Cover image",
+    "noCover": "No image",
+    "coverHint": "PNG, JPEG, WEBP or GIF, 5 MB max. Recommended ratio: 16:9 (e.g. 1280 × 720).",
+    "coverUpload": "Choose an image",
+    "coverReplace": "Replace image",
+    "coverRemove": "Remove image",
+    "coverSaved": "Cover image saved.",
+    "coverError": "Could not save the image."
   },
   "instructorDashboard": {
     "title": "Instructor area",
@@ -231,7 +257,8 @@
       "users": "Users",
       "certificates": "Certificates",
       "payments": "Payments",
-      "languages": "Languages"
+      "languages": "Languages",
+      "reviews": "Reviews"
     },
     "roles": {
       "LEARNER": "Learner",
@@ -277,6 +304,16 @@
       "headerName": "Name",
       "activate": "Activate",
       "deactivate": "Deactivate"
+    },
+    "reviews": {
+      "empty": "No reviews yet.",
+      "headerCourse": "Course",
+      "headerAuthor": "Author",
+      "headerRating": "Rating",
+      "headerComment": "Review",
+      "headerDate": "Date",
+      "confirmDelete": "Delete {{name}}'s review? Their rating will be removed from the course average.",
+      "deleteError": "Could not delete the review."
     }
   },
   "footer": {

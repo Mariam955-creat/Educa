@@ -1,0 +1,62 @@
+@if (auth.user(); as user) {
+  <button
+    type="button"
+    class="avatar"
+    [class.open]="open()"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="'userMenu.open' | translate"
+    (click)="toggle()"
+  >
+    {{ initials() }}
+  </button>
+
+  @if (open()) {
+    <div class="menu" role="menu">
+      <div class="identity">
+        <span class="avatar big" aria-hidden="true">{{ initials() }}</span>
+        <div class="identity-text">
+          <strong>{{ user.fullName }}</strong>
+          <span class="email">{{ user.email }}</span>
+          <span class="role">{{ roleKey() | translate }}</span>
+        </div>
+      </div>
+
+      <nav class="links">
+        <a role="menuitem" routerLink="/account">
+          <span class="icon" aria-hidden="true">👤</span>{{ 'userMenu.account' | translate }}
+        </a>
+        <a role="menuitem" routerLink="/dashboard">
+          <span class="icon" aria-hidden="true">📚</span>{{ 'userMenu.myCourses' | translate }}
+        </a>
+        <a role="menuitem" routerLink="/certificates">
+          <span class="icon" aria-hidden="true">🎓</span>{{ 'nav.certificates' | translate }}
+        </a>
+        <a role="menuitem" routerLink="/invoices">
+          <span class="icon" aria-hidden="true">🧾</span>{{ 'nav.invoices' | translate }}
+        </a>
+      </nav>
+
+      <div class="languages">
+        <span class="section-label"><span class="icon" aria-hidden="true">🌐</span>{{ 'userMenu.languages' | translate }}</span>
+        <div class="lang-pills" role="group" [attr.aria-label]="'userMenu.languages' | translate">
+          @for (code of lang.supported; track code) {
+            <button
+              type="button"
+              [class.active]="lang.current() === code"
+              [attr.aria-pressed]="lang.current() === code"
+              [attr.title]="'lang.' + code | translate"
+              (click)="changeLang(code)"
+            >
+              {{ code.toUpperCase() }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <button type="button" role="menuitem" class="logout" (click)="logout()">
+        <span class="icon" aria-hidden="true">⎋</span>{{ 'nav.logout' | translate }}
+      </button>
+    </div>
+  }
+}

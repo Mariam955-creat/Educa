@@ -3,10 +3,7 @@
 
   @if (auth.isAuthenticated()) {
     <nav class="nav">
-      <a routerLink="/dashboard" routerLinkActive="active">{{ 'nav.dashboard' | translate }}</a>
       <a routerLink="/catalog" routerLinkActive="active">{{ 'nav.catalog' | translate }}</a>
-      <a routerLink="/certificates" routerLinkActive="active">{{ 'nav.certificates' | translate }}</a>
-      <a routerLink="/invoices" routerLinkActive="active">{{ 'nav.invoices' | translate }}</a>
       @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
         <a routerLink="/instructor" routerLinkActive="active">{{ 'nav.instructor' | translate }}</a>
       }
@@ -15,20 +12,7 @@
       }
     </nav>
 
-    <div class="account">
-      <select
-        class="lang"
-        [value]="lang.current()"
-        (change)="changeLang($any($event.target).value)"
-        [attr.aria-label]="'lang.label' | translate"
-      >
-        @for (code of lang.supported; track code) {
-          <option [value]="code">{{ 'lang.' + code | translate }}</option>
-        }
-      </select>
-      <span class="who">{{ auth.user()?.fullName }}</span>
-      <button type="button" (click)="auth.logout()">{{ 'nav.logout' | translate }}</button>
-    </div>
+    <app-user-menu />
   } @else {
     <nav class="nav">
       <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | translate }}</a>

@@ -1,0 +1,59 @@
+<section class="page">
+  <h1>{{ 'account.title' | translate }}</h1>
+
+  @if (message()) {
+    <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
+  }
+
+  @if (auth.user(); as user) {
+    <div class="card profile">
+      <div class="identity">
+        <strong>{{ user.fullName }}</strong>
+        <span class="muted">{{ user.email }}</span>
+        <div class="roles">
+          @for (key of roleKeys(); track key) {
+            <span class="role">{{ key | translate }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <h2>{{ 'account.profile' | translate }}</h2>
+    <form class="card" [formGroup]="form" (ngSubmit)="save()">
+      <label>
+        {{ 'auth.register.fullName' | translate }}
+        <input type="text" formControlName="fullName" maxlength="150" />
+        @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+          <small class="field-error">{{ 'account.nameRequired' | translate }}</small>
+        }
+      </label>
+      <label>
+        {{ 'auth.login.email' | translate }}
+        <input type="email" [value]="user.email" disabled />
+        <small class="muted">{{ 'account.emailHint' | translate }}</small>
+      </label>
+      <button type="submit" [disabled]="saving() || form.pristine">
+        {{ (saving() ? 'account.saving' : 'account.save') | translate }}
+      </button>
+    </form>
+
+    <h2>{{ 'userMenu.languages' | translate }}</h2>
+    <div class="card">
+      <label>
+        {{ 'account.interfaceLanguage' | translate }}
+        <select [value]="lang.current()" (change)="changeLang($any($event.target).value)">
+          @for (code of lang.supported; track code) {
+            <option [value]="code">{{ 'lang.' + code | translate }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <h2>{{ 'account.shortcuts' | translate }}</h2>
+    <div class="shortcuts">
+      <a class="card shortcut" routerLink="/dashboard">📚 {{ 'userMenu.myCourses' | translate }}</a>
+      <a class="card shortcut" routerLink="/certificates">🎓 {{ 'nav.certificates' | translate }}</a>
+      <a class="card shortcut" routerLink="/invoices">🧾 {{ 'nav.invoices' | translate }}</a>
+    </div>
+  }
+</section>

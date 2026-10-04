@@ -44,14 +44,20 @@ export class AuthService {
   }
 
   updatePreferredLanguage(preferredLanguage: string): Observable<User> {
-    return this.http
-      .patch<User>(`${API_BASE_URL}/auth/me`, { preferredLanguage })
-      .pipe(
-        tap((user) => {
-          this._user.set(user);
-          localStorage.setItem(USER_KEY, JSON.stringify(user));
-        }),
-      );
+    return this.updateMe({ preferredLanguage });
+  }
+
+  updateFullName(fullName: string): Observable<User> {
+    return this.updateMe({ fullName });
+  }
+
+  private updateMe(body: { fullName?: string; preferredLanguage?: string }): Observable<User> {
+    return this.http.patch<User>(`${API_BASE_URL}/auth/me`, body).pipe(
+      tap((user) => {
+        this._user.set(user);
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+      }),
+    );
   }
 
   logout(): void {

@@ -328,5 +328,26 @@
     "languages": "Interface language",
     "rights": "All rights reserved.",
     "project": "Final-year project"
+  },
+  "userMenu": {
+    "open": "Open account menu",
+    "account": "My account",
+    "myCourses": "My courses",
+    "languages": "Languages",
+    "roleLearner": "Learner",
+    "roleInstructor": "Instructor",
+    "roleAdmin": "Administrator"
+  },
+  "account": {
+    "title": "My account",
+    "profile": "Profile",
+    "nameRequired": "Name is required.",
+    "emailHint": "Your email address is your login and cannot be changed.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Profile updated.",
+    "saveError": "Could not save your profile.",
+    "interfaceLanguage": "Interface language",
+    "shortcuts": "Shortcuts"
   }
 }

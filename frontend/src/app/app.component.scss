@@ -45,12 +45,6 @@ main {
   border-bottom-color: var(--accent, #7e22ce);
 }
 
-.account {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
 .lang {
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--border);
@@ -58,21 +52,6 @@ main {
   font: inherit;
   font-size: 0.85rem;
   background: var(--surface);
-}
-
-.who {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.account button {
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--border, #cbd0d6);
-  border-radius: 8px;
-  background: transparent;
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
 }
 
 /* --- Mobile : la barre passe sur 2 lignes (marque + compte, puis nav) --- */
@@ -90,14 +69,8 @@ main {
     gap: 0.4rem 1rem;
   }
 
-  .account {
+  app-user-menu {
     margin-inline-start: auto;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .who {
-    display: none; /* le nom complet prend trop de place sur petit écran */
   }
 }
 

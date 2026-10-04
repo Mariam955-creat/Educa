@@ -328,5 +328,26 @@
     "languages": "Taal van de interface",
     "rights": "Alle rechten voorbehouden.",
     "project": "Afstudeerproject"
+  },
+  "userMenu": {
+    "open": "Accountmenu openen",
+    "account": "Mijn account",
+    "myCourses": "Mijn cursussen",
+    "languages": "Talen",
+    "roleLearner": "Cursist",
+    "roleInstructor": "Docent",
+    "roleAdmin": "Beheerder"
+  },
+  "account": {
+    "title": "Mijn account",
+    "profile": "Profiel",
+    "nameRequired": "Naam is verplicht.",
+    "emailHint": "Je e-mailadres is je login en kan niet worden gewijzigd.",
+    "save": "Opslaan",
+    "saving": "Opslaan…",
+    "saved": "Profiel bijgewerkt.",
+    "saveError": "Je profiel kon niet worden opgeslagen.",
+    "interfaceLanguage": "Taal van de interface",
+    "shortcuts": "Snelkoppelingen"
   }
 }

@@ -328,5 +328,26 @@
     "languages": "Sprache der Oberfläche",
     "rights": "Alle Rechte vorbehalten.",
     "project": "Abschlussprojekt"
+  },
+  "userMenu": {
+    "open": "Kontomenü öffnen",
+    "account": "Mein Konto",
+    "myCourses": "Meine Kurse",
+    "languages": "Sprachen",
+    "roleLearner": "Lernende(r)",
+    "roleInstructor": "Kursleiter(in)",
+    "roleAdmin": "Administrator(in)"
+  },
+  "account": {
+    "title": "Mein Konto",
+    "profile": "Profil",
+    "nameRequired": "Der Name ist erforderlich.",
+    "emailHint": "Die E-Mail-Adresse ist Ihr Login und kann nicht geändert werden.",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Profil aktualisiert.",
+    "saveError": "Das Profil konnte nicht gespeichert werden.",
+    "interfaceLanguage": "Sprache der Oberfläche",
+    "shortcuts": "Schnellzugriff"
   }
 }

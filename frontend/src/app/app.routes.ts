@@ -41,6 +41,11 @@ export const routes: Routes = [
       import('./feature/certificate/my-certificates.component').then((m) => m.MyCertificatesComponent),
   },
   {
+    path: 'account',
+    canActivate: [authGuard],
+    loadComponent: () => import('./feature/account/account.component').then((m) => m.AccountComponent),
+  },
+  {
     path: 'invoices',
     canActivate: [authGuard],
     loadComponent: () => import('./feature/payment/my-invoices.component').then((m) => m.MyInvoicesComponent),

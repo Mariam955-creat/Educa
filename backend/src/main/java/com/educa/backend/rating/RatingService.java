@@ -116,6 +116,21 @@ public class RatingService {
         ratingRepository.delete(rating);
     }
 
+    /** Avis reçus par les cours d'un formateur, du plus récent au plus ancien. */
+    @Transactional(readOnly = true)
+    public List<AdminReviewDto> receivedByInstructor(Long instructorId) {
+        List<Long> courseIds = courseService.courseIdsByInstructor(instructorId);
+        if (courseIds.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Course> courses = new HashMap<>();
+        return ratingRepository.findByCourseIdInOrderByUpdatedAtDesc(courseIds).stream().map(r -> {
+            Course course = courses.computeIfAbsent(r.getCourseId(), courseService::requireCourse);
+            return new AdminReviewDto(r.getId(), course.getId(), course.getTitle(), course.getSlug(),
+                    userService.displayNameById(r.getUserId()), r.getStars(), r.getComment(), r.getUpdatedAt());
+        }).toList();
+    }
+
     /** Suppression par un administrateur (modération). */
     @Transactional
     public void delete(Long ratingId) {

@@ -16,6 +16,7 @@ import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 import { StarRatingComponent } from '../../shared/star-rating/star-rating.component';
 import { CourseChatComponent } from './course-chat.component';
+import { CoursePresentationComponent } from './course-presentation.component';
 import { CourseReviewsComponent } from './course-reviews.component';
 
 const ENROLL_RETRY_DELAY_MS = 2000;
@@ -23,7 +24,7 @@ const ENROLL_RETRIES_AFTER_PAYMENT = 5;
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent, CourseReviewsComponent, TranslatePipe, MoneyPipe, StarRatingComponent],
+  imports: [RouterLink, CourseChatComponent, CoursePresentationComponent, CourseReviewsComponent, TranslatePipe, MoneyPipe, StarRatingComponent],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })

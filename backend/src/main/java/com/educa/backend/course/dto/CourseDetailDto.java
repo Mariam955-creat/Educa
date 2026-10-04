@@ -3,6 +3,9 @@ package com.educa.backend.course.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.educa.backend.course.CourseCategory;
+import com.educa.backend.course.CourseLevel;
+
 public record CourseDetailDto(
         Long id,
         String slug,
@@ -20,5 +23,12 @@ public record CourseDetailDto(
         String coverImageUrl,
         long learnerCount,
         Double averageRating,
-        long ratingCount) {
+        long ratingCount,
+        String subtitle,
+        CourseCategory category,
+        CourseLevel level,
+        BigDecimal durationHours,
+        List<String> objectives,
+        List<String> prerequisites,
+        String targetAudience) {
 }

@@ -1,0 +1,99 @@
+<section class="page">
+  <div class="head">
+    <div>
+      <h1>{{ 'dashboard.greeting' | translate: { name: auth.user()?.fullName } }}</h1>
+      <p class="muted">{{ 'instructor.overview.subtitle' | translate }}</p>
+    </div>
+    <a class="btn" routerLink="../courses/new">＋ {{ 'instructor.newCourse' | translate }}</a>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else if (courses().length === 0) {
+    <div class="empty">
+      <span class="empty-icon" aria-hidden="true">🎬</span>
+      <h2>{{ 'instructor.overview.emptyTitle' | translate }}</h2>
+      <p class="muted">{{ 'instructor.overview.emptyText' | translate }}</p>
+      <a class="btn" routerLink="../courses/new">{{ 'instructor.overview.emptyCta' | translate }}</a>
+    </div>
+  } @else {
+    <div class="kpis">
+      <a class="kpi highlight" routerLink="../sales">
+        <span class="kpi-label">💶 {{ 'instructor.overview.revenue' | translate }}</span>
+        <span class="kpi-value">{{ revenue() | money: currency() : lang.current() }}</span>
+        <span class="kpi-sub">{{ 'instructor.overview.last30' | translate: { amount: (revenue30() | money: currency() : lang.current()) } }}</span>
+      </a>
+      <a class="kpi" routerLink="../sales">
+        <span class="kpi-label">🛒 {{ 'instructor.overview.sales' | translate }}</span>
+        <span class="kpi-value">{{ sales().length }}</span>
+      </a>
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-label">👥 {{ 'instructor.overview.learners' | translate }}</span>
+        <span class="kpi-value">{{ learners() }}</span>
+      </a>
+      <a class="kpi" routerLink="../reviews">
+        <span class="kpi-label">⭐ {{ 'instructor.overview.rating' | translate }}</span>
+        <span class="kpi-value">{{ averageRating() != null ? formatRating(averageRating()!) : '—' }}</span>
+        <span class="kpi-sub">{{ 'instructor.overview.ratingCount' | translate: { count: ratingCount() } }}</span>
+      </a>
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-label">📚 {{ 'instructor.overview.courses' | translate }}</span>
+        <span class="kpi-value">{{ courses().length }}</span>
+        <span class="kpi-sub">{{ 'instructor.overview.publishedOf' | translate: { published: publishedCount(), drafts: courses().length - publishedCount() } }}</span>
+      </a>
+    </div>
+
+    <div class="panels">
+      <article class="panel">
+        <div class="panel-head">
+          <h2>{{ 'instructor.overview.topCourses' | translate }}</h2>
+          <a routerLink="../courses">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (c of topCourses(); track c.id) {
+          <a class="row" [routerLink]="['../courses', c.slug, 'edit']">
+            <span class="row-title">{{ c.title }}</span>
+            <span class="muted">👥 {{ c.learnerCount }}</span>
+            <span class="muted">⭐ {{ c.averageRating != null ? formatRating(c.averageRating) : '—' }}</span>
+          </a>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>{{ 'instructor.overview.latestSales' | translate }}</h2>
+          <a routerLink="../sales">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (s of latestSales(); track s.id) {
+          <div class="row">
+            <span class="row-title">{{ s.courseTitle }}<small class="muted"> · {{ s.buyerName }}</small></span>
+            <span class="muted">{{ s.createdAt | localDate: 'long' : lang.current() }}</span>
+            <strong>{{ s.amount | money: s.currency : lang.current() }}</strong>
+          </div>
+        } @empty {
+          <p class="muted">{{ 'instructor.overview.noSales' | translate }}</p>
+        }
+      </article>
+
+      <article class="panel wide">
+        <div class="panel-head">
+          <h2>{{ 'instructor.overview.latestReviews' | translate }}</h2>
+          <a routerLink="../reviews">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (r of latestReviews(); track r.id) {
+          <div class="review">
+            <div class="review-head">
+              <app-star-rating [value]="r.stars" size="small" [label]="r.stars + ' / 5'" />
+              <strong>{{ r.authorName }}</strong>
+              <span class="muted">· {{ r.courseTitle }}</span>
+            </div>
+            @if (r.comment) {
+              <p>{{ r.comment }}</p>
+            }
+          </div>
+        } @empty {
+          <p class="muted">{{ 'instructor.overview.noReviews' | translate }}</p>
+        }
+      </article>
+    </div>
+  }
+</section>

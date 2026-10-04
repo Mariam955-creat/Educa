@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Year;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import com.educa.backend.course.CourseService;
 import com.educa.backend.payment.dto.AdminPaymentDto;
 import com.educa.backend.payment.dto.CheckoutRequest;
 import com.educa.backend.payment.dto.CheckoutResponse;
+import com.educa.backend.payment.dto.InstructorSaleDto;
 import com.educa.backend.payment.dto.InvoiceDto;
 import com.educa.backend.user.UserService;
 import com.educa.backend.user.dto.UserDto;
@@ -123,6 +126,22 @@ public class PaymentService {
                 .map(p -> new AdminPaymentDto(p.getId(), userService.displayNameById(p.getUserId()),
                         courseService.summary(p.getCourseId()).title(), p.getProvider(), p.getAmount(),
                         p.getCurrency(), p.getStatus(), p.getInvoiceNumber(), p.getCreatedAt()));
+    }
+
+    /** Ventes (paiements réussis) des cours d'un formateur, de la plus récente à la plus ancienne. */
+    @Transactional(readOnly = true)
+    public List<InstructorSaleDto> instructorSales(Long instructorId) {
+        List<Long> courseIds = courseService.courseIdsByInstructor(instructorId);
+        if (courseIds.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, String> titles = new HashMap<>();
+        return paymentRepository.findByCourseIdInAndStatusOrderByCreatedAtDesc(courseIds, PaymentStatus.SUCCEEDED)
+                .stream()
+                .map(p -> new InstructorSaleDto(p.getId(), p.getCourseId(),
+                        titles.computeIfAbsent(p.getCourseId(), id -> courseService.requireCourse(id).getTitle()),
+                        userService.displayNameById(p.getUserId()), p.getAmount(), p.getCurrency(), p.getCreatedAt()))
+                .toList();
     }
 
     /** Factures de l'apprenant connecté : un paiement réussi = une facture. */

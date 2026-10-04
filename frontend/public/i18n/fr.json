@@ -382,5 +382,110 @@
       "empty": "Vous n'avez encore noté aucun cours.",
       "confirmDelete": "Supprimer votre avis sur « {{course}} » ?"
     }
+  },
+  "instructor": {
+    "title": "Espace formateur",
+    "newCourse": "Nouveau cours",
+    "nav": {
+      "overview": "Tableau de bord",
+      "courses": "Mes cours",
+      "sales": "Revenus",
+      "reviews": "Avis reçus"
+    },
+    "overview": {
+      "subtitle": "Vos cours, vos apprenants et vos revenus en un coup d'œil.",
+      "emptyTitle": "Créez votre premier cours",
+      "emptyText": "Ajoutez des chapitres, des contenus et un contrôle par chapitre, fixez un prix, puis publiez : vos apprenants pourront l'acheter depuis le catalogue.",
+      "emptyCta": "Créer un cours",
+      "revenue": "Revenus",
+      "last30": "{{amount}} sur 30 jours",
+      "sales": "Ventes",
+      "learners": "Apprenants",
+      "rating": "Note moyenne",
+      "ratingCount": "{{count}} avis",
+      "courses": "Cours",
+      "publishedOf": "{{published}} publié(s) · {{drafts}} brouillon(s)",
+      "topCourses": "Cours les plus suivis",
+      "seeAll": "Tout voir",
+      "latestSales": "Dernières ventes",
+      "noSales": "Aucune vente pour le moment.",
+      "latestReviews": "Derniers avis",
+      "noReviews": "Aucun avis pour le moment."
+    },
+    "courses": {
+      "filter": {
+        "all": "Tous",
+        "published": "Publiés",
+        "draft": "Brouillons"
+      },
+      "search": "Rechercher un de mes cours…",
+      "noMatch": "Aucun cours ne correspond.",
+      "view": "Voir"
+    },
+    "sales": {
+      "byCourse": "Par cours",
+      "history": "Historique des ventes",
+      "date": "Date",
+      "course": "Cours",
+      "buyer": "Acheteur",
+      "amount": "Montant"
+    },
+    "reviews": {
+      "allCourses": "Tous les cours"
+    }
+  },
+  "courseForm": {
+    "general": "Informations générales",
+    "generalHint": "Ce que les apprenants voient en premier dans le catalogue.",
+    "titlePlaceholder": "Ex. : Introduction à Python",
+    "titleRequired": "Le titre est obligatoire.",
+    "subtitle": "Sous-titre",
+    "subtitlePlaceholder": "Une phrase qui donne envie de suivre le cours",
+    "descriptionPlaceholder": "Présentez le cours : son contenu, sa démarche, ce qui le rend utile.",
+    "category": "Catégorie",
+    "level": "Niveau",
+    "choose": "— Choisir —",
+    "categories": {
+      "DEVELOPMENT": "Développement",
+      "DATA": "Données & bases de données",
+      "NETWORK_SECURITY": "Réseaux & sécurité",
+      "OFFICE": "Bureautique",
+      "LANGUAGES": "Langues",
+      "DESIGN": "Design",
+      "BUSINESS": "Business & gestion",
+      "OTHER": "Autre"
+    },
+    "levels": {
+      "BEGINNER": "Débutant",
+      "INTERMEDIATE": "Intermédiaire",
+      "ADVANCED": "Avancé",
+      "ALL_LEVELS": "Tous niveaux"
+    },
+    "learning": "Ce que les apprenants vont acquérir",
+    "learningHint": "Des objectifs concrets aident les apprenants à choisir votre cours.",
+    "objectives": "Ce que vous apprendrez",
+    "objectivePlaceholder": "Ex. : Écrire et exécuter un script Python",
+    "addObjective": "Ajouter un objectif",
+    "prerequisites": "Prérequis",
+    "prerequisitePlaceholder": "Ex. : Savoir utiliser un ordinateur",
+    "addPrerequisite": "Ajouter un prérequis",
+    "targetAudience": "Public visé",
+    "targetAudiencePlaceholder": "À qui s'adresse ce cours ?",
+    "duration": "Durée estimée (heures)",
+    "durationHint": "Temps moyen pour suivre tout le cours.",
+    "pricing": "Prix et évaluation",
+    "pricingHint": "Prix de vente et règles d'obtention du certificat.",
+    "passThreshold": "Seuil de réussite (%)",
+    "passThresholdHint": "Note finale minimale pour obtenir le certificat.",
+    "weighting": "Pondération de la note finale",
+    "controlsWeight": "Contrôles : {{percent}} %",
+    "examWeight": "Examen final : {{percent}} %",
+    "fixErrors": "Corrigez les champs signalés."
+  },
+  "coursePage": {
+    "objectives": "Ce que vous apprendrez",
+    "prerequisites": "Prérequis",
+    "audience": "À qui s'adresse ce cours",
+    "duration": "{{hours}} h"
   }
 }

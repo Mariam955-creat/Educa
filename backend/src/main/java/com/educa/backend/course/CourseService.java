@@ -109,6 +109,12 @@ public class CourseService {
         return courses.stream().map(course -> toSummary(course, null, stats)).toList();
     }
 
+    /** Ids des cours d'un formateur (publiés ou non) — pour ses ventes et ses avis reçus. */
+    @Transactional(readOnly = true)
+    public List<Long> courseIdsByInstructor(Long instructorId) {
+        return courseRepository.findByInstructorIdOrderByCreatedAtDesc(instructorId).stream().map(Course::getId).toList();
+    }
+
     /** Id d'un cours visible (publié, ou propriétaire/ADMIN) — 404 sinon. */
     @Transactional(readOnly = true)
     public Long publicIdBySlug(String slug) {
@@ -153,7 +159,9 @@ public class CourseService {
                 course.getLanguage(), course.isPublished(), userService.displayNameById(course.getInstructorId()),
                 course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters,
                 course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
-                rating != null ? rating.average() : null, rating != null ? rating.count() : 0);
+                rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
+                course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
+                splitLines(course.getObjectives()), splitLines(course.getPrerequisites()), course.getTargetAudience());
     }
 
     // ---------- helpers inter-modules ----------
@@ -239,6 +247,14 @@ public class CourseService {
         if (request.examWeight() != null) course.setExamWeight(request.examWeight());
         if (request.passThreshold() != null) course.setPassThreshold(request.passThreshold());
         course.setPrice(request.price() != null ? request.price() : BigDecimal.ZERO);
+        // Présentation : remplacée en bloc (PUT), un champ absent est vidé
+        course.setSubtitle(StringUtils.hasText(request.subtitle()) ? request.subtitle().trim() : null);
+        course.setCategory(request.category());
+        course.setLevel(request.level());
+        course.setDurationHours(request.durationHours());
+        course.setObjectives(joinLines(request.objectives()));
+        course.setPrerequisites(joinLines(request.prerequisites()));
+        course.setTargetAudience(StringUtils.hasText(request.targetAudience()) ? request.targetAudience().trim() : null);
         if (course.getControlWeight() + course.getExamWeight() != 100) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "control_weight + exam_weight doit valoir 100");
@@ -257,7 +273,8 @@ public class CourseService {
                 course.getLanguage(), course.isPublished(),
                 userService.displayNameById(course.getInstructorId()), course.getChapters().size(),
                 course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
-                rating != null ? rating.average() : null, rating != null ? rating.count() : 0);
+                rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
+                course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours());
     }
 
     /**
@@ -290,6 +307,22 @@ public class CourseService {
         CourseRatingProvider.RatingStats rating(Long courseId) {
             return ratings.get(courseId);
         }
+    }
+
+    /** Liste stockée une entrée par ligne (objectifs, prérequis) ; {@code null} si vide. */
+    private static String joinLines(List<String> items) {
+        if (items == null) {
+            return null;
+        }
+        String joined = items.stream()
+                .filter(StringUtils::hasText)
+                .map(item -> item.trim().replace('\n', ' '))
+                .collect(Collectors.joining("\n"));
+        return joined.isEmpty() ? null : joined;
+    }
+
+    private static List<String> splitLines(String text) {
+        return text == null ? List.of() : List.of(text.split("\n"));
     }
 
     /** Traductions (dans {@code displayLanguage}, si fourni) des cours d'une page, indexées par id de cours. */

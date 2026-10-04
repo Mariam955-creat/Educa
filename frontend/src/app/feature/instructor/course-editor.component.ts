@@ -9,6 +9,7 @@ import { ContentType, CourseDetail } from '../../core/courses/course.models';
 import { CourseLanguage, LanguageApiService } from '../../core/language/language-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
+import { CourseFormSubmit, CourseInfoFormComponent } from './course-info-form.component';
 
 interface ChapterTranslationDraft {
   chapterId: number;
@@ -24,7 +25,7 @@ interface TranslationDraft {
 
 @Component({
   selector: 'app-course-editor',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe, CourseInfoFormComponent],
   templateUrl: './course-editor.component.html',
   styleUrl: './course-editor.component.scss',
 })
@@ -50,6 +51,7 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
     if (!current || active.some((l) => l.code === current)) return active;
     return [...active, { code: current, name: current.toUpperCase(), active: false }];
   });
+  readonly saving = signal(false);
   readonly message = signal<string | null>(null);
   readonly messageIsError = signal(false);
   readonly pickedFile = signal<File | null>(null);
@@ -76,14 +78,6 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
       void this.router.navigate(['/instructor/quizzes', q.id, 'edit']);
     });
   }
-
-  readonly courseForm = this.fb.nonNullable.group({
-    title: ['', [Validators.required, Validators.maxLength(200)]],
-    description: [''],
-    language: ['fr', [Validators.required]],
-    // Pas de prix par défaut : le formateur doit le saisir explicitement (0 = gratuit reste possible).
-    price: this.fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
-  });
 
   readonly chapterForm = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -133,28 +127,38 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
     this.api.removeCover(c.id).subscribe(() => this.loadCourse(c.slug));
   }
 
-  saveCourse(): void {
-    if (this.courseForm.invalid) {
-      this.courseForm.markAllAsTouched();
-      return;
-    }
-    const raw = this.courseForm.getRawValue();
-    const value = { ...raw, price: raw.price ?? 0 }; // non null ici : le formulaire est valide
+  saveCourse({ value, cover }: CourseFormSubmit): void {
     const current = this.course();
-    const request$ = current
-      ? this.api.updateCourse(current.id, value)
-      : this.api.createCourse(value);
+    const request$ = current ? this.api.updateCourse(current.id, value) : this.api.createCourse(value);
+    this.saving.set(true);
 
     request$.subscribe({
       next: (summary) => {
         this.flash(this.translate.instant('courseEditor.saved'));
-        if (!current) {
-          void this.router.navigate(['/instructor/courses', summary.slug, 'edit']);
-        } else {
+        if (current) {
+          this.saving.set(false);
           this.loadCourse(summary.slug);
+          return;
         }
+        // Création : la couverture choisie dans le formulaire est téléversée une fois le cours créé
+        const openEditor = () => {
+          this.saving.set(false);
+          void this.router.navigate(['/instructor/courses', summary.slug, 'edit']);
+        };
+        if (!cover) {
+          openEditor();
+          return;
+        }
+        this.api.uploadCover(summary.id, cover).subscribe({
+          next: openEditor,
+          error: (err: HttpErrorResponse) => {
+            this.flash(err.error?.message ?? this.translate.instant('courseEditor.coverError'), true);
+            openEditor();
+          },
+        });
       },
       error: (err: HttpErrorResponse) => {
+        this.saving.set(false);
         this.flash(err.error?.message ?? this.translate.instant('courseEditor.saveError'), true);
       },
     });
@@ -294,12 +298,6 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
     this.api.detail(slug).subscribe((course) => {
       this.course.set(course);
       this.loadCoverPreview(course);
-      this.courseForm.patchValue({
-        title: course.title,
-        description: course.description ?? '',
-        language: course.language,
-        price: course.price,
-      });
       if (course.chapters.length > 0 && this.contentForm.controls.chapterId.value === 0) {
         this.contentForm.patchValue({ chapterId: course.chapters[0].id });
       }

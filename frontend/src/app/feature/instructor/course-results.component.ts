@@ -11,7 +11,7 @@ import { LearnerResult } from '../../core/quiz/quiz.models';
   imports: [RouterLink, TranslatePipe],
   template: `
     <section class="page">
-      <a class="back" routerLink="/instructor">‹ {{ 'instructorDashboard.title' | translate }}</a>
+      <a class="back" routerLink="/instructor/courses">‹ {{ 'instructor.nav.courses' | translate }}</a>
       <h1>{{ 'courseResults.title' | translate: { course: title() } }}</h1>
 
       @if (loading()) {

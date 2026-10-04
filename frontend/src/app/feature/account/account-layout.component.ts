@@ -1,28 +1,21 @@
-import { Component, HostListener, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { Component, computed, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { DrawerLayoutComponent, DrawerLink } from '../../shared/drawer-layout/drawer-layout.component';
 
-interface DrawerLink {
-  path: string;
-  icon: string;
-  labelKey: string;
-}
-
-/**
- * Espace « Mon compte » : tiroir de navigation à gauche (fixe sur grand écran, escamotable sur mobile)
- * et section courante à droite (routes enfants).
- */
+/** Espace « Mon compte » : tiroir (sections de l'utilisateur) + section courante (routes enfants). */
 @Component({
   selector: 'app-account-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe],
-  templateUrl: './account-layout.component.html',
-  styleUrl: './account-layout.component.scss',
+  imports: [RouterOutlet, DrawerLayoutComponent],
+  template: `
+    <app-drawer-layout titleKey="account.title" [links]="links" [footerLinks]="footerLinks()">
+      <router-outlet />
+    </app-drawer-layout>
+  `,
 })
 export class AccountLayoutComponent {
-  readonly auth = inject(AuthService);
+  private readonly auth = inject(AuthService);
 
   readonly links: DrawerLink[] = [
     { path: 'overview', icon: '📊', labelKey: 'account.nav.overview' },
@@ -33,25 +26,10 @@ export class AccountLayoutComponent {
     { path: 'reviews', icon: '⭐', labelKey: 'account.nav.reviews' },
   ];
 
-  /** Tiroir ouvert (mobile uniquement : sur grand écran il est toujours visible). */
-  readonly drawerOpen = signal(false);
-
-  readonly initials = computed(() => {
-    const user = this.auth.user();
-    if (!user) return '';
-    const words = user.fullName.trim().split(/\s+/).filter(Boolean);
-    const letters = words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0]?.[0] ?? user.email[0]);
-    return letters.toUpperCase();
-  });
-
-  constructor() {
-    inject(Router)
-      .events.pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.drawerOpen.set(false));
-  }
-
-  @HostListener('document:keydown.escape')
-  closeDrawer(): void {
-    this.drawerOpen.set(false);
-  }
+  readonly footerLinks = computed<DrawerLink[]>(() => [
+    ...(this.auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])
+      ? [{ path: '/instructor', icon: '🧑‍🏫', labelKey: 'account.nav.instructorSpace' }]
+      : []),
+    ...(this.auth.hasRole('ADMIN') ? [{ path: '/admin', icon: '🛠️', labelKey: 'nav.admin' }] : []),
+  ]);
 }

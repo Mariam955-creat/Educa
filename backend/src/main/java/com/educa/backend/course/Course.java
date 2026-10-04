@@ -11,6 +11,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -63,6 +65,35 @@ public class Course {
     /** Prix d'achat unique du cours, fixé par le formateur. {@code 0} = cours gratuit. */
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price = BigDecimal.ZERO;
+
+    // ---------- page de présentation ----------
+
+    /** Accroche affichée sous le titre. */
+    @Column(length = 200)
+    private String subtitle;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private CourseCategory category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private CourseLevel level;
+
+    /** Durée estimée pour suivre le cours, en heures. */
+    @Column(name = "duration_hours", precision = 5, scale = 1)
+    private BigDecimal durationHours;
+
+    /** « Ce que vous apprendrez » : une entrée par ligne. */
+    @Column(columnDefinition = "text")
+    private String objectives;
+
+    /** Prérequis : une entrée par ligne. */
+    @Column(columnDefinition = "text")
+    private String prerequisites;
+
+    @Column(name = "target_audience", columnDefinition = "text")
+    private String targetAudience;
 
     /** Clé de stockage de l'image de couverture (module {@code storage}), {@code null} si aucune. */
     @Column(name = "cover_image_key", length = 500)

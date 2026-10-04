@@ -7,6 +7,22 @@
         <img class="cover" [src]="src" alt="" />
       }
       <h1>{{ c.title }}</h1>
+      @if (c.subtitle) {
+        <p class="subtitle">{{ c.subtitle }}</p>
+      }
+      @if (c.category || c.level || c.durationHours) {
+        <p class="tags">
+          @if (c.category) {
+            <span class="tag">{{ 'courseForm.categories.' + c.category | translate }}</span>
+          }
+          @if (c.level) {
+            <span class="tag">📶 {{ 'courseForm.levels.' + c.level | translate }}</span>
+          }
+          @if (c.durationHours) {
+            <span class="tag">⏱ {{ 'coursePage.duration' | translate: { hours: c.durationHours } }}</span>
+          }
+        </p>
+      }
       <p class="meta">{{ 'course.by' | translate: { instructor: c.instructorName, language: c.language } }}</p>
       <p class="stats">
         @if (c.averageRating != null) {
@@ -55,6 +71,8 @@
         </div>
       }
     </header>
+
+    <app-course-presentation [course]="c" />
 
     @if (!c.contentsVisible) {
       <p class="muted">{{ 'course.notEnrolledHint' | translate }}</p>

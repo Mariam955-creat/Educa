@@ -22,6 +22,9 @@
 
           <div class="body">
             <h3>{{ course.title }}</h3>
+            @if (course.subtitle) {
+              <p class="subtitle">{{ course.subtitle }}</p>
+            }
             <p class="instructor">{{ course.instructorName }}</p>
 
             <div class="rating">
@@ -42,7 +45,14 @@
               <span>{{ (course.learnerCount === 1 ? 'catalog.learnerOne' : 'catalog.learners') | translate: { count: course.learnerCount } }}</span>
               <span aria-hidden="true">·</span>
               <span>{{ (course.chapterCount === 1 ? 'catalog.chapterOne' : 'catalog.chapters') | translate: { count: course.chapterCount } }}</span>
+              @if (course.durationHours) {
+                <span aria-hidden="true">·</span>
+                <span>{{ 'coursePage.duration' | translate: { hours: course.durationHours } }}</span>
+              }
             </p>
+            @if (course.level) {
+              <p class="level">📶 {{ 'courseForm.levels.' + course.level | translate }}</p>
+            }
 
             <p class="price" [class.free]="course.price === 0">
               {{ course.price === 0 ? ('course.free' | translate) : (course.price | money: 'EUR' : lang.current()) }}

@@ -1,0 +1,183 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <!-- 1. Informations générales -->
+  <fieldset class="section">
+    <legend>
+      <span class="step">1</span>
+      <span>
+        <strong>{{ 'courseForm.general' | translate }}</strong>
+        <small>{{ 'courseForm.generalHint' | translate }}</small>
+      </span>
+    </legend>
+
+    <label>
+      <span class="label-row">{{ 'courseEditor.titleField' | translate }} <em>*</em><span class="counter">{{ titleLength() }}/200</span></span>
+      <input type="text" formControlName="title" maxlength="200" [placeholder]="'courseForm.titlePlaceholder' | translate" />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <small class="field-error">{{ 'courseForm.titleRequired' | translate }}</small>
+      }
+    </label>
+
+    <label>
+      <span class="label-row">{{ 'courseForm.subtitle' | translate }}<span class="counter">{{ subtitleLength() }}/200</span></span>
+      <input type="text" formControlName="subtitle" maxlength="200" [placeholder]="'courseForm.subtitlePlaceholder' | translate" />
+    </label>
+
+    <label>
+      {{ 'courseEditor.descriptionField' | translate }}
+      <textarea formControlName="description" rows="5" [placeholder]="'courseForm.descriptionPlaceholder' | translate"></textarea>
+    </label>
+
+    <div class="grid-3">
+      <label>
+        {{ 'courseForm.category' | translate }}
+        <select formControlName="category">
+          <option [ngValue]="null">{{ 'courseForm.choose' | translate }}</option>
+          @for (cat of categories; track cat) {
+            <option [ngValue]="cat">{{ 'courseForm.categories.' + cat | translate }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'courseForm.level' | translate }}
+        <select formControlName="level">
+          <option [ngValue]="null">{{ 'courseForm.choose' | translate }}</option>
+          @for (lvl of levels; track lvl) {
+            <option [ngValue]="lvl">{{ 'courseForm.levels.' + lvl | translate }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'courseEditor.languageField' | translate }}
+        <select formControlName="language">
+          @for (lang of languages(); track lang.code) {
+            <option [value]="lang.code" [disabled]="!lang.active">{{ lang.name }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- 2. Ce que les apprenants vont acquérir -->
+  <fieldset class="section">
+    <legend>
+      <span class="step">2</span>
+      <span>
+        <strong>{{ 'courseForm.learning' | translate }}</strong>
+        <small>{{ 'courseForm.learningHint' | translate }}</small>
+      </span>
+    </legend>
+
+    <div class="list-field">
+      <span class="list-label">{{ 'courseForm.objectives' | translate }}</span>
+      @for (ctrl of objectives.controls; track ctrl; let i = $index) {
+        <div class="list-item">
+          <span class="bullet" aria-hidden="true">✓</span>
+          <input type="text" [formControl]="ctrl" maxlength="200" [placeholder]="'courseForm.objectivePlaceholder' | translate" />
+          <button type="button" class="remove" (click)="removeItem(objectives, i)" [attr.aria-label]="'common.delete' | translate">×</button>
+        </div>
+      }
+      @if (objectives.length < maxListItems) {
+        <button type="button" class="add" (click)="addItem(objectives)">＋ {{ 'courseForm.addObjective' | translate }}</button>
+      }
+    </div>
+
+    <div class="list-field">
+      <span class="list-label">{{ 'courseForm.prerequisites' | translate }}</span>
+      @for (ctrl of prerequisites.controls; track ctrl; let i = $index) {
+        <div class="list-item">
+          <span class="bullet" aria-hidden="true">•</span>
+          <input type="text" [formControl]="ctrl" maxlength="200" [placeholder]="'courseForm.prerequisitePlaceholder' | translate" />
+          <button type="button" class="remove" (click)="removeItem(prerequisites, i)" [attr.aria-label]="'common.delete' | translate">×</button>
+        </div>
+      }
+      @if (prerequisites.length < maxListItems) {
+        <button type="button" class="add" (click)="addItem(prerequisites)">＋ {{ 'courseForm.addPrerequisite' | translate }}</button>
+      }
+    </div>
+
+    <div class="grid-2">
+      <label>
+        {{ 'courseForm.targetAudience' | translate }}
+        <textarea formControlName="targetAudience" rows="3" maxlength="2000" [placeholder]="'courseForm.targetAudiencePlaceholder' | translate"></textarea>
+      </label>
+      <label>
+        {{ 'courseForm.duration' | translate }}
+        <input type="number" formControlName="durationHours" min="0" max="999" step="0.5" placeholder="6" />
+        <small class="hint">{{ 'courseForm.durationHint' | translate }}</small>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- 3. Prix et évaluation -->
+  <fieldset class="section">
+    <legend>
+      <span class="step">3</span>
+      <span>
+        <strong>{{ 'courseForm.pricing' | translate }}</strong>
+        <small>{{ 'courseForm.pricingHint' | translate }}</small>
+      </span>
+    </legend>
+
+    <div class="grid-2">
+      <label>
+        <span>{{ 'courseEditor.priceField' | translate }} <em>*</em></span>
+        <input type="number" formControlName="price" min="0" step="0.01" placeholder="29.99" />
+        @if (form.controls.price.touched && form.controls.price.invalid) {
+          <small class="field-error">{{ 'courseEditor.priceRequired' | translate }}</small>
+        }
+      </label>
+      <label>
+        {{ 'courseForm.passThreshold' | translate }}
+        <input type="number" formControlName="passThreshold" min="0" max="100" step="5" />
+        <small class="hint">{{ 'courseForm.passThresholdHint' | translate }}</small>
+      </label>
+    </div>
+
+    <label>
+      {{ 'courseForm.weighting' | translate }}
+      <input type="range" formControlName="controlWeight" min="0" max="100" step="5" />
+      <span class="weights">
+        <span>{{ 'courseForm.controlsWeight' | translate: { percent: controlWeight() } }}</span>
+        <span>{{ 'courseForm.examWeight' | translate: { percent: 100 - controlWeight() } }}</span>
+      </span>
+    </label>
+  </fieldset>
+
+  <!-- 4. Couverture (à la création ; ensuite, section dédiée de l'éditeur) -->
+  @if (!course()) {
+    <fieldset class="section">
+      <legend>
+        <span class="step">4</span>
+        <span>
+          <strong>{{ 'courseEditor.cover' | translate }}</strong>
+          <small>{{ 'courseEditor.coverHint' | translate }}</small>
+        </span>
+      </legend>
+      <div class="cover-pick">
+        <div class="cover-preview">
+          @if (coverPreview(); as preview) {
+            <img [src]="preview" alt="" />
+          } @else {
+            <span>{{ 'courseEditor.noCover' | translate }}</span>
+          }
+        </div>
+        <label class="file-btn">
+          {{ (coverFile() ? 'courseEditor.coverReplace' : 'courseEditor.coverUpload') | translate }}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="onCoverPicked($event)" hidden />
+        </label>
+        @if (coverFile()) {
+          <button type="button" class="link" (click)="clearCover()">{{ 'courseEditor.coverRemove' | translate }}</button>
+        }
+      </div>
+    </fieldset>
+  }
+
+  <div class="submit-bar">
+    @if (form.invalid && form.touched) {
+      <span class="field-error">{{ 'courseForm.fixErrors' | translate }}</span>
+    }
+    <button type="submit" class="primary" [disabled]="saving()">
+      {{ (course() ? 'courseEditor.save' : 'courseEditor.create') | translate }}
+    </button>
+  </div>
+</form>

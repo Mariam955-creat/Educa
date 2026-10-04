@@ -382,5 +382,110 @@
       "empty": "You haven't rated any course yet.",
       "confirmDelete": "Delete your review of \"{{course}}\"?"
     }
+  },
+  "instructor": {
+    "title": "Instructor space",
+    "newCourse": "New course",
+    "nav": {
+      "overview": "Dashboard",
+      "courses": "My courses",
+      "sales": "Revenue",
+      "reviews": "Reviews received"
+    },
+    "overview": {
+      "subtitle": "Your courses, learners and revenue at a glance.",
+      "emptyTitle": "Create your first course",
+      "emptyText": "Add chapters, content and one quiz per chapter, set a price, then publish: learners will be able to buy it from the catalogue.",
+      "emptyCta": "Create a course",
+      "revenue": "Revenue",
+      "last30": "{{amount}} in the last 30 days",
+      "sales": "Sales",
+      "learners": "Learners",
+      "rating": "Average rating",
+      "ratingCount": "{{count}} review(s)",
+      "courses": "Courses",
+      "publishedOf": "{{published}} published · {{drafts}} draft(s)",
+      "topCourses": "Most popular courses",
+      "seeAll": "See all",
+      "latestSales": "Latest sales",
+      "noSales": "No sales yet.",
+      "latestReviews": "Latest reviews",
+      "noReviews": "No reviews yet."
+    },
+    "courses": {
+      "filter": {
+        "all": "All",
+        "published": "Published",
+        "draft": "Drafts"
+      },
+      "search": "Search my courses…",
+      "noMatch": "No matching course.",
+      "view": "View"
+    },
+    "sales": {
+      "byCourse": "By course",
+      "history": "Sales history",
+      "date": "Date",
+      "course": "Course",
+      "buyer": "Buyer",
+      "amount": "Amount"
+    },
+    "reviews": {
+      "allCourses": "All courses"
+    }
+  },
+  "courseForm": {
+    "general": "General information",
+    "generalHint": "What learners see first in the catalogue.",
+    "titlePlaceholder": "E.g. Introduction to Python",
+    "titleRequired": "Title is required.",
+    "subtitle": "Subtitle",
+    "subtitlePlaceholder": "One sentence that makes people want to take the course",
+    "descriptionPlaceholder": "Describe the course: its content, approach and why it is useful.",
+    "category": "Category",
+    "level": "Level",
+    "choose": "— Choose —",
+    "categories": {
+      "DEVELOPMENT": "Development",
+      "DATA": "Data & databases",
+      "NETWORK_SECURITY": "Networks & security",
+      "OFFICE": "Office software",
+      "LANGUAGES": "Languages",
+      "DESIGN": "Design",
+      "BUSINESS": "Business & management",
+      "OTHER": "Other"
+    },
+    "levels": {
+      "BEGINNER": "Beginner",
+      "INTERMEDIATE": "Intermediate",
+      "ADVANCED": "Advanced",
+      "ALL_LEVELS": "All levels"
+    },
+    "learning": "What learners will gain",
+    "learningHint": "Concrete goals help learners choose your course.",
+    "objectives": "What you'll learn",
+    "objectivePlaceholder": "E.g. Write and run a Python script",
+    "addObjective": "Add a goal",
+    "prerequisites": "Prerequisites",
+    "prerequisitePlaceholder": "E.g. Know how to use a computer",
+    "addPrerequisite": "Add a prerequisite",
+    "targetAudience": "Target audience",
+    "targetAudiencePlaceholder": "Who is this course for?",
+    "duration": "Estimated duration (hours)",
+    "durationHint": "Average time to complete the whole course.",
+    "pricing": "Price and assessment",
+    "pricingHint": "Selling price and certificate rules.",
+    "passThreshold": "Pass mark (%)",
+    "passThresholdHint": "Minimum final grade to earn the certificate.",
+    "weighting": "Final grade weighting",
+    "controlsWeight": "Quizzes: {{percent}}%",
+    "examWeight": "Final exam: {{percent}}%",
+    "fixErrors": "Please fix the highlighted fields."
+  },
+  "coursePage": {
+    "objectives": "What you'll learn",
+    "prerequisites": "Prerequisites",
+    "audience": "Who this course is for",
+    "duration": "{{hours}} h"
   }
 }

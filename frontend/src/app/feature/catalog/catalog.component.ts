@@ -10,16 +10,8 @@ import { CourseSummary } from '../../core/courses/course.models';
 import { intlLocale } from '../../core/i18n/intl-locale';
 import { LanguageService } from '../../core/i18n/language.service';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
+import { fallbackCover } from '../../shared/course-cover';
 import { StarRatingComponent } from '../../shared/star-rating/star-rating.component';
-
-const FALLBACK_GRADIENTS: [string, string][] = [
-  ['#7e22ce', '#db2777'],
-  ['#2563eb', '#7c3aed'],
-  ['#0d9488', '#2563eb'],
-  ['#ea580c', '#db2777'],
-  ['#059669', '#0d9488'],
-  ['#4f46e5', '#0ea5e9'],
-];
 
 @Component({
   selector: 'app-catalog',
@@ -50,11 +42,7 @@ export class CatalogComponent implements OnInit {
     }).format(value);
   }
 
-  /** Visuel de repli (cours sans image) : dégradé stable, déterminé par l'id du cours. */
-  fallbackCover(courseId: number): string {
-    const [from, to] = FALLBACK_GRADIENTS[courseId % FALLBACK_GRADIENTS.length];
-    return `linear-gradient(135deg, ${from}, ${to})`;
-  }
+  readonly fallbackCover = fallbackCover;
 
   private load(q: string): void {
     this.loading.set(true);

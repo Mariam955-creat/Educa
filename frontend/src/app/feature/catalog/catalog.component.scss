@@ -165,3 +165,19 @@ h1 {
 .price.free {
   color: #15803d;
 }
+
+.subtitle {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.82rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.level {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}

@@ -382,5 +382,110 @@
       "empty": "Sie haben noch keinen Kurs bewertet.",
       "confirmDelete": "Ihre Bewertung zu „{{course}}“ löschen?"
     }
+  },
+  "instructor": {
+    "title": "Kursleiterbereich",
+    "newCourse": "Neuer Kurs",
+    "nav": {
+      "overview": "Übersicht",
+      "courses": "Meine Kurse",
+      "sales": "Einnahmen",
+      "reviews": "Erhaltene Bewertungen"
+    },
+    "overview": {
+      "subtitle": "Ihre Kurse, Lernenden und Einnahmen auf einen Blick.",
+      "emptyTitle": "Erstellen Sie Ihren ersten Kurs",
+      "emptyText": "Fügen Sie Kapitel, Inhalte und einen Test pro Kapitel hinzu, legen Sie einen Preis fest und veröffentlichen Sie: Lernende können den Kurs dann im Katalog kaufen.",
+      "emptyCta": "Kurs erstellen",
+      "revenue": "Einnahmen",
+      "last30": "{{amount}} in 30 Tagen",
+      "sales": "Verkäufe",
+      "learners": "Lernende",
+      "rating": "Durchschnittsnote",
+      "ratingCount": "{{count}} Bewertung(en)",
+      "courses": "Kurse",
+      "publishedOf": "{{published}} veröffentlicht · {{drafts}} Entwurf/Entwürfe",
+      "topCourses": "Beliebteste Kurse",
+      "seeAll": "Alle anzeigen",
+      "latestSales": "Letzte Verkäufe",
+      "noSales": "Noch keine Verkäufe.",
+      "latestReviews": "Neueste Bewertungen",
+      "noReviews": "Noch keine Bewertungen."
+    },
+    "courses": {
+      "filter": {
+        "all": "Alle",
+        "published": "Veröffentlicht",
+        "draft": "Entwürfe"
+      },
+      "search": "Meine Kurse durchsuchen…",
+      "noMatch": "Kein passender Kurs.",
+      "view": "Ansehen"
+    },
+    "sales": {
+      "byCourse": "Nach Kurs",
+      "history": "Verkaufsverlauf",
+      "date": "Datum",
+      "course": "Kurs",
+      "buyer": "Käufer(in)",
+      "amount": "Betrag"
+    },
+    "reviews": {
+      "allCourses": "Alle Kurse"
+    }
+  },
+  "courseForm": {
+    "general": "Allgemeine Informationen",
+    "generalHint": "Was Lernende im Katalog zuerst sehen.",
+    "titlePlaceholder": "z. B. Einführung in Python",
+    "titleRequired": "Der Titel ist erforderlich.",
+    "subtitle": "Untertitel",
+    "subtitlePlaceholder": "Ein Satz, der Lust auf den Kurs macht",
+    "descriptionPlaceholder": "Stellen Sie den Kurs vor: Inhalt, Vorgehen und Nutzen.",
+    "category": "Kategorie",
+    "level": "Niveau",
+    "choose": "— Auswählen —",
+    "categories": {
+      "DEVELOPMENT": "Entwicklung",
+      "DATA": "Daten & Datenbanken",
+      "NETWORK_SECURITY": "Netzwerke & Sicherheit",
+      "OFFICE": "Büroanwendungen",
+      "LANGUAGES": "Sprachen",
+      "DESIGN": "Design",
+      "BUSINESS": "Business & Management",
+      "OTHER": "Sonstiges"
+    },
+    "levels": {
+      "BEGINNER": "Anfänger",
+      "INTERMEDIATE": "Mittelstufe",
+      "ADVANCED": "Fortgeschritten",
+      "ALL_LEVELS": "Alle Niveaus"
+    },
+    "learning": "Was Lernende mitnehmen",
+    "learningHint": "Konkrete Ziele helfen bei der Kurswahl.",
+    "objectives": "Das lernen Sie",
+    "objectivePlaceholder": "z. B. Ein Python-Skript schreiben und ausführen",
+    "addObjective": "Ziel hinzufügen",
+    "prerequisites": "Voraussetzungen",
+    "prerequisitePlaceholder": "z. B. Einen Computer bedienen können",
+    "addPrerequisite": "Voraussetzung hinzufügen",
+    "targetAudience": "Zielgruppe",
+    "targetAudiencePlaceholder": "Für wen ist dieser Kurs?",
+    "duration": "Geschätzte Dauer (Stunden)",
+    "durationHint": "Durchschnittliche Zeit für den gesamten Kurs.",
+    "pricing": "Preis und Bewertung",
+    "pricingHint": "Verkaufspreis und Regeln für das Zertifikat.",
+    "passThreshold": "Bestehensgrenze (%)",
+    "passThresholdHint": "Mindestnote für das Zertifikat.",
+    "weighting": "Gewichtung der Endnote",
+    "controlsWeight": "Tests: {{percent}} %",
+    "examWeight": "Abschlussprüfung: {{percent}} %",
+    "fixErrors": "Bitte korrigieren Sie die markierten Felder."
+  },
+  "coursePage": {
+    "objectives": "Das lernen Sie",
+    "prerequisites": "Voraussetzungen",
+    "audience": "Für wen ist dieser Kurs",
+    "duration": "{{hours}} Std."
   }
 }

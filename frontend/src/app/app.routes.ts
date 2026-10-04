@@ -76,33 +76,50 @@ export const routes: Routes = [
     path: 'instructor',
     canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
     loadComponent: () =>
-      import('./feature/instructor/instructor-dashboard.component').then(
-        (m) => m.InstructorDashboardComponent,
-      ),
-  },
-  {
-    path: 'instructor/courses/new',
-    canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
-    loadComponent: () =>
-      import('./feature/instructor/course-editor.component').then((m) => m.CourseEditorComponent),
-  },
-  {
-    path: 'instructor/courses/:slug/edit',
-    canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
-    loadComponent: () =>
-      import('./feature/instructor/course-editor.component').then((m) => m.CourseEditorComponent),
-  },
-  {
-    path: 'instructor/courses/:slug/results',
-    canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
-    loadComponent: () =>
-      import('./feature/instructor/course-results.component').then((m) => m.CourseResultsComponent),
-  },
-  {
-    path: 'instructor/quizzes/:id/edit',
-    canActivate: [roleGuard('INSTRUCTOR', 'ADMIN')],
-    loadComponent: () =>
-      import('./feature/instructor/quiz-editor.component').then((m) => m.QuizEditorComponent),
+      import('./feature/instructor/instructor-layout.component').then((m) => m.InstructorLayoutComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        loadComponent: () =>
+          import('./feature/instructor/instructor-overview.component').then((m) => m.InstructorOverviewComponent),
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./feature/instructor/instructor-courses.component').then((m) => m.InstructorCoursesComponent),
+      },
+      {
+        path: 'courses/new',
+        loadComponent: () =>
+          import('./feature/instructor/course-editor.component').then((m) => m.CourseEditorComponent),
+      },
+      {
+        path: 'courses/:slug/edit',
+        loadComponent: () =>
+          import('./feature/instructor/course-editor.component').then((m) => m.CourseEditorComponent),
+      },
+      {
+        path: 'courses/:slug/results',
+        loadComponent: () =>
+          import('./feature/instructor/course-results.component').then((m) => m.CourseResultsComponent),
+      },
+      {
+        path: 'quizzes/:id/edit',
+        loadComponent: () =>
+          import('./feature/instructor/quiz-editor.component').then((m) => m.QuizEditorComponent),
+      },
+      {
+        path: 'sales',
+        loadComponent: () =>
+          import('./feature/instructor/instructor-sales.component').then((m) => m.InstructorSalesComponent),
+      },
+      {
+        path: 'reviews',
+        loadComponent: () =>
+          import('./feature/instructor/instructor-reviews.component').then((m) => m.InstructorReviewsComponent),
+      },
+    ],
   },
   {
     path: 'admin',

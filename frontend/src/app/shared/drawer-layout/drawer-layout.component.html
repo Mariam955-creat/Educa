@@ -1,0 +1,50 @@
+<div class="shell">
+  <button type="button" class="drawer-toggle" [attr.aria-expanded]="open()" (click)="open.set(true)">
+    ☰ {{ titleKey() | translate }}
+  </button>
+
+  @if (open()) {
+    <div class="backdrop" (click)="close()" aria-hidden="true"></div>
+  }
+
+  <aside class="drawer" [class.open]="open()" [attr.aria-label]="titleKey() | translate">
+    <button type="button" class="drawer-close" (click)="close()" [attr.aria-label]="'account.closeMenu' | translate">×</button>
+
+    @if (auth.user(); as user) {
+      <div class="identity">
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+        <div class="identity-text">
+          <strong>{{ user.fullName }}</strong>
+          <span>{{ subtitleKey() ? (subtitleKey()! | translate) : user.email }}</span>
+        </div>
+      </div>
+    }
+
+    @if (cta(); as action) {
+      <a class="cta" [routerLink]="action.path">
+        <span aria-hidden="true">{{ action.icon }}</span>{{ action.labelKey | translate }}
+      </a>
+    }
+
+    <nav class="drawer-nav">
+      @for (link of links(); track link.path) {
+        <a [routerLink]="link.path" routerLinkActive="active">
+          <span class="icon" aria-hidden="true">{{ link.icon }}</span>{{ link.labelKey | translate }}
+        </a>
+      }
+    </nav>
+
+    <div class="drawer-footer">
+      @for (link of footerLinks(); track link.path) {
+        <a [routerLink]="link.path"><span class="icon" aria-hidden="true">{{ link.icon }}</span>{{ link.labelKey | translate }}</a>
+      }
+      <button type="button" class="logout" (click)="auth.logout()">
+        <span class="icon" aria-hidden="true">⎋</span>{{ 'nav.logout' | translate }}
+      </button>
+    </div>
+  </aside>
+
+  <div class="content">
+    <ng-content />
+  </div>
+</div>

@@ -382,5 +382,110 @@
       "empty": "Je hebt nog geen cursus beoordeeld.",
       "confirmDelete": "Je beoordeling van \"{{course}}\" verwijderen?"
     }
+  },
+  "instructor": {
+    "title": "Docentenruimte",
+    "newCourse": "Nieuwe cursus",
+    "nav": {
+      "overview": "Dashboard",
+      "courses": "Mijn cursussen",
+      "sales": "Inkomsten",
+      "reviews": "Ontvangen beoordelingen"
+    },
+    "overview": {
+      "subtitle": "Je cursussen, cursisten en inkomsten in één oogopslag.",
+      "emptyTitle": "Maak je eerste cursus",
+      "emptyText": "Voeg hoofdstukken, inhoud en een toets per hoofdstuk toe, stel een prijs in en publiceer: cursisten kunnen hem dan in de catalogus kopen.",
+      "emptyCta": "Cursus maken",
+      "revenue": "Inkomsten",
+      "last30": "{{amount}} in 30 dagen",
+      "sales": "Verkopen",
+      "learners": "Cursisten",
+      "rating": "Gemiddelde score",
+      "ratingCount": "{{count}} beoordeling(en)",
+      "courses": "Cursussen",
+      "publishedOf": "{{published}} gepubliceerd · {{drafts}} concept(en)",
+      "topCourses": "Populairste cursussen",
+      "seeAll": "Alles bekijken",
+      "latestSales": "Laatste verkopen",
+      "noSales": "Nog geen verkopen.",
+      "latestReviews": "Laatste beoordelingen",
+      "noReviews": "Nog geen beoordelingen."
+    },
+    "courses": {
+      "filter": {
+        "all": "Alle",
+        "published": "Gepubliceerd",
+        "draft": "Concepten"
+      },
+      "search": "Zoek in mijn cursussen…",
+      "noMatch": "Geen overeenkomende cursus.",
+      "view": "Bekijken"
+    },
+    "sales": {
+      "byCourse": "Per cursus",
+      "history": "Verkoopgeschiedenis",
+      "date": "Datum",
+      "course": "Cursus",
+      "buyer": "Koper",
+      "amount": "Bedrag"
+    },
+    "reviews": {
+      "allCourses": "Alle cursussen"
+    }
+  },
+  "courseForm": {
+    "general": "Algemene informatie",
+    "generalHint": "Wat cursisten als eerste zien in de catalogus.",
+    "titlePlaceholder": "Bv. Inleiding tot Python",
+    "titleRequired": "Titel is verplicht.",
+    "subtitle": "Ondertitel",
+    "subtitlePlaceholder": "Eén zin die zin geeft in de cursus",
+    "descriptionPlaceholder": "Stel de cursus voor: inhoud, aanpak en waarom hij nuttig is.",
+    "category": "Categorie",
+    "level": "Niveau",
+    "choose": "— Kiezen —",
+    "categories": {
+      "DEVELOPMENT": "Ontwikkeling",
+      "DATA": "Data & databases",
+      "NETWORK_SECURITY": "Netwerken & beveiliging",
+      "OFFICE": "Kantoorsoftware",
+      "LANGUAGES": "Talen",
+      "DESIGN": "Design",
+      "BUSINESS": "Business & management",
+      "OTHER": "Overig"
+    },
+    "levels": {
+      "BEGINNER": "Beginner",
+      "INTERMEDIATE": "Gemiddeld",
+      "ADVANCED": "Gevorderd",
+      "ALL_LEVELS": "Alle niveaus"
+    },
+    "learning": "Wat cursisten verwerven",
+    "learningHint": "Concrete doelen helpen cursisten je cursus te kiezen.",
+    "objectives": "Wat je leert",
+    "objectivePlaceholder": "Bv. Een Python-script schrijven en uitvoeren",
+    "addObjective": "Doel toevoegen",
+    "prerequisites": "Voorkennis",
+    "prerequisitePlaceholder": "Bv. Een computer kunnen gebruiken",
+    "addPrerequisite": "Voorkennis toevoegen",
+    "targetAudience": "Doelgroep",
+    "targetAudiencePlaceholder": "Voor wie is deze cursus?",
+    "duration": "Geschatte duur (uur)",
+    "durationHint": "Gemiddelde tijd om de hele cursus te volgen.",
+    "pricing": "Prijs en beoordeling",
+    "pricingHint": "Verkoopprijs en regels voor het certificaat.",
+    "passThreshold": "Slaaggrens (%)",
+    "passThresholdHint": "Minimaal eindcijfer voor het certificaat.",
+    "weighting": "Weging van het eindcijfer",
+    "controlsWeight": "Toetsen: {{percent}}%",
+    "examWeight": "Eindexamen: {{percent}}%",
+    "fixErrors": "Corrigeer de gemarkeerde velden."
+  },
+  "coursePage": {
+    "objectives": "Wat je leert",
+    "prerequisites": "Voorkennis",
+    "audience": "Voor wie is deze cursus",
+    "duration": "{{hours}} u"
   }
 }

@@ -237,6 +237,52 @@ class CourseCardTest {
     }
 
     @Test
+    void la_page_de_presentation_du_cours_est_enregistree_et_relue() throws Exception {
+        String prof = instructorToken("card-prof12@example.com");
+        String body = mvc.perform(post("/api/v1/courses").header("Authorization", "Bearer " + prof)
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {"title":"Cours presente","language":"fr","price":12,
+                                 "subtitle":"  Tout pour bien demarrer  ","category":"DATA","level":"BEGINNER",
+                                 "durationHours":6.5,"objectives":["Ecrire une requete"," ","Joindre deux tables"],
+                                 "prerequisites":["Savoir utiliser un ordinateur"],"targetAudience":"Debutants",
+                                 "controlWeight":30,"examWeight":70,"passThreshold":60}
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.subtitle").value("Tout pour bien demarrer"))
+                .andExpect(jsonPath("$.level").value("BEGINNER"))
+                .andReturn().getResponse().getContentAsString();
+        String slug = JsonPath.read(body, "$.slug");
+
+        mvc.perform(get("/api/v1/courses/" + slug).header("Authorization", "Bearer " + prof))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.category").value("DATA"))
+                .andExpect(jsonPath("$.durationHours").value(6.5))
+                // Les entrées vides sont ignorées
+                .andExpect(jsonPath("$.objectives.length()").value(2))
+                .andExpect(jsonPath("$.objectives[1]").value("Joindre deux tables"))
+                .andExpect(jsonPath("$.prerequisites[0]").value("Savoir utiliser un ordinateur"))
+                .andExpect(jsonPath("$.targetAudience").value("Debutants"))
+                .andExpect(jsonPath("$.passThreshold").value(60))
+                .andExpect(jsonPath("$.examWeight").value(70));
+    }
+
+    @Test
+    void un_niveau_inconnu_ou_trop_dobjectifs_sont_refuses() throws Exception {
+        String prof = instructorToken("card-prof13@example.com");
+        mvc.perform(post("/api/v1/courses").header("Authorization", "Bearer " + prof)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"title\":\"Cours mal niveau\",\"level\":\"EXPERT\"}"))
+                .andExpect(status().isBadRequest());
+
+        String tooMany = "[" + String.join(",", java.util.Collections.nCopies(13, "\"Objectif\"")) + "]";
+        mvc.perform(post("/api/v1/courses").header("Authorization", "Bearer " + prof)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"title\":\"Cours trop ambitieux\",\"objectives\":" + tooMany + "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void une_note_hors_bornes_est_refusee() throws Exception {
         String prof = instructorToken("card-prof2@example.com");
         long courseId = publishedCourse(prof, "Cours aux notes bornees");

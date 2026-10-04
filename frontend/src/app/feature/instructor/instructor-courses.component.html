@@ -1,48 +1,88 @@
 <section class="page">
   <div class="head">
-    <h1>{{ 'instructorDashboard.title' | translate }}</h1>
-    <a class="btn" routerLink="/instructor/courses/new">{{ 'instructorDashboard.newCourse' | translate }}</a>
+    <h1>{{ 'instructor.nav.courses' | translate }}</h1>
+    <a class="btn" routerLink="new">＋ {{ 'instructor.newCourse' | translate }}</a>
   </div>
 
   @if (error()) {
     <p class="flash error">{{ error() }}</p>
   }
 
+  <div class="toolbar">
+    <div class="tabs" role="tablist">
+      @for (f of filters; track f) {
+        <button type="button" role="tab" [class.active]="filter() === f" [attr.aria-selected]="filter() === f" (click)="filter.set(f)">
+          {{ 'instructor.courses.filter.' + f | translate }} <span class="count">{{ counts()[f] }}</span>
+        </button>
+      }
+    </div>
+    <input
+      class="search"
+      type="search"
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+      [placeholder]="'instructor.courses.search' | translate"
+    />
+  </div>
+
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
-  } @else if (courses().length === 0) {
-    <p class="muted">{{ 'instructorDashboard.noCourses' | translate }}</p>
+  } @else if (visible().length === 0) {
+    <p class="muted">{{ (courses().length ? 'instructor.courses.noMatch' : 'instructorDashboard.noCourses') | translate }}</p>
   } @else {
-    <table>
-      <thead>
-        <tr>
-          <th>{{ 'instructorDashboard.headerTitle' | translate }}</th>
-          <th>{{ 'instructorDashboard.headerChapters' | translate }}</th>
-          <th>{{ 'instructorDashboard.headerStatus' | translate }}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (course of courses(); track course.id) {
-          <tr>
-            <td>{{ course.title }}</td>
-            <td>{{ course.chapterCount }}</td>
-            <td>
+    <div class="list">
+      @for (course of visible(); track course.id) {
+        <article class="course">
+          <a class="cover" [routerLink]="[course.slug, 'edit']" [style.background]="course.coverImageUrl ? null : fallbackCover(course.id)">
+            @if (api.coverSrc(course.coverImageUrl); as src) {
+              <img [src]="src" alt="" loading="lazy" />
+            } @else {
+              <span aria-hidden="true">{{ course.title.charAt(0) }}</span>
+            }
+          </a>
+
+          <div class="info">
+            <div class="title-row">
+              <a class="title" [routerLink]="[course.slug, 'edit']">{{ course.title }}</a>
               <span class="badge" [class.on]="course.published">
                 {{ (course.published ? 'instructorDashboard.published' : 'instructorDashboard.draft') | translate }}
               </span>
-            </td>
-            <td class="actions">
-              <a [routerLink]="['/instructor/courses', course.slug, 'edit']">{{ 'common.edit' | translate }}</a>
-              <a [routerLink]="['/instructor/courses', course.slug, 'results']">{{ 'instructorDashboard.results' | translate }}</a>
-              <button type="button" (click)="togglePublish(course)">
+            </div>
+            <p class="meta">
+              {{ course.price === 0 ? ('course.free' | translate) : (course.price | money: 'EUR' : lang.current()) }}
+              · {{ (course.chapterCount === 1 ? 'catalog.chapterOne' : 'catalog.chapters') | translate: { count: course.chapterCount } }}
+              · {{ course.language.toUpperCase() }}
+            </p>
+
+            <dl class="stats">
+              <div>
+                <dt>{{ 'instructor.overview.learners' | translate }}</dt>
+                <dd>{{ course.learnerCount }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'instructor.overview.rating' | translate }}</dt>
+                <dd>{{ course.averageRating != null ? '⭐ ' + formatRating(course.averageRating) + ' (' + course.ratingCount + ')' : '—' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'instructor.overview.revenue' | translate }}</dt>
+                <dd>{{ revenueOf(course) | money: currency() : lang.current() }}</dd>
+              </div>
+            </dl>
+
+            <div class="actions">
+              <a class="action primary" [routerLink]="[course.slug, 'edit']">✏️ {{ 'common.edit' | translate }}</a>
+              <a class="action" [routerLink]="[course.slug, 'results']">📈 {{ 'instructorDashboard.results' | translate }}</a>
+              @if (course.published) {
+                <a class="action" [routerLink]="['/courses', course.slug]">👁 {{ 'instructor.courses.view' | translate }}</a>
+              }
+              <button type="button" class="action" (click)="togglePublish(course)">
                 {{ (course.published ? 'instructorDashboard.unpublish' : 'instructorDashboard.publish') | translate }}
               </button>
-              <button type="button" class="danger" (click)="remove(course)">{{ 'common.delete' | translate }}</button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+              <button type="button" class="action danger" (click)="remove(course)">{{ 'common.delete' | translate }}</button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
   }
 </section>

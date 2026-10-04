@@ -1,6 +1,37 @@
 export type ContentType = 'VIDEO' | 'DOCUMENT' | 'TEXT';
 
-export interface CourseSummary {
+export type CourseLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'ALL_LEVELS';
+export const COURSE_LEVELS: CourseLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'ALL_LEVELS'];
+
+export type CourseCategory =
+  | 'DEVELOPMENT'
+  | 'DATA'
+  | 'NETWORK_SECURITY'
+  | 'OFFICE'
+  | 'LANGUAGES'
+  | 'DESIGN'
+  | 'BUSINESS'
+  | 'OTHER';
+export const COURSE_CATEGORIES: CourseCategory[] = [
+  'DEVELOPMENT',
+  'DATA',
+  'NETWORK_SECURITY',
+  'OFFICE',
+  'LANGUAGES',
+  'DESIGN',
+  'BUSINESS',
+  'OTHER',
+];
+
+/** Champs de présentation communs au résumé et au détail d'un cours. */
+export interface CoursePresentation {
+  subtitle?: string;
+  category?: CourseCategory;
+  level?: CourseLevel;
+  durationHours?: number;
+}
+
+export interface CourseSummary extends CoursePresentation {
   id: number;
   slug: string;
   title: string;
@@ -36,7 +67,7 @@ export interface ChapterItem {
   contents: ContentItem[];
 }
 
-export interface CourseDetail {
+export interface CourseDetail extends CoursePresentation {
   id: number;
   slug: string;
   title: string;
@@ -50,6 +81,9 @@ export interface CourseDetail {
   contentsVisible: boolean;
   chapters: ChapterItem[];
   price: number;
+  objectives: string[];
+  prerequisites: string[];
+  targetAudience?: string;
   /** URL de l'image de couverture (chemin API), absente si le formateur n'en a pas mis. */
   coverImageUrl?: string;
   learnerCount: number;
@@ -116,11 +150,17 @@ export interface CourseProgress {
   completedContentIds: number[];
 }
 
-export interface CourseFormValue {
+export interface CourseFormValue extends CoursePresentation {
   title: string;
   description?: string;
   language: string;
   price: number;
+  objectives: string[];
+  prerequisites: string[];
+  targetAudience?: string;
+  controlWeight: number;
+  examWeight: number;
+  passThreshold: number;
 }
 
 export interface ChapterFormValue {

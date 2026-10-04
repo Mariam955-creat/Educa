@@ -1,37 +1,17 @@
 <section class="page">
-  <a class="back" routerLink="/instructor">‹ {{ 'instructorDashboard.title' | translate }}</a>
+  <a class="back" routerLink="/instructor/courses">‹ {{ 'instructor.nav.courses' | translate }}</a>
   <h1>{{ (isNew() ? 'courseEditor.newTitle' : 'courseEditor.editTitle') | translate }}</h1>
 
   @if (message()) {
     <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
   }
 
-  <form class="card" [formGroup]="courseForm" (ngSubmit)="saveCourse()">
-    <label>
-      {{ 'courseEditor.titleField' | translate }}
-      <input type="text" formControlName="title" />
-    </label>
-    <label>
-      {{ 'courseEditor.descriptionField' | translate }}
-      <textarea formControlName="description" rows="3"></textarea>
-    </label>
-    <label>
-      {{ 'courseEditor.languageField' | translate }}
-      <select formControlName="language">
-        @for (lang of selectableLanguages(); track lang.code) {
-          <option [value]="lang.code" [disabled]="!lang.active">{{ lang.name }}</option>
-        }
-      </select>
-    </label>
-    <label>
-      {{ 'courseEditor.priceField' | translate }}
-      <input type="number" formControlName="price" min="0" step="0.01" required />
-      @if (courseForm.controls.price.touched && courseForm.controls.price.invalid) {
-        <small class="field-error">{{ 'courseEditor.priceRequired' | translate }}</small>
-      }
-    </label>
-    <button type="submit">{{ (isNew() ? 'courseEditor.create' : 'courseEditor.save') | translate }}</button>
-  </form>
+  <app-course-info-form
+    [course]="course()"
+    [languages]="selectableLanguages()"
+    [saving]="saving()"
+    (submitted)="saveCourse($event)"
+  />
 
   @if (course(); as c) {
     <h2>{{ 'courseEditor.cover' | translate }}</h2>

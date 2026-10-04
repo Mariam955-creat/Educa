@@ -42,17 +42,17 @@
     @if (isInstructor()) {
       <h2>{{ 'account.overview.teaching' | translate }}</h2>
       <div class="kpis">
-        <a class="kpi teach" routerLink="/instructor">
+        <a class="kpi teach" routerLink="/instructor/overview">
           <span class="kpi-icon" aria-hidden="true">🧑‍🏫</span>
           <span class="kpi-value">{{ taughtCourses().length }}</span>
           <span class="kpi-label">{{ 'account.overview.coursesCreated' | translate: { published: publishedCount() } }}</span>
         </a>
-        <a class="kpi teach" routerLink="/instructor">
+        <a class="kpi teach" routerLink="/instructor/overview">
           <span class="kpi-icon" aria-hidden="true">👥</span>
           <span class="kpi-value">{{ totalLearners() }}</span>
           <span class="kpi-label">{{ 'account.overview.learners' | translate }}</span>
         </a>
-        <a class="kpi teach" routerLink="/instructor">
+        <a class="kpi teach" routerLink="/instructor/overview">
           <span class="kpi-icon" aria-hidden="true">⭐</span>
           <span class="kpi-value">{{ teachingRating() != null ? formatRating(teachingRating()!) + ' / 5' : '—' }}</span>
           <span class="kpi-label">{{ 'account.overview.teachingRating' | translate }}</span>

@@ -20,6 +20,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     boolean existsByCourseId(Long courseId);
 
+    long countByEnrolledAtAfter(java.time.Instant since);
+
     /** Lignes {@code [courseId, nombre d'inscrits]} pour les cours donnés. */
     @Query("select e.courseId, count(e) from Enrollment e where e.courseId in :courseIds group by e.courseId")
     List<Object[]> countByCourseIds(@Param("courseIds") Collection<Long> courseIds);

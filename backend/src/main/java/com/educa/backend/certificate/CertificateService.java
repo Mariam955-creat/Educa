@@ -86,6 +86,11 @@ public class CertificateService {
 
     /** Registre de tous les certificats délivrés (administration). */
     @Transactional(readOnly = true)
+    public long count() {
+        return certificateRepository.count();
+    }
+
+    @Transactional(readOnly = true)
     public Page<CertificateDto> registry(Pageable pageable) {
         return certificateRepository.findAllByOrderByIssuedAtDesc(pageable).map(this::toDto);
     }

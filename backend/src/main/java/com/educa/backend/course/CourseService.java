@@ -110,6 +110,20 @@ public class CourseService {
         return courses.stream().map(course -> toSummary(course, null, stats)).toList();
     }
 
+    /** Tous les cours, publiés ou non (administration). */
+    @Transactional(readOnly = true)
+    public Page<CourseSummaryDto> adminList(String q, Boolean published, Pageable pageable) {
+        Page<Course> page = courseRepository.searchAll(StringUtils.hasText(q) ? q.trim() : null, published, pageable);
+        CourseStats stats = statsFor(page.getContent());
+        return page.map(course -> toSummary(course, null, stats));
+    }
+
+    /** Nombre total de cours et de cours publiés (tableau de bord admin). */
+    @Transactional(readOnly = true)
+    public long[] courseCounts() {
+        return new long[] { courseRepository.count(), courseRepository.countByPublishedTrue() };
+    }
+
     /** Ids des cours d'un formateur (publiés ou non) — pour ses ventes et ses avis reçus. */
     @Transactional(readOnly = true)
     public List<Long> courseIdsByInstructor(Long instructorId) {

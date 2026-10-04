@@ -1,0 +1,120 @@
+<section class="page">
+  <div class="head">
+    <div>
+      <h1>{{ 'admin.nav.overview' | translate }}</h1>
+      <p class="subtitle">{{ 'admin.overview.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="flash">{{ 'admin.overview.loadError' | translate }}</p>
+  } @else if (!stats()) {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else {
+    @let s = stats()!;
+    <div class="kpis">
+      <a class="kpi highlight" routerLink="../payments">
+        <span class="kpi-label">💶 {{ 'admin.overview.revenue' | translate }}</span>
+        <span class="kpi-value">{{ s.revenue.total | money: s.revenue.currency : lang.current() }}</span>
+        <span class="kpi-sub">{{ 'admin.overview.last30' | translate: { amount: (s.revenue.recent | money: s.revenue.currency : lang.current()), count: s.revenue.recentSales } }}</span>
+      </a>
+      <a class="kpi" routerLink="../users">
+        <span class="kpi-label">👥 {{ 'admin.overview.users' | translate }}</span>
+        <span class="kpi-value">{{ s.users.total }}</span>
+        <span class="kpi-sub">{{ 'admin.overview.newUsers' | translate: { count: s.users.recent } }}</span>
+      </a>
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-label">📚 {{ 'admin.overview.courses' | translate }}</span>
+        <span class="kpi-value">{{ s.courses.total }}</span>
+        <span class="kpi-sub">{{ 'instructor.overview.publishedOf' | translate: { published: s.courses.published, drafts: s.courses.drafts } }}</span>
+      </a>
+      <div class="kpi">
+        <span class="kpi-label">📝 {{ 'admin.overview.enrollments' | translate }}</span>
+        <span class="kpi-value">{{ s.enrollments.total }}</span>
+        <span class="kpi-sub">{{ 'admin.overview.recentCount' | translate: { count: s.enrollments.recent } }}</span>
+      </div>
+      <a class="kpi" routerLink="../certificates">
+        <span class="kpi-label">🎓 {{ 'admin.overview.certificates' | translate }}</span>
+        <span class="kpi-value">{{ s.certificates }}</span>
+      </a>
+      <a class="kpi" routerLink="../reviews">
+        <span class="kpi-label">⭐ {{ 'admin.overview.rating' | translate }}</span>
+        <span class="kpi-value">{{ s.reviews.average != null ? formatRating(s.reviews.average) : '—' }}</span>
+        <span class="kpi-sub">{{ 'instructor.overview.ratingCount' | translate: { count: s.reviews.count } }}</span>
+      </a>
+    </div>
+
+    <div class="panels">
+      <article class="panel">
+        <h2>{{ 'admin.overview.userBreakdown' | translate }}</h2>
+        @for (row of [
+          { key: 'admin.roles.LEARNER', value: s.users.learners },
+          { key: 'admin.roles.INSTRUCTOR', value: s.users.instructors },
+          { key: 'admin.roles.ADMIN', value: s.users.admins }
+        ]; track row.key) {
+          <div class="bar-row">
+            <span>{{ row.key | translate }}</span>
+            <span class="bar"><span class="bar-fill" [style.width.%]="share(row.value, s.users.total)"></span></span>
+            <strong>{{ row.value }}</strong>
+          </div>
+        }
+        @if (s.users.disabled) {
+          <p class="note">⚠ {{ 'admin.overview.disabledUsers' | translate: { count: s.users.disabled } }}</p>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>{{ 'admin.overview.latestPayments' | translate }}</h2>
+          <a routerLink="../payments">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (p of payments(); track p.id) {
+          <div class="row">
+            <span class="row-title">{{ p.courseTitle }}<small> · {{ p.userName }}</small></span>
+            <span class="badge" [class.ok]="p.status === 'SUCCEEDED'" [class.warn]="p.status === 'PENDING'" [class.ko]="p.status === 'FAILED'">
+              {{ 'admin.payments.status.' + p.status | translate }}
+            </span>
+            <strong>{{ p.amount | money: p.currency : lang.current() }}</strong>
+          </div>
+        } @empty {
+          <p class="muted">{{ 'admin.payments.empty' | translate }}</p>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>{{ 'admin.overview.newestUsers' | translate }}</h2>
+          <a routerLink="../users">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (u of users(); track u.id) {
+          <div class="row">
+            <span class="person">
+              <span class="avatar" aria-hidden="true">{{ u.fullName.charAt(0) }}</span>
+              <span class="person-text">{{ u.fullName }}<small>{{ u.email }}</small></span>
+            </span>
+            <span class="muted">{{ u.createdAt | localDate: 'long' : lang.current() }}</span>
+          </div>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <h2>{{ 'instructor.overview.latestReviews' | translate }}</h2>
+          <a routerLink="../reviews">{{ 'instructor.overview.seeAll' | translate }}</a>
+        </div>
+        @for (r of reviews(); track r.id) {
+          <div class="review">
+            <app-star-rating [value]="r.stars" size="small" [label]="r.stars + ' / 5'" />
+            <strong>{{ r.authorName }}</strong>
+            <span class="muted">· {{ r.courseTitle }}</span>
+            @if (r.comment) {
+              <p>{{ r.comment }}</p>
+            }
+          </div>
+        } @empty {
+          <p class="muted">{{ 'admin.reviews.empty' | translate }}</p>
+        }
+      </article>
+    </div>
+  }
+</section>

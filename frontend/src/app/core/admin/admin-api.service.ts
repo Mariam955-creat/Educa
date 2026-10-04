@@ -4,8 +4,10 @@ import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
 import { RoleName } from '../auth/auth.models';
+import { CourseSummary } from '../courses/course.models';
 import { CourseLanguage } from '../language/language-api.service';
 import {
+  AdminStats,
   AdminUser,
   CertificateRegistryEntry,
   Page,
@@ -17,6 +19,18 @@ import {
 export class AdminApiService {
   private readonly http = inject(HttpClient);
   private readonly base = API_BASE_URL;
+
+  stats(): Observable<AdminStats> {
+    return this.http.get<AdminStats>(`${this.base}/admin/stats`);
+  }
+
+  /** @param published `true` publiés, `false` brouillons, absent = tous */
+  courses(q?: string, published?: boolean, page = 0, size = 20): Observable<Page<CourseSummary>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (q) params = params.set('q', q);
+    if (published !== undefined) params = params.set('published', published);
+    return this.http.get<Page<CourseSummary>>(`${this.base}/admin/courses`, { params });
+  }
 
   users(q?: string, page = 0, size = 50): Observable<Page<AdminUser>> {
     let params = new HttpParams().set('page', page).set('size', size);

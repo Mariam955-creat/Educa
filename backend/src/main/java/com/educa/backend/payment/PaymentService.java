@@ -128,6 +128,18 @@ public class PaymentService {
                         p.getCurrency(), p.getStatus(), p.getInvoiceNumber(), p.getCreatedAt()));
     }
 
+    /** Chiffre d'affaires (paiements réussis) total et depuis {@code recentSince}, pour le tableau de bord admin. */
+    @Transactional(readOnly = true)
+    public RevenueStats revenueStats(java.time.Instant recentSince) {
+        Object[] all = paymentRepository.totalsSince(PaymentStatus.SUCCEEDED, java.time.Instant.EPOCH).get(0);
+        Object[] recent = paymentRepository.totalsSince(PaymentStatus.SUCCEEDED, recentSince).get(0);
+        return new RevenueStats((BigDecimal) all[0], (Long) all[1], (BigDecimal) recent[0], (Long) recent[1],
+                educaProperties.payment().stripe().currency());
+    }
+
+    public record RevenueStats(BigDecimal total, long sales, BigDecimal recent, long recentSales, String currency) {
+    }
+
     /** Ventes (paiements réussis) des cours d'un formateur, de la plus récente à la plus ancienne. */
     @Transactional(readOnly = true)
     public List<InstructorSaleDto> instructorSales(Long instructorId) {

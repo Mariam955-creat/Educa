@@ -79,6 +79,17 @@ public class UserService {
 
     // ---------- administration ----------
 
+    /** Compteurs d'utilisateurs pour le tableau de bord admin. */
+    @Transactional(readOnly = true)
+    public UserStats stats(java.time.Instant newSince) {
+        return new UserStats(userRepository.count(), userRepository.countByRoles_Name(RoleName.LEARNER),
+                userRepository.countByRoles_Name(RoleName.INSTRUCTOR), userRepository.countByRoles_Name(RoleName.ADMIN),
+                userRepository.countByEnabledFalse(), userRepository.countByCreatedAtAfter(newSince));
+    }
+
+    public record UserStats(long total, long learners, long instructors, long admins, long disabled, long recent) {
+    }
+
     @Transactional(readOnly = true)
     public Page<AdminUserDto> adminList(String q, Pageable pageable) {
         String normalizedQ = StringUtils.hasText(q) ? q.trim() : null;

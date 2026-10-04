@@ -46,6 +46,16 @@ export interface ReviewRegistryEntry {
   updatedAt: string;
 }
 
+/** Indicateurs du tableau de bord admin ; « recent » = 30 derniers jours. */
+export interface AdminStats {
+  users: { total: number; learners: number; instructors: number; admins: number; disabled: number; recent: number };
+  courses: { total: number; published: number; drafts: number };
+  enrollments: { total: number; recent: number };
+  revenue: { total: number; sales: number; recent: number; recentSales: number; currency: string };
+  certificates: number;
+  reviews: { count: number; average: number | null };
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

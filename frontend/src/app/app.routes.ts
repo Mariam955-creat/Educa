@@ -124,8 +124,40 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [roleGuard('ADMIN')],
-    loadComponent: () =>
-      import('./feature/admin/admin-dashboard.component').then((m) => m.AdminDashboardComponent),
+    loadComponent: () => import('./feature/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        loadComponent: () => import('./feature/admin/admin-overview.component').then((m) => m.AdminOverviewComponent),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./feature/admin/admin-users.component').then((m) => m.AdminUsersComponent),
+      },
+      {
+        path: 'courses',
+        loadComponent: () => import('./feature/admin/admin-courses.component').then((m) => m.AdminCoursesComponent),
+      },
+      {
+        path: 'payments',
+        loadComponent: () => import('./feature/admin/admin-registries.component').then((m) => m.AdminPaymentsComponent),
+      },
+      {
+        path: 'certificates',
+        loadComponent: () =>
+          import('./feature/admin/admin-registries.component').then((m) => m.AdminCertificatesComponent),
+      },
+      {
+        path: 'reviews',
+        loadComponent: () => import('./feature/admin/admin-registries.component').then((m) => m.AdminReviewsComponent),
+      },
+      {
+        path: 'languages',
+        loadComponent: () =>
+          import('./feature/admin/admin-registries.component').then((m) => m.AdminLanguagesComponent),
+      },
+    ],
   },
   { path: '**', redirectTo: 'account' },
 ];

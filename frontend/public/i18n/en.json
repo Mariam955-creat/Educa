@@ -259,13 +259,6 @@
   "admin": {
     "title": "Administration",
     "connectedAs": "Signed in: {{email}}",
-    "tabs": {
-      "users": "Users",
-      "certificates": "Certificates",
-      "payments": "Payments",
-      "languages": "Languages",
-      "reviews": "Reviews"
-    },
     "roles": {
       "LEARNER": "Learner",
       "INSTRUCTOR": "Instructor",
@@ -303,7 +296,12 @@
       "headerAmount": "Amount",
       "headerStatus": "Status",
       "headerInvoice": "Invoice no.",
-      "headerDate": "Date"
+      "headerDate": "Date",
+      "status": {
+        "SUCCEEDED": "Succeeded",
+        "PENDING": "Pending",
+        "FAILED": "Failed"
+      }
     },
     "languages": {
       "headerCode": "Code",
@@ -320,6 +318,50 @@
       "headerDate": "Date",
       "confirmDelete": "Delete {{name}}'s review? Their rating will be removed from the course average.",
       "deleteError": "Could not delete the review."
+    },
+    "nav": {
+      "overview": "Dashboard",
+      "users": "Users",
+      "courses": "Courses",
+      "payments": "Payments",
+      "certificates": "Certificates",
+      "reviews": "Reviews",
+      "languages": "Languages"
+    },
+    "overview": {
+      "subtitle": "Platform activity: users, courses, sales and quality.",
+      "loadError": "Could not load the indicators.",
+      "revenue": "Revenue",
+      "last30": "{{amount}} in 30 days · {{count}} sale(s)",
+      "users": "Users",
+      "newUsers": "+{{count}} in 30 days",
+      "courses": "Courses",
+      "enrollments": "Enrolments",
+      "recentCount": "+{{count}} in 30 days",
+      "certificates": "Certificates issued",
+      "rating": "Average rating",
+      "userBreakdown": "Users by role",
+      "disabledUsers": "{{count}} disabled account(s)",
+      "latestPayments": "Latest payments",
+      "newestUsers": "Newest users"
+    },
+    "usersPage": {
+      "subtitle": "{{count}} account(s)",
+      "joined": "Joined",
+      "you": "You"
+    },
+    "coursesPage": {
+      "subtitle": "{{count}} courses, published and drafts",
+      "course": "Course",
+      "status": "Status",
+      "price": "Price"
+    },
+    "registry": {
+      "count": "{{count}} item(s)",
+      "verify": "Verify"
+    },
+    "languagesPage": {
+      "subtitle": "Languages available for course content. The interface language does not depend on this setting."
     }
   },
   "footer": {
@@ -530,5 +572,11 @@
     "changePassword": "Change password",
     "passwordChanged": "Password changed. Your other devices will need to sign in again.",
     "passwordSessionsHint": "After the change, your other open sessions are signed out."
+  },
+  "pager": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "status": "Page {{page}} / {{total}}"
   }
 }

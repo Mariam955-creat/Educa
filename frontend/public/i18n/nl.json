@@ -259,13 +259,6 @@
   "admin": {
     "title": "Beheer",
     "connectedAs": "Aangemeld: {{email}}",
-    "tabs": {
-      "users": "Gebruikers",
-      "certificates": "Certificaten",
-      "payments": "Betalingen",
-      "languages": "Talen",
-      "reviews": "Beoordelingen"
-    },
     "roles": {
       "LEARNER": "Cursist",
       "INSTRUCTOR": "Docent",
@@ -303,7 +296,12 @@
       "headerAmount": "Bedrag",
       "headerStatus": "Status",
       "headerInvoice": "Factuurnr.",
-      "headerDate": "Datum"
+      "headerDate": "Datum",
+      "status": {
+        "SUCCEEDED": "Geslaagd",
+        "PENDING": "In behandeling",
+        "FAILED": "Mislukt"
+      }
     },
     "languages": {
       "headerCode": "Code",
@@ -320,6 +318,50 @@
       "headerDate": "Datum",
       "confirmDelete": "Beoordeling van {{name}} verwijderen? De score wordt uit het cursusgemiddelde gehaald.",
       "deleteError": "De beoordeling kon niet worden verwijderd."
+    },
+    "nav": {
+      "overview": "Dashboard",
+      "users": "Gebruikers",
+      "courses": "Cursussen",
+      "payments": "Betalingen",
+      "certificates": "Certificaten",
+      "reviews": "Beoordelingen",
+      "languages": "Talen"
+    },
+    "overview": {
+      "subtitle": "Activiteit van het platform: gebruikers, cursussen, verkopen en kwaliteit.",
+      "loadError": "De indicatoren konden niet worden geladen.",
+      "revenue": "Omzet",
+      "last30": "{{amount}} in 30 dagen · {{count}} verkoop/verkopen",
+      "users": "Gebruikers",
+      "newUsers": "+{{count}} in 30 dagen",
+      "courses": "Cursussen",
+      "enrollments": "Inschrijvingen",
+      "recentCount": "+{{count}} in 30 dagen",
+      "certificates": "Uitgereikte certificaten",
+      "rating": "Gemiddelde score",
+      "userBreakdown": "Gebruikers per rol",
+      "disabledUsers": "{{count}} gedeactiveerd(e) account(s)",
+      "latestPayments": "Laatste betalingen",
+      "newestUsers": "Nieuwste gebruikers"
+    },
+    "usersPage": {
+      "subtitle": "{{count}} account(s)",
+      "joined": "Ingeschreven op",
+      "you": "Jij"
+    },
+    "coursesPage": {
+      "subtitle": "{{count}} cursussen, gepubliceerd en concepten",
+      "course": "Cursus",
+      "status": "Status",
+      "price": "Prijs"
+    },
+    "registry": {
+      "count": "{{count}} item(s)",
+      "verify": "Controleren"
+    },
+    "languagesPage": {
+      "subtitle": "Talen voor cursusinhoud. De taal van de interface hangt niet af van deze instelling."
     }
   },
   "footer": {
@@ -530,5 +572,11 @@
     "changePassword": "Wachtwoord wijzigen",
     "passwordChanged": "Wachtwoord gewijzigd. Je andere apparaten moeten opnieuw inloggen.",
     "passwordSessionsHint": "Na de wijziging worden je andere open sessies afgemeld."
+  },
+  "pager": {
+    "label": "Paginering",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "status": "Pagina {{page}} / {{total}}"
   }
 }

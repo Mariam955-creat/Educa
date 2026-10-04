@@ -131,6 +131,14 @@ public class RatingService {
         }).toList();
     }
 
+    /** Note moyenne et nombre d'avis de toute la plateforme ; moyenne {@code null} s'il n'y en a aucun. */
+    @Transactional(readOnly = true)
+    public RatingStats globalStats() {
+        Object[] row = ratingRepository.globalStats().get(0);
+        long count = (Long) row[1];
+        return new RatingStats(count == 0 ? 0 : Math.round(((Number) row[0]).doubleValue() * 10) / 10.0, count);
+    }
+
     /** Suppression par un administrateur (modération). */
     @Transactional
     public void delete(Long ratingId) {

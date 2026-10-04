@@ -259,13 +259,6 @@
   "admin": {
     "title": "Verwaltung",
     "connectedAs": "Angemeldet: {{email}}",
-    "tabs": {
-      "users": "Benutzer",
-      "certificates": "Zertifikate",
-      "payments": "Zahlungen",
-      "languages": "Sprachen",
-      "reviews": "Bewertungen"
-    },
     "roles": {
       "LEARNER": "Lernende/r",
       "INSTRUCTOR": "Kursleiter/in",
@@ -303,7 +296,12 @@
       "headerAmount": "Betrag",
       "headerStatus": "Status",
       "headerInvoice": "Rechnungsnr.",
-      "headerDate": "Datum"
+      "headerDate": "Datum",
+      "status": {
+        "SUCCEEDED": "Erfolgreich",
+        "PENDING": "Ausstehend",
+        "FAILED": "Fehlgeschlagen"
+      }
     },
     "languages": {
       "headerCode": "Code",
@@ -320,6 +318,50 @@
       "headerDate": "Datum",
       "confirmDelete": "Bewertung von {{name}} löschen? Die Note wird aus dem Kursdurchschnitt entfernt.",
       "deleteError": "Die Bewertung konnte nicht gelöscht werden."
+    },
+    "nav": {
+      "overview": "Übersicht",
+      "users": "Nutzer",
+      "courses": "Kurse",
+      "payments": "Zahlungen",
+      "certificates": "Zertifikate",
+      "reviews": "Bewertungen",
+      "languages": "Sprachen"
+    },
+    "overview": {
+      "subtitle": "Aktivität der Plattform: Nutzer, Kurse, Verkäufe und Qualität.",
+      "loadError": "Die Kennzahlen konnten nicht geladen werden.",
+      "revenue": "Umsatz",
+      "last30": "{{amount}} in 30 Tagen · {{count}} Verkauf/Verkäufe",
+      "users": "Nutzer",
+      "newUsers": "+{{count}} in 30 Tagen",
+      "courses": "Kurse",
+      "enrollments": "Einschreibungen",
+      "recentCount": "+{{count}} in 30 Tagen",
+      "certificates": "Ausgestellte Zertifikate",
+      "rating": "Durchschnittsnote",
+      "userBreakdown": "Nutzer nach Rolle",
+      "disabledUsers": "{{count}} deaktivierte(s) Konto/Konten",
+      "latestPayments": "Letzte Zahlungen",
+      "newestUsers": "Neueste Nutzer"
+    },
+    "usersPage": {
+      "subtitle": "{{count}} Konto/Konten",
+      "joined": "Registriert am",
+      "you": "Sie"
+    },
+    "coursesPage": {
+      "subtitle": "{{count}} Kurse, veröffentlicht und Entwürfe",
+      "course": "Kurs",
+      "status": "Status",
+      "price": "Preis"
+    },
+    "registry": {
+      "count": "{{count}} Eintrag/Einträge",
+      "verify": "Prüfen"
+    },
+    "languagesPage": {
+      "subtitle": "Sprachen für Kursinhalte. Die Sprache der Oberfläche hängt nicht von dieser Einstellung ab."
     }
   },
   "footer": {
@@ -530,5 +572,11 @@
     "changePassword": "Passwort ändern",
     "passwordChanged": "Passwort geändert. Ihre anderen Geräte müssen sich erneut anmelden.",
     "passwordSessionsHint": "Nach der Änderung werden Ihre anderen offenen Sitzungen abgemeldet."
+  },
+  "pager": {
+    "label": "Seitennavigation",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "status": "Seite {{page}} / {{total}}"
   }
 }

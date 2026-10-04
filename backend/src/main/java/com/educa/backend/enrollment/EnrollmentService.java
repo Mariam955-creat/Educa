@@ -120,6 +120,12 @@ public class EnrollmentService {
         return enrollmentRepository.findByCourseId(courseId).stream().map(Enrollment::getUserId).toList();
     }
 
+    /** Inscriptions totales et récentes (tableau de bord admin). */
+    @Transactional(readOnly = true)
+    public long[] enrollmentCounts(java.time.Instant recentSince) {
+        return new long[] { enrollmentRepository.count(), enrollmentRepository.countByEnrolledAtAfter(recentSince) };
+    }
+
     @Transactional
     public void markCompleted(Long userId, Long courseId) {
         enrollmentRepository.findByUserIdAndCourseId(userId, courseId).ifPresent(e -> {

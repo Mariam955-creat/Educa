@@ -27,4 +27,15 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> searchPublished(@Param("q") String q, @Param("language") String language, Pageable pageable);
 
     long countByInstructorId(Long instructorId);
+
+    long countByPublishedTrue();
+
+    /** Tous les cours (administration) : recherche sur le titre, filtre facultatif sur la publication. */
+    @Query("""
+            select c from Course c
+            where (cast(:q as string) is null or lower(c.title) like lower(concat('%', cast(:q as string), '%')))
+              and (:published is null or c.published = :published)
+            order by c.createdAt desc
+            """)
+    Page<Course> searchAll(@Param("q") String q, @Param("published") Boolean published, Pageable pageable);
 }

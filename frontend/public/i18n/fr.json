@@ -259,13 +259,6 @@
   "admin": {
     "title": "Administration",
     "connectedAs": "Connecté : {{email}}",
-    "tabs": {
-      "users": "Utilisateurs",
-      "certificates": "Certificats",
-      "payments": "Paiements",
-      "languages": "Langues",
-      "reviews": "Avis"
-    },
     "roles": {
       "LEARNER": "Apprenant",
       "INSTRUCTOR": "Formateur",
@@ -303,7 +296,12 @@
       "headerAmount": "Montant",
       "headerStatus": "Statut",
       "headerInvoice": "N° facture",
-      "headerDate": "Date"
+      "headerDate": "Date",
+      "status": {
+        "SUCCEEDED": "Réussi",
+        "PENDING": "En attente",
+        "FAILED": "Échoué"
+      }
     },
     "languages": {
       "headerCode": "Code",
@@ -320,6 +318,50 @@
       "headerDate": "Date",
       "confirmDelete": "Supprimer l'avis de {{name}} ? Sa note sera retirée de la moyenne du cours.",
       "deleteError": "Impossible de supprimer l'avis."
+    },
+    "nav": {
+      "overview": "Tableau de bord",
+      "users": "Utilisateurs",
+      "courses": "Cours",
+      "payments": "Paiements",
+      "certificates": "Certificats",
+      "reviews": "Avis",
+      "languages": "Langues"
+    },
+    "overview": {
+      "subtitle": "Activité de la plateforme : utilisateurs, cours, ventes et qualité.",
+      "loadError": "Impossible de charger les indicateurs.",
+      "revenue": "Chiffre d'affaires",
+      "last30": "{{amount}} sur 30 jours · {{count}} vente(s)",
+      "users": "Utilisateurs",
+      "newUsers": "+{{count}} sur 30 jours",
+      "courses": "Cours",
+      "enrollments": "Inscriptions",
+      "recentCount": "+{{count}} sur 30 jours",
+      "certificates": "Certificats délivrés",
+      "rating": "Note moyenne",
+      "userBreakdown": "Répartition des utilisateurs",
+      "disabledUsers": "{{count}} compte(s) désactivé(s)",
+      "latestPayments": "Derniers paiements",
+      "newestUsers": "Derniers inscrits"
+    },
+    "usersPage": {
+      "subtitle": "{{count}} compte(s)",
+      "joined": "Inscrit le",
+      "you": "Vous"
+    },
+    "coursesPage": {
+      "subtitle": "{{count}} cours, publiés et brouillons",
+      "course": "Cours",
+      "status": "Statut",
+      "price": "Prix"
+    },
+    "registry": {
+      "count": "{{count}} élément(s)",
+      "verify": "Vérifier"
+    },
+    "languagesPage": {
+      "subtitle": "Langues proposées pour le contenu des cours. La langue de l'interface ne dépend pas de ce réglage."
     }
   },
   "footer": {
@@ -530,5 +572,11 @@
     "changePassword": "Changer le mot de passe",
     "passwordChanged": "Mot de passe modifié. Vos autres appareils devront se reconnecter.",
     "passwordSessionsHint": "Après le changement, vos autres sessions ouvertes sont déconnectées."
+  },
+  "pager": {
+    "label": "Pagination",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "status": "Page {{page}} / {{total}}"
   }
 }

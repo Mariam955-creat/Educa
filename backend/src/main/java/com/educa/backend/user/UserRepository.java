@@ -12,6 +12,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailIgnoreCase(String email);
 
+    long countByRoles_Name(RoleName name);
+
+    long countByEnabledFalse();
+
+    long countByCreatedAtAfter(java.time.Instant since);
+
     boolean existsByEmailIgnoreCase(String email);
 
     @Query("""

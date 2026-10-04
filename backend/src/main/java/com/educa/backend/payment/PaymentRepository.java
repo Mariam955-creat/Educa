@@ -21,4 +21,12 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<Payment> findByCourseIdInAndStatusOrderByCreatedAtDesc(Collection<Long> courseIds, PaymentStatus status);
 
     long countByInvoiceNumberIsNotNull();
+
+    /** Ligne {@code [somme, nombre]} des paiements d'un statut depuis une date. */
+    @org.springframework.data.jpa.repository.Query("""
+            select coalesce(sum(p.amount), 0), count(p) from Payment p
+            where p.status = :status and p.createdAt >= :since
+            """)
+    List<Object[]> totalsSince(@org.springframework.data.repository.query.Param("status") PaymentStatus status,
+                               @org.springframework.data.repository.query.Param("since") java.time.Instant since);
 }

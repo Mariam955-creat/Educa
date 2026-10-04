@@ -23,6 +23,10 @@ public interface CourseRatingRepository extends JpaRepository<CourseRating, Long
     /** Notes reçues par un ensemble de cours (ceux d'un formateur), de la plus récente à la plus ancienne. */
     List<CourseRating> findByCourseIdInOrderByUpdatedAtDesc(Collection<Long> courseIds);
 
+    /** Ligne {@code [moyenne, nombre]} de toutes les notes de la plateforme. */
+    @Query("select avg(r.stars), count(r) from CourseRating r")
+    List<Object[]> globalStats();
+
     /** Toutes les notes, de la plus récente à la plus ancienne (modération). */
     Page<CourseRating> findAllByOrderByUpdatedAtDesc(Pageable pageable);
 

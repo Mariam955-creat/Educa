@@ -403,6 +403,21 @@ même forme de DTO). Non branché sur `GET /courses/{slug}` par défaut côté f
 toujours éditer le texte source, jamais une traduction affichée) — seule la page de consultation publique
 (`course-detail`) passe `displayLanguage`.
 
+### Profil utilisateur (migré, `V15__user_profile.sql`, 2026-10-04)
+
+```
+users (colonnes ajoutées)
+  headline  VARCHAR(120) NULL   -- titre professionnel, public pour un formateur
+  bio       TEXT NULL           -- biographie (1 000 car. max côté API), publique pour un formateur
+  country   VARCHAR(2)  NULL    -- ISO 3166-1 alpha-2, privé
+  phone     VARCHAR(30) NULL    -- privé
+```
+
+Mot de passe (inscription et changement) : 8 à 100 caractères, au moins une lettre et un chiffre (`PasswordRules`,
+même règle côté Angular). La page cours n'expose du formateur que `PublicProfileDto` (nom, titre, biographie) — jamais
+email ni téléphone (vérifié par test). Le changement de mot de passe révoque les refresh tokens **entité par entité**
+(un `UPDATE` groupé contournait le contexte de persistance : l'ancien jeton restait accepté dans la même transaction).
+
 ### Présentation d'un cours (migrée, `V14__course_presentation.sql`, 2026-10-04)
 
 ```
@@ -485,7 +500,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | POST | `/auth/refresh` | public | `{refreshToken}` | `200` `{accessToken, refreshToken, expiresIn}` |
 | POST | `/auth/logout` | authentifié | `{refreshToken}` | `204` |
 | GET | `/auth/me` | authentifié | – | `200` `{id, email, fullName, roles, preferredLanguage}` |
-| PATCH | `/auth/me` | authentifié | `{fullName?, preferredLanguage?}` | `200` profil |
+| PATCH | `/auth/me` | authentifié | `{fullName?, preferredLanguage?, headline?, bio?, country?, phone?}` — absent = inchangé, chaîne vide = effacé | `200` profil |
+| POST | `/auth/me/password` | authentifié | `{currentPassword, newPassword}` — mot de passe actuel faux ou identique → `400` (pas `401`, qui déclencherait un rafraîchissement côté client) ; révoque toutes les sessions | `200` `{accessToken, refreshToken, expiresIn, user}` (nouvelle session) |
 
 ### Langues (contenu des cours)
 | Méthode | Endpoint | Rôle | Notes |

@@ -1250,3 +1250,11 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `./mvnw test` → **86/86** (`InstructorSpaceTest` 3, 2 tests de présentation dans `CourseCardTest`) ; `npm run build` sans avertissement, `npm run test:ci` → 22/22 ; pas encore vu au navigateur.
 
 **Reste** : sous-titre/objectifs/prérequis non traduisibles ; cours de démo sans présentation enrichie ; durée affichée avec un point décimal.
+
+**Complément (même jour) — inscription et profil enrichis**
+- **Inscription** : confirmation du mot de passe, bouton afficher/masquer et jauge de force (`shared/password/password-field`), règle « 8 caractères dont une lettre et un chiffre » appliquée des deux côtés (`PasswordRules` / `PASSWORD_PATTERN`), pays facultatif (noms via `Intl.DisplayNames`, `core/i18n/countries.ts`), langue appliquée immédiatement. Messages d'erreur jusque-là codés en dur en français (et « 8+ / 8+ characters. » dans toutes les langues) désormais traduits.
+- **Mon profil** : sections Identité (nom, titre, biographie), Coordonnées (email en lecture seule, téléphone, pays — jamais montrés aux autres), Préférences (langue), Sécurité (changement de mot de passe : `POST /auth/me/password`, autres sessions révoquées, nouveaux jetons pour la session courante). Backend : `V15__user_profile.sql`, `UpdateMeRequest` (absent = inchangé, vide = effacé), `PublicProfileDto`.
+- **Page cours** : encadré « Votre formateur » (nom, titre, biographie).
+- **Défauts trouvés par les tests et corrigés** : révocation des sessions par `UPDATE` groupé inefficace dans la même transaction (remplacée par une révocation entité par entité) ; `toSignal` appelé dans un `computed` (hors contexte d'injection) dans la jauge de force, remplacé par un abonnement.
+
+**Vérifié** : `./mvnw test` → **90/90** (`UserProfileTest` 4) ; `npm run build` sans avertissement, `npm run test:ci` → **25/25** (3 tests des règles de mot de passe) ; pas encore vu au navigateur.

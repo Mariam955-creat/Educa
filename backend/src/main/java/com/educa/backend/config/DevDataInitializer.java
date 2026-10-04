@@ -17,6 +17,8 @@ import com.educa.backend.course.Chapter;
 import com.educa.backend.course.Content;
 import com.educa.backend.course.ContentType;
 import com.educa.backend.course.Course;
+import com.educa.backend.course.CourseCategory;
+import com.educa.backend.course.CourseLevel;
 import com.educa.backend.course.CourseRepository;
 import com.educa.backend.enrollment.EnrollmentService;
 import com.educa.backend.payment.PaymentService;
@@ -29,6 +31,7 @@ import com.educa.backend.quiz.QuizRepository;
 import com.educa.backend.quiz.QuizType;
 import com.educa.backend.quiz.dto.AttemptSubmission;
 import com.educa.backend.quiz.dto.AttemptSubmission.AnswerSubmission;
+import com.educa.backend.rating.RatingService;
 import com.educa.backend.user.Role;
 import com.educa.backend.user.RoleName;
 import com.educa.backend.user.RoleRepository;
@@ -68,12 +71,13 @@ public class DevDataInitializer implements ApplicationRunner {
     private final QuizAttemptService quizAttemptService;
     private final CertificateService certificateService;
     private final PaymentService paymentService;
+    private final RatingService ratingService;
 
     public DevDataInitializer(UserRepository userRepository, RoleRepository roleRepository,
                               PasswordEncoder passwordEncoder, CourseRepository courseRepository,
                               QuizRepository quizRepository, EnrollmentService enrollmentService,
                               QuizAttemptService quizAttemptService, CertificateService certificateService,
-                              PaymentService paymentService) {
+                              PaymentService paymentService, RatingService ratingService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -83,6 +87,7 @@ public class DevDataInitializer implements ApplicationRunner {
         this.quizAttemptService = quizAttemptService;
         this.certificateService = certificateService;
         this.paymentService = paymentService;
+        this.ratingService = ratingService;
     }
 
     @Override
@@ -98,6 +103,10 @@ public class DevDataInitializer implements ApplicationRunner {
         catalogCourses().forEach(spec -> seedCatalogCourse(instructor, spec));
 
         seedCertifiedLearner(graduate, gitCourse);
+
+        seedInstructorProfile(instructor);
+        presentations().forEach(this::seedPresentation);
+        seedReviews();
     }
 
     private User seedUser(String email, String fullName, RoleName roleName) {
@@ -550,6 +559,177 @@ public class DevDataInitializer implements ApplicationRunner {
                                 .toList()))
                 .toList();
         return new AttemptSubmission(answers);
+    }
+
+    // ---------- Présentation des cours, profil du formateur, avis ----------
+
+    private record PresentationSpec(String slug, String subtitle, CourseCategory category, CourseLevel level,
+                                    String durationHours, List<String> objectives, List<String> prerequisites,
+                                    String targetAudience) {
+    }
+
+    /** Un apprenant de démo qui a suivi le cours et le note (avis écrit facultatif). */
+    private record ReviewSpec(String slug, String reviewerEmail, int stars, String comment) {
+    }
+
+    private void seedInstructorProfile(User instructor) {
+        if (instructor.getHeadline() != null) {
+            return; // déjà renseigné (seed précédent ou saisie dans « Mon profil »)
+        }
+        instructor.setHeadline("Développeur full-stack, formateur depuis 2015");
+        instructor.setBio("""
+                Ingénieur logiciel pendant dix ans (Java, Python, bases de données), j'enseigne aujourd'hui \
+                la programmation à des débutants comme à des développeurs en reconversion. Mes cours vont à \
+                l'essentiel : un concept, un exemple concret, un exercice.""");
+        userRepository.save(instructor);
+    }
+
+    /** Remplit la page de présentation d'un cours de démo, seulement si elle est encore vide. */
+    private void seedPresentation(PresentationSpec spec) {
+        courseRepository.findBySlug(spec.slug())
+                .filter(course -> course.getSubtitle() == null)
+                .ifPresent(course -> {
+                    course.setSubtitle(spec.subtitle());
+                    course.setCategory(spec.category());
+                    course.setLevel(spec.level());
+                    course.setDurationHours(new BigDecimal(spec.durationHours()));
+                    course.setObjectives(String.join("\n", spec.objectives()));
+                    course.setPrerequisites(String.join("\n", spec.prerequisites()));
+                    course.setTargetAudience(spec.targetAudience());
+                    courseRepository.save(course);
+                    log.info("Présentation de démo ajoutée : « {} »", course.getTitle());
+                });
+    }
+
+    /**
+     * Chaque avis passe par le parcours réel : achat, inscription, contenus suivis (au-delà des 70 % requis),
+     * puis {@link RatingService#rate} — mêmes règles qu'un apprenant. Idempotent : un avis existant est conservé.
+     */
+    private void seedReviews() {
+        List<User> reviewers = List.of(
+                seedUser("lucas@educa.dev", "Lucas Martin", RoleName.LEARNER),
+                seedUser("fatou@educa.dev", "Fatou Ndiaye", RoleName.LEARNER),
+                seedUser("julie@educa.dev", "Julie Peeters", RoleName.LEARNER),
+                seedUser("mehdi@educa.dev", "Mehdi Benali", RoleName.LEARNER),
+                seedUser("sophie@educa.dev", "Sophie Wagner", RoleName.LEARNER));
+        for (ReviewSpec spec : reviews()) {
+            User reviewer = reviewers.stream()
+                    .filter(u -> u.getEmail().equals(spec.reviewerEmail()))
+                    .findFirst()
+                    .orElseThrow();
+            courseRepository.findBySlug(spec.slug()).ifPresent(course -> seedReview(reviewer, course, spec));
+        }
+    }
+
+    private void seedReview(User reviewer, Course course, ReviewSpec spec) {
+        try {
+            if (ratingService.get(course.getId(), reviewer.getId()).myStars() != null) {
+                return;
+            }
+            if (!enrollmentService.isEnrolled(reviewer.getId(), course.getId())) {
+                if (course.getPrice().signum() > 0) {
+                    paymentService.recordDemoPurchase(reviewer.getId(), course.getId());
+                }
+                enrollmentService.enroll(reviewer.getId(), course.getId());
+            }
+            for (Chapter chapter : course.getChapters()) {
+                for (Content content : chapter.getContents()) {
+                    enrollmentService.completeContent(reviewer.getId(), content.getId());
+                }
+            }
+            ratingService.rate(course.getId(), reviewer.getId(), spec.stars(), spec.comment());
+        } catch (RuntimeException e) {
+            log.warn("Avis de démo ignoré ({} sur « {} ») : {}", reviewer.getEmail(), course.getTitle(), e.getMessage());
+        }
+    }
+
+    private static List<PresentationSpec> presentations() {
+        return List.of(
+                new PresentationSpec(PYTHON_COURSE_SLUG,
+                        "Votre premier programme en une heure, sans aucune expérience préalable",
+                        CourseCategory.DEVELOPMENT, CourseLevel.BEGINNER, "4",
+                        List.of("Installer Python et lancer un script",
+                                "Manipuler des variables et les types de base",
+                                "Lire et comprendre un programme simple",
+                                "Savoir quoi apprendre ensuite"),
+                        List.of("Savoir utiliser un ordinateur et installer un logiciel"),
+                        "Toute personne curieuse de programmation : étudiants, reconversion, autodidactes."),
+                new PresentationSpec(GIT_COURSE_SLUG,
+                        "Versionner son code et collaborer sans jamais rien perdre",
+                        CourseCategory.DEVELOPMENT, CourseLevel.BEGINNER, "3",
+                        List.of("Comprendre le dépôt, le commit et l'historique",
+                                "Créer des branches et les fusionner",
+                                "Travailler avec un dépôt distant (push, pull)",
+                                "Annuler une erreur sans paniquer"),
+                        List.of("Être à l'aise avec un terminal (ouvrir un dossier, lancer une commande)"),
+                        "Développeurs débutants, étudiants en informatique, toute personne qui écrit du code en équipe."),
+                new PresentationSpec("sql-et-bases-de-donnees-relationnelles",
+                        "Interroger, filtrer et relier vos données avec le langage SQL",
+                        CourseCategory.DATA, CourseLevel.BEGINNER, "6",
+                        List.of("Écrire des requêtes SELECT avec filtres et tris",
+                                "Relier plusieurs tables avec des jointures",
+                                "Calculer des agrégats (COUNT, SUM, GROUP BY)",
+                                "Concevoir un schéma relationnel simple"),
+                        List.of("Aucune connaissance en programmation n'est requise"),
+                        "Analystes, gestionnaires, développeurs : quiconque doit exploiter des données."),
+                new PresentationSpec("algorithmique-les-fondamentaux",
+                        "Apprendre à raisonner comme un programmeur, quel que soit le langage",
+                        CourseCategory.DEVELOPMENT, CourseLevel.ALL_LEVELS, "5",
+                        List.of("Décomposer un problème en étapes",
+                                "Utiliser conditions, boucles et tableaux",
+                                "Comprendre la complexité d'un algorithme",
+                                "Écrire des algorithmes de tri et de recherche"),
+                        List.of("Notions de mathématiques du secondaire"),
+                        "Étudiants qui débutent l'informatique et développeurs qui veulent consolider leurs bases."),
+                new PresentationSpec("cybersecurite-les-bons-reflexes",
+                        "Protéger vos comptes, vos appareils et vos données au quotidien",
+                        CourseCategory.NETWORK_SECURITY, CourseLevel.BEGINNER, "2.5",
+                        List.of("Créer et gérer des mots de passe solides",
+                                "Repérer un e-mail d'hameçonnage",
+                                "Sécuriser son ordinateur et son téléphone",
+                                "Réagir après un incident"),
+                        List.of("Aucun — le cours s'adresse à tous les utilisateurs"),
+                        "Particuliers, salariés et indépendants qui veulent se protéger sans jargon technique."),
+                new PresentationSpec("java-programmation-orientee-objet",
+                        "Classes, objets, héritage : maîtriser les piliers de la POO avec Java",
+                        CourseCategory.DEVELOPMENT, CourseLevel.INTERMEDIATE, "8",
+                        List.of("Modéliser un problème avec des classes et des objets",
+                                "Protéger l'état d'un objet grâce à l'encapsulation",
+                                "Réutiliser du code avec l'héritage",
+                                "Exploiter le polymorphisme"),
+                        List.of("Connaître les bases d'un langage de programmation (variables, boucles, fonctions)"),
+                        "Développeurs débutants qui veulent passer à la programmation orientée objet."));
+    }
+
+    private static List<ReviewSpec> reviews() {
+        return List.of(
+                new ReviewSpec(PYTHON_COURSE_SLUG, "lucas@educa.dev", 5,
+                        "Parfait pour démarrer : chaque notion est expliquée simplement, j'ai écrit mon premier script dès le premier chapitre."),
+                new ReviewSpec(PYTHON_COURSE_SLUG, "fatou@educa.dev", 4,
+                        "Très clair. J'aurais aimé un ou deux exercices supplémentaires sur les listes."),
+                new ReviewSpec(PYTHON_COURSE_SLUG, "sophie@educa.dev", 5, null),
+                new ReviewSpec(GIT_COURSE_SLUG, "mehdi@educa.dev", 5,
+                        "Enfin compris les branches ! Les exemples collent à ce qu'on vit en projet."),
+                new ReviewSpec(GIT_COURSE_SLUG, "julie@educa.dev", 4,
+                        "Court et efficace, idéal avant un premier projet en équipe."),
+                new ReviewSpec("sql-et-bases-de-donnees-relationnelles", "julie@educa.dev", 5,
+                        "Les jointures étaient mon point faible, c'est maintenant acquis. Les contrôles aident vraiment à vérifier sa compréhension."),
+                new ReviewSpec("sql-et-bases-de-donnees-relationnelles", "lucas@educa.dev", 4,
+                        "Bonne progression, du SELECT jusqu'à la conception du schéma."),
+                new ReviewSpec("sql-et-bases-de-donnees-relationnelles", "mehdi@educa.dev", 3,
+                        "Contenu solide mais un peu rapide sur GROUP BY pour un débutant complet."),
+                new ReviewSpec("algorithmique-les-fondamentaux", "fatou@educa.dev", 5,
+                        "Le chapitre sur la complexité m'a ouvert les yeux. Je recommande à tous les étudiants de première année."),
+                new ReviewSpec("algorithmique-les-fondamentaux", "sophie@educa.dev", 4, null),
+                new ReviewSpec("cybersecurite-les-bons-reflexes", "sophie@educa.dev", 5,
+                        "Accessible même sans connaissances techniques. J'ai changé tous mes mots de passe dans la foulée !"),
+                new ReviewSpec("cybersecurite-les-bons-reflexes", "julie@educa.dev", 4,
+                        "Des réflexes simples et utiles, à faire suivre à toute l'équipe."),
+                new ReviewSpec("cybersecurite-les-bons-reflexes", "lucas@educa.dev", 5, null),
+                new ReviewSpec("java-programmation-orientee-objet", "mehdi@educa.dev", 4,
+                        "Très bonne introduction à la POO. Le chapitre sur le polymorphisme mériterait un exemple de plus."),
+                new ReviewSpec("java-programmation-orientee-objet", "fatou@educa.dev", 5,
+                        "L'encapsulation et l'héritage enfin clairs, avec des exemples concrets (comptes bancaires)."));
     }
 
     // ---------- fabriques ----------

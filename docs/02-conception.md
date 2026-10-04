@@ -420,7 +420,7 @@ course_ratings
   UNIQUE (course_id, user_id)                -- une note par apprenant et par cours, modifiable
 ```
 
-Règles : seul un apprenant **inscrit** note (`403` sinon) ; une nouvelle note remplace la précédente ;
+Règles : seul un apprenant **inscrit ayant suivi au moins 70 % du cours** (contenus terminés, `EnrollmentService.progressPercent`) note — `403` sinon, avec la progression actuelle dans le message (règle ajoutée le 2026-10-04) ; une nouvelle note remplace la précédente ;
 une note sans texte compte dans la moyenne mais n'apparaît pas dans la liste des avis. Le nombre
 d'apprenants affiché est le nombre d'inscriptions (un cours payant n'est accessible qu'après achat).
 Le module `course` lit ces chiffres via deux interfaces qu'il déclare, `CourseAudienceProvider`
@@ -532,8 +532,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | POST | `/courses/{id}/cover` | INSTRUCTOR (propriétaire) / ADMIN | upload **multipart** (`file`) de l'image de couverture — PNG/JPEG/WEBP/GIF (type réel détecté par `FileTypeDetector`, `415` sinon), 5 Mo max (`413`) ; renvoie le résumé du cours |
 | DELETE | `/courses/{id}/cover` | INSTRUCTOR (propriétaire) / ADMIN | retire l'image |
 | GET | `/courses/{id}/cover` | public (cours publié) / propriétaire / ADMIN | l'image (une balise `<img>` n'envoie pas de JWT) ; `404` pour un brouillon vu par un tiers ; URL versionnée `?v=` dans `coverImageUrl` → cache 7 jours |
-| GET | `/courses/{id}/rating` | public | `{average, count, myStars?, myComment?, canRate}` |
-| PUT | `/courses/{id}/rating` | inscrit | `{stars: 1..5, comment?}` — crée ou remplace ; `403` si non inscrit, `400` hors bornes ou avis > 2 000 caractères |
+| GET | `/courses/{id}/rating` | public | `{average, count, myStars?, myComment?, enrolled, progressPercent, requiredProgress, canRate}` |
+| PUT | `/courses/{id}/rating` | inscrit | `{stars: 1..5, comment?}` — crée ou remplace ; `403` si non inscrit ou progression < 70 %, `400` hors bornes ou avis > 2 000 caractères |
 | GET | `/courses/{id}/reviews` | public | avis écrits paginés (`{id, authorName, stars, comment, updatedAt}`), du plus récent au plus ancien |
 | GET | `/ai/chat/{courseId}/history` | LEARNER | Should have (si persistance activée) |
 

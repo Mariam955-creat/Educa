@@ -47,6 +47,20 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    /** Titre professionnel (ex. « Développeur Java »), affiché aux apprenants pour un formateur. */
+    @Column(length = 120)
+    private String headline;
+
+    @Column(columnDefinition = "text")
+    private String bio;
+
+    /** Code pays ISO 3166-1 alpha-2. */
+    @Column(length = 2)
+    private String country;
+
+    @Column(length = 30)
+    private String phone;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

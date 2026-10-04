@@ -40,7 +40,12 @@
       "submit": "Créer mon compte",
       "submitting": "Création…",
       "haveAccount": "Déjà inscrit ?",
-      "signIn": "Se connecter"
+      "signIn": "Se connecter",
+      "fullNameRequired": "Le nom est obligatoire.",
+      "emailInvalid": "Adresse email invalide.",
+      "errorExists": "Un compte existe déjà pour cet email.",
+      "errorInvalid": "Vérifiez les champs du formulaire.",
+      "errorServer": "Impossible de créer le compte pour le moment."
     }
   },
   "dashboard": {
@@ -486,6 +491,44 @@
     "objectives": "Ce que vous apprendrez",
     "prerequisites": "Prérequis",
     "audience": "À qui s'adresse ce cours",
-    "duration": "{{hours}} h"
+    "duration": "{{hours}} h",
+    "instructor": "Votre formateur"
+  },
+  "password": {
+    "show": "Afficher",
+    "hide": "Masquer",
+    "confirm": "Confirmer le mot de passe",
+    "mismatch": "Les mots de passe ne correspondent pas.",
+    "rules": "8 caractères minimum, avec au moins une lettre et un chiffre.",
+    "strength": {
+      "0": "Trop court",
+      "1": "Faible",
+      "2": "Moyen",
+      "3": "Bon",
+      "4": "Excellent"
+    }
+  },
+  "profile": {
+    "identity": "Identité",
+    "headline": "Titre",
+    "headlinePlaceholder": "Ex. : Développeuse Java, formatrice depuis 10 ans",
+    "bio": "Biographie",
+    "bioPlaceholder": "Quelques mots sur vous, votre parcours, vos centres d'intérêt.",
+    "bioHint": "Facultatif.",
+    "bioHintInstructor": "Affichée aux apprenants sur la page de vos cours, avec votre titre.",
+    "contact": "Coordonnées",
+    "phone": "Téléphone",
+    "phoneInvalid": "Numéro de téléphone invalide.",
+    "country": "Pays",
+    "countryNone": "— Non précisé —",
+    "privateHint": "Votre email, votre téléphone et votre pays ne sont jamais montrés aux autres utilisateurs.",
+    "preferences": "Préférences",
+    "languageHint": "Langue des pages, des certificats et des factures.",
+    "security": "Sécurité",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "changePassword": "Changer le mot de passe",
+    "passwordChanged": "Mot de passe modifié. Vos autres appareils devront se reconnecter.",
+    "passwordSessionsHint": "Après le changement, vos autres sessions ouvertes sont déconnectées."
   }
 }

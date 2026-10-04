@@ -6,38 +6,78 @@
   }
 
   @if (auth.user(); as user) {
-    <div class="card profile">
-      <div class="identity">
+    <div class="card identity">
+      <div>
         <strong>{{ user.fullName }}</strong>
+        @if (user.headline) {
+          <span class="headline">{{ user.headline }}</span>
+        }
         <span class="muted">{{ user.email }}</span>
-        <div class="roles">
-          @for (key of roleKeys(); track key) {
-            <span class="role">{{ key | translate }}</span>
-          }
-        </div>
+      </div>
+      <div class="roles">
+        @for (key of roleKeys(); track key) {
+          <span class="role">{{ key | translate }}</span>
+        }
       </div>
     </div>
 
-    <h2>{{ 'account.profile' | translate }}</h2>
-    <form class="card" [formGroup]="form" (ngSubmit)="save()">
-      <label>
-        {{ 'auth.register.fullName' | translate }}
-        <input type="text" formControlName="fullName" maxlength="150" />
-        @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
-          <small class="field-error">{{ 'account.nameRequired' | translate }}</small>
-        }
-      </label>
-      <label>
-        {{ 'auth.login.email' | translate }}
-        <input type="email" [value]="user.email" disabled />
-        <small class="muted">{{ 'account.emailHint' | translate }}</small>
-      </label>
-      <button type="submit" [disabled]="saving() || form.pristine">
-        {{ (saving() ? 'account.saving' : 'account.save') | translate }}
-      </button>
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <h2>{{ 'profile.identity' | translate }}</h2>
+      <div class="card">
+        <label>
+          {{ 'auth.register.fullName' | translate }}
+          <input type="text" formControlName="fullName" maxlength="150" autocomplete="name" />
+          @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+            <small class="field-error">{{ 'account.nameRequired' | translate }}</small>
+          }
+        </label>
+        <label>
+          {{ 'profile.headline' | translate }}
+          <input type="text" formControlName="headline" maxlength="120" [placeholder]="'profile.headlinePlaceholder' | translate" />
+        </label>
+        <label>
+          {{ 'profile.bio' | translate }}
+          <textarea formControlName="bio" rows="4" maxlength="1000" [placeholder]="'profile.bioPlaceholder' | translate"></textarea>
+          <small class="muted">{{ (isInstructor() ? 'profile.bioHintInstructor' : 'profile.bioHint') | translate }}</small>
+        </label>
+      </div>
+
+      <h2>{{ 'profile.contact' | translate }}</h2>
+      <div class="card">
+        <label>
+          {{ 'auth.login.email' | translate }}
+          <input type="email" [value]="user.email" disabled />
+          <small class="muted">{{ 'account.emailHint' | translate }}</small>
+        </label>
+        <div class="two-cols">
+          <label>
+            {{ 'profile.phone' | translate }}
+            <input type="tel" formControlName="phone" autocomplete="tel" placeholder="+33 6 12 34 56 78" />
+            @if (form.controls.phone.touched && form.controls.phone.invalid) {
+              <small class="field-error">{{ 'profile.phoneInvalid' | translate }}</small>
+            }
+          </label>
+          <label>
+            {{ 'profile.country' | translate }}
+            <select formControlName="country" autocomplete="country">
+              <option value="">{{ 'profile.countryNone' | translate }}</option>
+              @for (c of countries(); track c.code) {
+                <option [value]="c.code">{{ c.name }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <small class="muted">{{ 'profile.privateHint' | translate }}</small>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="saving() || form.pristine">
+          {{ (saving() ? 'account.saving' : 'account.save') | translate }}
+        </button>
+      </div>
     </form>
 
-    <h2>{{ 'userMenu.languages' | translate }}</h2>
+    <h2>{{ 'profile.preferences' | translate }}</h2>
     <div class="card">
       <label>
         {{ 'account.interfaceLanguage' | translate }}
@@ -46,8 +86,40 @@
             <option [value]="code">{{ 'lang.' + code | translate }}</option>
           }
         </select>
+        <small class="muted">{{ 'profile.languageHint' | translate }}</small>
       </label>
     </div>
 
+    <h2>{{ 'profile.security' | translate }}</h2>
+    <form class="card" [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+      <label for="current-password">{{ 'profile.currentPassword' | translate }}</label>
+      <app-password-field inputId="current-password" [control]="passwordForm.controls.currentPassword" autocomplete="current-password" />
+
+      <div class="two-cols">
+        <div class="field">
+          <label for="new-password">{{ 'profile.newPassword' | translate }}</label>
+          <app-password-field inputId="new-password" [control]="passwordForm.controls.password" autocomplete="new-password" [showStrength]="true" />
+        </div>
+        <div class="field">
+          <label for="confirm-password">{{ 'password.confirm' | translate }}</label>
+          <app-password-field inputId="confirm-password" [control]="passwordForm.controls.confirmPassword" autocomplete="new-password" />
+        </div>
+      </div>
+      @if (passwordForm.controls.password.touched && passwordForm.controls.password.invalid) {
+        <small class="field-error">{{ 'password.rules' | translate }}</small>
+      } @else {
+        <small class="muted">{{ 'password.rules' | translate }}</small>
+      }
+      @if (passwordForm.controls.confirmPassword.touched && passwordForm.hasError('passwordMismatch')) {
+        <small class="field-error">{{ 'password.mismatch' | translate }}</small>
+      }
+      @if (passwordError()) {
+        <p class="flash error">{{ passwordError() }}</p>
+      }
+      <small class="muted">{{ 'profile.passwordSessionsHint' | translate }}</small>
+      <div class="actions">
+        <button type="submit" [disabled]="savingPassword()">{{ 'profile.changePassword' | translate }}</button>
+      </div>
+    </form>
   }
 </section>

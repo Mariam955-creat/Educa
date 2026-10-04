@@ -40,7 +40,12 @@
       "submit": "Mein Konto erstellen",
       "submitting": "Wird erstellt…",
       "haveAccount": "Bereits registriert?",
-      "signIn": "Anmelden"
+      "signIn": "Anmelden",
+      "fullNameRequired": "Der Name ist erforderlich.",
+      "emailInvalid": "Ungültige E-Mail-Adresse.",
+      "errorExists": "Für diese E-Mail existiert bereits ein Konto.",
+      "errorInvalid": "Bitte überprüfen Sie die Formularfelder.",
+      "errorServer": "Das Konto kann derzeit nicht erstellt werden."
     }
   },
   "dashboard": {
@@ -486,6 +491,44 @@
     "objectives": "Das lernen Sie",
     "prerequisites": "Voraussetzungen",
     "audience": "Für wen ist dieser Kurs",
-    "duration": "{{hours}} Std."
+    "duration": "{{hours}} Std.",
+    "instructor": "Ihre Kursleitung"
+  },
+  "password": {
+    "show": "Anzeigen",
+    "hide": "Verbergen",
+    "confirm": "Passwort bestätigen",
+    "mismatch": "Die Passwörter stimmen nicht überein.",
+    "rules": "Mindestens 8 Zeichen, mit mindestens einem Buchstaben und einer Ziffer.",
+    "strength": {
+      "0": "Zu kurz",
+      "1": "Schwach",
+      "2": "Mittel",
+      "3": "Gut",
+      "4": "Ausgezeichnet"
+    }
+  },
+  "profile": {
+    "identity": "Identität",
+    "headline": "Titel",
+    "headlinePlaceholder": "z. B. Java-Entwicklerin, Kursleiterin seit 10 Jahren",
+    "bio": "Biografie",
+    "bioPlaceholder": "Ein paar Worte über Sie, Ihren Werdegang und Ihre Interessen.",
+    "bioHint": "Optional.",
+    "bioHintInstructor": "Wird Lernenden auf Ihren Kursseiten zusammen mit Ihrem Titel angezeigt.",
+    "contact": "Kontaktdaten",
+    "phone": "Telefon",
+    "phoneInvalid": "Ungültige Telefonnummer.",
+    "country": "Land",
+    "countryNone": "— Keine Angabe —",
+    "privateHint": "Ihre E-Mail, Ihr Telefon und Ihr Land werden anderen Nutzern nie angezeigt.",
+    "preferences": "Einstellungen",
+    "languageHint": "Sprache der Seiten, Zertifikate und Rechnungen.",
+    "security": "Sicherheit",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "changePassword": "Passwort ändern",
+    "passwordChanged": "Passwort geändert. Ihre anderen Geräte müssen sich erneut anmelden.",
+    "passwordSessionsHint": "Nach der Änderung werden Ihre anderen offenen Sitzungen abgemeldet."
   }
 }

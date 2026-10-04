@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
-import { RegisterRequest, RoleName, TokenResponse, User } from './auth.models';
+import { ProfileUpdate, RegisterRequest, RoleName, TokenResponse, User } from './auth.models';
 
 const ACCESS_KEY = 'educa.accessToken';
 const REFRESH_KEY = 'educa.refreshToken';
@@ -47,11 +47,18 @@ export class AuthService {
     return this.updateMe({ preferredLanguage });
   }
 
-  updateFullName(fullName: string): Observable<User> {
-    return this.updateMe({ fullName });
+  updateProfile(body: ProfileUpdate): Observable<User> {
+    return this.updateMe(body);
   }
 
-  private updateMe(body: { fullName?: string; preferredLanguage?: string }): Observable<User> {
+  /** Change le mot de passe ; le serveur révoque les autres sessions et renvoie de nouveaux jetons pour celle-ci. */
+  changePassword(currentPassword: string, newPassword: string): Observable<TokenResponse> {
+    return this.http
+      .post<TokenResponse>(`${API_BASE_URL}/auth/me/password`, { currentPassword, newPassword })
+      .pipe(tap((res) => this.store(res)));
+  }
+
+  private updateMe(body: ProfileUpdate): Observable<User> {
     return this.http.patch<User>(`${API_BASE_URL}/auth/me`, body).pipe(
       tap((user) => {
         this._user.set(user);

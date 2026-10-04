@@ -40,7 +40,12 @@
       "submit": "Create my account",
       "submitting": "Creating…",
       "haveAccount": "Already registered?",
-      "signIn": "Sign in"
+      "signIn": "Sign in",
+      "fullNameRequired": "Name is required.",
+      "emailInvalid": "Invalid email address.",
+      "errorExists": "An account already exists for this email.",
+      "errorInvalid": "Please check the form fields.",
+      "errorServer": "Unable to create the account right now."
     }
   },
   "dashboard": {
@@ -486,6 +491,44 @@
     "objectives": "What you'll learn",
     "prerequisites": "Prerequisites",
     "audience": "Who this course is for",
-    "duration": "{{hours}} h"
+    "duration": "{{hours}} h",
+    "instructor": "Your instructor"
+  },
+  "password": {
+    "show": "Show",
+    "hide": "Hide",
+    "confirm": "Confirm password",
+    "mismatch": "Passwords do not match.",
+    "rules": "At least 8 characters, with at least one letter and one digit.",
+    "strength": {
+      "0": "Too short",
+      "1": "Weak",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Excellent"
+    }
+  },
+  "profile": {
+    "identity": "Identity",
+    "headline": "Headline",
+    "headlinePlaceholder": "E.g. Java developer, teaching for 10 years",
+    "bio": "Bio",
+    "bioPlaceholder": "A few words about you, your background and interests.",
+    "bioHint": "Optional.",
+    "bioHintInstructor": "Shown to learners on your course pages, with your headline.",
+    "contact": "Contact details",
+    "phone": "Phone",
+    "phoneInvalid": "Invalid phone number.",
+    "country": "Country",
+    "countryNone": "— Not specified —",
+    "privateHint": "Your email, phone and country are never shown to other users.",
+    "preferences": "Preferences",
+    "languageHint": "Language of pages, certificates and invoices.",
+    "security": "Security",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "passwordChanged": "Password changed. Your other devices will need to sign in again.",
+    "passwordSessionsHint": "After the change, your other open sessions are signed out."
   }
 }

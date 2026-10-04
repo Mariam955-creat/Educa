@@ -30,5 +30,7 @@ public record CourseDetailDto(
         BigDecimal durationHours,
         List<String> objectives,
         List<String> prerequisites,
-        String targetAudience) {
+        String targetAudience,
+        String instructorHeadline,
+        String instructorBio) {
 }

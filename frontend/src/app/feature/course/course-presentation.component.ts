@@ -39,6 +39,22 @@ import { CourseDetail } from '../../core/courses/course.models';
         }
       </div>
     }
+
+    <section class="instructor">
+      <h2>{{ 'coursePage.instructor' | translate }}</h2>
+      <div class="instructor-head">
+        <span class="avatar" aria-hidden="true">{{ course().instructorName.charAt(0) }}</span>
+        <div>
+          <strong>{{ course().instructorName }}</strong>
+          @if (course().instructorHeadline) {
+            <span>{{ course().instructorHeadline }}</span>
+          }
+        </div>
+      </div>
+      @if (course().instructorBio) {
+        <p>{{ course().instructorBio }}</p>
+      }
+    </section>
   `,
   styles: `
     :host { display: block; margin-bottom: 1.5rem; }
@@ -50,6 +66,11 @@ import { CourseDetail } from '../../core/courses/course.models';
     .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 1.25rem; }
     .plain { margin: 0; padding-inline-start: 1.1rem; font-size: 0.92rem; line-height: 1.6; }
     p { margin: 0; font-size: 0.92rem; line-height: 1.55; white-space: pre-line; }
+    .instructor { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .instructor-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+    .instructor-head div { display: flex; flex-direction: column; }
+    .instructor-head span:not(.avatar) { color: var(--muted); font-size: 0.85rem; }
+    .avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: linear-gradient(135deg, #7e22ce, #db2777); color: #fff; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
   `,
 })
 export class CoursePresentationComponent {

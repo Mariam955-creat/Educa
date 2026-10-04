@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.educa.backend.security.CurrentUser;
+import com.educa.backend.user.dto.ChangePasswordRequest;
 import com.educa.backend.user.dto.LoginRequest;
 import com.educa.backend.user.dto.RefreshRequest;
 import com.educa.backend.user.dto.RegisterRequest;
@@ -61,5 +62,11 @@ public class AuthController {
     @PatchMapping("/me")
     public UserDto updateMe(@Valid @RequestBody UpdateMeRequest request) {
         return userService.update(CurrentUser.id(), request);
+    }
+
+    /** Change le mot de passe ; les autres sessions sont révoquées, de nouveaux jetons sont renvoyés. */
+    @PostMapping("/me/password")
+    public TokenResponse changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        return authService.changePassword(CurrentUser.id(), request);
     }
 }

@@ -84,6 +84,8 @@ export interface CourseDetail extends CoursePresentation {
   objectives: string[];
   prerequisites: string[];
   targetAudience?: string;
+  instructorHeadline?: string;
+  instructorBio?: string;
   /** URL de l'image de couverture (chemin API), absente si le formateur n'en a pas mis. */
   coverImageUrl?: string;
   learnerCount: number;

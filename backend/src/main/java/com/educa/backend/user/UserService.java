@@ -15,6 +15,7 @@ import com.educa.backend.common.error.ConflictException;
 import com.educa.backend.common.error.ResourceNotFoundException;
 import com.educa.backend.security.CurrentUser;
 import com.educa.backend.user.dto.AdminUserDto;
+import com.educa.backend.user.dto.PublicProfileDto;
 import com.educa.backend.user.dto.UpdateMeRequest;
 import com.educa.backend.user.dto.UserDto;
 
@@ -51,7 +52,24 @@ public class UserService {
         if (request.preferredLanguage() != null) {
             user.setPreferredLanguage(request.preferredLanguage());
         }
+        // Champs facultatifs : absent = inchangé, chaîne vide = effacé
+        if (request.headline() != null) user.setHeadline(blankToNull(request.headline()));
+        if (request.bio() != null) user.setBio(blankToNull(request.bio()));
+        if (request.country() != null) user.setCountry(blankToNull(request.country()));
+        if (request.phone() != null) user.setPhone(blankToNull(request.phone()));
         return userMapper.toDto(userRepository.save(user));
+    }
+
+    /** Profil public (formateur d'un cours) : nom, titre et biographie — jamais d'email ni de téléphone. */
+    @Transactional(readOnly = true)
+    public PublicProfileDto publicProfile(Long id) {
+        return userRepository.findById(id)
+                .map(u -> new PublicProfileDto(u.getFullName(), u.getHeadline(), u.getBio()))
+                .orElse(new PublicProfileDto("—", null, null));
+    }
+
+    private static String blankToNull(String value) {
+        return StringUtils.hasText(value) ? value.trim() : null;
     }
 
     private User loadById(Long id) {

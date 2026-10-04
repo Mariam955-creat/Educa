@@ -17,6 +17,7 @@ import com.educa.backend.common.error.ApiException;
 import com.educa.backend.common.error.ConflictException;
 import com.educa.backend.config.EducaProperties;
 import com.educa.backend.security.JwtService;
+import com.educa.backend.user.dto.ChangePasswordRequest;
 import com.educa.backend.user.dto.LoginRequest;
 import com.educa.backend.user.dto.RegisterRequest;
 import com.educa.backend.user.dto.TokenResponse;
@@ -65,6 +66,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setFullName(request.fullName().trim());
         user.setPreferredLanguage(request.preferredLanguage() != null ? request.preferredLanguage() : "fr");
+        user.setCountry(request.country());
         user.addRole(learner);
 
         return userMapper.toDto(userRepository.save(user));
@@ -97,6 +99,29 @@ public class AuthService {
         refreshTokenRepository.save(stored);
 
         return issueTokens(stored.getUser());
+    }
+
+    /**
+     * Change le mot de passe après vérification de l'actuel, puis révoque toutes les sessions (refresh tokens)
+     * de l'utilisateur : les autres appareils devront se reconnecter. Renvoie de nouveaux jetons pour la session
+     * courante. Mot de passe actuel faux → {@code 400} (et non {@code 401}, qui déclencherait côté client
+     * une tentative de rafraîchissement de session).
+     */
+    @Transactional
+    public TokenResponse changePassword(Long userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Mot de passe actuel incorrect");
+        }
+        if (passwordEncoder.matches(request.newPassword(), user.getPasswordHash())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Le nouveau mot de passe doit être différent de l'actuel");
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+        // Révocation entité par entité (et non par UPDATE groupé) : le contexte de persistance reste cohérent
+        refreshTokenRepository.findByUser_IdAndRevokedFalse(userId).forEach(token -> token.setRevoked(true));
+        return issueTokens(user);
     }
 
     @Transactional

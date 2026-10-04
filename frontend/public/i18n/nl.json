@@ -40,7 +40,12 @@
       "submit": "Mijn account aanmaken",
       "submitting": "Bezig met aanmaken…",
       "haveAccount": "Al geregistreerd?",
-      "signIn": "Aanmelden"
+      "signIn": "Aanmelden",
+      "fullNameRequired": "Naam is verplicht.",
+      "emailInvalid": "Ongeldig e-mailadres.",
+      "errorExists": "Er bestaat al een account voor dit e-mailadres.",
+      "errorInvalid": "Controleer de velden van het formulier.",
+      "errorServer": "Het account kan nu niet worden aangemaakt."
     }
   },
   "dashboard": {
@@ -486,6 +491,44 @@
     "objectives": "Wat je leert",
     "prerequisites": "Voorkennis",
     "audience": "Voor wie is deze cursus",
-    "duration": "{{hours}} u"
+    "duration": "{{hours}} u",
+    "instructor": "Je docent"
+  },
+  "password": {
+    "show": "Tonen",
+    "hide": "Verbergen",
+    "confirm": "Wachtwoord bevestigen",
+    "mismatch": "De wachtwoorden komen niet overeen.",
+    "rules": "Minstens 8 tekens, met minstens één letter en één cijfer.",
+    "strength": {
+      "0": "Te kort",
+      "1": "Zwak",
+      "2": "Redelijk",
+      "3": "Goed",
+      "4": "Uitstekend"
+    }
+  },
+  "profile": {
+    "identity": "Identiteit",
+    "headline": "Titel",
+    "headlinePlaceholder": "Bv. Java-ontwikkelaar, docent sinds 10 jaar",
+    "bio": "Biografie",
+    "bioPlaceholder": "Een paar woorden over jezelf, je achtergrond en interesses.",
+    "bioHint": "Optioneel.",
+    "bioHintInstructor": "Wordt aan cursisten getoond op de pagina's van je cursussen, samen met je titel.",
+    "contact": "Contactgegevens",
+    "phone": "Telefoon",
+    "phoneInvalid": "Ongeldig telefoonnummer.",
+    "country": "Land",
+    "countryNone": "— Niet opgegeven —",
+    "privateHint": "Je e-mail, telefoon en land worden nooit aan andere gebruikers getoond.",
+    "preferences": "Voorkeuren",
+    "languageHint": "Taal van de pagina's, certificaten en facturen.",
+    "security": "Beveiliging",
+    "currentPassword": "Huidig wachtwoord",
+    "newPassword": "Nieuw wachtwoord",
+    "changePassword": "Wachtwoord wijzigen",
+    "passwordChanged": "Wachtwoord gewijzigd. Je andere apparaten moeten opnieuw inloggen.",
+    "passwordSessionsHint": "Na de wijziging worden je andere open sessies afgemeld."
   }
 }

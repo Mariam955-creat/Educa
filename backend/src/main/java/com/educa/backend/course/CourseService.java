@@ -23,6 +23,7 @@ import com.educa.backend.course.dto.CourseSummaryDto;
 import com.educa.backend.language.LanguageService;
 import com.educa.backend.security.CurrentUser;
 import com.educa.backend.user.UserService;
+import com.educa.backend.user.dto.PublicProfileDto;
 
 @Service
 public class CourseService {
@@ -154,14 +155,16 @@ public class CourseService {
         String description = translation != null ? translation.getDescription() : course.getDescription();
         CourseStats stats = statsFor(List.of(course));
         CourseRatingProvider.RatingStats rating = stats.rating(course.getId());
+        PublicProfileDto instructor = userService.publicProfile(course.getInstructorId());
 
         return new CourseDetailDto(course.getId(), course.getSlug(), title, description,
-                course.getLanguage(), course.isPublished(), userService.displayNameById(course.getInstructorId()),
+                course.getLanguage(), course.isPublished(), instructor.fullName(),
                 course.getControlWeight(), course.getExamWeight(), course.getPassThreshold(), showContents, chapters,
                 course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
                 rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
                 course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
-                splitLines(course.getObjectives()), splitLines(course.getPrerequisites()), course.getTargetAudience());
+                splitLines(course.getObjectives()), splitLines(course.getPrerequisites()), course.getTargetAudience(),
+                instructor.headline(), instructor.bio());
     }
 
     // ---------- helpers inter-modules ----------

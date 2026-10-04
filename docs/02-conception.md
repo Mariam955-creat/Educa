@@ -403,6 +403,23 @@ même forme de DTO). Non branché sur `GET /courses/{slug}` par défaut côté f
 toujours éditer le texte source, jamais une traduction affichée) — seule la page de consultation publique
 (`course-detail`) passe `displayLanguage`.
 
+### Présentation d'un cours (migrée, `V14__course_presentation.sql`, 2026-10-04)
+
+```
+courses (colonnes ajoutées)
+  subtitle        VARCHAR(200) NULL     -- accroche
+  category        VARCHAR(30)  NULL     -- DEVELOPMENT | DATA | NETWORK_SECURITY | OFFICE | LANGUAGES | DESIGN | BUSINESS | OTHER
+  level           VARCHAR(20)  NULL     -- BEGINNER | INTERMEDIATE | ADVANCED | ALL_LEVELS
+  duration_hours  NUMERIC(5,1) NULL     -- durée estimée
+  objectives      TEXT NULL             -- « Ce que vous apprendrez », une entrée par ligne (12 max côté API)
+  prerequisites   TEXT NULL             -- une entrée par ligne (12 max côté API)
+  target_audience TEXT NULL
+```
+
+Enums Java `CourseCategory` / `CourseLevel` (valeur inconnue → `400`) ; listes exposées en `List<String>` dans
+`CourseRequest`/`CourseDetailDto`, entrées vides ignorées. Libellés des catégories et niveaux traduits côté frontend.
+Non couverts par les traductions de contenu (`course_translations` ne porte que titre et description).
+
 ### Couverture et notes des cours (migrées, `V12__course_cover_and_ratings.sql` + `V13__course_review_comments.sql`, 2026-10-04)
 
 ```
@@ -548,6 +565,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | PATCH | `/admin/languages/{code}` | ADMIN | `{active: false}` — `404` si code inconnu, `409` si dernière langue active |
 | GET | `/me/reviews` | authentifié | avis de l'utilisateur courant (`{id, courseId, courseTitle, courseSlug, stars, comment?, updatedAt}`), espace « Mon compte » |
 | DELETE | `/me/reviews/{id}` | authentifié | retire son propre avis ; `404` pour l'avis d'un autre (pas de fuite d'existence) |
+| GET | `/instructor/sales` | INSTRUCTOR / ADMIN | ventes (paiements réussis) des cours du formateur courant : `{id, courseId, courseTitle, buyerName, amount, currency, createdAt}` |
+| GET | `/instructor/reviews` | INSTRUCTOR / ADMIN | avis reçus par les cours du formateur courant (lecture seule) |
 | GET | `/admin/reviews` | ADMIN | registre paginé de toutes les notes (avec ou sans texte), cours et auteur compris |
 | DELETE | `/admin/reviews/{id}` | ADMIN | modération : supprime l'avis entier (note + texte), la moyenne du cours est recalculée ; `404` si inconnu |
 
@@ -818,6 +837,14 @@ Non ajoutées : client S3 (`software.amazon.awssdk:s3` / `io.minio:minio`) — q
 └──────────────────┴────────────────────────────────────────────┘
 ```
 Tiroir fixe au-delà de 900 px, escamotable (bouton « ☰ Mon compte », fond assombri) en dessous. Les pages Mes cours / certificats / achats existantes sont des routes enfants ; `/dashboard`, `/certificates`, `/invoices` redirigent vers elles.
+
+### 9.4 quater Espace formateur (`/instructor`, depuis le 2026-10-04)
+Même tiroir que « Mon compte » (`shared/drawer-layout`) avec un bouton « ＋ Nouveau cours » : **Tableau de bord**
+(revenus totaux et sur 30 jours, ventes, apprenants, note moyenne pondérée, cours publiés/brouillons ; cours les plus
+suivis, dernières ventes, derniers avis), **Mes cours** (cartes : couverture, statut, prix, apprenants, note, revenus ;
+filtres Tous/Publiés/Brouillons + recherche ; Éditer, Résultats, Voir, Publier, Supprimer), **Revenus** (par cours +
+historique), **Avis reçus** (moyenne, répartition 5→1 étoile, filtre par cours). L'éditeur de cours, l'éditeur de quiz
+et les résultats sont des routes enfants : le tiroir reste visible.
 
 ### 9.5 Dashboard administrateur (`/admin`)
 ```

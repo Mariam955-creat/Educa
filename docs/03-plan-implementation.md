@@ -259,8 +259,11 @@ Hors plan initial. Détail de chaque ligne : entrée correspondante de `docs/04-
 
 | E.13 | En-tête réorganisé : navigation réduite (Catalogue, Formateur, Admin) + avatar à initiales ouvrant un menu (identité, Mon compte, Mes cours, Mes certificats, Mes achats, langues, déconnexion) ; nouvelle page « Mon compte » (`/account`) | `core/layout/user-menu`, `feature/account`, `AuthService.updateFullName` | fait | 2026-10-04 |
 | E.14 | Espace « Mon compte » (`/account`) : tiroir gauche (tableau de bord à KPI apprenant + formateur, profil modifiable, mes cours, certificats, achats, avis) ; « Mes avis » (`GET/DELETE /me/reviews`) ; anciennes adresses `/dashboard`, `/certificates`, `/invoices` redirigées | `feature/account`, module `rating` (`MyReviewController`) | fait | 2026-10-04 |
+| E.15 | En-tête : lien « Catalogue » retiré, le logo **educa** ouvre le catalogue (en-tête et pied de page) | `app.component` | fait | 2026-10-04 |
+| E.16 | Espace formateur réorganisé (studio) : tiroir partagé avec « Mon compte » (`shared/drawer-layout`), tableau de bord (revenus, ventes, apprenants, note, cours), « Mes cours » en cartes filtrables avec revenus par cours, « Revenus » (par cours + historique), « Avis reçus » (répartition des étoiles, filtre par cours) ; éditeurs de cours/quiz et résultats dans l'espace ; `GET /instructor/sales`, `GET /instructor/reviews` | `feature/instructor`, `payment`, `rating` | fait | 2026-10-04 |
+| E.17 | Formulaire de cours enrichi (`course-info-form`, 4 sections) : sous-titre, catégorie, niveau, durée, objectifs, prérequis, public visé, seuil et pondération (déjà gérés par l'API, absents du formulaire), couverture dès la création ; affichés sur la page cours et les cartes (`V14__course_presentation.sql`) | `course`, `course-info-form`, `course-presentation`, `catalog` | fait | 2026-10-04 |
 
-**Vérifié (dernier état)** : `./mvnw test` → **81/81** (2026-10-04, dont `CourseCardTest` 12), `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49** (2026-09-29, non rejoué depuis).
+**Vérifié (dernier état)** : `./mvnw test` → **86/86** (2026-10-04, dont `CourseCardTest` 14, `InstructorSpaceTest` 3), `npm run test:ci` → **22/22**, `scripts/e2e-mvp.mjs` → **49/49** (2026-09-29, non rejoué depuis).
 
 **Reste avant la soutenance** : relecture humaine du MCD et de la matrice RBAC (0.7) ; clé Anthropic réelle pour un chatbot live ; identifiants sandbox Orange Money (non testé avec de vraies clés).
 

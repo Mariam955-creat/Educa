@@ -278,5 +278,17 @@
       "activate": "Activeren",
       "deactivate": "Deactiveren"
     }
+  },
+  "footer": {
+    "tagline": "Leer in je eigen tempo, bevestig je kennis en behaal verifieerbare certificaten.",
+    "learn": "Leren",
+    "teach": "Lesgeven",
+    "platform": "Het platform",
+    "featCertificates": "Pdf-certificaten verifieerbaar via QR-code",
+    "featAi": "Leerassistent aangedreven door AI",
+    "featPayment": "Veilig betalen met Stripe en Orange Money",
+    "languages": "Taal van de interface",
+    "rights": "Alle rechten voorbehouden.",
+    "project": "Afstudeerproject"
   }
 }

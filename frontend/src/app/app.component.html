@@ -45,3 +45,59 @@
 <main>
   <router-outlet />
 </main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <section class="footer-brand">
+      <a class="brand" routerLink="/">educa</a>
+      <p class="tagline">{{ 'footer.tagline' | translate }}</p>
+      <div class="footer-langs" role="group" [attr.aria-label]="'footer.languages' | translate">
+        @for (code of lang.supported; track code) {
+          <button
+            type="button"
+            [class.active]="lang.current() === code"
+            [attr.aria-pressed]="lang.current() === code"
+            [attr.title]="'lang.' + code | translate"
+            (click)="changeLang(code)"
+          >
+            {{ code | uppercase }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <nav class="footer-col" [attr.aria-label]="'footer.learn' | translate">
+      <h3>{{ 'footer.learn' | translate }}</h3>
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/catalog">{{ 'nav.catalog' | translate }}</a>
+        <a routerLink="/dashboard">{{ 'nav.dashboard' | translate }}</a>
+        <a routerLink="/certificates">{{ 'nav.certificates' | translate }}</a>
+        <a routerLink="/invoices">{{ 'nav.invoices' | translate }}</a>
+      } @else {
+        <a routerLink="/login">{{ 'nav.login' | translate }}</a>
+        <a routerLink="/register">{{ 'nav.register' | translate }}</a>
+      }
+      @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
+        <h3 class="sub">{{ 'footer.teach' | translate }}</h3>
+        <a routerLink="/instructor">{{ 'nav.instructor' | translate }}</a>
+        @if (auth.hasRole('ADMIN')) {
+          <a routerLink="/admin">{{ 'nav.admin' | translate }}</a>
+        }
+      }
+    </nav>
+
+    <section class="footer-col">
+      <h3>{{ 'footer.platform' | translate }}</h3>
+      <ul class="features">
+        <li>{{ 'footer.featCertificates' | translate }}</li>
+        <li>{{ 'footer.featAi' | translate }}</li>
+        <li>{{ 'footer.featPayment' | translate }}</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© {{ year }} educa. {{ 'footer.rights' | translate }}</span>
+    <span>{{ 'footer.project' | translate }}</span>
+  </div>
+</footer>

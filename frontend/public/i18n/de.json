@@ -278,5 +278,17 @@
       "activate": "Aktivieren",
       "deactivate": "Deaktivieren"
     }
+  },
+  "footer": {
+    "tagline": "Lernen Sie in Ihrem eigenen Tempo, bestätigen Sie Ihr Wissen und erhalten Sie überprüfbare Zertifikate.",
+    "learn": "Lernen",
+    "teach": "Unterrichten",
+    "platform": "Die Plattform",
+    "featCertificates": "Per QR-Code überprüfbare PDF-Zertifikate",
+    "featAi": "KI-gestützter Lernassistent",
+    "featPayment": "Sichere Zahlung mit Stripe und Orange Money",
+    "languages": "Sprache der Oberfläche",
+    "rights": "Alle Rechte vorbehalten.",
+    "project": "Abschlussprojekt"
   }
 }

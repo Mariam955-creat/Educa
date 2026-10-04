@@ -278,5 +278,17 @@
       "activate": "Activate",
       "deactivate": "Deactivate"
     }
+  },
+  "footer": {
+    "tagline": "Learn at your own pace, validate your skills and earn verifiable certificates.",
+    "learn": "Learn",
+    "teach": "Teach",
+    "platform": "The platform",
+    "featCertificates": "PDF certificates verifiable by QR code",
+    "featAi": "AI-powered learning assistant",
+    "featPayment": "Secure payment with Stripe and Orange Money",
+    "languages": "Interface language",
+    "rights": "All rights reserved.",
+    "project": "Final-year project"
   }
 }

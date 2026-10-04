@@ -278,5 +278,17 @@
       "activate": "Activer",
       "deactivate": "Désactiver"
     }
+  },
+  "footer": {
+    "tagline": "Apprenez à votre rythme, validez vos acquis et obtenez des certificats vérifiables.",
+    "learn": "Apprendre",
+    "teach": "Enseigner",
+    "platform": "La plateforme",
+    "featCertificates": "Certificats PDF vérifiables par QR code",
+    "featAi": "Assistant pédagogique propulsé par l'IA",
+    "featPayment": "Paiement sécurisé Stripe et Orange Money",
+    "languages": "Langue de l'interface",
+    "rights": "Tous droits réservés.",
+    "project": "Projet de fin d'études"
   }
 }

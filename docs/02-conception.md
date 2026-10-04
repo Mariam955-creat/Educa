@@ -110,6 +110,7 @@ com.educa.backend
 ├── storage/              # module : interface StorageService — FileSystemStorageService (dev), impl. S3 en cible ; FileTypeDetector (sniffing Tika)
 ├── language/              # module : Language (langues de contenu des cours) — LanguageController (public), AdminLanguageController
 ├── ai/                   # module : interface AiAssistant, LlmAiAssistant, DisabledAiAssistant, AiController
+├── admin/                # module sans entité : tableau de bord (AdminStatsController) assemblant les compteurs exposés par les services des autres modules
 ├── rating/               # module : notes 1–5 + avis écrits des inscrits (CourseRating), RatingController (public en lecture), AdminReviewController (modération)
 └── payment/              # module : achat individuel de cours — Payment (+ facture), interface PaymentGateway
                           #   (StripePaymentGateway Europe, OrangeMoneyPaymentGateway Afrique, DisabledPaymentGateway)
@@ -583,6 +584,8 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | DELETE | `/me/reviews/{id}` | authentifié | retire son propre avis ; `404` pour l'avis d'un autre (pas de fuite d'existence) |
 | GET | `/instructor/sales` | INSTRUCTOR / ADMIN | ventes (paiements réussis) des cours du formateur courant : `{id, courseId, courseTitle, buyerName, amount, currency, createdAt}` |
 | GET | `/instructor/reviews` | INSTRUCTOR / ADMIN | avis reçus par les cours du formateur courant (lecture seule) |
+| GET | `/admin/stats` | ADMIN | indicateurs : utilisateurs (par rôle, désactivés, nouveaux sur 30 j), cours (publiés/brouillons), inscriptions, chiffre d'affaires (total, 30 j, ventes), certificats, avis (nombre, moyenne) |
+| GET | `/admin/courses` | ADMIN | tous les cours, publiés ou non ; `?q=&published=&page=&size=` |
 | GET | `/admin/reviews` | ADMIN | registre paginé de toutes les notes (avec ou sans texte), cours et auteur compris |
 | DELETE | `/admin/reviews/{id}` | ADMIN | modération : supprime l'avis entier (note + texte), la moyenne du cours est recalculée ; `404` si inconnu |
 
@@ -863,6 +866,10 @@ historique), **Avis reçus** (moyenne, répartition 5→1 étoile, filtre par co
 et les résultats sont des routes enfants : le tiroir reste visible.
 
 ### 9.5 Dashboard administrateur (`/admin`)
+
+**Depuis le 2026-10-04** : même tiroir que les espaces compte et formateur — Tableau de bord (6 indicateurs + répartition
+des rôles, derniers paiements, derniers inscrits, derniers avis), Utilisateurs, Cours, Paiements, Certificats, Avis,
+Langues (une route enfant par section, pagination partagée `shared/pager`). Maquette d'origine (onglets) :
 ```
 ┌───────────────────────────────────────────────────────────────┐
 │ educa — Administration                                         │

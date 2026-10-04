@@ -40,12 +40,12 @@ h2 {
 }
 
 .kpi:hover {
-  border-color: var(--accent);
+  border-color: var(--accent, #2563eb);
   transform: translateY(-2px);
 }
 
 .kpi.teach {
-  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+  background: linear-gradient(135deg, var(--accent-soft, #eff6ff), var(--surface));
 }
 
 .kpi-icon {
@@ -113,7 +113,7 @@ h2 {
 .fill {
   display: block;
   height: 100%;
-  background: var(--success);
+  background: var(--success, #10b981);
 }
 
 .pct {

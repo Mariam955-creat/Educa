@@ -36,7 +36,7 @@
 }
 
 .price.free {
-  color: var(--success-strong);
+  color: var(--success-strong, #047857);
 }
 
 .buy-buttons {
@@ -47,15 +47,15 @@
 
 .buy-buttons button.ghost {
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
 }
 
 button {
   padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -83,7 +83,7 @@ button:disabled {
 
 .progress-fill {
   height: 100%;
-  background: var(--success);
+  background: var(--success, #10b981);
   transition: width 0.3s ease;
 }
 
@@ -101,7 +101,7 @@ button:disabled {
 }
 
 .enroll-error a {
-  color: var(--accent);
+  color: var(--accent, #2563eb);
   margin-left: 0.4rem;
 }
 
@@ -159,7 +159,7 @@ button:disabled {
 
 .link-btn {
   background: transparent;
-  color: var(--accent);
+  color: var(--accent, #2563eb);
   border: 1px solid var(--border);
   padding: 0.4rem 0.7rem;
   margin-bottom: 0.5rem;
@@ -169,8 +169,8 @@ button:disabled {
   display: block;
   margin-top: 0.5rem;
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
 }
@@ -196,7 +196,7 @@ button:disabled {
 }
 
 .btn-sm {
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   text-decoration: none;
   padding: 0.4rem 0.75rem;
@@ -241,8 +241,8 @@ button:disabled {
 /* Récompense : jaune de la palette */
 .cert-btn {
   margin-top: 0.85rem;
-  background: var(--warning);
-  color: var(--text);
+  background: var(--warning, #f59e0b);
+  color: var(--text, #1f2937);
 }
 
 /* --- Couverture, statistiques et note --- */
@@ -276,7 +276,7 @@ button:disabled {
 }
 
 .rate-thanks {
-  color: var(--success-strong);
+  color: var(--success-strong, #047857);
   font-size: 0.85rem;
 }
 
@@ -298,8 +298,8 @@ button:disabled {
 .tag {
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-size: 0.78rem;
   font-weight: 600;
 }

@@ -62,7 +62,7 @@ export function passwordScore(value: string): number {
     .seg.on[data-level='1'] { background: #dc2626; }
     .seg.on[data-level='2'] { background: #f59e0b; }
     .seg.on[data-level='3'] { background: #65a30d; }
-    .seg.on[data-level='4'] { background: var(--success-strong); }
+    .seg.on[data-level='4'] { background: var(--success-strong, #047857); }
     .strength { color: var(--muted); font-size: 0.75rem; font-weight: 400; }
   `,
 })

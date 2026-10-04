@@ -36,8 +36,8 @@ h2 {
 .role {
   padding: 0.1rem 0.55rem;
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -83,7 +83,7 @@ button {
   padding: 0.6rem 1.1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -98,8 +98,8 @@ button:disabled {
 .flash {
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
-  background: var(--success-soft);
-  color: var(--success-strong);
+  background: var(--success-soft, #d1fae5);
+  color: var(--success-strong, #047857);
   font-size: 0.85rem;
 }
 

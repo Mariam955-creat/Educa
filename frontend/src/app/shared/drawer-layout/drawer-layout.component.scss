@@ -1,6 +1,7 @@
 .shell {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
+  /* Tiroir à droite, contenu à gauche */
+  grid-template-columns: minmax(0, 1fr) 250px;
   min-height: calc(100vh - 3.5rem);
 }
 
@@ -13,7 +14,8 @@
   align-self: start;
   height: calc(100vh - 3.5rem);
   overflow-y: auto;
-  border-inline-end: 1px solid var(--border);
+  order: 2;
+  border-inline-start: 1px solid var(--border);
   background: var(--surface);
 }
 
@@ -21,44 +23,6 @@
 .drawer-toggle,
 .backdrop {
   display: none;
-}
-
-.identity {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.avatar {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50%;
-  background: var(--brand-gradient);
-  color: #fff;
-  font-weight: 700;
-}
-
-.identity-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.identity-text strong,
-.identity-text span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.identity-text span {
-  color: var(--muted);
-  font-size: 0.78rem;
 }
 
 .drawer-nav,
@@ -95,8 +59,8 @@
 }
 
 .drawer a.active {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-weight: 700;
 }
 
@@ -126,9 +90,10 @@
   }
 
   .drawer-toggle {
-    display: inline-flex;
+    display: flex;
     gap: 0.4rem;
-    margin: 1rem 1rem 0;
+    margin: 1rem 1rem 0 auto; /* bouton à droite, du côté du tiroir */
+    width: fit-content;
     padding: 0.5rem 0.85rem;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -149,11 +114,11 @@
   .drawer {
     position: fixed;
     inset-block: 0;
-    inset-inline-start: 0;
+    inset-inline-end: 0;
     z-index: 70;
     width: min(280px, 85vw);
     height: 100vh;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition: transform 0.2s ease-out;
     box-shadow: 0 0 40px rgba(17, 24, 39, 0.2);
   }
@@ -164,8 +129,8 @@
 
   .drawer-close {
     display: block;
-    align-self: flex-end;
-    margin: 0.5rem 0.5rem 0 0;
+    align-self: flex-start;
+    margin: 0.5rem 0 0 0.5rem;
     border: 0;
     background: transparent;
     font-size: 1.5rem;
@@ -183,11 +148,11 @@
   margin: 0.85rem 0.85rem 0.25rem;
   padding: 0.6rem 0.75rem;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 700;
 }
 
 .drawer a.cta:hover {
-  background: var(--accent-hover);
+  background: var(--accent-hover, #1d4ed8);
 }

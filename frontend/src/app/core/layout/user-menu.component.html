@@ -1,14 +1,16 @@
 @if (auth.user(); as user) {
   <button
     type="button"
-    class="avatar"
+    class="trigger"
     [class.open]="open()"
     aria-haspopup="menu"
     [attr.aria-expanded]="open()"
     [attr.aria-label]="'userMenu.open' | translate"
     (click)="toggle()"
   >
-    {{ initials() }}
+    <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+    <span class="who">{{ user.fullName }}</span>
+    <span class="caret" aria-hidden="true">▾</span>
   </button>
 
   @if (open()) {

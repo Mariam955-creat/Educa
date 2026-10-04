@@ -62,7 +62,7 @@ import { CourseDetail } from '../../core/courses/course.models';
     .learn { margin-bottom: 1.25rem; padding: 1.1rem 1.25rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
     .learn ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 0.5rem 1.5rem; margin: 0; padding: 0; list-style: none; }
     .learn li { display: flex; gap: 0.6rem; font-size: 0.92rem; line-height: 1.45; }
-    .learn li span { color: var(--success); font-weight: 800; }
+    .learn li span { color: var(--success, #10b981); font-weight: 800; }
     .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 1.25rem; }
     .plain { margin: 0; padding-inline-start: 1.1rem; font-size: 0.92rem; line-height: 1.6; }
     p { margin: 0; font-size: 0.92rem; line-height: 1.55; white-space: pre-line; }
@@ -70,7 +70,7 @@ import { CourseDetail } from '../../core/courses/course.models';
     .instructor-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
     .instructor-head div { display: flex; flex-direction: column; }
     .instructor-head span:not(.avatar) { color: var(--muted); font-size: 0.85rem; }
-    .avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--brand-gradient); color: #fff; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
+    .avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af)); color: #fff; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
   `,
 })
 export class CoursePresentationComponent {

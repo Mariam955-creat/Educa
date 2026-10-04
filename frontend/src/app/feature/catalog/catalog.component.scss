@@ -163,7 +163,7 @@ h1 {
 }
 
 .price.free {
-  color: var(--success-strong);
+  color: var(--success-strong, #047857);
 }
 
 .subtitle {

@@ -12,30 +12,34 @@ main {
 .topbar {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 1.5rem;
   padding: 0.75rem 1.25rem;
-  background: var(--accent);
-  box-shadow: 0 2px 10px rgba(30, 64, 175, 0.25);
-  color: #fff;
+  border-bottom: 3px solid var(--accent, #2563eb);
+  background: var(--surface, #ffffff);
+  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.06);
+  color: var(--text, #1f2937);
 }
 
-/* Marque de l'en-tête (le pied de page a sa propre couleur, voir .footer .brand) */
+/*
+ * Disposition de l'en-tête : tout regroupé à droite — marque « educa », puis liens, compte (ou langue).
+ * Marque de l'en-tête (le pied de page a sa propre couleur, voir .footer .brand).
+ */
 .brand {
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--accent, #2563eb);
   text-decoration: none;
 }
 
 .nav {
   display: flex;
-  gap: 1rem;
-  flex: 1;
+  gap: 1.25rem;
 }
 
 .nav a {
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--text, #1f2937);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
@@ -44,17 +48,17 @@ main {
 }
 
 .nav a:hover {
-  color: #fff;
+  color: var(--accent, #2563eb);
 }
 
 .nav a.active {
-  color: #fff;
-  border-bottom-color: var(--warning);
+  color: var(--accent, #2563eb);
+  border-bottom-color: var(--warning, #f59e0b);
 }
 
 .lang {
   padding: 0.35rem 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--border, #dbe3ef);
   border-radius: 8px;
   font: inherit;
   font-size: 0.85rem;
@@ -70,15 +74,13 @@ main {
   }
 
   .nav {
-    order: 3;
+    order: 20;
     flex-basis: 100%;
+    justify-content: flex-end;
     flex-wrap: wrap;
     gap: 0.4rem 1rem;
   }
 
-  app-user-menu {
-    margin-inline-start: auto;
-  }
 }
 
 /* --- Footer --- */
@@ -129,13 +131,13 @@ main {
 }
 
 .footer-langs button:hover {
-  border-color: var(--warning);
+  border-color: var(--warning, #f59e0b);
   color: #fff;
 }
 
 .footer-langs button.active {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--accent, #2563eb);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 
@@ -192,7 +194,7 @@ main {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--warning);
+  background: var(--warning, #f59e0b);
 }
 
 .footer-bottom {

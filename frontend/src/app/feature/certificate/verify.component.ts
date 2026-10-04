@@ -49,7 +49,7 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
       }
       .badge {
         font-weight: 700;
-        color: var(--success-strong);
+        color: var(--success-strong, #047857);
         margin-top: 0;
       }
       .meta {

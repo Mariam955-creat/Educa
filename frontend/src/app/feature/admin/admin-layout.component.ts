@@ -8,7 +8,7 @@ import { DrawerLayoutComponent, DrawerLink } from '../../shared/drawer-layout/dr
   selector: 'app-admin-layout',
   imports: [RouterOutlet, DrawerLayoutComponent],
   template: `
-    <app-drawer-layout titleKey="admin.title" subtitleKey="userMenu.roleAdmin" [links]="links" [footerLinks]="footerLinks">
+    <app-drawer-layout titleKey="admin.title" [links]="links" [footerLinks]="footerLinks">
       <router-outlet />
     </app-drawer-layout>
   `,

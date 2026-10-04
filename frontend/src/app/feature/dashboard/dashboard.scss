@@ -29,7 +29,7 @@ h2 {
 
 .btn {
   display: inline-block;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   text-decoration: none;
   padding: 0.55rem 0.9rem;
@@ -66,7 +66,7 @@ h2 {
 }
 
 .enr-card:hover {
-  border-color: var(--accent);
+  border-color: var(--accent, #2563eb);
 }
 
 .enr-head {
@@ -78,7 +78,7 @@ h2 {
 
 .pct {
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent, #2563eb);
 }
 
 .progress-track {
@@ -90,7 +90,7 @@ h2 {
 
 .progress-fill {
   height: 100%;
-  background: var(--success);
+  background: var(--success, #10b981);
 }
 
 .sub {

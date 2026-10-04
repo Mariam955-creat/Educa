@@ -78,7 +78,7 @@ form button {
   padding: 0.55rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;

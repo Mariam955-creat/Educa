@@ -149,7 +149,7 @@ interface PendingDeletion {
   styles: `
     .count { margin-inline-start: 0.2rem; opacity: 0.75; }
     .comment { max-width: 26rem; margin-top: 0.25rem; font-size: 0.82rem; white-space: pre-line; }
-    .flash.ok-flash { border-color: #a7f3d0; background: var(--success-soft); color: var(--success-strong); }
+    .flash.ok-flash { border-color: #a7f3d0; background: var(--success-soft, #d1fae5); color: var(--success-strong, #047857); }
   `,
 })
 export class AdminTrashComponent implements OnInit {

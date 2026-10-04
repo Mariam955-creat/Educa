@@ -77,8 +77,8 @@ h1 {
 }
 
 .chips button.active {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--accent, #2563eb);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 
@@ -114,7 +114,7 @@ th {
 }
 
 tbody tr:hover {
-  background: var(--accent-soft);
+  background: var(--accent-soft, #eff6ff);
 }
 
 tr:last-child td {
@@ -149,8 +149,8 @@ tr:last-child td {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -178,8 +178,8 @@ select {
 }
 
 .badge.ok {
-  background: var(--success-soft);
-  color: var(--success-strong);
+  background: var(--success-soft, #d1fae5);
+  color: var(--success-strong, #047857);
 }
 
 .badge.warn {
@@ -193,8 +193,8 @@ select {
 }
 
 .badge.info {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
 }
 
 /* --- Actions --- */
@@ -211,7 +211,7 @@ select {
   border: 1px solid var(--border);
   border-radius: 6px;
   background: transparent;
-  color: var(--accent);
+  color: var(--accent, #2563eb);
   font: inherit;
   font-size: 0.8rem;
   text-decoration: none;

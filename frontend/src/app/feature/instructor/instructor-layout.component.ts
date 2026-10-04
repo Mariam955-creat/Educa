@@ -14,7 +14,7 @@ import { DrawerLayoutComponent, DrawerLink } from '../../shared/drawer-layout/dr
   template: `
     <app-drawer-layout
       titleKey="instructor.title"
-      subtitleKey="instructor.title"
+     
       [cta]="newCourse"
       [links]="links"
       [footerLinks]="footerLinks()"

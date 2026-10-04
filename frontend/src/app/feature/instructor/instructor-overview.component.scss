@@ -30,7 +30,7 @@ h2 {
 .btn {
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 700;
   text-decoration: none;
@@ -82,13 +82,13 @@ h2 {
 }
 
 .kpi:hover {
-  border-color: var(--accent);
+  border-color: var(--accent, #2563eb);
   transform: translateY(-2px);
 }
 
 .kpi.highlight {
   border-color: transparent;
-  background: var(--brand-gradient);
+  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
   color: #fff;
 }
 

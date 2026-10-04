@@ -10,16 +10,6 @@
   <aside class="drawer" [class.open]="open()" [attr.aria-label]="titleKey() | translate">
     <button type="button" class="drawer-close" (click)="close()" [attr.aria-label]="'account.closeMenu' | translate">×</button>
 
-    @if (auth.user(); as user) {
-      <div class="identity">
-        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
-        <div class="identity-text">
-          <strong>{{ user.fullName }}</strong>
-          <span>{{ subtitleKey() ? (subtitleKey()! | translate) : user.email }}</span>
-        </div>
-      </div>
-    }
-
     @if (cta(); as action) {
       <a class="cta" [routerLink]="action.path">
         <span aria-hidden="true">{{ action.icon }}</span>{{ action.labelKey | translate }}

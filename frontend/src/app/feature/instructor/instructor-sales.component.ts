@@ -79,7 +79,7 @@ interface CourseRevenue {
     .muted { color: var(--muted); }
     .summary { display: flex; flex-wrap: wrap; gap: 1rem; }
     .summary div { display: flex; flex-direction: column; min-width: 170px; padding: 1rem 1.2rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
-    .summary div:first-child { border-color: transparent; background: var(--brand-gradient); color: #fff; }
+    .summary div:first-child { border-color: transparent; background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af)); color: #fff; }
     .summary div:first-child .label { color: rgba(255, 255, 255, 0.85); }
     .label { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
     .summary strong { font-size: 1.6rem; }
@@ -87,7 +87,7 @@ interface CourseRevenue {
     .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 2fr) auto; align-items: center; gap: 0.85rem; font-size: 0.88rem; }
     .bar-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bar { height: 8px; overflow: hidden; border-radius: 999px; background: var(--border); }
-    .bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+    .bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--accent, #2563eb); }
     .bar-value { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }
     table { width: 100%; border-collapse: collapse; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.88rem; }
     th, td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); text-align: start; }

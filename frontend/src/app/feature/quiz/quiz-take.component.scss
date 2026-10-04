@@ -53,7 +53,7 @@ button {
   padding: 0.65rem 1.1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -67,8 +67,8 @@ button:disabled {
 button.ghost,
 .btn.ghost {
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
 }
 
 .result {
@@ -88,8 +88,8 @@ button.ghost,
 }
 
 .cert {
-  background: var(--success-soft);
-  color: var(--success-strong);
+  background: var(--success-soft, #d1fae5);
+  color: var(--success-strong, #047857);
   padding: 0.6rem 1rem;
   border-radius: 8px;
 }

@@ -70,7 +70,7 @@ import { ConfirmDeleteDialogComponent } from '../../shared/trash/confirm-delete-
     h1 { margin: 0; font-size: 1.5rem; }
     .subtitle { margin: 0.3rem 0 1.25rem; color: var(--muted); font-size: 0.9rem; }
     .muted { color: var(--muted); font-size: 0.82rem; }
-    .flash { padding: 0.55rem 0.8rem; border-radius: 8px; background: var(--success-soft); color: var(--success-strong); font-size: 0.85rem; }
+    .flash { padding: 0.55rem 0.8rem; border-radius: 8px; background: var(--success-soft, #d1fae5); color: var(--success-strong, #047857); font-size: 0.85rem; }
     .flash.error { background: #fee2e2; color: #991b1b; }
     .empty { display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem; border: 1px dashed var(--border); border-radius: 14px; color: var(--muted); }
     .empty span { font-size: 2.2rem; }
@@ -81,7 +81,7 @@ import { ConfirmDeleteDialogComponent } from '../../shared/trash/confirm-delete-
     .hint { color: #92400e; font-size: 0.8rem; }
     .actions { display: flex; gap: 0.4rem; }
     button { padding: 0.4rem 0.75rem; border-radius: 6px; font: inherit; font-size: 0.82rem; cursor: pointer; }
-    .restore { border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: 600; }
+    .restore { border: 1px solid var(--accent, #2563eb); background: transparent; color: var(--accent, #2563eb); font-weight: 600; }
     .danger { border: 1px solid #fecaca; background: transparent; color: #b91c1c; }
     .danger:disabled { opacity: 0.45; cursor: not-allowed; }
   `,

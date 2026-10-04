@@ -3,38 +3,62 @@
   display: inline-block;
 }
 
+/* Bouton du menu : avatar + nom + flèche */
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.2rem 0.6rem 0.2rem 0.2rem;
+  border: 1px solid var(--border, #dbe3ef);
+  border-radius: 999px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #1f2937);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.trigger:hover,
+.trigger:focus-visible,
+.trigger.open {
+  border-color: var(--accent, #2563eb);
+  box-shadow: 0 0 0 3px var(--accent-soft, #eff6ff);
+  outline: none;
+}
+
+.who {
+  max-width: 12rem;
+  overflow: hidden;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .avatar {
   display: grid;
   place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  padding: 0;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  width: 2.1rem;
+  height: 2.1rem;
   border-radius: 50%;
-  background: #fff;
-  color: var(--accent);
-  font: inherit;
-  font-size: 0.85rem;
+  background: var(--accent, #2563eb);
+  color: #fff;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  cursor: pointer;
-  transition:
-    box-shadow 0.15s,
-    border-color 0.15s;
-}
-
-button.avatar:hover,
-button.avatar:focus-visible,
-button.avatar.open {
-  border-color: var(--warning);
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
-  outline: none;
 }
 
 .avatar.big {
   flex-shrink: 0;
   border: 0;
-  background: var(--brand-gradient);
+  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
   color: #fff;
   width: 2.75rem;
   height: 2.75rem;
@@ -94,8 +118,8 @@ button.avatar.open {
   margin-top: 0.3rem;
   padding: 0.05rem 0.45rem;
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-size: 0.7rem;
   font-weight: 700;
 }
@@ -165,12 +189,12 @@ button.avatar.open {
 }
 
 .lang-pills button:hover {
-  border-color: var(--accent);
+  border-color: var(--accent, #2563eb);
 }
 
 .lang-pills button.active {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--accent, #2563eb);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 
@@ -183,6 +207,18 @@ button.avatar.open {
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
+}
+
+/* Petit écran : l'avatar seul, sans le nom */
+@media (max-width: 600px) {
+  .who,
+  .caret {
+    display: none;
+  }
+
+  .trigger {
+    padding: 0.2rem;
+  }
 }
 
 @media (max-width: 480px) {

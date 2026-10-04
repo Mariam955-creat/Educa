@@ -23,8 +23,8 @@ h3 {
 }
 
 .flash {
-  background: var(--success-soft);
-  color: var(--success-strong);
+  background: var(--success-soft, #d1fae5);
+  color: var(--success-strong, #047857);
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -54,7 +54,7 @@ h3 {
 }
 
 .question li.correct {
-  color: var(--success-strong);
+  color: var(--success-strong, #047857);
   font-weight: 600;
 }
 
@@ -116,7 +116,7 @@ button {
   padding: 0.55rem 0.9rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -125,8 +125,8 @@ button {
 
 button.ghost {
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
   font-size: 0.85rem;
   padding: 0.35rem 0.7rem;
 }

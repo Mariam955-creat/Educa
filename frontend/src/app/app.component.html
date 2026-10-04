@@ -1,9 +1,8 @@
 <header class="topbar">
-  <a class="brand" routerLink="/">educa</a>
+  <a class="brand" routerLink="/catalog" [attr.title]="'nav.catalog' | translate">educa</a>
 
   @if (auth.isAuthenticated()) {
     <nav class="nav">
-      <a routerLink="/catalog" routerLinkActive="active">{{ 'nav.catalog' | translate }}</a>
       @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
         <a routerLink="/instructor" routerLinkActive="active">{{ 'nav.instructor' | translate }}</a>
       }
@@ -33,7 +32,7 @@
 <footer class="footer">
   <div class="footer-inner">
     <section class="footer-brand">
-      <a class="brand" routerLink="/">educa</a>
+      <a class="brand" routerLink="/catalog" [attr.title]="'nav.catalog' | translate">educa</a>
       <p class="tagline">{{ 'footer.tagline' | translate }}</p>
       <div class="footer-langs" role="group" [attr.aria-label]="'footer.languages' | translate">
         @for (code of lang.supported; track code) {

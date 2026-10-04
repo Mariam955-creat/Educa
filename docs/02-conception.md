@@ -22,7 +22,7 @@ Le périmètre **Must have** est intégralement réalisé et vérifié (`docs/06
 | §6 / EF-26/27 | Interface FR/EN/AR avec RTL arabe | **FR/EN/DE/NL** depuis le 2026-09-28 (arabe, espagnol, portugais retirés à la demande ; plus de RTL) |
 | §3 / §6.3 | `certificates.pdf_key` / `payments.pdf_key` (PDF mis en cache) | colonnes **supprimées** (`V10__drop_pdf_cache.sql`, 2026-09-26) : certificat et facture régénérés à chaque téléchargement, dans la langue de l'interface |
 | §4 / §11 | Accès gratuit à tous les cours (brief initial) | **achat individuel par cours** (`courses.price`, table `payments`, Stripe + Orange Money, factures) — extension post-MVP, voir §11 |
-| §4 | Suppression d'un cours | refusée en **`409`** si le cours a des inscrits (`CourseDeletionGuard`, 2026-09-29) |
+| §4 | Suppression d'un cours | **corbeille depuis le 2026-10-04** : `DELETE /courses/{id}` met à la corbeille (dépublie) ; la suppression **définitive** (`DELETE /courses/{id}/permanent`, depuis la corbeille) reste refusée en **`409`** si le cours a des inscrits (`CourseDeletionGuard`) |
 | §1.1 / §3 / §4 | Pas d'image de cours ni de notes | **ajoutés le 2026-10-04** : image de couverture téléversée par le formateur (`courses.cover_image_key`/`cover_image_type`, `V12`), notes 1 à 5 + avis écrit facultatif des inscrits (nouveau module `rating`, table `course_ratings`, `V12`/`V13`), modération admin ; les cartes du catalogue affichent couverture, nombre d'inscrits et note moyenne |
 
 Le reste du document correspond à ce qui a été construit.
@@ -404,6 +404,26 @@ même forme de DTO). Non branché sur `GET /courses/{slug}` par défaut côté f
 toujours éditer le texte source, jamais une traduction affichée) — seule la page de consultation publique
 (`course-detail`) passe `displayLanguage`.
 
+### Corbeille (migrée, `V16__soft_delete.sql`, 2026-10-04)
+
+```
+courses.deleted_at, users.deleted_at, course_ratings.deleted_at   TIMESTAMPTZ NULL  -- NULL = actif
+```
+
+- **Cours** : à la corbeille → dépublié, absent du catalogue, de « Mes cours », de la liste admin et des compteurs ;
+  page `404` jusqu'à restauration (en brouillon). Filtrage explicite dans les requêtes (le cours reste lisible par
+  `requireCourse` : paiements, certificats et restauration en dépendent).
+- **Comptes** : à la corbeille → `enabled = false` (connexion et rafraîchissement refusés), refresh tokens révoqués,
+  hors listes et compteurs ; restauration = réactivation. Suppression définitive : jetons supprimés puis compte (cascade
+  base sur inscriptions, achats, certificats, avis) ; refusée si une `UserDeletionGuard` s'y oppose (module `course` :
+  formateur ayant des cours, clé étrangère `courses.instructor_id` sans cascade).
+- **Avis** : `@SQLRestriction("deleted_at is null")` sur l'entité — exclus de toutes les requêtes JPA, moyennes
+  comprises ; corbeille, restauration, mise à la corbeille et suppression définitive en SQL natif (un avis déjà en
+  cache JPA ne peut pas être « re-supprimé »). Un apprenant qui note à nouveau purge son ancien avis modéré
+  (unicité cours/apprenant).
+- Suppression définitive : uniquement depuis la corbeille (`409` sinon) ; côté interface, saisie du mot « SUPPRIMER »
+  (traduit : DELETE, LÖSCHEN, VERWIJDEREN).
+
 ### Profil utilisateur (migré, `V15__user_profile.sql`, 2026-10-04)
 
 ```
@@ -584,6 +604,13 @@ Pagination : `?page=0&size=20`, réponse `{ content, page, size, totalElements, 
 | DELETE | `/me/reviews/{id}` | authentifié | retire son propre avis ; `404` pour l'avis d'un autre (pas de fuite d'existence) |
 | GET | `/instructor/sales` | INSTRUCTOR / ADMIN | ventes (paiements réussis) des cours du formateur courant : `{id, courseId, courseTitle, buyerName, amount, currency, createdAt}` |
 | GET | `/instructor/reviews` | INSTRUCTOR / ADMIN | avis reçus par les cours du formateur courant (lecture seule) |
+| GET | `/instructor/trash/courses` | INSTRUCTOR / ADMIN | ses cours à la corbeille |
+| GET | `/admin/trash/courses` | ADMIN | tous les cours à la corbeille |
+| POST | `/courses/{id}/restore` | INSTRUCTOR (propriétaire) / ADMIN | sort de la corbeille, en brouillon |
+| DELETE | `/courses/{id}/permanent` | INSTRUCTOR (propriétaire) / ADMIN | définitive, depuis la corbeille ; `409` si inscrits |
+| DELETE | `/admin/users/{id}` | ADMIN | compte à la corbeille ; `409` sur soi-même |
+| GET | `/admin/users/trash` · POST `/admin/users/{id}/restore` · DELETE `/admin/users/{id}/permanent` | ADMIN | corbeille des comptes ; définitive `409` pour un formateur ayant des cours |
+| GET | `/admin/reviews/trash` · POST `/admin/reviews/{id}/restore` · DELETE `/admin/reviews/{id}/permanent` | ADMIN | corbeille des avis (`DELETE /admin/reviews/{id}` y met l'avis) |
 | GET | `/admin/stats` | ADMIN | indicateurs : utilisateurs (par rôle, désactivés, nouveaux sur 30 j), cours (publiés/brouillons), inscriptions, chiffre d'affaires (total, 30 j, ventes), certificats, avis (nombre, moyenne) |
 | GET | `/admin/courses` | ADMIN | tous les cours, publiés ou non ; `?q=&published=&page=&size=` |
 | GET | `/admin/reviews` | ADMIN | registre paginé de toutes les notes (avec ou sans texte), cours et auteur compris |
@@ -708,6 +735,13 @@ Deux niveaux distincts :
 - Pas de données personnelles envoyées au LLM au-delà du strict nécessaire (pas d'email, pas d'identifiant).
 
 ---
+
+## 7 bis. Charte graphique (2026-10-04)
+
+Bleu `#2563EB` (confiance, sérieux : en-tête, boutons, liens), vert `#10B981` (progression, réussite), jaune
+`#F59E0B` (étoiles, récompenses comme le certificat, mises en avant), fond blanc / bleu très clair `#EFF6FF`, texte
+gris foncé `#1F2937` ; rouge conservé pour les actions dangereuses. Toutes les couleurs passent par des variables CSS
+déclarées dans `frontend/src/styles.scss` (`--accent`, `--success`, `--warning`, `--bg`, `--text`…).
 
 ## 8. Choix techniques justifiés
 

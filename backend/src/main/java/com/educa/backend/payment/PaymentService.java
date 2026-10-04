@@ -276,7 +276,7 @@ public class PaymentService {
                 <html lang="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4; margin: 0; }
                   body { font-family: '%s'; color: #1f2937; margin: 48px; }
-                  h1 { font-size: 24px; color: #7e22ce; margin: 0 0 4px; }
+                  h1 { font-size: 24px; color: #2563eb; margin: 0 0 4px; }
                   .sub { color: #6b7280; margin: 0 0 32px; }
                   table { width: 100%%; border-collapse: collapse; margin-top: 16px; }
                   th, td { text-align: left; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
@@ -285,7 +285,7 @@ public class PaymentService {
                   .parties { width: 100%%; margin-bottom: 24px; }
                   .parties td { border: none; vertical-align: top; width: 50%%; padding: 0; }
                   .label { color: #6b7280; font-size: 12px; text-transform: uppercase; }
-                  .paid { color: #15803d; font-weight: bold; }
+                  .paid { color: #047857; font-weight: bold; }
                 </style></head><body>
                 <h1>%s</h1>
                 <p class="sub">%s</p>

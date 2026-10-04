@@ -79,7 +79,7 @@ interface CourseRevenue {
     .muted { color: var(--muted); }
     .summary { display: flex; flex-wrap: wrap; gap: 1rem; }
     .summary div { display: flex; flex-direction: column; min-width: 170px; padding: 1rem 1.2rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
-    .summary div:first-child { border-color: transparent; background: linear-gradient(135deg, #7e22ce, #db2777); color: #fff; }
+    .summary div:first-child { border-color: transparent; background: var(--brand-gradient); color: #fff; }
     .summary div:first-child .label { color: rgba(255, 255, 255, 0.85); }
     .label { color: var(--muted); font-size: 0.8rem; font-weight: 600; }
     .summary strong { font-size: 1.6rem; }

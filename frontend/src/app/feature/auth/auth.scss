@@ -7,8 +7,8 @@
 .auth-card {
   width: 100%;
   max-width: 380px;
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #e2e2e5);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 2rem;
 }
@@ -20,7 +20,7 @@ h1 {
 
 .subtitle {
   margin: 0 0 1.5rem;
-  color: var(--muted, #6b7280);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -41,7 +41,7 @@ label {
 input,
 select {
   padding: 0.6rem 0.7rem;
-  border: 1px solid var(--border, #cbd0d6);
+  border: 1px solid var(--border);
   border-radius: 8px;
   font: inherit;
 }
@@ -51,7 +51,7 @@ button {
   padding: 0.7rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #7e22ce);
+  background: var(--accent);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -92,7 +92,7 @@ button:disabled {
 
 .hint {
   margin-top: -0.5rem;
-  color: var(--muted, #6b7280);
+  color: var(--muted);
   font-size: 0.75rem;
 }
 

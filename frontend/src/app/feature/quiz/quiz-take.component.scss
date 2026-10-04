@@ -88,8 +88,8 @@ button.ghost,
 }
 
 .cert {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--success-soft);
+  color: var(--success-strong);
   padding: 0.6rem 1rem;
   border-radius: 8px;
 }

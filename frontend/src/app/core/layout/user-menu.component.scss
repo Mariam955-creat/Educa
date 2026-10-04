@@ -9,10 +9,10 @@
   width: 2.4rem;
   height: 2.4rem;
   padding: 0;
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6);
   border-radius: 50%;
-  background: linear-gradient(135deg, #7e22ce, #db2777);
-  color: #fff;
+  background: #fff;
+  color: var(--accent);
   font: inherit;
   font-size: 0.85rem;
   font-weight: 700;
@@ -26,13 +26,16 @@
 button.avatar:hover,
 button.avatar:focus-visible,
 button.avatar.open {
-  border-color: #fff;
-  box-shadow: 0 0 0 2px var(--accent, #7e22ce);
+  border-color: var(--warning);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
   outline: none;
 }
 
 .avatar.big {
   flex-shrink: 0;
+  border: 0;
+  background: var(--brand-gradient);
+  color: #fff;
   width: 2.75rem;
   height: 2.75rem;
   font-size: 0.95rem;
@@ -91,7 +94,7 @@ button.avatar.open {
   margin-top: 0.3rem;
   padding: 0.05rem 0.45rem;
   border-radius: 999px;
-  background: #f3e8ff;
+  background: var(--accent-soft);
   color: var(--accent);
   font-size: 0.7rem;
   font-weight: 700;

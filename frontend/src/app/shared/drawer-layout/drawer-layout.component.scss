@@ -38,7 +38,7 @@
   width: 2.6rem;
   height: 2.6rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7e22ce, #db2777);
+  background: var(--brand-gradient);
   color: #fff;
   font-weight: 700;
 }
@@ -95,7 +95,7 @@
 }
 
 .drawer a.active {
-  background: #f3e8ff;
+  background: var(--accent-soft);
   color: var(--accent);
   font-weight: 700;
 }
@@ -189,5 +189,5 @@
 }
 
 .drawer a.cta:hover {
-  background: #6b21a8;
+  background: var(--accent-hover);
 }

@@ -45,7 +45,7 @@ h2 {
 }
 
 .kpi.teach {
-  background: linear-gradient(135deg, #faf5ff, var(--surface));
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
 }
 
 .kpi-icon {
@@ -113,7 +113,7 @@ h2 {
 .fill {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: var(--success);
 }
 
 .pct {

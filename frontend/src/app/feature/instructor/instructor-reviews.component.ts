@@ -81,7 +81,7 @@ import { StarRatingComponent } from '../../shared/star-rating/star-rating.compon
     .course-filter { margin: 1.25rem 0 0.5rem; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
     .review { padding: 1rem 0; border-bottom: 1px solid var(--border); }
     .review-head { display: flex; align-items: center; gap: 0.75rem; }
-    .avatar { display: grid; place-items: center; flex-shrink: 0; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: #f3e8ff; color: var(--accent); font-weight: 800; text-transform: uppercase; }
+    .avatar { display: grid; place-items: center; flex-shrink: 0; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; text-transform: uppercase; }
     .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.78rem; }
     .review p { margin: 0.6rem 0 0; line-height: 1.55; white-space: pre-line; }
   `,

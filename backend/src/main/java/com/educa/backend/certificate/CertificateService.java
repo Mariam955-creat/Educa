@@ -171,9 +171,9 @@ public class CertificateService {
                 <html lang="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4 landscape; margin: 0; }
                   body { font-family: '%s'; color: #1f2937; }
-                  .frame { margin: 28px; border: 3px solid #7e22ce; border-radius: 10px;
+                  .frame { margin: 28px; border: 3px solid #2563eb; border-radius: 10px;
                            padding: 60px 70px; text-align: center; position: relative; }
-                  h1 { font-size: 34px; letter-spacing: 2px; color: #7e22ce; margin: 0 0 8px; }
+                  h1 { font-size: 34px; letter-spacing: 2px; color: #2563eb; margin: 0 0 8px; }
                   .sub { color: #6b7280; margin: 0 0 40px; }
                   .name { font-size: 30px; font-weight: bold; margin: 24px 0 6px; }
                   .course { font-size: 20px; font-weight: bold; margin: 0 0 28px; }

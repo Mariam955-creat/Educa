@@ -36,7 +36,7 @@
 }
 
 .price.free {
-  color: #16a34a;
+  color: var(--success-strong);
 }
 
 .buy-buttons {
@@ -83,7 +83,7 @@ button:disabled {
 
 .progress-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--success);
   transition: width 0.3s ease;
 }
 
@@ -238,9 +238,11 @@ button:disabled {
   margin: 0.75rem 0 0;
 }
 
+/* Récompense : jaune de la palette */
 .cert-btn {
   margin-top: 0.85rem;
-  background: #16a34a;
+  background: var(--warning);
+  color: var(--text);
 }
 
 /* --- Couverture, statistiques et note --- */
@@ -274,7 +276,7 @@ button:disabled {
 }
 
 .rate-thanks {
-  color: #15803d;
+  color: var(--success-strong);
   font-size: 0.85rem;
 }
 
@@ -296,7 +298,7 @@ button:disabled {
 .tag {
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  background: #f3e8ff;
+  background: var(--accent-soft);
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 600;

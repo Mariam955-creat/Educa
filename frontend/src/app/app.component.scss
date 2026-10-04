@@ -14,14 +14,17 @@ main {
   align-items: center;
   gap: 1.5rem;
   padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid var(--border, #e2e2e5);
-  background: var(--surface, #fff);
+  background: var(--accent);
+  box-shadow: 0 2px 10px rgba(30, 64, 175, 0.25);
+  color: #fff;
 }
 
+/* Marque de l'en-tête (le pied de page a sa propre couleur, voir .footer .brand) */
 .brand {
   font-weight: 800;
-  font-size: 1.15rem;
-  color: var(--accent, #7e22ce);
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: #fff;
   text-decoration: none;
 }
 
@@ -32,7 +35,7 @@ main {
 }
 
 .nav a {
-  color: var(--muted, #4b5563);
+  color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
@@ -40,14 +43,18 @@ main {
   border-bottom: 2px solid transparent;
 }
 
+.nav a:hover {
+  color: #fff;
+}
+
 .nav a.active {
-  color: var(--accent, #7e22ce);
-  border-bottom-color: var(--accent, #7e22ce);
+  color: #fff;
+  border-bottom-color: var(--warning);
 }
 
 .lang {
   padding: 0.35rem 0.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 8px;
   font: inherit;
   font-size: 0.85rem;
@@ -77,8 +84,8 @@ main {
 /* --- Footer --- */
 .footer {
   margin-top: 3rem;
-  background: #1e1b2e;
-  color: #c4c2d0;
+  background: #1f2937;
+  color: #d1d5db;
   font-size: 0.9rem;
 }
 
@@ -109,10 +116,10 @@ main {
 
 .footer-langs button {
   padding: 0.3rem 0.6rem;
-  border: 1px solid #3d3854;
+  border: 1px solid #374151;
   border-radius: 6px;
   background: transparent;
-  color: #c4c2d0;
+  color: #d1d5db;
   font: inherit;
   font-size: 0.75rem;
   font-weight: 700;
@@ -122,13 +129,13 @@ main {
 }
 
 .footer-langs button:hover {
-  border-color: #a78bfa;
+  border-color: var(--warning);
   color: #fff;
 }
 
 .footer-langs button.active {
-  border-color: var(--accent, #7e22ce);
-  background: var(--accent, #7e22ce);
+  border-color: var(--accent);
+  background: var(--accent);
   color: #fff;
 }
 
@@ -153,7 +160,7 @@ main {
 
 .footer-col a {
   width: fit-content;
-  color: #c4c2d0;
+  color: #d1d5db;
   text-decoration: none;
   transition: color 0.15s;
 }
@@ -185,7 +192,7 @@ main {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #a78bfa;
+  background: var(--warning);
 }
 
 .footer-bottom {
@@ -196,8 +203,8 @@ main {
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.1rem 1.25rem;
-  border-top: 1px solid #2f2a44;
-  color: #8b88a0;
+  border-top: 1px solid #374151;
+  color: #9ca3af;
   font-size: 0.8rem;
 }
 

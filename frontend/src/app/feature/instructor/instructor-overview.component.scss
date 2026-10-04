@@ -88,7 +88,7 @@ h2 {
 
 .kpi.highlight {
   border-color: transparent;
-  background: linear-gradient(135deg, #7e22ce, #db2777);
+  background: var(--brand-gradient);
   color: #fff;
 }
 

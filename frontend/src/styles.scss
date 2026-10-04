@@ -1,9 +1,29 @@
+/*
+ * Palette educa — bleu (confiance, sérieux), vert (progression, réussite), jaune (mise en avant, récompense),
+ * fond blanc / bleu très clair, texte gris foncé. Les couleurs de l'application passent par ces variables.
+ */
 :root {
+  /* Bleu : boutons, liens, éléments importants, en-tête */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-strong: #1e40af;
+  --accent-soft: #eff6ff;
+  --brand-gradient: linear-gradient(135deg, #2563eb, #1e40af);
+
+  /* Vert : progression, réussite, validation */
+  --success: #10b981;
+  --success-strong: #047857;
+  --success-soft: #d1fae5;
+
+  /* Jaune : notifications, points importants, récompenses */
+  --warning: #f59e0b;
+
+  /* Fonds, texte, bordures */
   --surface: #ffffff;
-  --border: #e2e2e5;
+  --bg: #eff6ff;
+  --text: #1f2937;
   --muted: #6b7280;
-  --accent: #7e22ce;
-  --bg: #f7f7f8;
+  --border: #dbe3ef;
 }
 
 * {
@@ -18,7 +38,7 @@ body {
 
 body {
   background: var(--bg);
-  color: #111827;
+  color: var(--text);
   font-family:
     system-ui,
     -apple-system,

@@ -42,14 +42,14 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
         color: var(--muted);
       }
       .ok {
-        border: 1px solid #bbf7d0;
+        border: 1px solid #a7f3d0;
         background: #f0fdf4;
         border-radius: 12px;
         padding: 1.5rem;
       }
       .badge {
         font-weight: 700;
-        color: #166534;
+        color: var(--success-strong);
         margin-top: 0;
       }
       .meta {

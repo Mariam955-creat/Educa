@@ -55,15 +55,15 @@ export function passwordScore(value: string): number {
   styles: `
     :host { display: flex; flex-direction: column; gap: 0.3rem; }
     .wrap { position: relative; display: flex; }
-    input { flex: 1; padding: 0.6rem 4.8rem 0.6rem 0.7rem; border: 1px solid var(--border, #cbd0d6); border-radius: 8px; font: inherit; font-weight: 400; }
-    .toggle { position: absolute; inset-block: 0.3rem; inset-inline-end: 0.3rem; margin: 0; padding: 0 0.6rem; border: 0; border-radius: 6px; background: var(--bg, #f7f7f8); color: var(--muted, #6b7280); font: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+    input { flex: 1; padding: 0.6rem 4.8rem 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-weight: 400; }
+    .toggle { position: absolute; inset-block: 0.3rem; inset-inline-end: 0.3rem; margin: 0; padding: 0 0.6rem; border: 0; border-radius: 6px; background: var(--bg); color: var(--muted); font: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
     .meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-    .seg { height: 4px; border-radius: 999px; background: var(--border, #e2e2e5); }
+    .seg { height: 4px; border-radius: 999px; background: var(--border); }
     .seg.on[data-level='1'] { background: #dc2626; }
     .seg.on[data-level='2'] { background: #f59e0b; }
     .seg.on[data-level='3'] { background: #65a30d; }
-    .seg.on[data-level='4'] { background: #15803d; }
-    .strength { color: var(--muted, #6b7280); font-size: 0.75rem; font-weight: 400; }
+    .seg.on[data-level='4'] { background: var(--success-strong); }
+    .strength { color: var(--muted); font-size: 0.75rem; font-weight: 400; }
   `,
 })
 export class PasswordFieldComponent implements OnInit {

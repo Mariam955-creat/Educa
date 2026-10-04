@@ -140,8 +140,8 @@ h1 {
 .new-badge {
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
-  background: #f3e8ff;
-  color: var(--accent);
+  background: #fef3c7;
+  color: #92400e;
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -163,7 +163,7 @@ h1 {
 }
 
 .price.free {
-  color: #15803d;
+  color: var(--success-strong);
 }
 
 .subtitle {

@@ -74,6 +74,8 @@ public class RatingService {
                     + " % du cours pour le noter (progression actuelle : " + progress + " %)");
         }
         CourseRating rating = ratingRepository.findByCourseIdAndUserId(courseId, userId).orElseGet(() -> {
+            // Un ancien avis modéré (corbeille) occuperait la place unique (cours, apprenant) : il est purgé
+            ratingRepository.purgeTrashed(courseId, userId);
             CourseRating created = new CourseRating();
             created.setCourseId(courseId);
             created.setUserId(userId);
@@ -142,9 +144,35 @@ public class RatingService {
     /** Suppression par un administrateur (modération). */
     @Transactional
     public void delete(Long ratingId) {
-        CourseRating rating = ratingRepository.findById(ratingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Avis introuvable"));
-        ratingRepository.delete(rating);
+        // Suppression douce : l'avis part à la corbeille et sort aussitôt des moyennes (restaurable)
+        // (SQL natif : un avis déjà à la corbeille est traité comme introuvable, même s'il est encore en cache JPA)
+        if (ratingRepository.moveToTrash(ratingId) == 0) {
+            throw new ResourceNotFoundException("Avis introuvable");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminReviewDto> trash() {
+        Map<Long, Course> courses = new HashMap<>();
+        return ratingRepository.findTrash().stream().map(r -> {
+            Course course = courses.computeIfAbsent(r.getCourseId(), courseService::requireCourse);
+            return new AdminReviewDto(r.getId(), course.getId(), course.getTitle(), course.getSlug(),
+                    userService.displayNameById(r.getUserId()), r.getStars(), r.getComment(), r.getDeletedAt());
+        }).toList();
+    }
+
+    @Transactional
+    public void restore(Long ratingId) {
+        if (ratingRepository.restoreFromTrash(ratingId) == 0) {
+            throw new ResourceNotFoundException("Avis introuvable dans la corbeille");
+        }
+    }
+
+    @Transactional
+    public void deletePermanently(Long ratingId) {
+        if (ratingRepository.deleteFromTrash(ratingId) == 0) {
+            throw new ResourceNotFoundException("Avis introuvable dans la corbeille");
+        }
     }
 
     /** Avis écrits d'un cours publié (ou visible par son propriétaire/ADMIN), du plus récent au plus ancien. */

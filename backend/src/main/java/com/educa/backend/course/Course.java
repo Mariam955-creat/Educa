@@ -103,6 +103,14 @@ public class Course {
     @Column(name = "cover_image_type", length = 100)
     private String coverImageType;
 
+    /** Date de mise à la corbeille ; {@code null} = cours actif. */
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

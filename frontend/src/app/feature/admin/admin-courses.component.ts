@@ -88,9 +88,10 @@ const PAGE_SIZE = 20;
                     <div class="actions">
                       <a [routerLink]="['/courses', c.slug]">{{ 'instructor.courses.view' | translate }}</a>
                       <a [routerLink]="['/instructor/courses', c.slug, 'edit']">{{ 'common.edit' | translate }}</a>
-                      <button type="button" [class.danger]="c.published" (click)="togglePublish(c)">
+                      <button type="button" (click)="togglePublish(c)">
                         {{ (c.published ? 'instructorDashboard.unpublish' : 'instructorDashboard.publish') | translate }}
                       </button>
+                      <button type="button" class="danger" (click)="moveToTrash(c)">🗑 {{ 'trash.moveToTrash' | translate }}</button>
                     </div>
                   </td>
                 </tr>
@@ -155,6 +156,22 @@ export class AdminCoursesComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
+    });
+  }
+
+  /** Met le cours à la corbeille (dépublié, restaurable depuis « Corbeille »). */
+  moveToTrash(course: CourseSummary): void {
+    if (!confirm(this.translate.instant('trash.confirmMoveCourse', { name: course.title }))) return;
+    this.courseApi.deleteCourse(course.id).subscribe({
+      next: () => {
+        this.message.set(this.translate.instant('trash.movedCourse', { name: course.title }));
+        setTimeout(() => this.message.set(null), 4000);
+        this.load(this.page());
+      },
+      error: (err: HttpErrorResponse) => {
+        this.message.set(err.error?.message ?? this.translate.instant('trash.error'));
+        setTimeout(() => this.message.set(null), 4000);
+      },
     });
   }
 

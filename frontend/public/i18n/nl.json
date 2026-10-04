@@ -578,5 +578,39 @@
     "previous": "Vorige",
     "next": "Volgende",
     "status": "Pagina {{page}} / {{total}}"
+  },
+  "trash": {
+    "title": "Prullenbak",
+    "open": "Prullenbak openen",
+    "empty": "De prullenbak is leeg.",
+    "instructorHint": "Je verwijderde cursussen. Zet ze terug (als concept) of verwijder ze definitief.",
+    "adminHint": "Verwijderde cursussen, accounts en beoordelingen. Terugzetten of definitief verwijderen.",
+    "tabs": {
+      "courses": "Cursussen",
+      "users": "Accounts",
+      "reviews": "Beoordelingen"
+    },
+    "moveToTrash": "Verwijderen",
+    "restore": "Terugzetten",
+    "deleteForever": "Definitief verwijderen",
+    "cancel": "Annuleren",
+    "deletedOn": "Verwijderd op {{date}}",
+    "hasLearners": "{{count}} ingeschreven cursist(en): definitief verwijderen niet mogelijk",
+    "confirmMoveCourse": "\"{{name}}\" naar de prullenbak verplaatsen? De cursus wordt gedepubliceerd en kan worden teruggezet.",
+    "confirmMoveUser": "Account van {{name}} naar de prullenbak verplaatsen? Inloggen is dan niet meer mogelijk (terug te zetten).",
+    "confirmMoveReview": "Beoordeling van {{name}} naar de prullenbak verplaatsen? Ze telt niet meer mee in de score (terug te zetten).",
+    "movedCourse": "\"{{name}}\" is naar de prullenbak verplaatst.",
+    "movedUser": "Het account van {{name}} is naar de prullenbak verplaatst.",
+    "movedReview": "De beoordeling van {{name}} is naar de prullenbak verplaatst.",
+    "restoredCourse": "\"{{name}}\" is teruggezet (als concept).",
+    "restoredUser": "Het account van {{name}} is teruggezet.",
+    "restoredReview": "De beoordeling van {{name}} is teruggezet.",
+    "deleted": "\"{{name}}\" is definitief verwijderd.",
+    "error": "De bewerking is mislukt.",
+    "permanentTitle": "Definitief verwijderen",
+    "permanentText": "\"{{name}}\" wordt voorgoed verwijderd. Dit kan niet ongedaan worden gemaakt.",
+    "userWarning": "Inschrijvingen, aankopen, facturen, certificaten en beoordelingen worden ook gewist.",
+    "typeToConfirm": "Typ {{word}} om te bevestigen:",
+    "confirmWord": "VERWIJDEREN"
   }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,10 +35,27 @@ public class AdminReviewController {
         return PageResponse.of(ratingService.registry(PageRequest.of(Math.max(page, 0), safeSize)));
     }
 
-    /** Supprime l'avis entier (note + texte) : la moyenne du cours est recalculée sans lui. */
+    /** Met l'avis (note + texte) à la corbeille : la moyenne du cours est recalculée sans lui. */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         ratingService.delete(id);
+    }
+
+    @GetMapping("/trash")
+    public java.util.List<AdminReviewDto> trash() {
+        return ratingService.trash();
+    }
+
+    @PostMapping("/{id}/restore")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void restore(@PathVariable Long id) {
+        ratingService.restore(id);
+    }
+
+    @DeleteMapping("/{id}/permanent")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePermanently(@PathVariable Long id) {
+        ratingService.deletePermanently(id);
     }
 }

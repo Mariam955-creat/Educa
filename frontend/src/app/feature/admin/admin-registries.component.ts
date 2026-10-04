@@ -240,7 +240,7 @@ export class AdminCertificatesComponent implements OnInit {
                   <td class="muted">{{ r.updatedAt | localDate: 'short' : lang.current() }}</td>
                   <td>
                     <div class="actions">
-                      <button type="button" class="danger" (click)="remove(r)">{{ 'common.delete' | translate }}</button>
+                      <button type="button" class="danger" (click)="remove(r)">🗑 {{ 'trash.moveToTrash' | translate }}</button>
                     </div>
                   </td>
                 </tr>
@@ -286,9 +286,13 @@ export class AdminReviewsComponent implements OnInit {
   }
 
   remove(review: ReviewRegistryEntry): void {
-    if (!confirm(this.translate.instant('admin.reviews.confirmDelete', { name: review.authorName }))) return;
+    if (!confirm(this.translate.instant('trash.confirmMoveReview', { name: review.authorName }))) return;
     this.api.deleteReview(review.id).subscribe({
-      next: () => this.load(this.page()),
+      next: () => {
+        this.message.set(this.translate.instant('trash.movedReview', { name: review.authorName }));
+        setTimeout(() => this.message.set(null), 4000);
+        this.load(this.page());
+      },
       error: (err: HttpErrorResponse) => {
         this.message.set(err.error?.message ?? this.translate.instant('admin.reviews.deleteError'));
         setTimeout(() => this.message.set(null), 3500);

@@ -127,7 +127,7 @@ class CourseFlowTest {
     }
 
     @Test
-    void suppression_refusee_si_apprenants_inscrits() throws Exception {
+    void suppression_definitive_refusee_si_apprenants_inscrits() throws Exception {
         String prof = instructorToken("prof5@example.com");
         long suivi = createCourse(prof, "Cours avec inscrits");
         long vide = createCourse(prof, "Cours sans inscrits");
@@ -137,10 +137,15 @@ class CourseFlowTest {
         mvc.perform(post("/api/v1/courses/" + suivi + "/enroll").header("Authorization", "Bearer " + eleve))
                 .andExpect(status().isCreated());
 
-        // supprimer effacerait en cascade inscriptions, certificats et paiements → 409
+        // La corbeille (réversible) est toujours possible…
         mvc.perform(delete("/api/v1/courses/" + suivi).header("Authorization", "Bearer " + prof))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNoContent());
         mvc.perform(delete("/api/v1/courses/" + vide).header("Authorization", "Bearer " + prof))
+                .andExpect(status().isNoContent());
+        // …mais la suppression définitive effacerait en cascade inscriptions, certificats et paiements → 409
+        mvc.perform(delete("/api/v1/courses/" + suivi + "/permanent").header("Authorization", "Bearer " + prof))
+                .andExpect(status().isConflict());
+        mvc.perform(delete("/api/v1/courses/" + vide + "/permanent").header("Authorization", "Bearer " + prof))
                 .andExpect(status().isNoContent());
     }
 

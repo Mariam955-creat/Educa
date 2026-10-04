@@ -3,6 +3,7 @@ package com.educa.backend.rating;
 import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -15,8 +16,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Note d'un apprenant pour un cours : une seule par (cours, apprenant), modifiable. */
+/**
+ * Note d'un apprenant pour un cours : une seule par (cours, apprenant), modifiable. Les avis mis à la corbeille
+ * par la modération ({@code deleted_at} renseigné) sont exclus de toutes les requêtes JPA — moyennes comprises ;
+ * seule la corbeille les lit, en SQL natif ({@link CourseRatingRepository}).
+ */
 @Entity
+@SQLRestriction("deleted_at is null")
 @Table(name = "course_ratings")
 @Getter
 @Setter
@@ -44,6 +50,9 @@ public class CourseRating {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)

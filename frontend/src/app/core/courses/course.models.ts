@@ -125,6 +125,16 @@ export interface MyReview {
   updatedAt: string;
 }
 
+/** Cours à la corbeille. `learnerCount > 0` : suppression définitive impossible (inscrits). */
+export interface TrashedCourse {
+  id: number;
+  title: string;
+  instructorName: string;
+  coverImageUrl?: string;
+  learnerCount: number;
+  deletedAt: string;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

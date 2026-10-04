@@ -61,6 +61,10 @@ public class User {
     @Column(length = 30)
     private String phone;
 
+    /** Date de mise à la corbeille (compte supprimé par un admin, restaurable) ; {@code null} = compte actif. */
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

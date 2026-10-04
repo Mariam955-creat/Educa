@@ -31,6 +31,7 @@ export class InstructorCoursesComponent implements OnInit {
   private readonly sales = signal<InstructorSale[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly notice = signal<string | null>(null);
   readonly filter = signal<StatusFilter>('all');
   readonly query = signal('');
 
@@ -81,18 +82,18 @@ export class InstructorCoursesComponent implements OnInit {
     });
   }
 
+  /** Met le cours à la corbeille (restaurable depuis « Corbeille »). */
   remove(course: CourseSummary): void {
-    if (!confirm(this.translate.instant('instructorDashboard.confirmDelete', { title: course.title }))) return;
+    if (!confirm(this.translate.instant('trash.confirmMoveCourse', { name: course.title }))) return;
     this.error.set(null);
     this.api.deleteCourse(course.id).subscribe({
-      next: () => this.courses.update((list) => list.filter((c) => c.id !== course.id)),
-      // 409 : le cours a des inscrits, sa suppression effacerait leurs certificats et paiements
+      next: () => {
+        this.courses.update((list) => list.filter((c) => c.id !== course.id));
+        this.notice.set(this.translate.instant('trash.movedCourse', { name: course.title }));
+        setTimeout(() => this.notice.set(null), 4000);
+      },
       error: (err: HttpErrorResponse) =>
-        this.error.set(
-          this.translate.instant(
-            err.status === 409 ? 'instructorDashboard.deleteBlocked' : 'instructorDashboard.deleteError',
-          ),
-        ),
+        this.error.set(err.error?.message ?? this.translate.instant('instructorDashboard.deleteError')),
     });
   }
 

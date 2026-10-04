@@ -1,5 +1,6 @@
 package com.educa.backend.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -12,19 +13,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailIgnoreCase(String email);
 
-    long countByRoles_Name(RoleName name);
+    long countByRoles_NameAndDeletedAtIsNull(RoleName name);
 
-    long countByEnabledFalse();
+    long countByEnabledFalseAndDeletedAtIsNull();
 
-    long countByCreatedAtAfter(java.time.Instant since);
+    long countByCreatedAtAfterAndDeletedAtIsNull(java.time.Instant since);
+
+    long countByDeletedAtIsNull();
+
+    List<User> findByDeletedAtIsNotNullOrderByDeletedAtDesc();
 
     boolean existsByEmailIgnoreCase(String email);
 
     @Query("""
             select u from User u
-            where cast(:q as string) is null
+            where u.deletedAt is null
+              and (cast(:q as string) is null
                or lower(u.fullName) like lower(concat('%', cast(:q as string), '%'))
-               or lower(u.email) like lower(concat('%', cast(:q as string), '%'))
+               or lower(u.email) like lower(concat('%', cast(:q as string), '%')))
             order by u.createdAt desc
             """)
     Page<User> search(@Param("q") String q, Pageable pageable);

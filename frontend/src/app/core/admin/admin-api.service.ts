@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
 import { RoleName } from '../auth/auth.models';
-import { CourseSummary } from '../courses/course.models';
+import { CourseSummary, TrashedCourse } from '../courses/course.models';
 import { CourseLanguage } from '../language/language-api.service';
 import {
   AdminStats,
@@ -13,6 +13,7 @@ import {
   Page,
   PaymentRegistryEntry,
   ReviewRegistryEntry,
+  TrashedUser,
 } from './admin.models';
 
 @Injectable({ providedIn: 'root' })
@@ -63,6 +64,41 @@ export class AdminApiService {
 
   deleteReview(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/admin/reviews/${id}`);
+  }
+
+  // ---------- corbeille ----------
+
+  courseTrash(): Observable<TrashedCourse[]> {
+    return this.http.get<TrashedCourse[]>(`${this.base}/admin/trash/courses`);
+  }
+
+  /** Met le compte à la corbeille (connexion bloquée, restaurable). */
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/admin/users/${id}`);
+  }
+
+  userTrash(): Observable<TrashedUser[]> {
+    return this.http.get<TrashedUser[]>(`${this.base}/admin/users/trash`);
+  }
+
+  restoreUser(id: number): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.base}/admin/users/${id}/restore`, {});
+  }
+
+  deleteUserPermanently(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/admin/users/${id}/permanent`);
+  }
+
+  reviewTrash(): Observable<ReviewRegistryEntry[]> {
+    return this.http.get<ReviewRegistryEntry[]>(`${this.base}/admin/reviews/trash`);
+  }
+
+  restoreReview(id: number): Observable<void> {
+    return this.http.post<void>(`${this.base}/admin/reviews/${id}/restore`, {});
+  }
+
+  deleteReviewPermanently(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/admin/reviews/${id}/permanent`);
   }
 
   languages(): Observable<CourseLanguage[]> {

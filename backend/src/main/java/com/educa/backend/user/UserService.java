@@ -1,6 +1,7 @@
 package com.educa.backend.user;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import com.educa.backend.common.error.ResourceNotFoundException;
 import com.educa.backend.security.CurrentUser;
 import com.educa.backend.user.dto.AdminUserDto;
 import com.educa.backend.user.dto.PublicProfileDto;
+import com.educa.backend.user.dto.TrashedUserDto;
 import com.educa.backend.user.dto.UpdateMeRequest;
 import com.educa.backend.user.dto.UserDto;
 
@@ -25,11 +27,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final List<UserDeletionGuard> deletionGuards;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper,
+                       RefreshTokenRepository refreshTokenRepository, List<UserDeletionGuard> deletionGuards) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.deletionGuards = deletionGuards;
     }
 
     @Transactional(readOnly = true)
@@ -82,9 +89,12 @@ public class UserService {
     /** Compteurs d'utilisateurs pour le tableau de bord admin. */
     @Transactional(readOnly = true)
     public UserStats stats(java.time.Instant newSince) {
-        return new UserStats(userRepository.count(), userRepository.countByRoles_Name(RoleName.LEARNER),
-                userRepository.countByRoles_Name(RoleName.INSTRUCTOR), userRepository.countByRoles_Name(RoleName.ADMIN),
-                userRepository.countByEnabledFalse(), userRepository.countByCreatedAtAfter(newSince));
+        return new UserStats(userRepository.countByDeletedAtIsNull(),
+                userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.LEARNER),
+                userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.INSTRUCTOR),
+                userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.ADMIN),
+                userRepository.countByEnabledFalseAndDeletedAtIsNull(),
+                userRepository.countByCreatedAtAfterAndDeletedAtIsNull(newSince));
     }
 
     public record UserStats(long total, long learners, long instructors, long admins, long disabled, long recent) {
@@ -120,6 +130,62 @@ public class UserService {
         User user = loadById(id);
         user.setEnabled(enabled);
         return userMapper.toAdminDto(userRepository.save(user));
+    }
+
+    // ---------- corbeille ----------
+
+    /**
+     * Met un compte à la corbeille : il est désactivé (connexion et rafraîchissement de session refusés), ses
+     * sessions sont révoquées et il disparaît des listes. Restaurable.
+     */
+    @Transactional
+    public void softDelete(Long id) {
+        if (id.equals(CurrentUser.id())) {
+            throw new ConflictException("Vous ne pouvez pas supprimer votre propre compte");
+        }
+        User user = loadById(id);
+        if (user.getDeletedAt() == null) {
+            user.setDeletedAt(java.time.Instant.now());
+            user.setEnabled(false);
+            refreshTokenRepository.findByUser_IdAndRevokedFalse(id).forEach(token -> token.setRevoked(true));
+        }
+    }
+
+    @Transactional
+    public AdminUserDto restore(Long id) {
+        User user = loadById(id);
+        user.setDeletedAt(null);
+        user.setEnabled(true);
+        return userMapper.toAdminDto(user);
+    }
+
+    /**
+     * Suppression définitive, depuis la corbeille uniquement. Efface en cascade inscriptions, achats,
+     * certificats et avis du compte ; refusée (409) si une garde s'y oppose (formateur ayant des cours).
+     */
+    @Transactional
+    public void deletePermanently(Long id) {
+        User user = loadById(id);
+        if (user.getDeletedAt() == null) {
+            throw new ConflictException("Mettez d'abord le compte à la corbeille");
+        }
+        for (UserDeletionGuard guard : deletionGuards) {
+            String reason = guard.blockingReason(id);
+            if (reason != null) {
+                throw new ConflictException(reason);
+            }
+        }
+        refreshTokenRepository.deleteByUser_Id(id);
+        userRepository.delete(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TrashedUserDto> trash() {
+        return userRepository.findByDeletedAtIsNotNullOrderByDeletedAtDesc().stream()
+                .map(u -> new TrashedUserDto(u.getId(), u.getEmail(), u.getFullName(),
+                        u.getRoles().stream().map(r -> r.getName().name()).collect(java.util.stream.Collectors.toSet()),
+                        u.getDeletedAt()))
+                .toList();
     }
 
     private static RoleName parseRoleName(String name) {

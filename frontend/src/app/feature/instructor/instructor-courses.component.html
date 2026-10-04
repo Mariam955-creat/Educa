@@ -7,6 +7,9 @@
   @if (error()) {
     <p class="flash error">{{ error() }}</p>
   }
+  @if (notice()) {
+    <p class="flash ok">{{ notice() }} <a routerLink="../trash">{{ 'trash.open' | translate }}</a></p>
+  }
 
   <div class="toolbar">
     <div class="tabs" role="tablist">
@@ -78,7 +81,7 @@
               <button type="button" class="action" (click)="togglePublish(course)">
                 {{ (course.published ? 'instructorDashboard.unpublish' : 'instructorDashboard.publish') | translate }}
               </button>
-              <button type="button" class="action danger" (click)="remove(course)">{{ 'common.delete' | translate }}</button>
+              <button type="button" class="action danger" (click)="remove(course)">🗑 {{ 'trash.moveToTrash' | translate }}</button>
             </div>
           </div>
         </article>

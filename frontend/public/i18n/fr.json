@@ -578,5 +578,39 @@
     "previous": "Précédent",
     "next": "Suivant",
     "status": "Page {{page}} / {{total}}"
+  },
+  "trash": {
+    "title": "Corbeille",
+    "open": "Ouvrir la corbeille",
+    "empty": "La corbeille est vide.",
+    "instructorHint": "Vos cours supprimés. Restaurez-les (ils reviennent en brouillon) ou supprimez-les définitivement.",
+    "adminHint": "Cours, comptes et avis supprimés. Restaurez-les ou supprimez-les définitivement.",
+    "tabs": {
+      "courses": "Cours",
+      "users": "Comptes",
+      "reviews": "Avis"
+    },
+    "moveToTrash": "Supprimer",
+    "restore": "Restaurer",
+    "deleteForever": "Supprimer définitivement",
+    "cancel": "Annuler",
+    "deletedOn": "Supprimé le {{date}}",
+    "hasLearners": "{{count}} inscrit(s) : suppression définitive impossible",
+    "confirmMoveCourse": "Mettre « {{name}} » à la corbeille ? Il sera dépublié et restaurable depuis la corbeille.",
+    "confirmMoveUser": "Mettre le compte de {{name}} à la corbeille ? Il ne pourra plus se connecter (restaurable).",
+    "confirmMoveReview": "Mettre l'avis de {{name}} à la corbeille ? Il sortira de la moyenne du cours (restaurable).",
+    "movedCourse": "« {{name}} » a été mis à la corbeille.",
+    "movedUser": "Le compte de {{name}} a été mis à la corbeille.",
+    "movedReview": "L'avis de {{name}} a été mis à la corbeille.",
+    "restoredCourse": "« {{name}} » a été restauré (en brouillon).",
+    "restoredUser": "Le compte de {{name}} a été restauré.",
+    "restoredReview": "L'avis de {{name}} a été restauré.",
+    "deleted": "« {{name}} » a été supprimé définitivement.",
+    "error": "L'opération a échoué.",
+    "permanentTitle": "Suppression définitive",
+    "permanentText": "« {{name}} » sera supprimé pour toujours. Cette action est irréversible.",
+    "userWarning": "Ses inscriptions, achats, factures, certificats et avis seront aussi effacés.",
+    "typeToConfirm": "Pour confirmer, tapez {{word}} :",
+    "confirmWord": "SUPPRIMER"
   }
 }

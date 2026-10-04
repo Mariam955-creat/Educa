@@ -578,5 +578,39 @@
     "previous": "Zurück",
     "next": "Weiter",
     "status": "Seite {{page}} / {{total}}"
+  },
+  "trash": {
+    "title": "Papierkorb",
+    "open": "Papierkorb öffnen",
+    "empty": "Der Papierkorb ist leer.",
+    "instructorHint": "Ihre gelöschten Kurse. Stellen Sie sie wieder her (als Entwurf) oder löschen Sie sie endgültig.",
+    "adminHint": "Gelöschte Kurse, Konten und Bewertungen. Wiederherstellen oder endgültig löschen.",
+    "tabs": {
+      "courses": "Kurse",
+      "users": "Konten",
+      "reviews": "Bewertungen"
+    },
+    "moveToTrash": "Löschen",
+    "restore": "Wiederherstellen",
+    "deleteForever": "Endgültig löschen",
+    "cancel": "Abbrechen",
+    "deletedOn": "Gelöscht am {{date}}",
+    "hasLearners": "{{count}} Lernende eingeschrieben: endgültiges Löschen nicht möglich",
+    "confirmMoveCourse": "„{{name}}“ in den Papierkorb verschieben? Der Kurs wird unveröffentlicht und kann wiederhergestellt werden.",
+    "confirmMoveUser": "Konto von {{name}} in den Papierkorb verschieben? Eine Anmeldung ist dann nicht mehr möglich (wiederherstellbar).",
+    "confirmMoveReview": "Bewertung von {{name}} in den Papierkorb verschieben? Sie zählt nicht mehr zur Kursnote (wiederherstellbar).",
+    "movedCourse": "„{{name}}“ wurde in den Papierkorb verschoben.",
+    "movedUser": "Das Konto von {{name}} wurde in den Papierkorb verschoben.",
+    "movedReview": "Die Bewertung von {{name}} wurde in den Papierkorb verschoben.",
+    "restoredCourse": "„{{name}}“ wurde wiederhergestellt (als Entwurf).",
+    "restoredUser": "Das Konto von {{name}} wurde wiederhergestellt.",
+    "restoredReview": "Die Bewertung von {{name}} wurde wiederhergestellt.",
+    "deleted": "„{{name}}“ wurde endgültig gelöscht.",
+    "error": "Der Vorgang ist fehlgeschlagen.",
+    "permanentTitle": "Endgültiges Löschen",
+    "permanentText": "„{{name}}“ wird für immer gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "userWarning": "Einschreibungen, Käufe, Rechnungen, Zertifikate und Bewertungen werden ebenfalls gelöscht.",
+    "typeToConfirm": "Zur Bestätigung {{word}} eingeben:",
+    "confirmWord": "LÖSCHEN"
   }
 }

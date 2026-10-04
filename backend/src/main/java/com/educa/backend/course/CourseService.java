@@ -1,6 +1,7 @@
 package com.educa.backend.course;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import com.educa.backend.course.dto.ChapterDto;
 import com.educa.backend.course.dto.CourseDetailDto;
 import com.educa.backend.course.dto.CourseRequest;
 import com.educa.backend.course.dto.CourseSummaryDto;
+import com.educa.backend.course.dto.TrashedCourseDto;
 import com.educa.backend.language.LanguageService;
 import com.educa.backend.security.CurrentUser;
 import com.educa.backend.user.UserService;
@@ -77,11 +79,48 @@ public class CourseService {
 
     @Transactional
     public void delete(Long courseId) {
+        // Suppression douce : le cours part à la corbeille (restaurable) et est dépublié — il sort du
+        // catalogue et ne peut plus être acheté ni suivi par de nouveaux apprenants.
         Course course = requireOwned(courseId);
+        if (!course.isDeleted()) {
+            course.setDeletedAt(Instant.now());
+            course.setPublished(false);
+        }
+    }
+
+    /** Sort un cours de la corbeille ; il reste en brouillon, à republier par son formateur. */
+    @Transactional
+    public CourseSummaryDto restore(Long courseId) {
+        Course course = requireOwned(courseId);
+        course.setDeletedAt(null);
+        return toSummary(course);
+    }
+
+    /**
+     * Suppression définitive, depuis la corbeille uniquement. Refusée si le cours a des inscrits : les clés
+     * étrangères en cascade effaceraient leurs progressions, certificats et paiements.
+     */
+    @Transactional
+    public void deletePermanently(Long courseId) {
+        Course course = requireOwned(courseId);
+        if (!course.isDeleted()) {
+            throw new ConflictException("Mettez d'abord le cours à la corbeille.");
+        }
         if (deletionGuards.stream().anyMatch(guard -> guard.blocksDeletion(courseId))) {
-            throw new ConflictException("Ce cours a des apprenants inscrits : dépubliez-le plutôt que de le supprimer.");
+            throw new ConflictException("Ce cours a des apprenants inscrits : il ne peut pas être supprimé définitivement.");
         }
         courseRepository.delete(course);
+    }
+
+    /** Corbeille d'un formateur, ou de toute la plateforme si {@code instructorId} est {@code null} (admin). */
+    @Transactional(readOnly = true)
+    public List<TrashedCourseDto> trash(Long instructorId) {
+        List<Course> courses = courseRepository.findTrash(instructorId);
+        CourseStats stats = statsFor(courses);
+        return courses.stream()
+                .map(c -> new TrashedCourseDto(c.getId(), c.getTitle(), userService.displayNameById(c.getInstructorId()),
+                        coverImageUrl(c), stats.learners(c.getId()), c.getDeletedAt()))
+                .toList();
     }
 
     @Transactional
@@ -105,7 +144,7 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public java.util.List<CourseSummaryDto> listByInstructor(Long instructorId) {
-        List<Course> courses = courseRepository.findByInstructorIdOrderByCreatedAtDesc(instructorId);
+        List<Course> courses = courseRepository.findByInstructorIdAndDeletedAtIsNullOrderByCreatedAtDesc(instructorId);
         CourseStats stats = statsFor(courses);
         return courses.stream().map(course -> toSummary(course, null, stats)).toList();
     }
@@ -121,7 +160,7 @@ public class CourseService {
     /** Nombre total de cours et de cours publiés (tableau de bord admin). */
     @Transactional(readOnly = true)
     public long[] courseCounts() {
-        return new long[] { courseRepository.count(), courseRepository.countByPublishedTrue() };
+        return new long[] { courseRepository.countByDeletedAtIsNull(), courseRepository.countByPublishedTrue() };
     }
 
     /** Ids des cours d'un formateur (publiés ou non) — pour ses ventes et ses avis reçus. */
@@ -135,7 +174,7 @@ public class CourseService {
     public Long publicIdBySlug(String slug) {
         Course course = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Cours introuvable"));
-        if (!course.isPublished() && !isOwnerOrAdmin(course)) {
+        if (course.isDeleted() || (!course.isPublished() && !isOwnerOrAdmin(course))) {
             throw new ResourceNotFoundException("Cours introuvable");
         }
         return course.getId();
@@ -146,7 +185,8 @@ public class CourseService {
         Course course = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Cours introuvable"));
         boolean privileged = isOwnerOrAdmin(course);
-        if (!course.isPublished() && !privileged) {
+        // Un cours à la corbeille n'est plus consultable (ni éditable) avant restauration
+        if (course.isDeleted() || (!course.isPublished() && !privileged)) {
             throw new ResourceNotFoundException("Cours introuvable");
         }
         boolean showContents = contentsVisible || privileged;

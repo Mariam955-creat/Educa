@@ -85,6 +85,9 @@ const PAGE_SIZE = 20;
                       <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
                         {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
                       </button>
+                      <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="moveToTrash(user)">
+                        🗑 {{ 'trash.moveToTrash' | translate }}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -160,6 +163,19 @@ export class AdminUsersComponent implements OnInit {
     if (!confirm(this.translate.instant(key, { name: user.fullName }))) return;
     this.api.updateStatus(user.id, enable).subscribe({
       next: (updated) => this.replace(updated),
+      error: (err: HttpErrorResponse) => this.fail(err),
+    });
+  }
+
+  /** Met le compte à la corbeille : connexion bloquée, restaurable depuis « Corbeille ». */
+  moveToTrash(user: AdminUser): void {
+    if (!confirm(this.translate.instant('trash.confirmMoveUser', { name: user.fullName }))) return;
+    this.api.deleteUser(user.id).subscribe({
+      next: () => {
+        this.message.set(this.translate.instant('trash.movedUser', { name: user.fullName }));
+        setTimeout(() => this.message.set(null), 4000);
+        this.load(this.page());
+      },
       error: (err: HttpErrorResponse) => this.fail(err),
     });
   }

@@ -33,6 +33,7 @@ export class InstructorLayoutComponent {
     { path: 'courses', icon: '📚', labelKey: 'instructor.nav.courses' },
     { path: 'sales', icon: '💶', labelKey: 'instructor.nav.sales' },
     { path: 'reviews', icon: '⭐', labelKey: 'instructor.nav.reviews' },
+    { path: 'trash', icon: '🗑', labelKey: 'trash.title' },
   ];
 
   readonly footerLinks = computed<DrawerLink[]>(() => [

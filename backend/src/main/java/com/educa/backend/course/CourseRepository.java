@@ -17,6 +17,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByInstructorIdOrderByCreatedAtDesc(Long instructorId);
 
+    List<Course> findByInstructorIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long instructorId);
+
+    /** Corbeille d'un formateur ({@code instructorId} renseigné) ou de toute la plateforme ({@code null}). */
+    @Query("""
+            select c from Course c
+            where c.deletedAt is not null
+              and (cast(:instructorId as long) is null or c.instructorId = :instructorId)
+            order by c.deletedAt desc
+            """)
+    List<Course> findTrash(@Param("instructorId") Long instructorId);
+
+    long countByDeletedAtIsNull();
+
     @Query("""
             select c from Course c
             where c.published = true
@@ -33,7 +46,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     /** Tous les cours (administration) : recherche sur le titre, filtre facultatif sur la publication. */
     @Query("""
             select c from Course c
-            where (cast(:q as string) is null or lower(c.title) like lower(concat('%', cast(:q as string), '%')))
+            where c.deletedAt is null
+              and (cast(:q as string) is null or lower(c.title) like lower(concat('%', cast(:q as string), '%')))
               and (:published is null or c.published = :published)
             order by c.createdAt desc
             """)

@@ -14,6 +14,7 @@ import {
   CourseRating,
   CourseReview,
   MyReview,
+  TrashedCourse,
   CourseSummary,
   CourseTranslationEdit,
   Page,
@@ -84,8 +85,21 @@ export class CourseApiService {
     return this.http.put<CourseSummary>(`${this.base}/courses/${id}`, body);
   }
 
+  /** Met le cours à la corbeille (restaurable). */
   deleteCourse(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/courses/${id}`);
+  }
+
+  trash(): Observable<TrashedCourse[]> {
+    return this.http.get<TrashedCourse[]>(`${this.base}/instructor/trash/courses`);
+  }
+
+  restoreCourse(id: number): Observable<CourseSummary> {
+    return this.http.post<CourseSummary>(`${this.base}/courses/${id}/restore`, {});
+  }
+
+  deleteCoursePermanently(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/courses/${id}/permanent`);
   }
 
   setPublished(id: number, published: boolean): Observable<CourseSummary> {

@@ -281,12 +281,14 @@ async function req(method, path, { token, body, raw } = {}) {
   check('AUTH-10 logout révoque le refresh token', loggedOut && r.status === 401, `logout ok=${loggedOut} refresh=HTTP ${r.status}`);
 
   // ---------- NETTOYAGE ----------
-  // le cours de test a des inscrits : suppression refusée (elle effacerait certificats et paiements)
+  // le cours de test part à la corbeille (dépublié, hors catalogue) ; sa suppression définitive est refusée
+  // car il a des inscrits (elle effacerait certificats et paiements)
   r = await req('DELETE', `/courses/${courseId}`, { token: instrTok });
-  check('CAT-DEL-01 suppression d\'un cours avec inscrits → 409', r.status === 409, `HTTP ${r.status}`);
-  // dépublié pour ne pas polluer le catalogue de démo
-  r = await req('POST', `/courses/${courseId}/unpublish`, { token: instrTok });
-  check('CAT-DEL-02 dépublication du cours de test (200)', r.status === 200 && r.json?.published === false, `HTTP ${r.status}`);
+  const trashed = r.status === 204;
+  r = await req('DELETE', `/courses/${courseId}/permanent`, { token: instrTok });
+  check('CAT-DEL-01 corbeille (204) puis suppression définitive d\'un cours avec inscrits → 409', trashed && r.status === 409, `corbeille=${trashed} définitive=HTTP ${r.status}`);
+  r = await req('GET', '/instructor/trash/courses', { token: instrTok });
+  check('CAT-DEL-02 le cours de test est dans la corbeille du formateur', r.status === 200 && r.json?.some((c) => c.id === courseId), `HTTP ${r.status}`);
 
   // ---------- BILAN ----------
   console.log(`\n=== BILAN : ${pass} PASS · ${fail} FAIL sur ${pass + fail} ===`);

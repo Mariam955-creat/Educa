@@ -22,6 +22,7 @@ export class AdminLayoutComponent {
     { path: 'certificates', icon: '🎓', labelKey: 'admin.nav.certificates' },
     { path: 'reviews', icon: '⭐', labelKey: 'admin.nav.reviews' },
     { path: 'languages', icon: '🌐', labelKey: 'admin.nav.languages' },
+    { path: 'trash', icon: '🗑', labelKey: 'trash.title' },
   ];
 
   readonly footerLinks: DrawerLink[] = [

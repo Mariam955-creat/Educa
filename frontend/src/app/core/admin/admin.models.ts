@@ -56,6 +56,15 @@ export interface AdminStats {
   reviews: { count: number; average: number | null };
 }
 
+/** Compte à la corbeille. */
+export interface TrashedUser {
+  id: number;
+  email: string;
+  fullName: string;
+  roles: RoleName[];
+  deletedAt: string;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

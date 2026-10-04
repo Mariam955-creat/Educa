@@ -578,5 +578,39 @@
     "previous": "Previous",
     "next": "Next",
     "status": "Page {{page}} / {{total}}"
+  },
+  "trash": {
+    "title": "Trash",
+    "open": "Open the trash",
+    "empty": "The trash is empty.",
+    "instructorHint": "Your deleted courses. Restore them (they come back as drafts) or delete them permanently.",
+    "adminHint": "Deleted courses, accounts and reviews. Restore them or delete them permanently.",
+    "tabs": {
+      "courses": "Courses",
+      "users": "Accounts",
+      "reviews": "Reviews"
+    },
+    "moveToTrash": "Delete",
+    "restore": "Restore",
+    "deleteForever": "Delete permanently",
+    "cancel": "Cancel",
+    "deletedOn": "Deleted on {{date}}",
+    "hasLearners": "{{count}} learner(s) enrolled: cannot be deleted permanently",
+    "confirmMoveCourse": "Move \"{{name}}\" to the trash? It will be unpublished and can be restored from the trash.",
+    "confirmMoveUser": "Move {{name}}'s account to the trash? They will no longer be able to sign in (restorable).",
+    "confirmMoveReview": "Move {{name}}'s review to the trash? It will no longer count in the course rating (restorable).",
+    "movedCourse": "\"{{name}}\" was moved to the trash.",
+    "movedUser": "{{name}}'s account was moved to the trash.",
+    "movedReview": "{{name}}'s review was moved to the trash.",
+    "restoredCourse": "\"{{name}}\" was restored (as a draft).",
+    "restoredUser": "{{name}}'s account was restored.",
+    "restoredReview": "{{name}}'s review was restored.",
+    "deleted": "\"{{name}}\" was permanently deleted.",
+    "error": "The operation failed.",
+    "permanentTitle": "Permanent deletion",
+    "permanentText": "\"{{name}}\" will be deleted forever. This cannot be undone.",
+    "userWarning": "Their enrolments, purchases, invoices, certificates and reviews will also be erased.",
+    "typeToConfirm": "To confirm, type {{word}}:",
+    "confirmWord": "DELETE"
   }
 }

@@ -119,6 +119,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./feature/instructor/instructor-reviews.component').then((m) => m.InstructorReviewsComponent),
       },
+      {
+        path: 'trash',
+        loadComponent: () =>
+          import('./feature/instructor/instructor-trash.component').then((m) => m.InstructorTrashComponent),
+      },
     ],
   },
   {
@@ -156,6 +161,10 @@ export const routes: Routes = [
         path: 'languages',
         loadComponent: () =>
           import('./feature/admin/admin-registries.component').then((m) => m.AdminLanguagesComponent),
+      },
+      {
+        path: 'trash',
+        loadComponent: () => import('./feature/admin/admin-trash.component').then((m) => m.AdminTrashComponent),
       },
     ],
   },

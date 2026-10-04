@@ -54,9 +54,9 @@
       <h3>{{ 'footer.learn' | translate }}</h3>
       @if (auth.isAuthenticated()) {
         <a routerLink="/catalog">{{ 'nav.catalog' | translate }}</a>
-        <a routerLink="/dashboard">{{ 'nav.dashboard' | translate }}</a>
-        <a routerLink="/certificates">{{ 'nav.certificates' | translate }}</a>
-        <a routerLink="/invoices">{{ 'nav.invoices' | translate }}</a>
+        <a routerLink="/account/courses">{{ 'nav.dashboard' | translate }}</a>
+        <a routerLink="/account/certificates">{{ 'nav.certificates' | translate }}</a>
+        <a routerLink="/account/invoices">{{ 'nav.invoices' | translate }}</a>
       } @else {
         <a routerLink="/login">{{ 'nav.login' | translate }}</a>
         <a routerLink="/register">{{ 'nav.register' | translate }}</a>

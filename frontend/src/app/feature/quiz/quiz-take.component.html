@@ -6,7 +6,7 @@
     <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (error() && !q) {
     <p class="form-error">{{ error() }}</p>
-    <a class="btn ghost" routerLink="/dashboard">{{ 'common.back' | translate }}</a>
+    <a class="btn ghost" routerLink="/account/courses">{{ 'common.back' | translate }}</a>
   } @else if (r) {
     <div class="result">
       <h1>{{ (r.passed ? 'quizTake.passed' : 'quizTake.result') | translate }}</h1>
@@ -19,7 +19,7 @@
         @if (r.certificateId) {
           <p class="cert">
             {{ 'quizTake.certificateIssued' | translate }}
-            <a routerLink="/certificates">{{ 'quizTake.viewCertificates' | translate }}</a>
+            <a routerLink="/account/certificates">{{ 'quizTake.viewCertificates' | translate }}</a>
           </p>
         }
       }
@@ -31,7 +31,7 @@
       </div>
     </div>
   } @else if (q) {
-    <a class="back" routerLink="/dashboard">‹ {{ 'common.back' | translate }}</a>
+    <a class="back" routerLink="/account/courses">‹ {{ 'common.back' | translate }}</a>
     <h1>{{ q.title }}</h1>
     <p class="muted">{{ 'quizTake.questionCount' | translate: { count: q.questions.length, threshold: q.passThreshold } }}</p>
 

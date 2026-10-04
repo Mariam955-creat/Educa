@@ -81,7 +81,7 @@ export class AuthService {
   homePathForRole(): string {
     if (this.hasRole('ADMIN')) return '/admin';
     if (this.hasRole('INSTRUCTOR')) return '/instructor';
-    return '/dashboard';
+    return '/account';
   }
 
   private store(res: TokenResponse): void {

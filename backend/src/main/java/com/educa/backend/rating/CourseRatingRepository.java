@@ -17,6 +17,9 @@ public interface CourseRatingRepository extends JpaRepository<CourseRating, Long
     /** Avis écrits d'un cours, du plus récent au plus ancien (les notes sans commentaire n'y figurent pas). */
     Page<CourseRating> findByCourseIdAndCommentIsNotNullOrderByUpdatedAtDesc(Long courseId, Pageable pageable);
 
+    /** Notes d'un utilisateur, de la plus récente à la plus ancienne (son espace « Mon compte »). */
+    List<CourseRating> findByUserIdOrderByUpdatedAtDesc(Long userId);
+
     /** Toutes les notes, de la plus récente à la plus ancienne (modération). */
     Page<CourseRating> findAllByOrderByUpdatedAtDesc(Pageable pageable);
 

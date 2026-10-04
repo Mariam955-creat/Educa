@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { RoleName } from '../../core/auth/auth.models';
@@ -14,14 +13,14 @@ const ROLE_KEYS: Record<RoleName, string> = {
   ADMIN: 'userMenu.roleAdmin',
 };
 
-/** Page « Mon compte » : identité (nom modifiable), rôles, langue de l'interface et raccourcis. */
+/** Section « Mon profil » de l'espace compte : identité (nom modifiable), rôles, langue de l'interface. */
 @Component({
-  selector: 'app-account',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
-  templateUrl: './account.component.html',
-  styleUrl: './account.component.scss',
+  selector: 'app-account-profile',
+  imports: [ReactiveFormsModule, TranslatePipe],
+  templateUrl: './account-profile.component.html',
+  styleUrl: './account-profile.component.scss',
 })
-export class AccountComponent {
+export class AccountProfileComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   readonly auth = inject(AuthService);

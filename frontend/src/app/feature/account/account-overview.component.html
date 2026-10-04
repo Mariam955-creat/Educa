@@ -1,0 +1,94 @@
+<section class="page">
+  <h1>{{ 'dashboard.greeting' | translate: { name: auth.user()?.fullName } }}</h1>
+  <p class="muted">{{ 'account.overview.subtitle' | translate }}</p>
+
+  @if (loading()) {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else {
+    <h2>{{ 'account.overview.learning' | translate }}</h2>
+    <div class="kpis">
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-icon" aria-hidden="true">📚</span>
+        <span class="kpi-value">{{ enrollments().length }}</span>
+        <span class="kpi-label">{{ 'account.overview.enrolled' | translate }}</span>
+      </a>
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-icon" aria-hidden="true">✅</span>
+        <span class="kpi-value">{{ completedCount() }}</span>
+        <span class="kpi-label">{{ 'account.overview.completed' | translate }}</span>
+      </a>
+      <a class="kpi" routerLink="../courses">
+        <span class="kpi-icon" aria-hidden="true">📈</span>
+        <span class="kpi-value">{{ averageProgress() }} %</span>
+        <span class="kpi-label">{{ 'account.overview.averageProgress' | translate }}</span>
+      </a>
+      <a class="kpi" routerLink="../certificates">
+        <span class="kpi-icon" aria-hidden="true">🎓</span>
+        <span class="kpi-value">{{ certificates().length }}</span>
+        <span class="kpi-label">{{ 'account.overview.certificates' | translate }}</span>
+      </a>
+      <a class="kpi" routerLink="../invoices">
+        <span class="kpi-icon" aria-hidden="true">🧾</span>
+        <span class="kpi-value">{{ totalSpent() | money: spentCurrency() : lang.current() }}</span>
+        <span class="kpi-label">{{ 'account.overview.spent' | translate: { count: paidInvoices().length } }}</span>
+      </a>
+      <a class="kpi" routerLink="../reviews">
+        <span class="kpi-icon" aria-hidden="true">⭐</span>
+        <span class="kpi-value">{{ reviews().length }}</span>
+        <span class="kpi-label">{{ 'account.overview.reviews' | translate }}</span>
+      </a>
+    </div>
+
+    @if (isInstructor()) {
+      <h2>{{ 'account.overview.teaching' | translate }}</h2>
+      <div class="kpis">
+        <a class="kpi teach" routerLink="/instructor">
+          <span class="kpi-icon" aria-hidden="true">🧑‍🏫</span>
+          <span class="kpi-value">{{ taughtCourses().length }}</span>
+          <span class="kpi-label">{{ 'account.overview.coursesCreated' | translate: { published: publishedCount() } }}</span>
+        </a>
+        <a class="kpi teach" routerLink="/instructor">
+          <span class="kpi-icon" aria-hidden="true">👥</span>
+          <span class="kpi-value">{{ totalLearners() }}</span>
+          <span class="kpi-label">{{ 'account.overview.learners' | translate }}</span>
+        </a>
+        <a class="kpi teach" routerLink="/instructor">
+          <span class="kpi-icon" aria-hidden="true">⭐</span>
+          <span class="kpi-value">{{ teachingRating() != null ? formatRating(teachingRating()!) + ' / 5' : '—' }}</span>
+          <span class="kpi-label">{{ 'account.overview.teachingRating' | translate }}</span>
+        </a>
+      </div>
+    }
+
+    <div class="panels">
+      <article class="panel">
+        <h2>{{ 'account.overview.resume' | translate }}</h2>
+        @for (e of inProgress(); track e.courseId) {
+          <a class="resume" [routerLink]="['/courses', e.courseSlug]">
+            <span class="resume-title">{{ e.courseTitle }}</span>
+            <span class="track"><span class="fill" [style.width.%]="e.progressPercent"></span></span>
+            <span class="pct">{{ e.progressPercent }} %</span>
+          </a>
+        } @empty {
+          <p class="muted">{{ 'account.overview.nothingInProgress' | translate }}</p>
+          <a class="link" routerLink="/catalog">{{ 'dashboard.browseCatalog' | translate }}</a>
+        }
+      </article>
+
+      <article class="panel">
+        <h2>{{ 'account.overview.latestCertificates' | translate }}</h2>
+        @for (c of latestCertificates(); track c.id) {
+          <div class="cert">
+            <span aria-hidden="true">🎓</span>
+            <div>
+              <strong>{{ c.courseTitle }}</strong>
+              <span class="muted">{{ c.finalGrade }} / 100 · {{ c.issuedAt | localDate: 'long' : lang.current() }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="muted">{{ 'account.overview.noCertificates' | translate }}</p>
+        }
+      </article>
+    </div>
+  }
+</section>

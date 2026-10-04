@@ -2,10 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { AuthService } from '../../core/auth/auth.service';
 import { Enrollment } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
 
+/** Section « Mes cours » de l'espace compte : cours suivis et leur progression. */
 @Component({
   selector: 'app-learner-dashboard',
   imports: [RouterLink, TranslatePipe],
@@ -13,7 +13,6 @@ import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.serv
   styleUrl: './dashboard.scss',
 })
 export class LearnerDashboardComponent implements OnInit {
-  readonly auth = inject(AuthService);
   private readonly enrollmentApi = inject(EnrollmentApiService);
 
   readonly enrollments = signal<Enrollment[]>([]);

@@ -1,12 +1,10 @@
 <section class="page">
-  <h1>{{ 'dashboard.greeting' | translate: { name: auth.user()?.fullName } }}</h1>
-  <p class="role">{{ 'dashboard.learnerRole' | translate }}</p>
+  <h1>{{ 'account.nav.courses' | translate }}</h1>
 
   <div class="toolbar">
     <a class="btn" routerLink="/catalog">{{ 'dashboard.browseCatalog' | translate }}</a>
   </div>
 
-  <h2>{{ 'dashboard.myCourses' | translate }}</h2>
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else if (enrollments().length === 0) {

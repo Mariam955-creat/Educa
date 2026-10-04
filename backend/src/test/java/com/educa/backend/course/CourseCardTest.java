@@ -204,6 +204,39 @@ class CourseCardTest {
     }
 
     @Test
+    void un_apprenant_liste_et_retire_ses_propres_avis() throws Exception {
+        String prof = instructorToken("card-prof11@example.com");
+        long courseId = publishedCourse(prof, "Cours de mon espace");
+        String eleve = learnerToken("card-eleve10@example.com");
+        String autre = learnerToken("card-eleve11@example.com");
+        enroll(eleve, courseId);
+        enroll(autre, courseId);
+        mvc.perform(put("/api/v1/courses/" + courseId + "/rating")
+                        .header("Authorization", "Bearer " + eleve)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"stars\":4,\"comment\":\"Bien construit\"}"))
+                .andExpect(status().isOk());
+        rate(autre, courseId, 2).andExpect(status().isOk());
+
+        String body = mvc.perform(get("/api/v1/me/reviews").header("Authorization", "Bearer " + eleve))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].courseTitle").value("Cours de mon espace"))
+                .andExpect(jsonPath("$[0].comment").value("Bien construit"))
+                .andReturn().getResponse().getContentAsString();
+        long reviewId = ((Number) JsonPath.read(body, "$[0].id")).longValue();
+
+        // L'avis d'un autre apprenant est traité comme inexistant
+        mvc.perform(delete("/api/v1/me/reviews/" + reviewId).header("Authorization", "Bearer " + autre))
+                .andExpect(status().isNotFound());
+        mvc.perform(delete("/api/v1/me/reviews/" + reviewId).header("Authorization", "Bearer " + eleve))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/me/reviews").header("Authorization", "Bearer " + eleve))
+                .andExpect(jsonPath("$.length()").value(0));
+        mvc.perform(get("/api/v1/me/reviews")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void une_note_hors_bornes_est_refusee() throws Exception {
         String prof = instructorToken("card-prof2@example.com");
         long courseId = publishedCourse(prof, "Cours aux notes bornees");

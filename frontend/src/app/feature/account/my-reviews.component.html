@@ -1,0 +1,28 @@
+<section class="page">
+  <h1>{{ 'account.nav.reviews' | translate }}</h1>
+
+  @if (loading()) {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else {
+    @for (review of reviews(); track review.id) {
+      <article class="review">
+        <div class="review-head">
+          <a [routerLink]="['/courses', review.courseSlug]">{{ review.courseTitle }}</a>
+          <span class="muted">{{ review.updatedAt | localDate: 'long' : lang.current() }}</span>
+        </div>
+        <app-star-rating [value]="review.stars" size="small" [label]="review.stars + ' / 5'" />
+        @if (review.comment) {
+          <p class="text">{{ review.comment }}</p>
+        } @else {
+          <p class="muted text">{{ 'account.reviews.noText' | translate }}</p>
+        }
+        <div class="actions">
+          <a [routerLink]="['/courses', review.courseSlug]">{{ 'account.reviews.edit' | translate }}</a>
+          <button type="button" class="danger" (click)="remove(review)">{{ 'common.delete' | translate }}</button>
+        </div>
+      </article>
+    } @empty {
+      <p class="muted">{{ 'account.reviews.empty' | translate }}</p>
+    }
+  }
+</section>

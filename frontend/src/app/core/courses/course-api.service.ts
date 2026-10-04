@@ -13,6 +13,7 @@ import {
   CourseFormValue,
   CourseRating,
   CourseReview,
+  MyReview,
   CourseSummary,
   CourseTranslationEdit,
   Page,
@@ -147,6 +148,14 @@ export class CourseApiService {
   /** @param comment avis écrit facultatif (vide = note seule) */
   rate(courseId: number, stars: number, comment?: string): Observable<CourseRating> {
     return this.http.put<CourseRating>(`${this.base}/courses/${courseId}/rating`, { stars, comment });
+  }
+
+  myReviews(): Observable<MyReview[]> {
+    return this.http.get<MyReview[]>(`${this.base}/me/reviews`);
+  }
+
+  deleteMyReview(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/me/reviews/${id}`);
   }
 
   reviews(courseId: number, page = 0, size = 5): Observable<Page<CourseReview>> {

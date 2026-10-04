@@ -1,5 +1,5 @@
 <section class="page">
-  <h1>{{ 'account.title' | translate }}</h1>
+  <h1>{{ 'account.nav.profile' | translate }}</h1>
 
   @if (message()) {
     <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
@@ -49,11 +49,5 @@
       </label>
     </div>
 
-    <h2>{{ 'account.shortcuts' | translate }}</h2>
-    <div class="shortcuts">
-      <a class="card shortcut" routerLink="/dashboard">📚 {{ 'userMenu.myCourses' | translate }}</a>
-      <a class="card shortcut" routerLink="/certificates">🎓 {{ 'nav.certificates' | translate }}</a>
-      <a class="card shortcut" routerLink="/invoices">🧾 {{ 'nav.invoices' | translate }}</a>
-    </div>
   }
 </section>

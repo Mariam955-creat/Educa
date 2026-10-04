@@ -348,6 +348,39 @@
     "saved": "Profiel bijgewerkt.",
     "saveError": "Je profiel kon niet worden opgeslagen.",
     "interfaceLanguage": "Taal van de interface",
-    "shortcuts": "Snelkoppelingen"
+    "closeMenu": "Menu sluiten",
+    "nav": {
+      "overview": "Dashboard",
+      "profile": "Mijn profiel",
+      "courses": "Mijn cursussen",
+      "certificates": "Mijn certificaten",
+      "invoices": "Mijn aankopen",
+      "reviews": "Mijn beoordelingen",
+      "instructorSpace": "Docentenruimte"
+    },
+    "overview": {
+      "subtitle": "Je activiteit op educa in één oogopslag.",
+      "learning": "Mijn leren",
+      "enrolled": "Gevolgde cursussen",
+      "completed": "Afgeronde cursussen",
+      "averageProgress": "Gemiddelde voortgang",
+      "certificates": "Behaalde certificaten",
+      "spent": "Uitgegeven · {{count}} aankoop/aankopen",
+      "reviews": "Geplaatste beoordelingen",
+      "teaching": "Mijn lesgeven",
+      "coursesCreated": "Gemaakte cursussen · {{published}} gepubliceerd",
+      "learners": "Ingeschreven cursisten",
+      "teachingRating": "Gemiddelde score van mijn cursussen",
+      "resume": "Verder leren",
+      "nothingInProgress": "Geen lopende cursus.",
+      "latestCertificates": "Laatste certificaten",
+      "noCertificates": "Nog geen certificaat."
+    },
+    "reviews": {
+      "noText": "Score zonder opmerking.",
+      "edit": "Wijzigen op de cursuspagina",
+      "empty": "Je hebt nog geen cursus beoordeeld.",
+      "confirmDelete": "Je beoordeling van \"{{course}}\" verwijderen?"
+    }
   }
 }

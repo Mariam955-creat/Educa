@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'account' },
   {
     path: 'login',
     loadComponent: () => import('./feature/auth/login.component').then((m) => m.LoginComponent),
@@ -12,12 +12,10 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./feature/auth/register.component').then((m) => m.RegisterComponent),
   },
-  {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./feature/dashboard/learner-dashboard.component').then((m) => m.LearnerDashboardComponent),
-  },
+  // Anciennes adresses : leurs pages vivent désormais dans l'espace « Mon compte »
+  { path: 'dashboard', pathMatch: 'full', redirectTo: 'account/courses' },
+  { path: 'certificates', pathMatch: 'full', redirectTo: 'account/certificates' },
+  { path: 'invoices', pathMatch: 'full', redirectTo: 'account/invoices' },
   {
     path: 'catalog',
     canActivate: [authGuard],
@@ -35,20 +33,40 @@ export const routes: Routes = [
     loadComponent: () => import('./feature/quiz/quiz-take.component').then((m) => m.QuizTakeComponent),
   },
   {
-    path: 'certificates',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./feature/certificate/my-certificates.component').then((m) => m.MyCertificatesComponent),
-  },
-  {
     path: 'account',
     canActivate: [authGuard],
-    loadComponent: () => import('./feature/account/account.component').then((m) => m.AccountComponent),
-  },
-  {
-    path: 'invoices',
-    canActivate: [authGuard],
-    loadComponent: () => import('./feature/payment/my-invoices.component').then((m) => m.MyInvoicesComponent),
+    loadComponent: () => import('./feature/account/account-layout.component').then((m) => m.AccountLayoutComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        loadComponent: () =>
+          import('./feature/account/account-overview.component').then((m) => m.AccountOverviewComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./feature/account/account-profile.component').then((m) => m.AccountProfileComponent),
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./feature/dashboard/learner-dashboard.component').then((m) => m.LearnerDashboardComponent),
+      },
+      {
+        path: 'certificates',
+        loadComponent: () =>
+          import('./feature/certificate/my-certificates.component').then((m) => m.MyCertificatesComponent),
+      },
+      {
+        path: 'invoices',
+        loadComponent: () => import('./feature/payment/my-invoices.component').then((m) => m.MyInvoicesComponent),
+      },
+      {
+        path: 'reviews',
+        loadComponent: () => import('./feature/account/my-reviews.component').then((m) => m.MyReviewsComponent),
+      },
+    ],
   },
   {
     path: 'verify/:code',
@@ -92,5 +110,5 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./feature/admin/admin-dashboard.component').then((m) => m.AdminDashboardComponent),
   },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '**', redirectTo: 'account' },
 ];

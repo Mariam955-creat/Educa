@@ -348,6 +348,39 @@
     "saved": "Profile updated.",
     "saveError": "Could not save your profile.",
     "interfaceLanguage": "Interface language",
-    "shortcuts": "Shortcuts"
+    "closeMenu": "Close menu",
+    "nav": {
+      "overview": "Dashboard",
+      "profile": "My profile",
+      "courses": "My courses",
+      "certificates": "My certificates",
+      "invoices": "My purchases",
+      "reviews": "My reviews",
+      "instructorSpace": "Instructor space"
+    },
+    "overview": {
+      "subtitle": "Your activity on educa at a glance.",
+      "learning": "My learning",
+      "enrolled": "Courses taken",
+      "completed": "Courses completed",
+      "averageProgress": "Average progress",
+      "certificates": "Certificates earned",
+      "spent": "Spent · {{count}} purchase(s)",
+      "reviews": "Reviews posted",
+      "teaching": "My teaching",
+      "coursesCreated": "Courses created · {{published}} published",
+      "learners": "Enrolled learners",
+      "teachingRating": "Average rating of my courses",
+      "resume": "Continue learning",
+      "nothingInProgress": "No course in progress.",
+      "latestCertificates": "Latest certificates",
+      "noCertificates": "No certificate yet."
+    },
+    "reviews": {
+      "noText": "Rating without comment.",
+      "edit": "Edit on the course page",
+      "empty": "You haven't rated any course yet.",
+      "confirmDelete": "Delete your review of \"{{course}}\"?"
+    }
   }
 }

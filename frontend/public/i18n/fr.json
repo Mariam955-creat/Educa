@@ -348,6 +348,39 @@
     "saved": "Profil mis à jour.",
     "saveError": "Impossible d'enregistrer le profil.",
     "interfaceLanguage": "Langue de l'interface",
-    "shortcuts": "Accès rapides"
+    "closeMenu": "Fermer le menu",
+    "nav": {
+      "overview": "Tableau de bord",
+      "profile": "Mon profil",
+      "courses": "Mes cours",
+      "certificates": "Mes certificats",
+      "invoices": "Mes achats",
+      "reviews": "Mes avis",
+      "instructorSpace": "Espace formateur"
+    },
+    "overview": {
+      "subtitle": "Votre activité sur educa en un coup d'œil.",
+      "learning": "Mon apprentissage",
+      "enrolled": "Cours suivis",
+      "completed": "Cours terminés",
+      "averageProgress": "Progression moyenne",
+      "certificates": "Certificats obtenus",
+      "spent": "Dépensés · {{count}} achat(s)",
+      "reviews": "Avis publiés",
+      "teaching": "Mon enseignement",
+      "coursesCreated": "Cours créés · {{published}} publié(s)",
+      "learners": "Apprenants inscrits",
+      "teachingRating": "Note moyenne de mes cours",
+      "resume": "Reprendre mes cours",
+      "nothingInProgress": "Aucun cours en cours.",
+      "latestCertificates": "Derniers certificats",
+      "noCertificates": "Pas encore de certificat."
+    },
+    "reviews": {
+      "noText": "Note sans commentaire.",
+      "edit": "Modifier sur la page du cours",
+      "empty": "Vous n'avez encore noté aucun cours.",
+      "confirmDelete": "Supprimer votre avis sur « {{course}} » ?"
+    }
   }
 }

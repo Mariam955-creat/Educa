@@ -348,6 +348,39 @@
     "saved": "Profil aktualisiert.",
     "saveError": "Das Profil konnte nicht gespeichert werden.",
     "interfaceLanguage": "Sprache der Oberfläche",
-    "shortcuts": "Schnellzugriff"
+    "closeMenu": "Menü schließen",
+    "nav": {
+      "overview": "Übersicht",
+      "profile": "Mein Profil",
+      "courses": "Meine Kurse",
+      "certificates": "Meine Zertifikate",
+      "invoices": "Meine Käufe",
+      "reviews": "Meine Bewertungen",
+      "instructorSpace": "Kursleiterbereich"
+    },
+    "overview": {
+      "subtitle": "Ihre Aktivität auf educa auf einen Blick.",
+      "learning": "Mein Lernen",
+      "enrolled": "Belegte Kurse",
+      "completed": "Abgeschlossene Kurse",
+      "averageProgress": "Durchschnittlicher Fortschritt",
+      "certificates": "Erhaltene Zertifikate",
+      "spent": "Ausgegeben · {{count}} Kauf/Käufe",
+      "reviews": "Veröffentlichte Bewertungen",
+      "teaching": "Mein Unterricht",
+      "coursesCreated": "Erstellte Kurse · {{published}} veröffentlicht",
+      "learners": "Eingeschriebene Lernende",
+      "teachingRating": "Durchschnittsnote meiner Kurse",
+      "resume": "Kurse fortsetzen",
+      "nothingInProgress": "Kein laufender Kurs.",
+      "latestCertificates": "Neueste Zertifikate",
+      "noCertificates": "Noch kein Zertifikat."
+    },
+    "reviews": {
+      "noText": "Bewertung ohne Kommentar.",
+      "edit": "Auf der Kursseite ändern",
+      "empty": "Sie haben noch keinen Kurs bewertet.",
+      "confirmDelete": "Ihre Bewertung zu „{{course}}“ löschen?"
+    }
   }
 }

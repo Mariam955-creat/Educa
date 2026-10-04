@@ -78,6 +78,17 @@ export interface CourseReview {
   updatedAt: string;
 }
 
+export interface MyReview {
+  id: number;
+  courseId: number;
+  courseTitle: string;
+  courseSlug: string;
+  stars: number;
+  /** Absent pour une note sans avis écrit. */
+  comment: string | null;
+  updatedAt: string;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;

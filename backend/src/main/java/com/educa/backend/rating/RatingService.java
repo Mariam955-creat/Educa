@@ -20,6 +20,7 @@ import com.educa.backend.enrollment.EnrollmentService;
 import com.educa.backend.rating.dto.AdminReviewDto;
 import com.educa.backend.rating.dto.CourseRatingDto;
 import com.educa.backend.rating.dto.CourseReviewDto;
+import com.educa.backend.rating.dto.MyReviewDto;
 import com.educa.backend.user.UserService;
 
 @Service
@@ -93,6 +94,26 @@ public class RatingService {
             return new AdminReviewDto(r.getId(), course.getId(), course.getTitle(), course.getSlug(),
                     userService.displayNameById(r.getUserId()), r.getStars(), r.getComment(), r.getUpdatedAt());
         });
+    }
+
+    /** Avis de l'utilisateur, du plus récent au plus ancien. */
+    @Transactional(readOnly = true)
+    public List<MyReviewDto> mine(Long userId) {
+        Map<Long, Course> courses = new HashMap<>();
+        return ratingRepository.findByUserIdOrderByUpdatedAtDesc(userId).stream().map(r -> {
+            Course course = courses.computeIfAbsent(r.getCourseId(), courseService::requireCourse);
+            return new MyReviewDto(r.getId(), course.getId(), course.getTitle(), course.getSlug(), r.getStars(),
+                    r.getComment(), r.getUpdatedAt());
+        }).toList();
+    }
+
+    /** L'utilisateur retire son propre avis ; celui d'un autre est traité comme inexistant (pas de fuite d'existence). */
+    @Transactional
+    public void deleteMine(Long ratingId, Long userId) {
+        CourseRating rating = ratingRepository.findById(ratingId)
+                .filter(r -> r.getUserId().equals(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("Avis introuvable"));
+        ratingRepository.delete(rating);
     }
 
     /** Suppression par un administrateur (modération). */

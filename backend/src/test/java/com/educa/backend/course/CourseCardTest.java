@@ -12,6 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +39,11 @@ import com.jayway.jsonpath.JsonPath;
 @ActiveProfiles("test")
 @Transactional
 class CourseCardTest {
+
+    /** Contenus créés par {@link #publishedCourse}, par cours. */
+    private final Map<Long, List<Long>> contentIdsByCourse = new HashMap<>();
+
+    private static final int CONTENTS_PER_COURSE = 10;
 
     private static final byte[] PNG_MAGIC = { (byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
 
@@ -169,6 +179,31 @@ class CourseCardTest {
     }
 
     @Test
+    void il_faut_avoir_suivi_70_pourcent_du_cours_pour_le_noter() throws Exception {
+        String prof = instructorToken("card-prof10@example.com");
+        long courseId = publishedCourse(prof, "Cours a suivre avant de noter");
+        String eleve = learnerToken("card-eleve9@example.com");
+        enrollOnly(eleve, courseId);
+
+        follow(eleve, courseId, 6);
+        mvc.perform(get("/api/v1/courses/" + courseId + "/rating").header("Authorization", "Bearer " + eleve))
+                .andExpect(jsonPath("$.enrolled").value(true))
+                .andExpect(jsonPath("$.progressPercent").value(60))
+                .andExpect(jsonPath("$.requiredProgress").value(70))
+                .andExpect(jsonPath("$.canRate").value(false));
+        rate(eleve, courseId, 5).andExpect(status().isForbidden());
+
+        // 7 contenus sur 10 : le seuil de 70 % est atteint
+        mvc.perform(post("/api/v1/contents/" + contentIdsByCourse.get(courseId).get(6) + "/complete")
+                        .header("Authorization", "Bearer " + eleve))
+                .andExpect(status().isOk());
+        rate(eleve, courseId, 5)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.progressPercent").value(70))
+                .andExpect(jsonPath("$.canRate").value(true));
+    }
+
+    @Test
     void une_note_hors_bornes_est_refusee() throws Exception {
         String prof = instructorToken("card-prof2@example.com");
         long courseId = publishedCourse(prof, "Cours aux notes bornees");
@@ -265,13 +300,47 @@ class CourseCardTest {
                 .content("{\"stars\":" + stars + "}"));
     }
 
+    /** Inscrit l'apprenant et lui fait suivre tout le cours (assez pour pouvoir le noter). */
     private void enroll(String token, long courseId) throws Exception {
+        enrollOnly(token, courseId);
+        follow(token, courseId, CONTENTS_PER_COURSE);
+    }
+
+    private void enrollOnly(String token, long courseId) throws Exception {
         mvc.perform(post("/api/v1/courses/" + courseId + "/enroll").header("Authorization", "Bearer " + token))
                 .andExpect(status().isCreated());
     }
 
+    /** Marque les {@code count} premiers contenus du cours comme terminés. */
+    private void follow(String token, long courseId, int count) throws Exception {
+        for (long contentId : contentIdsByCourse.get(courseId).subList(0, count)) {
+            mvc.perform(post("/api/v1/contents/" + contentId + "/complete").header("Authorization", "Bearer " + token))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    /** Cours publié de {@value #CONTENTS_PER_COURSE} contenus texte (1 contenu = 10 % de progression). */
     private long publishedCourse(String token, String title) throws Exception {
         long courseId = createCourse(token, title);
+        String chapter = mvc.perform(post("/api/v1/courses/" + courseId + "/chapters")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"title\":\"Chapitre 1\",\"position\":1}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        long chapterId = ((Number) JsonPath.read(chapter, "$.id")).longValue();
+        List<Long> contentIds = new ArrayList<>();
+        for (int position = 1; position <= CONTENTS_PER_COURSE; position++) {
+            String content = mvc.perform(post("/api/v1/chapters/" + chapterId + "/contents")
+                            .header("Authorization", "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content("{\"type\":\"TEXT\",\"title\":\"Lecon " + position + "\",\"position\":"
+                                    + position + ",\"textBody\":\"contenu\"}"))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse().getContentAsString();
+            contentIds.add(((Number) JsonPath.read(content, "$.id")).longValue());
+        }
+        contentIdsByCourse.put(courseId, contentIds);
         mvc.perform(post("/api/v1/courses/" + courseId + "/publish").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
         return courseId;

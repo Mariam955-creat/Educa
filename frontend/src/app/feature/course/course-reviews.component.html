@@ -11,7 +11,11 @@
     </div>
   }
 
-  @if (rating()?.canRate) {
+  @if (progressTooLow()) {
+    <p class="locked">
+      {{ 'course.rateLocked' | translate: { required: rating()!.requiredProgress, progress: currentProgress() } }}
+    </p>
+  } @else if (canRate()) {
     <form class="review-form" (ngSubmit)="submit()">
       <span class="form-title">{{ (rating()?.myStars ? 'course.yourRating' : 'course.rateThisCourse') | translate }}</span>
       <app-star-rating

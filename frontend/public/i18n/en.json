@@ -127,7 +127,8 @@
     "publishReview": "Post my review",
     "updateReview": "Update my review",
     "noReviews": "No written reviews yet.",
-    "moreReviews": "Show more reviews"
+    "moreReviews": "Show more reviews",
+    "rateLocked": "🔒 You can rate and review this course once you have completed {{required}}% of it (current progress: {{progress}}%)."
   },
   "chat": {
     "title": "💬 Course assistant",

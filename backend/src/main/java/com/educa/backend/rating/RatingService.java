@@ -25,6 +25,9 @@ import com.educa.backend.user.UserService;
 @Service
 public class RatingService {
 
+    /** Progression minimale (en % des contenus terminés) pour noter un cours : un avis doit venir de quelqu'un qui l'a réellement suivi. */
+    static final int REQUIRED_PROGRESS_PERCENT = 70;
+
     private final CourseRatingRepository ratingRepository;
     private final RatingCourseStatsProvider statsProvider;
     private final CourseService courseService;
@@ -47,20 +50,27 @@ public class RatingService {
         RatingStats stats = statsProvider.ratingStats(List.of(courseId)).get(courseId);
         CourseRating mine = userId == null ? null
                 : ratingRepository.findByCourseIdAndUserId(courseId, userId).orElse(null);
-        boolean canRate = userId != null && enrollmentService.isEnrolled(userId, courseId);
+        boolean enrolled = userId != null && enrollmentService.isEnrolled(userId, courseId);
+        int progress = enrolled ? enrollmentService.progressPercent(userId, courseId) : 0;
         return new CourseRatingDto(stats != null ? stats.average() : null, stats != null ? stats.count() : 0,
-                mine != null ? (int) mine.getStars() : null, mine != null ? mine.getComment() : null, canRate);
+                mine != null ? (int) mine.getStars() : null, mine != null ? mine.getComment() : null,
+                enrolled, progress, REQUIRED_PROGRESS_PERCENT, enrolled && progress >= REQUIRED_PROGRESS_PERCENT);
     }
 
     /**
-     * Crée ou remplace la note (et l'avis écrit facultatif) de l'apprenant : réservé aux inscrits, un avis
-     * doit venir de quelqu'un qui suit le cours.
+     * Crée ou remplace la note (et l'avis écrit facultatif) de l'apprenant : réservé aux inscrits ayant suivi
+     * au moins {@value #REQUIRED_PROGRESS_PERCENT} % du cours.
      */
     @Transactional
     public CourseRatingDto rate(Long courseId, Long userId, int stars, String comment) {
         courseService.requireCourse(courseId);
         if (!enrollmentService.isEnrolled(userId, courseId)) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Seuls les apprenants inscrits peuvent noter ce cours");
+        }
+        int progress = enrollmentService.progressPercent(userId, courseId);
+        if (progress < REQUIRED_PROGRESS_PERCENT) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Suivez au moins " + REQUIRED_PROGRESS_PERCENT
+                    + " % du cours pour le noter (progression actuelle : " + progress + " %)");
         }
         CourseRating rating = ratingRepository.findByCourseIdAndUserId(courseId, userId).orElseGet(() -> {
             CourseRating created = new CourseRating();

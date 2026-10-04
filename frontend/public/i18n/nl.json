@@ -127,7 +127,8 @@
     "publishReview": "Beoordeling plaatsen",
     "updateReview": "Beoordeling wijzigen",
     "noReviews": "Nog geen geschreven beoordelingen.",
-    "moreReviews": "Meer beoordelingen tonen"
+    "moreReviews": "Meer beoordelingen tonen",
+    "rateLocked": "🔒 Je kunt deze cursus beoordelen zodra je {{required}}% ervan hebt gevolgd (huidige voortgang: {{progress}}%)."
   },
   "chat": {
     "title": "💬 Cursusassistent",

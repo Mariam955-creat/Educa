@@ -127,7 +127,8 @@
     "publishReview": "Publier mon avis",
     "updateReview": "Modifier mon avis",
     "noReviews": "Aucun avis écrit pour l'instant.",
-    "moreReviews": "Voir plus d'avis"
+    "moreReviews": "Voir plus d'avis",
+    "rateLocked": "🔒 Vous pourrez noter ce cours et donner votre avis après en avoir suivi {{required}} % (progression actuelle : {{progress}} %)."
   },
   "chat": {
     "title": "💬 Assistant du cours",

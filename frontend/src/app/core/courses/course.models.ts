@@ -63,6 +63,10 @@ export interface CourseRating {
   count: number;
   myStars?: number;
   myComment?: string;
+  enrolled: boolean;
+  progressPercent: number;
+  /** Progression minimale (%) pour noter le cours. */
+  requiredProgress: number;
   canRate: boolean;
 }
 

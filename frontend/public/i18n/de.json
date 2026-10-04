@@ -127,7 +127,8 @@
     "publishReview": "Bewertung veröffentlichen",
     "updateReview": "Bewertung ändern",
     "noReviews": "Noch keine schriftlichen Bewertungen.",
-    "moreReviews": "Weitere Bewertungen anzeigen"
+    "moreReviews": "Weitere Bewertungen anzeigen",
+    "rateLocked": "🔒 Sie können diesen Kurs bewerten, sobald Sie {{required}} % davon absolviert haben (aktueller Fortschritt: {{progress}} %)."
   },
   "chat": {
     "title": "💬 Kursassistent",

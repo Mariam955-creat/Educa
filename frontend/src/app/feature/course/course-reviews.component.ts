@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -21,6 +21,8 @@ export class CourseReviewsComponent implements OnInit {
   readonly lang = inject(LanguageService);
 
   readonly courseId = input.required<number>();
+  /** Progression courante de l'apprenant (page cours) : le formulaire s'ouvre dès le seuil atteint, sans recharger. */
+  readonly progress = input(0);
   /** Émis après publication d'un avis, pour mettre à jour la note affichée en tête de page. */
   readonly ratingChange = output<CourseRating>();
 
@@ -33,6 +35,18 @@ export class CourseReviewsComponent implements OnInit {
   readonly reviews = signal<CourseReview[]>([]);
   readonly hasMore = signal(false);
   private page = 0;
+
+  /** Progression la plus à jour : celle de la page (suivie en direct) ou celle renvoyée avec la note (chargée en premier). */
+  readonly currentProgress = computed(() => Math.max(this.progress(), this.rating()?.progressPercent ?? 0));
+  /** Inscrit mais pas encore assez avancé pour noter. */
+  readonly progressTooLow = computed(() => {
+    const r = this.rating();
+    return !!r && r.enrolled && this.currentProgress() < r.requiredProgress;
+  });
+  readonly canRate = computed(() => {
+    const r = this.rating();
+    return !!r && r.enrolled && this.currentProgress() >= r.requiredProgress;
+  });
 
   ngOnInit(): void {
     this.api.rating(this.courseId()).subscribe({ next: (r) => this.setRating(r), error: () => undefined });

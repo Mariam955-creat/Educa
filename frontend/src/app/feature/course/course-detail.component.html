@@ -155,7 +155,7 @@
       }
     }
 
-    <app-course-reviews [courseId]="c.id" (ratingChange)="onRatingChange($event)" />
+    <app-course-reviews [courseId]="c.id" [progress]="progressPercent()" (ratingChange)="onRatingChange($event)" />
   } @else if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
   } @else {

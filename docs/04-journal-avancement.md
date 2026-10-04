@@ -1272,3 +1272,10 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 - **Charte graphique** : bleu `#2563EB` (en-tête bleu, boutons, liens), vert `#10B981` (barres de progression, réussite), jaune `#F59E0B` (étoiles, bouton du certificat, badge « Nouveau », onglet actif), fond `#EFF6FF` et cartes blanches, texte `#1F2937`. Palette déclarée en variables dans `styles.scss` ; ~26 fichiers repassés des couleurs codées en dur (violet) aux variables ; couvertures de repli et PDF (certificat, facture) recolorés.
 
 **Vérifié** : `./mvnw test` → **100/100** (`TrashTest` 7) ; `npm run build` sans avertissement, `npm run test:ci` → **27/27** ; pas encore vu au navigateur.
+
+**Complément (même jour) — retours sur la mise en page**
+- Signalement : « je ne vois plus les écrits sur les boutons » et « remets educa, admin et formateur ». Des captures réelles (Chrome headless piloté par le protocole DevTools, session de démo injectée) montraient pourtant un rendu correct : cause probable, une ancienne feuille de style globale en cache côté navigateur — les nouvelles variables de couleur absentes, des textes blancs se retrouvaient sur fond transparent. Correctif défensif : valeur de secours ajoutée à chaque usage des variables de la palette (28 fichiers).
+- En-tête passé en blanc souligné de bleu ; nom de l'utilisateur affiché dans l'en-tête (« [AD] Admin Démo ▾ ») et retiré du haut du tiroir (doublon) ; puis, à la demande, tout l'en-tête regroupé à droite et le tiroir des espaces placé à droite (mobile compris).
+- **Jeu de démo enrichi vérifié** après redémarrage : tableau de bord admin à 16 avis, note moyenne 4,4, ventes et inscriptions des apprenants de démo.
+
+**Vérifié** : `npm run build` sans avertissement, `npm run test:ci` → 27/27 ; rendu contrôlé par captures (ordinateur et mobile).

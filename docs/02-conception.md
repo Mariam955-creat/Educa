@@ -741,7 +741,12 @@ Deux niveaux distincts :
 Bleu `#2563EB` (confiance, sérieux : en-tête, boutons, liens), vert `#10B981` (progression, réussite), jaune
 `#F59E0B` (étoiles, récompenses comme le certificat, mises en avant), fond blanc / bleu très clair `#EFF6FF`, texte
 gris foncé `#1F2937` ; rouge conservé pour les actions dangereuses. Toutes les couleurs passent par des variables CSS
-déclarées dans `frontend/src/styles.scss` (`--accent`, `--success`, `--warning`, `--bg`, `--text`…).
+déclarées dans `frontend/src/styles.scss` (`--accent`, `--success`, `--warning`, `--bg`, `--text`…), toujours écrites
+avec une valeur de secours dans les composants (`var(--accent, #2563eb)`).
+
+**Mise en page** : en-tête blanc souligné de bleu, éléments regroupés à droite (« educa », liens, bouton
+« avatar + nom ▾ » qui ouvre le menu du compte) ; tiroir des espaces compte / formateur / admin à droite (escamotable
+sur mobile, glisse depuis la droite), sans répéter le nom de l'utilisateur déjà présent dans l'en-tête.
 
 ## 8. Choix techniques justifiés
 

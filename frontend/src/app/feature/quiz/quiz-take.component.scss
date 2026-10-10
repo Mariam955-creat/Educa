@@ -19,7 +19,7 @@ h1 {
 }
 
 .form-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 .question {
@@ -50,7 +50,7 @@ h1 {
 }
 
 button {
-  padding: 0.65rem 1.1rem;
+  padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
   background: var(--accent, #2563eb);

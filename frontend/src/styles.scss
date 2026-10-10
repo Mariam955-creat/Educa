@@ -18,12 +18,23 @@
   /* Jaune : notifications, points importants, récompenses */
   --warning: #f59e0b;
 
+  /* Rouge : erreurs, actions destructrices */
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+  --danger-border: #fecaca;
+
   /* Fonds, texte, bordures */
   --surface: #ffffff;
   --bg: #eff6ff;
   --text: #1f2937;
   --muted: #6b7280;
   --border: #dbe3ef;
+
+  /* Formes et ombres communes */
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 1px 2px rgba(31, 41, 55, 0.05);
+  --shadow-raised: 0 10px 24px rgba(17, 24, 39, 0.12);
 }
 
 * {
@@ -46,10 +57,72 @@ body {
     Roboto,
     'Noto Sans',
     sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Socle commun : ces règles s'appliquent partout où un composant ne dit rien de plus précis
+ * (titres, liens, boutons, champs), pour que toutes les pages réagissent de la même façon.
+ */
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--accent, #2563eb);
+  color: #fff;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+/* Anneau de focus identique sur tout le site (navigation au clavier) */
+:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
 }
 
 a {
-  color: var(--accent);
+  color: var(--accent, #2563eb);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--accent-hover, #1d4ed8);
 }
 
 /* --- Responsive --- */

@@ -1301,3 +1301,14 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Pages non relues au navigateur par Claude.
 
 **Incident** : catalogue et « Mes cours » vides pendant la session — le backend (`:8081`) n'était pas démarré (le proxy Angular répondait `500`). Sans rapport avec le design ; relancé avec `./mvnw spring-boot:run`, les 7 cours reviennent.
+
+## 2026-10-10 — Harmonisation visuelle du site
+
+**Fait** (aucune page ne change de structure)
+- `styles.scss` : socle commun appliqué là où un composant ne précise rien — interligne et lissage du texte, titres (`h1`–`h3`), liens (survol), boutons (curseur, transition, léger assombrissement au survol), champs (transition), anneau de focus clavier unique (`:focus-visible`), couleur de sélection.
+- Nouvelles variables : `--danger`, `--danger-soft`, `--danger-border`, `--radius`, `--radius-lg`, `--shadow-card`, `--shadow-raised`.
+- Valeurs divergentes alignées dans 20 feuilles de composants : arrondis 6/10/14 px → 8 ou 12 px (les étiquettes à 4 px sont conservées), boutons à `0.6rem 1rem`, pages `instructor-courses`/`instructor-overview` de 1050 → 1100 px, titre des pages d'authentification à 1.5rem, rouge `#b91c1c` → `var(--danger, #b91c1c)`.
+
+**Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Rendu non relu au navigateur par Claude.
+
+**À noter** : le socle ne fixe pas la couleur des titres (ils héritent de leur conteneur), sinon les titres blancs des bandeaux bleus deviendraient sombres.

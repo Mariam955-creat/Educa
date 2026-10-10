@@ -75,12 +75,12 @@ small {
 }
 
 .field-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 button {
   align-self: flex-start;
-  padding: 0.6rem 1.1rem;
+  padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
   background: var(--accent, #2563eb);

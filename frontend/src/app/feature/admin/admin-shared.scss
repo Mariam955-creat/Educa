@@ -159,7 +159,7 @@ tr:last-child td {
 select {
   padding: 0.3rem 0.45rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--surface);
   font: inherit;
   font-size: 0.85rem;
@@ -209,7 +209,7 @@ select {
 .actions button {
   padding: 0.3rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: var(--accent, #2563eb);
   font: inherit;
@@ -221,7 +221,7 @@ select {
 
 .actions .danger {
   border-color: #fecaca;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 .actions button:disabled,

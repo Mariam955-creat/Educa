@@ -1,5 +1,5 @@
 .page {
-  max-width: 1050px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1.25rem;
 }
@@ -194,7 +194,7 @@ h1 {
 .action {
   padding: 0.35rem 0.7rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -215,7 +215,7 @@ h1 {
 
 .action.danger {
   border-color: #fecaca;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 @media (max-width: 640px) {

@@ -92,11 +92,11 @@ button:disabled {
 }
 
 .form-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 .enroll-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   margin-top: 0.5rem;
 }
 

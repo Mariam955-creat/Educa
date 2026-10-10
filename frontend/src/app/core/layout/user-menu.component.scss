@@ -179,7 +179,7 @@
 .lang-pills button {
   padding: 0.25rem 0.55rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -203,7 +203,7 @@
   margin: 0.3rem 0;
   border: 0;
   background: transparent;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;

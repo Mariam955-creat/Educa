@@ -31,7 +31,7 @@ h3 {
 }
 
 .form-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
 }
 
 .card {
@@ -113,7 +113,7 @@ textarea {
 }
 
 button {
-  padding: 0.55rem 0.9rem;
+  padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
   background: var(--accent, #2563eb);
@@ -133,7 +133,7 @@ button.ghost {
 
 .link-danger {
   background: transparent;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   border: 0;
   font-size: 1.1rem;
   cursor: pointer;

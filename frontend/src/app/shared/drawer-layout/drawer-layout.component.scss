@@ -73,7 +73,7 @@
   width: 100%;
   border: 0;
   background: transparent;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;

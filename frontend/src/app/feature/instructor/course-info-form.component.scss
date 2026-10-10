@@ -58,7 +58,7 @@ label {
 }
 
 em {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   font-style: normal;
 }
 
@@ -91,7 +91,7 @@ textarea:focus {
 }
 
 .field-error {
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   font-size: 0.8rem;
   font-weight: 400;
 }
@@ -149,7 +149,7 @@ button {
   padding: 0 0.4rem;
   border: 0;
   background: transparent;
-  color: #b91c1c;
+  color: var(--danger, #b91c1c);
   font-size: 1.2rem;
 }
 
@@ -192,7 +192,7 @@ input[type='range'] {
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px dashed var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--bg);
   color: var(--muted);
   font-size: 0.8rem;
@@ -207,7 +207,7 @@ input[type='range'] {
 .file-btn {
   display: inline-block;
   margin: 0;
-  padding: 0.55rem 0.9rem;
+  padding: 0.6rem 1rem;
   border-radius: 8px;
   background: var(--accent, #2563eb);
   color: #fff;

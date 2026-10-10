@@ -1,5 +1,5 @@
 <header class="topbar">
-  <a class="brand" routerLink="/catalog" [attr.title]="'nav.catalog' | translate">educa</a>
+  <a class="brand" [routerLink]="auth.isAuthenticated() ? '/catalog' : '/'">educa</a>
 
   @if (auth.isAuthenticated()) {
     <nav class="nav">

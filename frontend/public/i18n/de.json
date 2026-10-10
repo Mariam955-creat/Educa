@@ -612,5 +612,60 @@
     "userWarning": "Einschreibungen, Käufe, Rechnungen, Zertifikate und Bewertungen werden ebenfalls gelöscht.",
     "typeToConfirm": "Zur Bestätigung {{word}} eingeben:",
     "confirmWord": "LÖSCHEN"
+  },
+  "home": {
+    "eyebrow": "E-Learning-Plattform",
+    "title": "Lernen Sie in Ihrem Tempo, belegen Sie Ihre Kompetenzen",
+    "lead": "Belegen Sie strukturierte Kurse, schließen Sie jedes Kapitel mit einem Test ab, legen Sie die Abschlussprüfung ab und erhalten Sie ein überprüfbares Zertifikat.",
+    "ctaRegister": "Konto erstellen",
+    "ctaLogin": "Anmelden",
+    "trustLanguages": "4 Sprachen: FR, EN, DE, NL",
+    "trustCertificate": "Überprüfbares PDF-Zertifikat",
+    "trustPayment": "Sichere Zahlung",
+    "cardTitle": "Ihr Fortschritt",
+    "cardQuizzes": "Durchschnitt der Tests",
+    "cardExam": "Abschlussprüfung",
+    "cardCertificate": "Zertifikat erhalten",
+    "featuresTitle": "Alles zum Lernen und Bestehen",
+    "features": {
+      "courses": {
+        "title": "Strukturierte Kurse",
+        "text": "In Kapitel gegliederte Kurse: Videos, Dokumente und Texte, jederzeit abrufbar."
+      },
+      "quiz": {
+        "title": "Tests und Prüfung",
+        "text": "Ein Test pro Kapitel und eine Abschlussprüfung, automatisch korrigiert."
+      },
+      "certificate": {
+        "title": "Überprüfbares Zertifikat",
+        "text": "Ein PDF-Zertifikat mit QR-Code, das jeder online überprüfen kann."
+      },
+      "ai": {
+        "title": "Lernassistent",
+        "text": "Ein KI-Assistent beantwortet Ihre Fragen während des Kurses."
+      }
+    },
+    "stepsTitle": "So funktioniert es",
+    "steps": {
+      "one": {
+        "title": "Kurs auswählen",
+        "text": "Durchsuchen Sie den Katalog und schreiben Sie sich in den gewünschten Kurs ein."
+      },
+      "two": {
+        "title": "Kapitel durcharbeiten",
+        "text": "Lernen Sie in Ihrem Tempo und verfolgen Sie Ihren Fortschritt."
+      },
+      "three": {
+        "title": "Bewertungen ablegen",
+        "text": "Die Tests zählen 40 % der Note, die Abschlussprüfung 60 %."
+      },
+      "four": {
+        "title": "Zertifikat erhalten",
+        "text": "Sobald die Bestehensgrenze erreicht ist, wird Ihr Zertifikat ausgestellt."
+      }
+    },
+    "coursesTitle": "Einige Kurse aus dem Katalog",
+    "ctaTitle": "Bereit loszulegen?",
+    "ctaText": "Erstellen Sie kostenlos Ihr Konto und entdecken Sie den Katalog."
   }
 }

@@ -612,5 +612,60 @@
     "userWarning": "Their enrolments, purchases, invoices, certificates and reviews will also be erased.",
     "typeToConfirm": "To confirm, type {{word}}:",
     "confirmWord": "DELETE"
+  },
+  "home": {
+    "eyebrow": "E-learning platform",
+    "title": "Learn at your own pace, prove your skills",
+    "lead": "Follow structured courses, validate each chapter with a quiz, take the final exam and earn a verifiable certificate.",
+    "ctaRegister": "Create an account",
+    "ctaLogin": "Sign in",
+    "trustLanguages": "4 languages: FR, EN, DE, NL",
+    "trustCertificate": "Verifiable PDF certificate",
+    "trustPayment": "Secure payment",
+    "cardTitle": "Your progress",
+    "cardQuizzes": "Quiz average",
+    "cardExam": "Final exam",
+    "cardCertificate": "Certificate earned",
+    "featuresTitle": "Everything you need to learn and succeed",
+    "features": {
+      "courses": {
+        "title": "Structured courses",
+        "text": "Courses split into chapters: videos, documents and texts, available whenever you want."
+      },
+      "quiz": {
+        "title": "Quizzes and exam",
+        "text": "One quiz per chapter and a final exam, graded automatically."
+      },
+      "certificate": {
+        "title": "Verifiable certificate",
+        "text": "A PDF certificate with a QR code that anyone can verify online."
+      },
+      "ai": {
+        "title": "Learning assistant",
+        "text": "An AI assistant answers your questions during the course."
+      }
+    },
+    "stepsTitle": "How it works",
+    "steps": {
+      "one": {
+        "title": "Choose a course",
+        "text": "Browse the catalogue and enrol in the course you are interested in."
+      },
+      "two": {
+        "title": "Follow the chapters",
+        "text": "Move forward at your own pace and track your progress."
+      },
+      "three": {
+        "title": "Take the assessments",
+        "text": "Quizzes count for 40% of the grade, the final exam for 60%."
+      },
+      "four": {
+        "title": "Get your certificate",
+        "text": "As soon as the pass mark is reached, your certificate is issued."
+      }
+    },
+    "coursesTitle": "A few courses from the catalogue",
+    "ctaTitle": "Ready to start?",
+    "ctaText": "Create your free account and explore the catalogue."
   }
 }

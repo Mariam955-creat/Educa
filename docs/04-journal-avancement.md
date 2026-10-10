@@ -1279,3 +1279,15 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 - **Jeu de démo enrichi vérifié** après redémarrage : tableau de bord admin à 16 avis, note moyenne 4,4, ventes et inscriptions des apprenants de démo.
 
 **Vérifié** : `npm run build` sans avertissement, `npm run test:ci` → 27/27 ; rendu contrôlé par captures (ordinateur et mobile).
+
+## 2026-10-10 — Page d'accueil publique
+
+**Fait**
+- Nouvelle page d'accueil `feature/home` sur `/` (jusqu'ici, un visiteur non connecté arrivait directement sur le formulaire de connexion) : bandeau bleu (titre, accroche, boutons « Créer un compte » / « Se connecter », carte d'illustration du parcours), quatre atouts, « comment ça marche » en quatre étapes (règle 40 % / 60 %), aperçu de trois cours lus via `GET /courses` (public), appel final à l'inscription.
+- Textes dans les quatre langues (`home.*` dans `public/i18n/{fr,en,de,nl}.json`), couleurs de la charte via les variables CSS.
+- `guestGuard` (`core/auth/auth.guard.ts`) : un utilisateur connecté qui ouvre `/` est renvoyé vers l'accueil de son rôle (`/admin`, `/instructor` ou `/account`) — auparavant toujours `/account`.
+- En-tête : le logo « educa » mène à l'accueil pour un visiteur, au catalogue pour un utilisateur connecté.
+
+**Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Page non relue au navigateur.
+
+**À noter** : cliquer sur un cours de l'aperçu sans être connecté renvoie vers la connexion (la page d'un cours reste protégée par `authGuard`).

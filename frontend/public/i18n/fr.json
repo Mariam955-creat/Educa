@@ -612,5 +612,60 @@
     "userWarning": "Ses inscriptions, achats, factures, certificats et avis seront aussi effacés.",
     "typeToConfirm": "Pour confirmer, tapez {{word}} :",
     "confirmWord": "SUPPRIMER"
+  },
+  "home": {
+    "eyebrow": "Plateforme e-learning",
+    "title": "Apprenez à votre rythme, prouvez vos compétences",
+    "lead": "Suivez des cours structurés, validez chaque chapitre par un contrôle, passez l’examen final et obtenez un certificat vérifiable.",
+    "ctaRegister": "Créer un compte",
+    "ctaLogin": "Se connecter",
+    "trustLanguages": "4 langues : FR, EN, DE, NL",
+    "trustCertificate": "Certificat PDF vérifiable",
+    "trustPayment": "Paiement sécurisé",
+    "cardTitle": "Votre progression",
+    "cardQuizzes": "Moyenne des contrôles",
+    "cardExam": "Examen final",
+    "cardCertificate": "Certificat obtenu",
+    "featuresTitle": "Tout pour apprendre et réussir",
+    "features": {
+      "courses": {
+        "title": "Cours structurés",
+        "text": "Des formations découpées en chapitres : vidéos, documents et textes, à suivre quand vous voulez."
+      },
+      "quiz": {
+        "title": "Contrôles et examen",
+        "text": "Un contrôle par chapitre et un examen final, corrigés automatiquement."
+      },
+      "certificate": {
+        "title": "Certificat vérifiable",
+        "text": "Un certificat PDF avec QR code, que chacun peut vérifier en ligne."
+      },
+      "ai": {
+        "title": "Assistant pédagogique",
+        "text": "Un assistant IA répond à vos questions pendant le cours."
+      }
+    },
+    "stepsTitle": "Comment ça marche",
+    "steps": {
+      "one": {
+        "title": "Choisissez un cours",
+        "text": "Parcourez le catalogue et inscrivez-vous au cours qui vous intéresse."
+      },
+      "two": {
+        "title": "Suivez les chapitres",
+        "text": "Avancez à votre rythme et suivez votre progression."
+      },
+      "three": {
+        "title": "Passez les évaluations",
+        "text": "Les contrôles comptent pour 40 % de la note, l’examen final pour 60 %."
+      },
+      "four": {
+        "title": "Obtenez votre certificat",
+        "text": "Dès que le seuil de réussite est atteint, votre certificat est délivré."
+      }
+    },
+    "coursesTitle": "Quelques cours du catalogue",
+    "ctaTitle": "Prêt à commencer ?",
+    "ctaText": "Créez votre compte gratuitement et découvrez le catalogue."
   }
 }

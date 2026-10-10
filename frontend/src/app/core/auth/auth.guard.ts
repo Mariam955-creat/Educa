@@ -20,3 +20,10 @@ export const roleGuard =
     if (!auth.isAuthenticated()) return router.createUrlTree(['/login']);
     return auth.hasAnyRole(roles) ? true : router.createUrlTree([auth.homePathForRole()]);
   };
+
+/** Réservé aux visiteurs : un utilisateur connecté est renvoyé vers l'accueil de son rôle. */
+export const guestGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.isAuthenticated() ? router.createUrlTree([auth.homePathForRole()]) : true;
+};

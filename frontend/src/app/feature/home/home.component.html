@@ -1,0 +1,84 @@
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">{{ 'home.eyebrow' | translate }}</span>
+      <h1>{{ 'home.title' | translate }}</h1>
+      <p class="lead">{{ 'home.lead' | translate }}</p>
+      <div class="actions">
+        <a class="btn primary" routerLink="/register">{{ 'home.ctaRegister' | translate }}</a>
+        <a class="btn ghost" routerLink="/login">{{ 'home.ctaLogin' | translate }}</a>
+      </div>
+      <ul class="trust">
+        <li>{{ 'home.trustLanguages' | translate }}</li>
+        <li>{{ 'home.trustCertificate' | translate }}</li>
+        <li>{{ 'home.trustPayment' | translate }}</li>
+      </ul>
+    </div>
+
+    <div class="hero-card" aria-hidden="true">
+      <p class="card-title">{{ 'home.cardTitle' | translate }}</p>
+      <div class="bar"><span></span></div>
+      <p class="card-line"><span>{{ 'home.cardQuizzes' | translate }}</span><strong>82 %</strong></p>
+      <p class="card-line"><span>{{ 'home.cardExam' | translate }}</span><strong>90 %</strong></p>
+      <p class="card-badge">🎓 {{ 'home.cardCertificate' | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>{{ 'home.featuresTitle' | translate }}</h2>
+  <div class="features">
+    @for (feature of features; track feature) {
+      <article class="feature">
+        <span class="icon" aria-hidden="true">{{ featureIcons[feature] }}</span>
+        <h3>{{ 'home.features.' + feature + '.title' | translate }}</h3>
+        <p>{{ 'home.features.' + feature + '.text' | translate }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="block">
+  <h2>{{ 'home.stepsTitle' | translate }}</h2>
+  <ol class="steps">
+    @for (step of steps; track step; let i = $index) {
+      <li>
+        <span class="num">{{ i + 1 }}</span>
+        <h3>{{ 'home.steps.' + step + '.title' | translate }}</h3>
+        <p>{{ 'home.steps.' + step + '.text' | translate }}</p>
+      </li>
+    }
+  </ol>
+</section>
+
+@if (courses().length > 0) {
+  <section class="block">
+    <h2>{{ 'home.coursesTitle' | translate }}</h2>
+    <div class="courses">
+      @for (course of courses(); track course.id) {
+        <a class="course" [routerLink]="['/courses', course.slug]">
+          <div class="cover" [style.background]="course.coverImageUrl ? null : fallbackCover(course.id)">
+            @if (api.coverSrc(course.coverImageUrl); as src) {
+              <img [src]="src" alt="" loading="lazy" />
+            } @else {
+              <span class="cover-initial" aria-hidden="true">{{ course.title.charAt(0) }}</span>
+            }
+          </div>
+          <div class="course-body">
+            <h3>{{ course.title }}</h3>
+            <p class="instructor">{{ course.instructorName }}</p>
+            <p class="price">
+              {{ course.price === 0 ? ('course.free' | translate) : (course.price | money: 'EUR' : lang.current()) }}
+            </p>
+          </div>
+        </a>
+      }
+    </div>
+  </section>
+}
+
+<section class="cta">
+  <h2>{{ 'home.ctaTitle' | translate }}</h2>
+  <p>{{ 'home.ctaText' | translate }}</p>
+  <a class="btn light" routerLink="/register">{{ 'home.ctaRegister' | translate }}</a>
+</section>

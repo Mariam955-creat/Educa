@@ -612,5 +612,60 @@
     "userWarning": "Inschrijvingen, aankopen, facturen, certificaten en beoordelingen worden ook gewist.",
     "typeToConfirm": "Typ {{word}} om te bevestigen:",
     "confirmWord": "VERWIJDEREN"
+  },
+  "home": {
+    "eyebrow": "E-learningplatform",
+    "title": "Leer in je eigen tempo, bewijs je vaardigheden",
+    "lead": "Volg gestructureerde cursussen, sluit elk hoofdstuk af met een toets, leg het eindexamen af en behaal een verifieerbaar certificaat.",
+    "ctaRegister": "Account aanmaken",
+    "ctaLogin": "Inloggen",
+    "trustLanguages": "4 talen: FR, EN, DE, NL",
+    "trustCertificate": "Verifieerbaar pdf-certificaat",
+    "trustPayment": "Veilig betalen",
+    "cardTitle": "Je voortgang",
+    "cardQuizzes": "Gemiddelde van de toetsen",
+    "cardExam": "Eindexamen",
+    "cardCertificate": "Certificaat behaald",
+    "featuresTitle": "Alles om te leren en te slagen",
+    "features": {
+      "courses": {
+        "title": "Gestructureerde cursussen",
+        "text": "Cursussen opgedeeld in hoofdstukken: video’s, documenten en teksten, te volgen wanneer je wilt."
+      },
+      "quiz": {
+        "title": "Toetsen en examen",
+        "text": "Eén toets per hoofdstuk en een eindexamen, automatisch verbeterd."
+      },
+      "certificate": {
+        "title": "Verifieerbaar certificaat",
+        "text": "Een pdf-certificaat met QR-code dat iedereen online kan controleren."
+      },
+      "ai": {
+        "title": "Leerassistent",
+        "text": "Een AI-assistent beantwoordt je vragen tijdens de cursus."
+      }
+    },
+    "stepsTitle": "Hoe het werkt",
+    "steps": {
+      "one": {
+        "title": "Kies een cursus",
+        "text": "Bekijk de catalogus en schrijf je in voor de cursus die je interesseert."
+      },
+      "two": {
+        "title": "Volg de hoofdstukken",
+        "text": "Ga vooruit in je eigen tempo en volg je voortgang."
+      },
+      "three": {
+        "title": "Leg de evaluaties af",
+        "text": "De toetsen tellen voor 40 % van het cijfer, het eindexamen voor 60 %."
+      },
+      "four": {
+        "title": "Ontvang je certificaat",
+        "text": "Zodra de slaagdrempel is bereikt, wordt je certificaat uitgereikt."
+      }
+    },
+    "coursesTitle": "Enkele cursussen uit de catalogus",
+    "ctaTitle": "Klaar om te beginnen?",
+    "ctaText": "Maak gratis je account aan en ontdek de catalogus."
   }
 }

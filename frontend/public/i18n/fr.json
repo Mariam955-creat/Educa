@@ -58,6 +58,7 @@
   },
   "catalog": {
     "title": "Catalogue des formations",
+    "subtitle": "Trouvez le cours qui vous fera progresser, puis validez-le par un certificat.",
     "searchPlaceholder": "Rechercher un cours…",
     "empty": "Aucun cours ne correspond.",
     "newCourse": "Nouveau",

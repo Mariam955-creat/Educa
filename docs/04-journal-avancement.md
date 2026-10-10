@@ -1291,3 +1291,13 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Page non relue au navigateur.
 
 **À noter** : cliquer sur un cours de l'aperçu sans être connecté renvoie vers la connexion (la page d'un cours reste protégée par `authGuard`).
+
+## 2026-10-10 — Connexion, inscription et bandeau du catalogue
+
+**Fait**
+- `feature/auth` (connexion et inscription, feuille commune `auth.scss`) : le formulaire est accolé à un panneau bleu (logo qui ramène à l'accueil, titre et quatre atouts repris des clés `home.*`) ; le panneau disparaît sous 760 px ; bouton plus foncé au survol, contour bleu sur le champ actif.
+- `feature/catalog` : bandeau bleu en tête de page (titre, accroche `catalog.subtitle` ajoutée en FR/EN/DE/NL, recherche arrondie à contour jaune au focus). Les cartes de cours sont inchangées.
+
+**Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Pages non relues au navigateur par Claude.
+
+**Incident** : catalogue et « Mes cours » vides pendant la session — le backend (`:8081`) n'était pas démarré (le proxy Angular répondait `500`). Sans rapport avec le design ; relancé avec `./mvnw spring-boot:run`, les 7 cours reviennent.

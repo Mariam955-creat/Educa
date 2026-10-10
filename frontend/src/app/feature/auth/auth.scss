@@ -4,13 +4,80 @@
   padding: 3rem 1rem;
 }
 
-.auth-card {
+/* Panneau de présentation (bleu) accolé au formulaire ; masqué sur petit écran */
+.auth-shell {
+  display: flex;
   width: 100%;
-  max-width: 380px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 2rem;
+  max-width: 860px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface, #ffffff);
+  box-shadow: 0 16px 40px rgba(30, 64, 175, 0.14);
+}
+
+.auth-aside {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2.5rem 2rem;
+  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
+  color: #fff;
+}
+
+.aside-brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.auth-aside h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+
+.auth-aside ul {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.92rem;
+  color: #dbeafe;
+}
+
+.auth-aside li::before {
+  content: '✓';
+  margin-right: 0.5rem;
+  color: var(--warning, #f59e0b);
+  font-weight: 700;
+}
+
+.auth-card {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface, #ffffff);
+  padding: 2.5rem 2rem;
+}
+
+@media (max-width: 760px) {
+  .auth-shell {
+    max-width: 460px;
+  }
+
+  .auth-aside {
+    display: none;
+  }
+
+  .auth-card,
+  .auth-card.wide {
+    max-width: none;
+  }
 }
 
 h1 {
@@ -56,6 +123,17 @@ button {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-hover, #1d4ed8);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 1px;
+  border-color: transparent;
 }
 
 button:disabled {

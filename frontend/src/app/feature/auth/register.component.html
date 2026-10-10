@@ -1,69 +1,82 @@
-<div class="auth-card wide">
-  <h1>{{ 'auth.register.title' | translate }}</h1>
-  <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <a class="aside-brand" routerLink="/">educa</a>
+    <h2>{{ 'home.title' | translate }}</h2>
+    <ul>
+      <li>{{ 'home.features.courses.title' | translate }}</li>
+      <li>{{ 'home.features.quiz.title' | translate }}</li>
+      <li>{{ 'home.features.certificate.title' | translate }}</li>
+      <li>{{ 'home.features.ai.title' | translate }}</li>
+    </ul>
+  </aside>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <label>
-      {{ 'auth.register.fullName' | translate }}
-      <input type="text" formControlName="fullName" autocomplete="name" maxlength="150" />
-    </label>
-    @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
-      <small class="field-error">{{ 'auth.register.fullNameRequired' | translate }}</small>
-    }
+  <div class="auth-card wide">
+    <h1>{{ 'auth.register.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
 
-    <label>
-      {{ 'auth.register.email' | translate }}
-      <input type="email" formControlName="email" autocomplete="email" placeholder="vous@exemple.com" />
-    </label>
-    @if (form.controls.email.touched && form.controls.email.invalid) {
-      <small class="field-error">{{ 'auth.register.emailInvalid' | translate }}</small>
-    }
-
-    <label for="register-password">{{ 'auth.register.password' | translate }}</label>
-    <app-password-field inputId="register-password" [control]="form.controls.password" autocomplete="new-password" [showStrength]="true" />
-    @if (form.controls.password.touched && form.controls.password.invalid) {
-      <small class="field-error">{{ 'password.rules' | translate }}</small>
-    } @else {
-      <small class="hint">{{ 'password.rules' | translate }}</small>
-    }
-
-    <label for="register-confirm">{{ 'password.confirm' | translate }}</label>
-    <app-password-field inputId="register-confirm" [control]="form.controls.confirmPassword" autocomplete="new-password" />
-    @if (form.controls.confirmPassword.touched && form.hasError('passwordMismatch')) {
-      <small class="field-error">{{ 'password.mismatch' | translate }}</small>
-    }
-
-    <div class="two-cols">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <label>
-        {{ 'profile.country' | translate }}
-        <select formControlName="country" autocomplete="country">
-          <option value="">{{ 'profile.countryNone' | translate }}</option>
-          @for (c of countries(); track c.code) {
-            <option [value]="c.code">{{ c.name }}</option>
-          }
-        </select>
+        {{ 'auth.register.fullName' | translate }}
+        <input type="text" formControlName="fullName" autocomplete="name" maxlength="150" />
       </label>
+      @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+        <small class="field-error">{{ 'auth.register.fullNameRequired' | translate }}</small>
+      }
+
       <label>
-        {{ 'auth.register.language' | translate }}
-        <select formControlName="preferredLanguage" (change)="onLanguageChange($any($event.target).value)">
-          @for (code of lang.supported; track code) {
-            <option [value]="code">{{ 'lang.' + code | translate }}</option>
-          }
-        </select>
+        {{ 'auth.register.email' | translate }}
+        <input type="email" formControlName="email" autocomplete="email" placeholder="vous@exemple.com" />
       </label>
-    </div>
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <small class="field-error">{{ 'auth.register.emailInvalid' | translate }}</small>
+      }
 
-    @if (error()) {
-      <p class="form-error">{{ error() }}</p>
-    }
+      <label for="register-password">{{ 'auth.register.password' | translate }}</label>
+      <app-password-field inputId="register-password" [control]="form.controls.password" autocomplete="new-password" [showStrength]="true" />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <small class="field-error">{{ 'password.rules' | translate }}</small>
+      } @else {
+        <small class="hint">{{ 'password.rules' | translate }}</small>
+      }
 
-    <button type="submit" [disabled]="loading()">
-      {{ (loading() ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
-    </button>
-  </form>
+      <label for="register-confirm">{{ 'password.confirm' | translate }}</label>
+      <app-password-field inputId="register-confirm" [control]="form.controls.confirmPassword" autocomplete="new-password" />
+      @if (form.controls.confirmPassword.touched && form.hasError('passwordMismatch')) {
+        <small class="field-error">{{ 'password.mismatch' | translate }}</small>
+      }
 
-  <p class="switch">
-    {{ 'auth.register.haveAccount' | translate }}
-    <a routerLink="/login">{{ 'auth.register.signIn' | translate }}</a>
-  </p>
+      <div class="two-cols">
+        <label>
+          {{ 'profile.country' | translate }}
+          <select formControlName="country" autocomplete="country">
+            <option value="">{{ 'profile.countryNone' | translate }}</option>
+            @for (c of countries(); track c.code) {
+              <option [value]="c.code">{{ c.name }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'auth.register.language' | translate }}
+          <select formControlName="preferredLanguage" (change)="onLanguageChange($any($event.target).value)">
+            @for (code of lang.supported; track code) {
+              <option [value]="code">{{ 'lang.' + code | translate }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (error()) {
+        <p class="form-error">{{ error() }}</p>
+      }
+
+      <button type="submit" [disabled]="loading()">
+        {{ (loading() ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
+      </button>
+    </form>
+
+    <p class="switch">
+      {{ 'auth.register.haveAccount' | translate }}
+      <a routerLink="/login">{{ 'auth.register.signIn' | translate }}</a>
+    </p>
+  </div>
 </div>

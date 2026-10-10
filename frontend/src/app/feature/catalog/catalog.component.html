@@ -1,7 +1,12 @@
-<section class="page">
-  <h1>{{ 'catalog.title' | translate }}</h1>
+<header class="catalog-head">
+  <div class="catalog-head-inner">
+    <h1>{{ 'catalog.title' | translate }}</h1>
+    <p class="head-subtitle">{{ 'catalog.subtitle' | translate }}</p>
+    <input class="search" type="search" [formControl]="search" [placeholder]="'catalog.searchPlaceholder' | translate" />
+  </div>
+</header>
 
-  <input class="search" type="search" [formControl]="search" [placeholder]="'catalog.searchPlaceholder' | translate" />
+<section class="page">
 
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>

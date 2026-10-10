@@ -58,6 +58,7 @@
   },
   "catalog": {
     "title": "Cursuscatalogus",
+    "subtitle": "Vind de cursus die je vooruit helpt en sluit hem af met een certificaat.",
     "searchPlaceholder": "Een cursus zoeken…",
     "empty": "Geen cursus gevonden.",
     "newCourse": "Nieuw",

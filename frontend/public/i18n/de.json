@@ -58,6 +58,7 @@
   },
   "catalog": {
     "title": "Kurskatalog",
+    "subtitle": "Finden Sie den Kurs, der Sie weiterbringt, und schließen Sie ihn mit einem Zertifikat ab.",
     "searchPlaceholder": "Kurs suchen…",
     "empty": "Keine passenden Kurse gefunden.",
     "newCourse": "Neu",

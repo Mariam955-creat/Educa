@@ -58,6 +58,7 @@
   },
   "catalog": {
     "title": "Course catalog",
+    "subtitle": "Find the course that will move you forward, then validate it with a certificate.",
     "searchPlaceholder": "Search a course…",
     "empty": "No course matches.",
     "newCourse": "New",

@@ -1312,3 +1312,13 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Rendu non relu au navigateur par Claude.
 
 **À noter** : le socle ne fixe pas la couleur des titres (ils héritent de leur conteneur), sinon les titres blancs des bandeaux bleus deviendraient sombres.
+
+## 2026-10-11 — Design de la page d'un cours
+
+**Fait** (styles uniquement, le gabarit HTML est inchangé)
+- `course-detail.component.scss` : l'en-tête du cours devient une carte blanche à liseré bleu ; la couverture, quand elle existe, s'étale en bandeau 21:9 sur toute la largeur de la carte ; prix agrandi en bleu foncé ; boutons d'achat et d'inscription plus larges ; barre de progression sur fond bleu clair avec le pourcentage en vert ; chapitres avec ombre légère et titre souligné. Page élargie de 820 à 900 px.
+- `angular.json` : seuil d'avertissement `anyComponentStyle` relevé de 4 à 6 kB (la feuille de cette page atteint 4,7 kB) ; le seuil d'erreur reste à 8 kB.
+
+**Vérifié** : `npm run build` OK sans avertissement, `npm run test:ci` → 27/27. Rendu non relu au navigateur par Claude.
+
+**À noter** : le backend lancé pendant la session a été arrêté automatiquement par Claude Code faute de mémoire sur le poste ; le lancer dans un terminal séparé évite la coupure.

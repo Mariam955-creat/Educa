@@ -53,9 +53,9 @@ h2 {
 }
 
 .kpi-value {
-  font-size: 1.45rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .kpi-label {
@@ -140,4 +140,17 @@ h2 {
 
 .link {
   font-size: 0.9rem;
+}
+
+/* Indicateurs : même relief dans les trois espaces (compte, formateur, admin) */
+.kpi {
+  box-shadow: var(--shadow-card, 0 1px 2px rgba(31, 41, 55, 0.05));
+}
+
+.kpi:hover {
+  box-shadow: var(--shadow-raised, 0 10px 24px rgba(17, 24, 39, 0.12));
+}
+
+.kpi:not(.highlight) .kpi-value {
+  color: var(--accent-strong, #1e40af);
 }

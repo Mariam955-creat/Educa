@@ -10,6 +10,8 @@
   <aside class="drawer" [class.open]="open()" [attr.aria-label]="titleKey() | translate">
     <button type="button" class="drawer-close" (click)="close()" [attr.aria-label]="'account.closeMenu' | translate">×</button>
 
+    <p class="drawer-title">{{ titleKey() | translate }}</p>
+
     @if (cta(); as action) {
       <a class="cta" [routerLink]="action.path">
         <span aria-hidden="true">{{ action.icon }}</span>{{ action.labelKey | translate }}

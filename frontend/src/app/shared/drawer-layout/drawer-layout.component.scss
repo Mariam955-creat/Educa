@@ -156,3 +156,31 @@
 .drawer a.cta:hover {
   background: var(--accent-hover, #1d4ed8);
 }
+
+/* --- Titre de l’espace et repère du lien actif --- */
+.drawer-title {
+  margin: 0;
+  padding: 1.1rem 1.35rem 0.5rem;
+  color: var(--muted, #6b7280);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.drawer-nav {
+  gap: 0.15rem;
+}
+
+.drawer a.active {
+  box-shadow: inset 3px 0 0 var(--accent, #2563eb);
+}
+
+.drawer a:not(.cta):hover,
+.logout:hover {
+  background: var(--accent-soft, #eff6ff);
+}
+
+.content {
+  padding-bottom: 2rem;
+}

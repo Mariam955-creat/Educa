@@ -9,6 +9,7 @@
     <div class="list">
       @for (i of invoices(); track i.id) {
         <article class="invoice-card">
+          <span class="badge" aria-hidden="true">🧾</span>
           <div class="invoice-main">
             <h3>{{ i.courseTitle }}</h3>
             <p class="meta">

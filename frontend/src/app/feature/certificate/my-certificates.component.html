@@ -9,6 +9,7 @@
     <div class="list">
       @for (c of certificates(); track c.id) {
         <article class="cert-card">
+          <span class="badge" aria-hidden="true">🎓</span>
           <div class="cert-main">
             <h3>{{ c.courseTitle }}</h3>
             <p class="meta">

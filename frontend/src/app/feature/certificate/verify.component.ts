@@ -35,19 +35,35 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
         padding: 3rem 1rem;
       }
       h1 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         margin: 0 0 1.5rem;
+        text-align: center;
       }
       .muted {
         color: var(--muted);
       }
       .ok {
-        border: 1px solid #a7f3d0;
-        background: #f0fdf4;
+        border: 1px solid var(--border, #dbe3ef);
+        border-top: 6px solid var(--success, #10b981);
+        background: var(--surface, #ffffff);
         border-radius: 12px;
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-raised, 0 10px 24px rgba(17, 24, 39, 0.12));
+      }
+      .badge::before {
+        content: '✓';
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 0.75rem;
+        border-radius: 50%;
+        background: var(--success-soft, #d1fae5);
+        font-size: 1.8rem;
       }
       .badge {
+        font-size: 1.15rem;
         font-weight: 700;
         color: var(--success-strong, #047857);
         margin-top: 0;
@@ -57,8 +73,14 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
         font-size: 0.85rem;
       }
       .ko {
-        color: #b91c1c;
+        padding: 1.5rem;
+        border: 1px solid var(--danger-border, #fecaca);
+        border-top: 6px solid var(--danger, #b91c1c);
+        border-radius: 12px;
+        background: var(--danger-soft, #fef2f2);
+        color: var(--danger, #b91c1c);
         font-weight: 600;
+        text-align: center;
       }
     `,
   ],

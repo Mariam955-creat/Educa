@@ -8,7 +8,7 @@
     <p class="form-error">{{ error() }}</p>
     <a class="btn ghost" routerLink="/account/courses">{{ 'common.back' | translate }}</a>
   } @else if (r) {
-    <div class="result">
+    <div class="result" [class.passed]="r.passed">
       <h1>{{ (r.passed ? 'quizTake.passed' : 'quizTake.result') | translate }}</h1>
       <p class="score">{{ 'quizTake.score' | translate: { score: r.score, correct: r.correctCount, total: r.total } }}</p>
       @if (isFinalExam()) {

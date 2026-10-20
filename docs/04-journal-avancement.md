@@ -1331,3 +1331,18 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 - **Quiz** (`quiz-take`) : questions en cartes à liseré bleu, réponses en tuiles cliquables (réponse choisie surlignée via `:has(input:checked)`), bouton de validation élargi, résultat à bandeau vert si réussi et jaune sinon.
 
 **Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Backend non retesté (seuls des textes changent) ; le nouveau nom n'apparaît dans les PDF et le chatbot qu'après redémarrage du backend. Rendu non relu au navigateur par Claude.
+
+## 2026-10-20 — Catalogue, responsive, promotions, vidéo de démo, mauve clair
+
+**Fait** (un commit par changement)
+- **Certificats, achats, vérification** : médaille jaune et pastille de note, montant mis en avant, carte verte ou rouge sur `/verify/:code`.
+- **Prix** : une première idée (plafond à 9,99 € et prix de démo baissés) a été abandonnée à la demande de l'utilisatrice, prix trop bas pour faire vivre le site. On garde des prix proches du marché (14,99 € à 39,99 €), sans plafond, et on ajoute des **promotions** comme les concurrents (Udemy, Coursera, Teachable…).
+- **Promotions** (`V17__course_promotions_and_preview.sql`) : `courses.promo_price` (contrainte : > 0 et < prix) et `promo_ends_at` ; `Course.effectivePrice(now)` utilisé par le paiement (Stripe, Orange Money) et l'achat de démo ; DTO enrichis (`promoPrice`, `promoEndsAt`, `promoActive`) ; prix barré et badge « -X % » sur les cartes et la page du cours, « Offre valable jusqu'au … » ; saisie dans le formulaire du cours (`400` si promo ≥ prix). Démo : Python 14,99 € au lieu de 29,99 €, SQL 17,99 € au lieu de 34,99 €, Java 19,99 € au lieu de 39,99 €, pour 14 jours, reposées au démarrage si expirées.
+- **Vidéo de démo** : `courses.preview_video_key/type`, `CoursePreviewService`/`CoursePreviewController` (`POST/DELETE/GET /courses/{id}/preview`, même patron que la couverture : MP4/WEBM détectés sur le contenu, 50 Mo max, publique si le cours est publié). Lecteur vidéo en tête de la page du cours, ▶ sur la carte, section dans l'éditeur. La durée d'une minute n'est pas contrôlée (taille seulement). Les cours de démo n'ont pas de vidéo.
+- **Cartes de cours** : composant `shared/course-card`, commun au catalogue et à l'aperçu de l'accueil (désormais 4 cours). Couverture de repli avec pictogramme de catégorie au lieu d'une grosse lettre, étiquettes catégorie/langue, formateur avec initiales, pastilles chapitres/durée/niveau, pied de carte aligné (apprenants, prix).
+- **Responsive** : grille 4 → 3 → 2 → 1 colonnes (1180 / 900 / 560 px), carte horizontale sur téléphone ; tableaux (admin, ventes, résultats) empilés en cartes sous 640 px (règle globale dans `styles.scss`, `:root` pour passer devant les styles de composant) ; ombre du tiroir fermé qui débordait sur le bord droit supprimée. Vérifié par captures Chrome headless (protocole DevTools, connexion avec un compte de démo) sur toutes les pages principales en 390, 820 et 1366 px : aucun débordement horizontal.
+- **Charte mauve clair** : variables de `styles.scss` et valeurs de secours de tous les composants passées du bleu au mauve ; couvertures de repli en mauves, verts et jaunes.
+
+**Vérifié** : `./mvnw test` → **104/104** (4 nouveaux `CoursePromotionTest`), `npm run build` OK, `npm run test:ci` → 27/27, captures avant/après du catalogue et de l'accueil. Promotions non vues à l'écran : le backend lancé par l'utilisatrice doit être redémarré pour appliquer `V17`.
+
+**Reste** : certificat et facture PDF encore en bleu ; pas de vidéo de démo dans le jeu de données.

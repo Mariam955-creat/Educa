@@ -424,6 +424,20 @@ courses.deleted_at, users.deleted_at, course_ratings.deleted_at   TIMESTAMPTZ NU
 - Suppression définitive : uniquement depuis la corbeille (`409` sinon) ; côté interface, saisie du mot « SUPPRIMER »
   (traduit : DELETE, LÖSCHEN, VERWIJDEREN).
 
+### Promotions et vidéo de démo (migrées, `V17__course_promotions_and_preview.sql`, 2026-10-20)
+
+```
+courses.promo_price         NUMERIC(10,2) NULL  -- CHECK promo_price > 0 AND promo_price < price
+courses.promo_ends_at       TIMESTAMPTZ   NULL  -- NULL = sans date de fin
+courses.preview_video_key   VARCHAR(500)  NULL  -- vidéo de démo (~1 min), module storage
+courses.preview_video_type  VARCHAR(100)  NULL  -- type détecté (video/mp4, video/webm)
+```
+
+- Prix payé = `Course.effectivePrice(now)` : prix promo s'il est défini et pas encore terminé, sinon prix normal
+  (paiement Stripe / Orange Money et achat de démo). Le montant payé reste figé dans `payments.amount`.
+- Vidéo de démo : `POST/DELETE /courses/{id}/preview` (propriétaire/ADMIN), `GET` public si le cours est publié
+  (lecture par `<video>`, sans jeton ; requêtes `Range` gérées par Spring).
+
 ### Profil utilisateur (migré, `V15__user_profile.sql`, 2026-10-04)
 
 ```

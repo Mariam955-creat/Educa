@@ -1322,3 +1322,12 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `npm run build` OK sans avertissement, `npm run test:ci` → 27/27. Rendu non relu au navigateur par Claude.
 
 **À noter** : le backend lancé pendant la session a été arrêté automatiquement par Claude Code faute de mémoire sur le poste ; le lancer dans un terminal séparé évite la coupure.
+
+## 2026-10-13 → 2026-10-20 — Nom « Ganndal », espaces et page de quiz
+
+**Fait**
+- **Renommage affiché** : la plateforme s'appelle désormais **Ganndal** (« le savoir » en pulaar) partout où l'utilisateur voit son nom : en-tête, pied de page, panneau des pages connexion/inscription, titre de l'onglet, phrases i18n qui citaient le nom (FR/EN/DE/NL), mention de plateforme du certificat PDF (`messages*.properties`), vendeur de la facture PDF, présentation du chatbot, titre Swagger. Volontairement inchangés : préfixe `EDUCA-` des n° de série de certificat (les certificats déjà émis garderaient l'ancien), comptes de démo `@educa.dev`, paquets `com.educa`, bases `educa`/`educa_test`, nom du dépôt, documentation.
+- **Espaces** (`shared/drawer-layout`) : titre de l'espace en petites capitales en tête du tiroir, barre bleue sur le lien actif, survol bleu clair. Cartes d'indicateurs des trois tableaux de bord au même relief (ombre légère, plus forte au survol, chiffres en bleu foncé) ; carte mise en avant de l'admin passée au dégradé de la charte.
+- **Quiz** (`quiz-take`) : questions en cartes à liseré bleu, réponses en tuiles cliquables (réponse choisie surlignée via `:has(input:checked)`), bouton de validation élargi, résultat à bandeau vert si réussi et jaune sinon.
+
+**Vérifié** : `npm run build` OK, `npm run test:ci` → 27/27. Backend non retesté (seuls des textes changent) ; le nouveau nom n'apparaît dans les PDF et le chatbot qu'après redémarrage du backend. Rendu non relu au navigateur par Claude.

@@ -1,0 +1,72 @@
+@let c = course();
+<a class="card" [routerLink]="['/courses', c.slug]">
+  <div class="cover" [style.background]="coverSrc() ? null : fallback()">
+    @if (coverSrc(); as src) {
+      <img [src]="src" alt="" loading="lazy" />
+    } @else {
+      <span class="cover-icon" aria-hidden="true">{{ icon() }}</span>
+    }
+    <span class="lang-badge">{{ c.language | uppercase }}</span>
+    @if (discount(); as percent) {
+      <span class="promo-badge">-{{ percent }} %</span>
+    }
+    @if (c.previewVideoUrl) {
+      <span class="preview-badge" [attr.title]="'course.preview' | translate">▶</span>
+    }
+    @if (c.category) {
+      <span class="category">{{ 'courseForm.categories.' + c.category | translate }}</span>
+    }
+  </div>
+
+  <div class="body">
+    <h3>{{ c.title }}</h3>
+    @if (c.subtitle) {
+      <p class="subtitle">{{ c.subtitle }}</p>
+    }
+
+    <p class="instructor">
+      <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      <span class="instructor-name">{{ c.instructorName }}</span>
+    </p>
+
+    <div class="rating">
+      @if (c.averageRating != null) {
+        <strong class="rating-value">{{ formatRating(c.averageRating) }}</strong>
+        <app-star-rating
+          [value]="c.averageRating"
+          size="small"
+          [label]="'catalog.ratingLabel' | translate: { value: formatRating(c.averageRating) }"
+        />
+        <span class="rating-count">({{ c.ratingCount }})</span>
+      } @else {
+        <span class="new-badge">{{ 'catalog.newCourse' | translate }}</span>
+      }
+    </div>
+
+    <ul class="facts">
+      <li>📚 {{ (c.chapterCount === 1 ? 'catalog.chapterOne' : 'catalog.chapters') | translate: { count: c.chapterCount } }}</li>
+      @if (c.durationHours) {
+        <li>⏱ {{ 'coursePage.duration' | translate: { hours: c.durationHours } }}</li>
+      }
+      @if (c.level) {
+        <li>📶 {{ 'courseForm.levels.' + c.level | translate }}</li>
+      }
+    </ul>
+
+    <div class="footer">
+      <span class="learners">
+        👥 {{ (c.learnerCount === 1 ? 'catalog.learnerOne' : 'catalog.learners') | translate: { count: c.learnerCount } }}
+      </span>
+      @if (discount() && c.promoPrice != null) {
+        <span class="price-block">
+          <s class="old-price">{{ c.price | money: 'EUR' : lang.current() }}</s>
+          <span class="price promo">{{ c.promoPrice | money: 'EUR' : lang.current() }}</span>
+        </span>
+      } @else {
+        <span class="price" [class.free]="c.price === 0">
+          {{ c.price === 0 ? ('course.free' | translate) : (c.price | money: 'EUR' : lang.current()) }}
+        </span>
+      }
+    </div>
+  </div>
+</a>

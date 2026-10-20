@@ -120,11 +120,12 @@
     height: 100vh;
     transform: translateX(100%);
     transition: transform 0.2s ease-out;
-    box-shadow: 0 0 40px rgba(17, 24, 39, 0.2);
   }
 
+  /* Ombre seulement une fois ouvert : fermé, elle débordait sur le bord droit de l’écran */
   .drawer.open {
     transform: none;
+    box-shadow: 0 0 40px rgba(17, 24, 39, 0.2);
   }
 
   .drawer-close {

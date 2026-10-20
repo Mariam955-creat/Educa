@@ -132,14 +132,45 @@ video {
   height: auto;
 }
 
+/*
+ * Téléphone : chaque ligne de tableau devient une carte empilée (plus de colonnes coupées à droite).
+ * Les en-têtes de colonnes sont masqués visuellement mais restent lus par les lecteurs d'écran.
+ */
 @media (max-width: 640px) {
-  /* Tableaux larges : défilement horizontal au lieu de déborder la page */
-  table {
+  table,
+  tbody,
+  tr,
+  td {
     display: block;
-    max-width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  tr {
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--border, #dbe3ef);
+  }
+
+  tr:last-child {
+    border-bottom: 0;
+  }
+
+  /* :root relève la spécificité au-dessus des styles de composant (td[_ngcontent]) */
+  :root table td {
+    padding: 0.2rem 0;
+    border: 0;
+    white-space: normal;
+  }
+
+  td:empty {
+    display: none;
   }
 }
 

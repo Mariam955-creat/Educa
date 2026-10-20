@@ -56,24 +56,10 @@
     <h2>{{ 'home.coursesTitle' | translate }}</h2>
     <div class="courses">
       @for (course of courses(); track course.id) {
-        <a class="course" [routerLink]="['/courses', course.slug]">
-          <div class="cover" [style.background]="course.coverImageUrl ? null : fallbackCover(course.id)">
-            @if (api.coverSrc(course.coverImageUrl); as src) {
-              <img [src]="src" alt="" loading="lazy" />
-            } @else {
-              <span class="cover-initial" aria-hidden="true">{{ course.title.charAt(0) }}</span>
-            }
-          </div>
-          <div class="course-body">
-            <h3>{{ course.title }}</h3>
-            <p class="instructor">{{ course.instructorName }}</p>
-            <p class="price">
-              {{ course.price === 0 ? ('course.free' | translate) : (course.price | money: 'EUR' : lang.current()) }}
-            </p>
-          </div>
-        </a>
+        <app-course-card [course]="course" />
       }
     </div>
+    <p class="see-all"><a routerLink="/register">{{ 'home.ctaRegister' | translate }} →</a></p>
   </section>
 }
 

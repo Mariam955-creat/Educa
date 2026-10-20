@@ -9,7 +9,7 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0.2rem 0.6rem 0.2rem 0.2rem;
-  border: 1px solid var(--border, #dbe3ef);
+  border: 1px solid var(--border, #e9e2fb);
   border-radius: 999px;
   background: var(--surface, #ffffff);
   color: var(--text, #1f2937);
@@ -23,8 +23,8 @@
 .trigger:hover,
 .trigger:focus-visible,
 .trigger.open {
-  border-color: var(--accent, #2563eb);
-  box-shadow: 0 0 0 3px var(--accent-soft, #eff6ff);
+  border-color: var(--accent, #8b5cf6);
+  box-shadow: 0 0 0 3px var(--accent-soft, #f5f3ff);
   outline: none;
 }
 
@@ -48,7 +48,7 @@
   width: 2.1rem;
   height: 2.1rem;
   border-radius: 50%;
-  background: var(--accent, #2563eb);
+  background: var(--accent, #8b5cf6);
   color: #fff;
   font-size: 0.8rem;
   font-weight: 700;
@@ -58,7 +58,7 @@
 .avatar.big {
   flex-shrink: 0;
   border: 0;
-  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
+  background: var(--brand-gradient, linear-gradient(135deg, #a78bfa, #7c3aed));
   color: #fff;
   width: 2.75rem;
   height: 2.75rem;
@@ -118,8 +118,8 @@
   margin-top: 0.3rem;
   padding: 0.05rem 0.45rem;
   border-radius: 999px;
-  background: var(--accent-soft, #eff6ff);
-  color: var(--accent, #2563eb);
+  background: var(--accent-soft, #f5f3ff);
+  color: var(--accent, #8b5cf6);
   font-size: 0.7rem;
   font-weight: 700;
 }
@@ -189,12 +189,12 @@
 }
 
 .lang-pills button:hover {
-  border-color: var(--accent, #2563eb);
+  border-color: var(--accent, #8b5cf6);
 }
 
 .lang-pills button.active {
-  border-color: var(--accent, #2563eb);
-  background: var(--accent, #2563eb);
+  border-color: var(--accent, #8b5cf6);
+  background: var(--accent, #8b5cf6);
   color: #fff;
 }
 

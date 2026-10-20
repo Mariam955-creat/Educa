@@ -8,7 +8,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--border, #dbe3ef);
+  border: 1px solid var(--border, #e9e2fb);
   border-radius: 12px;
   background: var(--surface, #ffffff);
   color: inherit;
@@ -98,7 +98,7 @@
   max-width: calc(100% - 1.3rem);
   overflow: hidden;
   background: var(--surface, #ffffff);
-  color: var(--accent-strong, #1e40af);
+  color: var(--accent-strong, #6d28d9);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -150,8 +150,8 @@ h3 {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--accent-soft, #eff6ff);
-  color: var(--accent, #2563eb);
+  background: var(--accent-soft, #f5f3ff);
+  color: var(--accent, #8b5cf6);
   font-size: 0.65rem;
   font-weight: 800;
 }
@@ -200,7 +200,7 @@ h3 {
 .facts li {
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: var(--bg, #eff6ff);
+  background: var(--bg, #f5f3ff);
   color: var(--text, #1f2937);
   font-size: 0.72rem;
   white-space: nowrap;
@@ -214,7 +214,7 @@ h3 {
   gap: 0.5rem;
   margin-top: auto;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--border, #dbe3ef);
+  border-top: 1px solid var(--border, #e9e2fb);
 }
 
 .learners {
@@ -225,7 +225,7 @@ h3 {
 .price {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--accent-strong, #1e40af);
+  color: var(--accent-strong, #6d28d9);
   white-space: nowrap;
 }
 

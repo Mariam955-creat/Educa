@@ -70,7 +70,7 @@ import { CourseDetail } from '../../core/courses/course.models';
     .instructor-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
     .instructor-head div { display: flex; flex-direction: column; }
     .instructor-head span:not(.avatar) { color: var(--muted); font-size: 0.85rem; }
-    .avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af)); color: #fff; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
+    .avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--brand-gradient, linear-gradient(135deg, #a78bfa, #7c3aed)); color: #fff; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
   `,
 })
 export class CoursePresentationComponent {

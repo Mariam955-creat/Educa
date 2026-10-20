@@ -81,7 +81,7 @@ import { ConfirmDeleteDialogComponent } from '../../shared/trash/confirm-delete-
     .hint { color: #92400e; font-size: 0.8rem; }
     .actions { display: flex; gap: 0.4rem; }
     button { padding: 0.4rem 0.75rem; border-radius: 6px; font: inherit; font-size: 0.82rem; cursor: pointer; }
-    .restore { border: 1px solid var(--accent, #2563eb); background: transparent; color: var(--accent, #2563eb); font-weight: 600; }
+    .restore { border: 1px solid var(--accent, #8b5cf6); background: transparent; color: var(--accent, #8b5cf6); font-weight: 600; }
     .danger { border: 1px solid #fecaca; background: transparent; color: #b91c1c; }
     .danger:disabled { opacity: 0.45; cursor: not-allowed; }
   `,

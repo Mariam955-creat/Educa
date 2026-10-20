@@ -37,8 +37,8 @@ legend small {
   width: 1.7rem;
   height: 1.7rem;
   border-radius: 50%;
-  background: var(--accent-soft, #eff6ff);
-  color: var(--accent, #2563eb);
+  background: var(--accent-soft, #f5f3ff);
+  color: var(--accent, #8b5cf6);
   font-size: 0.85rem;
   font-weight: 800;
 }
@@ -81,8 +81,8 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--accent, #2563eb);
-  outline: 2px solid var(--accent-soft, #eff6ff);
+  border-color: var(--accent, #8b5cf6);
+  outline: 2px solid var(--accent-soft, #f5f3ff);
 }
 
 .hint {
@@ -135,7 +135,7 @@ textarea:focus {
 
 .bullet {
   width: 1rem;
-  color: var(--accent, #2563eb);
+  color: var(--accent, #8b5cf6);
   font-weight: 800;
   text-align: center;
 }
@@ -159,7 +159,7 @@ button {
   padding: 0.3rem 0;
   border: 0;
   background: transparent;
-  color: var(--accent, #2563eb);
+  color: var(--accent, #8b5cf6);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -167,7 +167,7 @@ button {
 /* --- Pondération --- */
 input[type='range'] {
   padding: 0;
-  accent-color: var(--accent, #2563eb);
+  accent-color: var(--accent, #8b5cf6);
 }
 
 .weights {
@@ -209,7 +209,7 @@ input[type='range'] {
   margin: 0;
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  background: var(--accent, #2563eb);
+  background: var(--accent, #8b5cf6);
   color: #fff;
   cursor: pointer;
 }
@@ -232,7 +232,7 @@ input[type='range'] {
   padding: 0.65rem 1.4rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #2563eb);
+  background: var(--accent, #8b5cf6);
   color: #fff;
   font-weight: 700;
 }

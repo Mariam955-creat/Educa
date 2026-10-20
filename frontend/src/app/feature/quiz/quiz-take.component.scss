@@ -53,7 +53,7 @@ button {
   padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #2563eb);
+  background: var(--accent, #8b5cf6);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -67,8 +67,8 @@ button:disabled {
 button.ghost,
 .btn.ghost {
   background: transparent;
-  color: var(--accent, #2563eb);
-  border: 1px solid var(--accent, #2563eb);
+  color: var(--accent, #8b5cf6);
+  border: 1px solid var(--accent, #8b5cf6);
 }
 
 .result {
@@ -104,7 +104,7 @@ button.ghost,
 /* --- Questions : réponses en tuiles cliquables, réponse choisie surlignée en bleu --- */
 .question {
   padding: 1.35rem;
-  border-top: 4px solid var(--accent, #2563eb);
+  border-top: 4px solid var(--accent, #8b5cf6);
   box-shadow: var(--shadow-card, 0 1px 2px rgba(31, 41, 55, 0.05));
 }
 
@@ -115,7 +115,7 @@ button.ghost,
 
 .option {
   padding: 0.7rem 0.9rem;
-  border: 1px solid var(--border, #dbe3ef);
+  border: 1px solid var(--border, #e9e2fb);
   border-radius: 8px;
   background: var(--surface, #ffffff);
   transition:
@@ -124,17 +124,17 @@ button.ghost,
 }
 
 .option:hover {
-  border-color: var(--accent, #2563eb);
+  border-color: var(--accent, #8b5cf6);
 }
 
 .option:has(input:checked) {
-  border-color: var(--accent, #2563eb);
-  background: var(--accent-soft, #eff6ff);
+  border-color: var(--accent, #8b5cf6);
+  background: var(--accent-soft, #f5f3ff);
   font-weight: 600;
 }
 
 .option input {
-  accent-color: var(--accent, #2563eb);
+  accent-color: var(--accent, #8b5cf6);
   width: 1.05rem;
   height: 1.05rem;
 }

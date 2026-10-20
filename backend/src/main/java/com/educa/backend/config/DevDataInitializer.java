@@ -106,6 +106,9 @@ public class DevDataInitializer implements ApplicationRunner {
         seedDemoPromotion(PYTHON_COURSE_SLUG, "14.99");
         seedDemoPromotion("sql-et-bases-de-donnees-relationnelles", "17.99");
         seedDemoPromotion("java-programmation-orientee-objet", "19.99");
+        seedDemoPromotion("html-et-css-creer-son-premier-site", "9.99");
+        seedDemoPromotion("design-d-interfaces-les-bases-ui-ux", "17.99");
+        seedDemoPromotion("marketing-digital-attirer-ses-premiers-clients", "24.99");
 
         seedCertifiedLearner(graduate, gitCourse);
 
@@ -362,7 +365,198 @@ public class DevDataInitializer implements ApplicationRunner {
     }
 
     private static List<CourseSpec> catalogCourses() {
-        return List.of(sqlCourse(), algorithmsCourse(), securityCourse(), javaCourse());
+        return List.of(sqlCourse(), algorithmsCourse(), securityCourse(), javaCourse(),
+                htmlCssCourse(), excelCourse(), englishCourse(), uiDesignCourse(), digitalMarketingCourse());
+    }
+
+    private static CourseSpec htmlCssCourse() {
+        return new CourseSpec("html-et-css-creer-son-premier-site", "HTML et CSS : créer son premier site web",
+                "Structurer une page avec HTML, la mettre en forme avec CSS et la rendre lisible sur téléphone.",
+                "19.99",
+                List.of(
+                        new ChapterSpec("La structure d'une page HTML", List.of(
+                                textContent("Les balises", 1,
+                                        "Une page HTML est faite de balises : <h1> pour un titre, <p> pour un paragraphe, <a> pour un lien, <img> pour une image."),
+                                textContent("Le squelette d'une page", 2,
+                                        "Toute page commence par <!doctype html>, puis <html>, <head> (titre, encodage) et <body> (le contenu visible).")),
+                                List.of(singleChoice("Quelle balise crée un lien ?", 1,
+                                                "<a>", true, "<p>", false, "<img>", false),
+                                        trueFalse("Le contenu visible de la page se trouve dans <body>.", 2, true))),
+                        new ChapterSpec("Mettre en forme avec CSS", List.of(
+                                textContent("Sélecteurs et propriétés", 1,
+                                        "Une règle CSS associe un sélecteur (h1, .carte, #menu) à des propriétés : color, font-size, margin, padding…"),
+                                textContent("Le modèle de boîte", 2,
+                                        "Chaque élément est une boîte : contenu, puis marge intérieure (padding), bordure (border) et marge extérieure (margin).")),
+                                List.of(singleChoice("Quelle propriété change la couleur du texte ?", 1,
+                                                "color", true, "background", false, "border", false),
+                                        trueFalse("Le padding est l'espace à l'extérieur de la bordure.", 2, false))),
+                        new ChapterSpec("Un site lisible sur téléphone", List.of(
+                                textContent("La balise viewport", 1,
+                                        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> indique au téléphone d'afficher la page à sa vraie largeur."),
+                                textContent("Les media queries", 2,
+                                        "@media (max-width: 600px) { … } applique des règles seulement sur les petits écrans : une colonne au lieu de trois, par exemple.")),
+                                List.of(singleChoice("À quoi sert une media query ?", 1,
+                                                "adapter le style à la taille de l'écran", true,
+                                                "ajouter une vidéo", false, "envoyer un formulaire", false),
+                                        trueFalse("Sans balise viewport, une page peut s'afficher en tout petit sur téléphone.", 2, true)))),
+                List.of(singleChoice("Quel langage décrit la structure d'une page ?", 1,
+                                "HTML", true, "CSS", false, "SQL", false),
+                        singleChoice("Où met-on la mise en forme (couleurs, tailles) ?", 2,
+                                "dans le CSS", true, "dans le titre de la page", false, "dans l'adresse du site", false),
+                        trueFalse("Un site responsive s'adapte à la taille de l'écran.", 3, true)));
+    }
+
+    private static CourseSpec excelCourse() {
+        return new CourseSpec("excel-de-debutant-a-efficace", "Excel : de débutant à efficace",
+                "Saisir et organiser des données, calculer avec les formules essentielles et présenter ses chiffres en graphiques.",
+                "24.99",
+                List.of(
+                        new ChapterSpec("Prendre en main un classeur", List.of(
+                                textContent("Cellules, lignes et colonnes", 1,
+                                        "Chaque cellule a une adresse : la colonne (lettre) puis la ligne (chiffre), par exemple B3."),
+                                textContent("Mettre en forme un tableau", 2,
+                                        "Mettez les titres en gras, figez la première ligne et utilisez « Mettre sous forme de tableau » pour trier et filtrer facilement.")),
+                                List.of(singleChoice("Que désigne l'adresse C5 ?", 1,
+                                                "la colonne C, ligne 5", true, "la ligne C, colonne 5", false,
+                                                "la 5e feuille", false),
+                                        trueFalse("Figer la première ligne la garde visible quand on fait défiler.", 2, true))),
+                        new ChapterSpec("Les formules essentielles", List.of(
+                                textContent("SOMME, MOYENNE, MAX", 1,
+                                        "Une formule commence par = : =SOMME(B2:B10) additionne une plage, =MOYENNE(B2:B10) en fait la moyenne."),
+                                textContent("Le SI", 2,
+                                        "=SI(B2>=10;\"Admis\";\"Ajourné\") affiche un texte selon une condition.")),
+                                List.of(singleChoice("Par quel caractère commence une formule ?", 1,
+                                                "=", true, "#", false, "@", false),
+                                        trueFalse("=MOYENNE(A1:A4) additionne les cellules A1 à A4.", 2, false))),
+                        new ChapterSpec("Présenter ses données", List.of(
+                                textContent("Les graphiques", 1,
+                                        "Sélectionnez vos données puis Insertion > Graphique : histogramme pour comparer, courbe pour une évolution, secteurs pour une répartition."),
+                                textContent("Le tableau croisé dynamique", 2,
+                                        "Il résume un grand tableau en quelques clics : total des ventes par mois et par vendeur, par exemple.")),
+                                List.of(singleChoice("Quel graphique montre le mieux une évolution dans le temps ?", 1,
+                                                "une courbe", true, "un secteur", false, "un nuage de mots", false),
+                                        trueFalse("Un tableau croisé dynamique permet de résumer un grand tableau.", 2, true)))),
+                List.of(singleChoice("Quelle formule additionne les cellules A1 à A10 ?", 1,
+                                "=SOMME(A1:A10)", true, "=MOYENNE(A1:A10)", false, "=SI(A1:A10)", false),
+                        singleChoice("Pour comparer des ventes entre plusieurs vendeurs, on choisit plutôt…", 2,
+                                "un histogramme", true, "une seule cellule", false, "un texte en gras", false),
+                        trueFalse("Une formule Excel commence toujours par le signe =.", 3, true)));
+    }
+
+    private static CourseSpec englishCourse() {
+        return new CourseSpec("anglais-professionnel-communiquer-au-travail", "Anglais professionnel : communiquer au travail",
+                "Écrire des e-mails clairs, réussir ses appels et ses réunions en anglais, avec les expressions utiles au quotidien.",
+                "29.99",
+                List.of(
+                        new ChapterSpec("Écrire un e-mail professionnel", List.of(
+                                textContent("Ouvrir et conclure", 1,
+                                        "« Dear Ms Smith, » pour ouvrir, « Kind regards, » pour conclure ; « Hi John, » reste réservé aux collègues proches."),
+                                textContent("Être clair et poli", 2,
+                                        "Une demande par paragraphe, des phrases courtes, et des formules polies : « Could you please… », « I would appreciate it if… ».")),
+                                List.of(singleChoice("Quelle formule conclut un e-mail professionnel ?", 1,
+                                                "Kind regards,", true, "See ya!", false, "Bye bye", false),
+                                        trueFalse("« Could you please send me the report? » est une demande polie.", 2, true))),
+                        new ChapterSpec("Au téléphone et en visio", List.of(
+                                textContent("Se présenter", 1,
+                                        "« Hello, this is Awa from Ganndal. I'm calling about… » : votre nom, votre entreprise, puis l'objet de l'appel."),
+                                textContent("Faire répéter", 2,
+                                        "« Sorry, could you repeat that? » ou « Could you speak a little more slowly, please? » : demander de répéter est normal.")),
+                                List.of(singleChoice("Pour faire répéter poliment, on dit…", 1,
+                                                "Sorry, could you repeat that?", true, "What?", false, "Again!", false),
+                                        trueFalse("Au téléphone, on annonce l'objet de l'appel après s'être présenté.", 2, true))),
+                        new ChapterSpec("Participer à une réunion", List.of(
+                                textContent("Donner son avis", 1,
+                                        "« In my opinion… », « I agree with you », « I see your point, but… » permettent de nuancer sans brusquer."),
+                                textContent("Résumer les décisions", 2,
+                                        "« To sum up, we agreed that… » puis « The next step is… » : chacun repart avec les mêmes informations.")),
+                                List.of(singleChoice("Quelle expression exprime un désaccord poli ?", 1,
+                                                "I see your point, but…", true, "You are wrong.", false, "No way.", false),
+                                        trueFalse("« To sum up » sert à résumer.", 2, true)))),
+                List.of(singleChoice("Comment commencer un e-mail à une cliente que vous ne connaissez pas ?", 1,
+                                "Dear Ms Diallo,", true, "Hey!", false, "Yo Diallo", false),
+                        singleChoice("« Could you speak more slowly? » sert à…", 2,
+                                "demander de parler plus lentement", true, "raccrocher", false, "dire au revoir", false),
+                        trueFalse("« I agree with you » signifie « Je suis d'accord avec vous ».", 3, true)));
+    }
+
+    private static CourseSpec uiDesignCourse() {
+        return new CourseSpec("design-d-interfaces-les-bases-ui-ux", "Design d'interfaces : les bases de l'UI/UX",
+                "Comprendre les besoins des utilisateurs et concevoir des écrans clairs : hiérarchie, couleurs, typographie et maquettes.",
+                "34.99",
+                List.of(
+                        new ChapterSpec("Penser utilisateur (UX)", List.of(
+                                textContent("Partir du besoin", 1,
+                                        "Avant de dessiner, on interroge les utilisateurs : qui sont-ils, que veulent-ils faire, qu'est-ce qui les gêne aujourd'hui ?"),
+                                textContent("Le parcours utilisateur", 2,
+                                        "On décrit les étapes pour atteindre un but (s'inscrire, acheter) et on supprime toutes celles qui ne servent à rien.")),
+                                List.of(singleChoice("Par quoi commence une démarche UX ?", 1,
+                                                "comprendre les utilisateurs", true, "choisir les couleurs", false,
+                                                "écrire le code", false),
+                                        trueFalse("Réduire le nombre d'étapes d'un parcours améliore souvent l'expérience.", 2, true))),
+                        new ChapterSpec("Les règles visuelles (UI)", List.of(
+                                textContent("Hiérarchie et contraste", 1,
+                                        "Le plus important doit se voir en premier : taille, graisse et contraste guident l'œil. Un texte doit rester lisible sur son fond."),
+                                textContent("Couleurs et typographie", 2,
+                                        "Une couleur principale, une ou deux couleurs d'accent et au plus deux polices suffisent à un design cohérent.")),
+                                List.of(singleChoice("Combien de polices au maximum pour un design cohérent ?", 1,
+                                                "deux", true, "six", false, "une par page", false),
+                                        trueFalse("Un texte gris clair sur fond blanc est toujours facile à lire.", 2, false))),
+                        new ChapterSpec("De la maquette au prototype", List.of(
+                                textContent("Le wireframe", 1,
+                                        "Un wireframe est un croquis en noir et blanc qui place les blocs de l'écran, sans se soucier des couleurs."),
+                                textContent("Tester le prototype", 2,
+                                        "Un prototype cliquable (Figma, par exemple) se fait tester par quelques utilisateurs avant tout développement.")),
+                                List.of(singleChoice("Qu'est-ce qu'un wireframe ?", 1,
+                                                "un croquis de la disposition d'un écran", true,
+                                                "le code final du site", false, "une palette de couleurs", false),
+                                        trueFalse("On peut tester un prototype avec des utilisateurs avant de coder.", 2, true)))),
+                List.of(singleChoice("Que désigne l'UX ?", 1,
+                                "l'expérience vécue par l'utilisateur", true, "le langage de programmation", false,
+                                "le nom de domaine", false),
+                        singleChoice("Comment faire ressortir l'élément le plus important d'un écran ?", 2,
+                                "par la taille, la graisse et le contraste", true, "en le cachant dans un menu", false,
+                                "en l'écrivant en tout petit", false),
+                        trueFalse("Un prototype se teste idéalement avant le développement.", 3, true)));
+    }
+
+    private static CourseSpec digitalMarketingCourse() {
+        return new CourseSpec("marketing-digital-attirer-ses-premiers-clients", "Marketing digital : attirer ses premiers clients",
+                "Définir sa cible, être visible sur les réseaux sociaux et sur Google, et mesurer ce qui fonctionne vraiment.",
+                "39.99",
+                List.of(
+                        new ChapterSpec("Connaître sa cible", List.of(
+                                textContent("Le persona", 1,
+                                        "Un persona décrit un client type : âge, métier, besoins, freins. Il aide à choisir le bon message et le bon canal."),
+                                textContent("La proposition de valeur", 2,
+                                        "En une phrase : pour qui, quel problème vous résolvez et pourquoi vous plutôt qu'un autre.")),
+                                List.of(singleChoice("À quoi sert un persona ?", 1,
+                                                "représenter un client type", true, "calculer la TVA", false,
+                                                "créer un logo", false),
+                                        trueFalse("Une proposition de valeur doit tenir en quelques mots clairs.", 2, true))),
+                        new ChapterSpec("Être visible", List.of(
+                                textContent("Les réseaux sociaux", 1,
+                                        "Mieux vaut un ou deux réseaux bien choisis (là où se trouve votre cible) et une publication régulière que tous les réseaux à moitié."),
+                                textContent("Le référencement (SEO)", 2,
+                                        "Des pages rapides, des titres clairs et un contenu qui répond aux questions de vos clients aident à remonter sur Google.")),
+                                List.of(singleChoice("Sur quels réseaux publier ?", 1,
+                                                "là où se trouve sa cible", true, "sur tous, sans exception", false,
+                                                "aucun", false),
+                                        trueFalse("Le SEO vise à être mieux classé dans les moteurs de recherche.", 2, true))),
+                        new ChapterSpec("Mesurer et ajuster", List.of(
+                                textContent("Les bons indicateurs", 1,
+                                        "Visites, taux de clic, taux de conversion (visiteurs devenus clients) : suivez peu d'indicateurs, mais régulièrement."),
+                                textContent("Tester et améliorer", 2,
+                                        "Changez une chose à la fois (un titre, une image) et comparez les résultats : c'est le principe du test A/B.")),
+                                List.of(singleChoice("Le taux de conversion mesure…", 1,
+                                                "la part des visiteurs devenus clients", true, "le nombre d'abonnés", false,
+                                                "la vitesse du site", false),
+                                        trueFalse("Dans un test A/B, on change plusieurs choses à la fois.", 2, false)))),
+                List.of(singleChoice("Quelle est la première étape d'une stratégie marketing ?", 1,
+                                "définir sa cible", true, "acheter de la publicité", false, "changer de logo", false),
+                        singleChoice("Que signifie SEO ?", 2,
+                                "l'optimisation pour les moteurs de recherche", true, "un réseau social", false,
+                                "un logiciel de comptabilité", false),
+                        trueFalse("Mesurer ses résultats permet d'ajuster ses actions.", 3, true)));
     }
 
     private static CourseSpec sqlCourse() {
@@ -665,6 +859,46 @@ public class DevDataInitializer implements ApplicationRunner {
 
     private static List<PresentationSpec> presentations() {
         return List.of(
+                new PresentationSpec("html-et-css-creer-son-premier-site",
+                        "Votre premier site web, lisible sur ordinateur comme sur téléphone",
+                        CourseCategory.DEVELOPMENT, CourseLevel.BEGINNER, "4",
+                        List.of("Structurer une page avec les balises HTML",
+                                "Mettre en forme avec CSS",
+                                "Adapter la page aux téléphones"),
+                        List.of("Savoir utiliser un ordinateur et un navigateur"),
+                        "Débutants complets, entrepreneurs qui veulent comprendre leur site, futurs développeurs."),
+                new PresentationSpec("excel-de-debutant-a-efficace",
+                        "Les formules et graphiques utiles au travail, pas à pas",
+                        CourseCategory.OFFICE, CourseLevel.BEGINNER, "5",
+                        List.of("Organiser des données dans un tableau propre",
+                                "Calculer avec SOMME, MOYENNE et SI",
+                                "Présenter ses chiffres en graphiques"),
+                        List.of("Avoir Excel ou un tableur gratuit (LibreOffice, Google Sheets)"),
+                        "Salariés, étudiants et indépendants qui veulent gagner du temps sur leurs tableaux."),
+                new PresentationSpec("anglais-professionnel-communiquer-au-travail",
+                        "E-mails, appels et réunions : les expressions qui servent vraiment",
+                        CourseCategory.LANGUAGES, CourseLevel.INTERMEDIATE, "6",
+                        List.of("Rédiger un e-mail professionnel clair et poli",
+                                "Se présenter et faire répéter au téléphone",
+                                "Donner son avis et résumer une réunion"),
+                        List.of("Un niveau d'anglais scolaire (A2)"),
+                        "Professionnels qui travaillent avec des clients ou des collègues anglophones."),
+                new PresentationSpec("design-d-interfaces-les-bases-ui-ux",
+                        "Concevoir des écrans clairs que les utilisateurs comprennent tout de suite",
+                        CourseCategory.DESIGN, CourseLevel.BEGINNER, "6",
+                        List.of("Partir des besoins des utilisateurs",
+                                "Appliquer les règles de hiérarchie, couleur et typographie",
+                                "Passer du croquis au prototype testé"),
+                        List.of("Aucun — un compte Figma gratuit suffit pour pratiquer"),
+                        "Curieux du design, développeurs, chefs de projet et créateurs d'entreprise."),
+                new PresentationSpec("marketing-digital-attirer-ses-premiers-clients",
+                        "Une méthode simple pour être visible en ligne et convertir",
+                        CourseCategory.BUSINESS, CourseLevel.ALL_LEVELS, "7",
+                        List.of("Définir sa cible et sa proposition de valeur",
+                                "Choisir ses réseaux sociaux et soigner son référencement",
+                                "Mesurer ses résultats et les améliorer"),
+                        List.of("Avoir un projet, un produit ou un service à faire connaître"),
+                        "Entrepreneurs, commerçants, associations et indépendants qui se lancent."),
                 new PresentationSpec(PYTHON_COURSE_SLUG,
                         "Votre premier programme en une heure, sans aucune expérience préalable",
                         CourseCategory.DEVELOPMENT, CourseLevel.BEGINNER, "4",

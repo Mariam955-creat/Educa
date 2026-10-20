@@ -109,6 +109,7 @@ public class DevDataInitializer implements ApplicationRunner {
         seedDemoPromotion("html-et-css-creer-son-premier-site", "9.99");
         seedDemoPromotion("design-d-interfaces-les-bases-ui-ux", "17.99");
         seedDemoPromotion("marketing-digital-attirer-ses-premiers-clients", "24.99");
+        seedDemoPromotion("gestion-de-projet-agile-et-scrum", "22.99");
 
         seedCertifiedLearner(graduate, gitCourse);
 
@@ -366,7 +367,7 @@ public class DevDataInitializer implements ApplicationRunner {
 
     private static List<CourseSpec> catalogCourses() {
         return List.of(sqlCourse(), algorithmsCourse(), securityCourse(), javaCourse(),
-                htmlCssCourse(), excelCourse(), englishCourse(), uiDesignCourse(), digitalMarketingCourse());
+                htmlCssCourse(), excelCourse(), englishCourse(), uiDesignCourse(), digitalMarketingCourse(), agileCourse());
     }
 
     private static CourseSpec htmlCssCourse() {
@@ -557,6 +558,46 @@ public class DevDataInitializer implements ApplicationRunner {
                                 "l'optimisation pour les moteurs de recherche", true, "un réseau social", false,
                                 "un logiciel de comptabilité", false),
                         trueFalse("Mesurer ses résultats permet d'ajuster ses actions.", 3, true)));
+    }
+
+    private static CourseSpec agileCourse() {
+        return new CourseSpec("gestion-de-projet-agile-et-scrum", "Gestion de projet : méthodes agiles et Scrum",
+                "Livrer par petites étapes, organiser le travail d'équipe avec Scrum et suivre l'avancement avec un tableau Kanban.",
+                "44.99",
+                List.of(
+                        new ChapterSpec("L'esprit agile", List.of(
+                                textContent("Pourquoi l'agilité", 1,
+                                        "Plutôt qu'un grand plan figé, on livre un produit utile par petites étapes et on l'ajuste grâce aux retours des utilisateurs."),
+                                textContent("Les 4 valeurs du Manifeste agile", 2,
+                                        "Les individus avant les outils, un produit qui fonctionne avant la documentation, la collaboration avec le client et l'adaptation au changement.")),
+                                List.of(singleChoice("Que privilégie une démarche agile ?", 1,
+                                                "des livraisons courtes et fréquentes", true,
+                                                "un seul livrable à la fin du projet", false,
+                                                "un plan qu'on ne modifie jamais", false),
+                                        trueFalse("L'agilité accepte que les besoins changent en cours de projet.", 2, true))),
+                        new ChapterSpec("Scrum en pratique", List.of(
+                                textContent("Les rôles", 1,
+                                        "Le Product Owner priorise les besoins, le Scrum Master aide l'équipe à bien travailler, l'équipe de développement réalise le produit."),
+                                textContent("Le sprint et ses rituels", 2,
+                                        "Un sprint dure 1 à 4 semaines : planification, point quotidien de 15 minutes, revue du travail livré puis rétrospective pour s'améliorer.")),
+                                List.of(singleChoice("Qui priorise les besoins du produit ?", 1,
+                                                "le Product Owner", true, "le Scrum Master", false, "le client final seul", false),
+                                        trueFalse("Le point quotidien (daily) dure environ 15 minutes.", 2, true))),
+                        new ChapterSpec("Suivre l'avancement", List.of(
+                                textContent("Le tableau Kanban", 1,
+                                        "Trois colonnes suffisent pour commencer : À faire, En cours, Terminé. On limite le nombre de tâches « En cours » pour finir avant de commencer."),
+                                textContent("Les user stories", 2,
+                                        "« En tant que [utilisateur], je veux [action] afin de [bénéfice] » : une user story décrit un besoin du point de vue de l'utilisateur.")),
+                                List.of(singleChoice("Pourquoi limiter les tâches « En cours » ?", 1,
+                                                "pour terminer avant de commencer autre chose", true,
+                                                "pour cacher le travail", false, "pour aller plus vite en commençant tout", false),
+                                        trueFalse("Une user story décrit un besoin du point de vue de l'utilisateur.", 2, true)))),
+                List.of(singleChoice("Combien de temps dure en général un sprint Scrum ?", 1,
+                                "de 1 à 4 semaines", true, "une journée", false, "un an", false),
+                        singleChoice("À quoi sert la rétrospective ?", 2,
+                                "améliorer la façon de travailler de l'équipe", true, "fixer le prix du produit", false,
+                                "recruter un nouveau membre", false),
+                        trueFalse("Un tableau Kanban rend visible l'avancement des tâches.", 3, true)));
     }
 
     private static CourseSpec sqlCourse() {
@@ -859,6 +900,14 @@ public class DevDataInitializer implements ApplicationRunner {
 
     private static List<PresentationSpec> presentations() {
         return List.of(
+                new PresentationSpec("gestion-de-projet-agile-et-scrum",
+                        "Organiser une équipe et livrer par petites étapes, sans perdre le client de vue",
+                        CourseCategory.BUSINESS, CourseLevel.INTERMEDIATE, "6",
+                        List.of("Comprendre les valeurs et principes agiles",
+                                "Conduire un sprint Scrum avec ses rôles et ses rituels",
+                                "Suivre le travail avec un tableau Kanban et des user stories"),
+                        List.of("Avoir déjà participé à un projet, même petit"),
+                        "Chefs de projet, développeurs, entrepreneurs et étudiants qui travaillent en équipe."),
                 new PresentationSpec("html-et-css-creer-son-premier-site",
                         "Votre premier site web, lisible sur ordinateur comme sur téléphone",
                         CourseCategory.DEVELOPMENT, CourseLevel.BEGINNER, "4",

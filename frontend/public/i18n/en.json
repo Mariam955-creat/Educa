@@ -1,6 +1,7 @@
 {
   "lang": { "label": "Language", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
   "nav": {
+    "subscription": "Subscription",
     "dashboard": "Dashboard",
     "catalog": "Catalog",
     "certificates": "My certificates",
@@ -78,6 +79,8 @@
     "verifyLink": "Verify publicly"
   },
   "invoices": {
+    "subscription": "Subscription — access to all courses",
+    "accessUntil": "Access until {{date}}",
     "title": "My purchases",
     "empty": "No purchase yet.",
     "line": "{{invoiceNumber}} · {{date}}",
@@ -93,6 +96,8 @@
     "invalid": "❌ No certificate matches this code."
   },
   "course": {
+    "orSubscribe": "Or get every course:",
+    "subscribeLink": "subscription at {{price}} a month",
     "preview": "Course preview",
     "promoUntil": "Offer valid until {{date}}",
     "backToCatalog": "‹ Catalog",
@@ -682,5 +687,44 @@
     "coursesTitle": "A few courses from the catalogue",
     "ctaTitle": "Ready to start?",
     "ctaText": "Create your free account and explore the catalogue."
+  },
+  "subscription": {
+    "eyebrow": "Ganndal subscription",
+    "title": "Every course, one price",
+    "lead": "Access the whole catalogue for 30 days: take as many courses as you like, pass the assessments and earn your certificates.",
+    "planName": "Unlimited access",
+    "perMonth": "/ month",
+    "days": "{{days}} days of access to every course",
+    "activeUntil": "Subscription active until {{date}}",
+    "subscribeStripe": "Subscribe by card (Europe)",
+    "subscribeOrangeMoney": "Subscribe with Orange Money (Africa)",
+    "renewStripe": "Extend by card (Europe)",
+    "renewOrangeMoney": "Extend with Orange Money (Africa)",
+    "loginHint": "Create an account or sign in to subscribe.",
+    "renewHint": "No automatic charge: each payment adds {{days}} days after your current access.",
+    "paymentSuccess": "Thank you! Your subscription becomes active as soon as the payment is confirmed (a few seconds).",
+    "paymentCancelled": "Payment cancelled: you have not been charged.",
+    "error": "The payment cannot be started right now.",
+    "benefitsTitle": "What the subscription includes",
+    "benefits": {
+      "allCourses": {
+        "title": "Every paid course",
+        "text": "Enrol in any course of the catalogue without buying it separately."
+      },
+      "newCourses": {
+        "title": "New courses too",
+        "text": "Every course added to the catalogue is included as soon as it is published."
+      },
+      "certificates": {
+        "title": "Verifiable certificates",
+        "text": "Quizzes, final exam and PDF certificate, just like a purchased course. Your certificates are yours to keep."
+      },
+      "noCommitment": {
+        "title": "No commitment",
+        "text": "No automatic renewal: you only renew if you want to."
+      }
+    },
+    "compare": "Worth it from the very first course: our courses cost €19.99 to €44.99 each.",
+    "seeCatalog": "See the catalogue"
   }
 }

@@ -12,7 +12,7 @@ import { intlLocale } from '../../core/i18n/intl-locale';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
-import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-api.service';
+import { PaymentApiService, PaymentProvider, Subscription } from '../../core/payment/payment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseGrade, CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 import { StarRatingComponent } from '../../shared/star-rating/star-rating.component';
@@ -53,6 +53,8 @@ export class CourseDetailComponent implements OnInit {
   readonly paymentNotice = signal<'success' | 'cancelled' | null>(null);
   /** Cours déjà payé mais pas encore inscrit (confirmation reçue après le retour de Stripe) → « S'inscrire ». */
   readonly purchased = signal(false);
+  /** Offre d'abonnement (prix affiché sous les boutons d'achat) ; `active` = inscription possible sans achat. */
+  readonly subscription = signal<Subscription | null>(null);
 
   readonly canEnroll = computed(() => {
     const c = this.course();
@@ -182,6 +184,12 @@ export class CourseDetailComponent implements OnInit {
         if (autoEnrollAfterPayment && !course.contentsVisible) {
           this.enroll(ENROLL_RETRIES_AFTER_PAYMENT);
           return;
+        }
+        if (!course.contentsVisible && course.price > 0) {
+          this.paymentApi.subscription().subscribe({
+            next: (s) => this.subscription.set(s),
+            error: () => this.subscription.set(null),
+          });
         }
         if (!course.contentsVisible && course.price > 0 && this.auth.isAuthenticated()) {
           this.paymentApi.myInvoices().subscribe({

@@ -3,6 +3,7 @@
 
   @if (auth.isAuthenticated()) {
     <nav class="nav">
+      <a routerLink="/subscription" routerLinkActive="active">{{ 'nav.subscription' | translate }}</a>
       @if (auth.hasAnyRole(['INSTRUCTOR', 'ADMIN'])) {
         <a routerLink="/instructor" routerLinkActive="active">{{ 'nav.instructor' | translate }}</a>
       }
@@ -14,6 +15,7 @@
     <app-user-menu />
   } @else {
     <nav class="nav">
+      <a routerLink="/subscription" routerLinkActive="active">{{ 'nav.subscription' | translate }}</a>
       <a routerLink="/login" routerLinkActive="active">{{ 'nav.login' | translate }}</a>
       <a routerLink="/register" routerLinkActive="active">{{ 'nav.register' | translate }}</a>
     </nav>
@@ -51,6 +53,7 @@
 
     <nav class="footer-col" [attr.aria-label]="'footer.learn' | translate">
       <h3>{{ 'footer.learn' | translate }}</h3>
+      <a routerLink="/subscription">{{ 'nav.subscription' | translate }}</a>
       @if (auth.isAuthenticated()) {
         <a routerLink="/catalog">{{ 'nav.catalog' | translate }}</a>
         <a routerLink="/account/courses">{{ 'nav.dashboard' | translate }}</a>

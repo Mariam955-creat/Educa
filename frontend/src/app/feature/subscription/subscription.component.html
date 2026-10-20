@@ -1,0 +1,64 @@
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{ 'subscription.eyebrow' | translate }}</span>
+    <h1>{{ 'subscription.title' | translate }}</h1>
+    <p class="lead">{{ 'subscription.lead' | translate }}</p>
+  </div>
+</section>
+
+<section class="page">
+  @if (notice() === 'success') {
+    <p class="notice ok">{{ 'subscription.paymentSuccess' | translate }}</p>
+  } @else if (notice() === 'cancelled') {
+    <p class="notice">{{ 'subscription.paymentCancelled' | translate }}</p>
+  }
+
+  @if (offer(); as o) {
+    <div class="layout">
+      <article class="plan">
+        <p class="plan-name">{{ 'subscription.planName' | translate }}</p>
+        <p class="plan-price">
+          <strong>{{ o.price | money: o.currency : lang.current() }}</strong>
+          <span>{{ 'subscription.perMonth' | translate }}</span>
+        </p>
+        <p class="plan-days">{{ 'subscription.days' | translate: { days: o.days } }}</p>
+
+        @if (o.active && o.accessUntil) {
+          <p class="status">✓ {{ 'subscription.activeUntil' | translate: { date: (o.accessUntil | localDate: 'long' : lang.current()) } }}</p>
+        }
+
+        <div class="actions">
+          <button type="button" (click)="subscribe('STRIPE')" [disabled]="buying() !== null">
+            {{ (o.active ? 'subscription.renewStripe' : 'subscription.subscribeStripe') | translate }}
+          </button>
+          <button type="button" class="ghost" (click)="subscribe('ORANGE_MONEY')" [disabled]="buying() !== null">
+            {{ (o.active ? 'subscription.renewOrangeMoney' : 'subscription.subscribeOrangeMoney') | translate }}
+          </button>
+        </div>
+        @if (error()) {
+          <p class="error">{{ error() }}</p>
+        }
+        @if (!auth.isAuthenticated()) {
+          <p class="hint">{{ 'subscription.loginHint' | translate }} <a routerLink="/login">{{ 'nav.login' | translate }}</a></p>
+        }
+        <p class="hint">{{ 'subscription.renewHint' | translate: { days: o.days } }}</p>
+      </article>
+
+      <div class="benefits">
+        <h2>{{ 'subscription.benefitsTitle' | translate }}</h2>
+        <ul>
+          @for (b of benefits; track b) {
+            <li>
+              <strong>{{ 'subscription.benefits.' + b + '.title' | translate }}</strong>
+              <span>{{ 'subscription.benefits.' + b + '.text' | translate }}</span>
+            </li>
+          }
+        </ul>
+        <p class="compare">{{ 'subscription.compare' | translate }}</p>
+        <a class="catalog-link" routerLink="/catalog">{{ 'subscription.seeCatalog' | translate }} →</a>
+      </div>
+    </div>
+  } @else {
+    <p class="muted">{{ 'common.loading' | translate }}</p>
+  }
+</section>

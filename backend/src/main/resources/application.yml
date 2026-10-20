@@ -58,6 +58,10 @@ educa:
     model: ${AI_MODEL:claude-sonnet-5}
     timeout-ms: ${AI_TIMEOUT_MS:15000}
     max-context-chars: ${AI_MAX_CONTEXT_CHARS:4000}
+  subscription:
+    # Abonnement « accès à tous les cours » : pass de N jours renouvelable (Stripe et Orange Money).
+    monthly-price: ${SUBSCRIPTION_MONTHLY_PRICE:19.99}
+    days: ${SUBSCRIPTION_DAYS:30}
   payment:
     # Origine où l'API est joignable par les prestataires (webhooks serveur-à-serveur).
     # Distincte de public-base-url (origine du frontend) : en dev les deux diffèrent (:8081 vs :4200).

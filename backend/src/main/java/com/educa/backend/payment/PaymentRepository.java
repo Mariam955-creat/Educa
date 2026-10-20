@@ -22,6 +22,14 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     long countByInvoiceNumberIsNotNull();
 
+    /** Pass d'abonnement réussi dont l'accès court encore après {@code now}. */
+    boolean existsByUserIdAndKindAndStatusAndAccessUntilAfter(Long userId, PaymentKind kind, PaymentStatus status,
+                                                               java.time.Instant now);
+
+    /** Dernier pass d'abonnement réussi (accès le plus lointain), pour prolonger ou afficher l'abonnement. */
+    Optional<Payment> findFirstByUserIdAndKindAndStatusOrderByAccessUntilDesc(Long userId, PaymentKind kind,
+                                                                             PaymentStatus status);
+
     /** Ligne {@code [somme, nombre]} des paiements d'un statut depuis une date. */
     @org.springframework.data.jpa.repository.Query("""
             select coalesce(sum(p.amount), 0), count(p) from Payment p

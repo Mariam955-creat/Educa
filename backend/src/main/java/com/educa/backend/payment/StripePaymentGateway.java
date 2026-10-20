@@ -33,30 +33,32 @@ public class StripePaymentGateway implements PaymentGateway {
     }
 
     @Override
-    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug,
-            String courseTitle, BigDecimal amount) {
+    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String itemName,
+            BigDecimal amount, String returnPath) {
         String currency = config.currency();
         long amountCents = amount.setScale(2, RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(100)).longValueExact();
 
-        SessionCreateParams params = SessionCreateParams.builder()
+        SessionCreateParams.Builder builder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomerEmail(userEmail)
-                .setSuccessUrl(publicBaseUrl + "/courses/" + courseSlug + "?payment=success")
-                .setCancelUrl(publicBaseUrl + "/courses/" + courseSlug + "?payment=cancelled")
+                .setSuccessUrl(publicBaseUrl + returnPath + "?payment=success")
+                .setCancelUrl(publicBaseUrl + returnPath + "?payment=cancelled")
                 .putMetadata("userId", userId.toString())
-                .putMetadata("courseId", courseId.toString())
                 .addLineItem(SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                 .setCurrency(currency)
                                 .setUnitAmount(amountCents)
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                        .setName(courseTitle)
+                                        .setName(itemName)
                                         .build())
                                 .build())
-                        .build())
-                .build();
+                        .build());
+        if (courseId != null) {
+            builder.putMetadata("courseId", courseId.toString());
+        }
+        SessionCreateParams params = builder.build();
 
         try {
             Session session = client.v1().checkout().sessions().create(params);

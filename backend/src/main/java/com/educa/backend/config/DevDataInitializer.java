@@ -99,6 +99,9 @@ public class DevDataInitializer implements ApplicationRunner {
         User instructor = seedUser("formateur@educa.dev", "Karim Formateur", RoleName.INSTRUCTOR);
         seedUser("apprenant@educa.dev", "Amina Apprenante", RoleName.LEARNER);
         User graduate = seedUser("diplome@educa.dev", "Sara Diplômée", RoleName.LEARNER);
+        // Abonné : accès à tous les cours payants sans achat à l'unité (pass de 30 jours renouvelé au démarrage si expiré)
+        User subscriber = seedUser("abonne@educa.dev", "Moussa Abonné", RoleName.LEARNER);
+        paymentService.recordDemoSubscription(subscriber.getId());
 
         seedPythonCourse(instructor);
         Course gitCourse = seedGitCourse(instructor);

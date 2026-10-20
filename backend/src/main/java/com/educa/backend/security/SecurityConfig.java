@@ -69,6 +69,9 @@ public class SecurityConfig {
                         // Langues actives (pour peupler les sélecteurs de langue de cours/inscription).
                         .requestMatchers(HttpMethod.GET, "/api/v1/languages")
                         .permitAll()
+                        // Offre d'abonnement (prix, durée) visible des visiteurs ; l'état n'est renvoyé qu'aux connectés.
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscription")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) ->

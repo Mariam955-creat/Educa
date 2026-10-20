@@ -41,15 +41,26 @@ public class EnrollmentService {
         if (!course.isPublished()) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Ce cours n'est pas publié");
         }
-        enrollmentRepository.findByUserIdAndCourseId(userId, courseId).ifPresent(existing -> {
-            throw new ApiException(HttpStatus.CONFLICT, "Vous êtes déjà inscrit à ce cours");
-        });
-        if (course.getPrice().signum() > 0 && !paymentService.hasSucceededPayment(userId, courseId)) {
-            throw new ApiException(HttpStatus.PAYMENT_REQUIRED, "Le paiement de ce cours est requis pour s'inscrire");
+        boolean paid = course.getPrice().signum() > 0;
+        boolean purchased = !paid || paymentService.hasSucceededPayment(userId, courseId);
+        boolean subscribed = !purchased && paymentService.hasActiveSubscription(userId);
+        Enrollment existing = enrollmentRepository.findByUserIdAndCourseId(userId, courseId).orElse(null);
+        if (existing != null) {
+            // Une inscription par abonnement expiré se réactive par un achat ou un nouvel abonnement
+            if (hasAccess(existing) || !(purchased || subscribed)) {
+                throw new ApiException(HttpStatus.CONFLICT, "Vous êtes déjà inscrit à ce cours");
+            }
+            existing.setViaSubscription(!purchased);
+            return toDto(enrollmentRepository.save(existing));
+        }
+        if (!purchased && !subscribed) {
+            throw new ApiException(HttpStatus.PAYMENT_REQUIRED,
+                    "Le paiement de ce cours ou un abonnement est requis pour s'inscrire");
         }
         Enrollment enrollment = new Enrollment();
         enrollment.setUserId(userId);
         enrollment.setCourseId(courseId);
+        enrollment.setViaSubscription(!purchased);
         enrollmentRepository.save(enrollment);
         return toDto(enrollment);
     }
@@ -82,8 +93,10 @@ public class EnrollmentService {
 
     @Transactional(readOnly = true)
     public boolean isEnrolled(Long userId, Long courseId) {
-        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.ACTIVE)
-                || enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.COMPLETED);
+        return enrollmentRepository.findByUserIdAndCourseId(userId, courseId)
+                .filter(e -> e.getStatus() != EnrollmentStatus.CANCELLED)
+                .filter(this::hasAccess)
+                .isPresent();
     }
 
     /**
@@ -145,7 +158,23 @@ public class EnrollmentService {
         if (enrollment.getStatus() == EnrollmentStatus.CANCELLED) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Inscription annulée");
         }
+        if (!hasAccess(enrollment)) {
+            throw new ApiException(HttpStatus.PAYMENT_REQUIRED,
+                    "Votre abonnement est terminé : renouvelez-le ou achetez ce cours pour y accéder");
+        }
         return enrollment;
+    }
+
+    /**
+     * Une inscription par abonnement ne donne accès au contenu que tant que l'abonnement court (ou si le cours a
+     * été acheté depuis) ; la progression et les certificats déjà obtenus restent acquis.
+     */
+    private boolean hasAccess(Enrollment enrollment) {
+        if (!enrollment.isViaSubscription()) {
+            return true;
+        }
+        return paymentService.hasActiveSubscription(enrollment.getUserId())
+                || paymentService.hasSucceededPayment(enrollment.getUserId(), enrollment.getCourseId());
     }
 
     private CourseProgressDto progressOf(Enrollment enrollment, Long courseId) {

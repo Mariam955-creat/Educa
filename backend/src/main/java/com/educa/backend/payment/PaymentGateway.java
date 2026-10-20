@@ -11,12 +11,14 @@ import java.math.BigDecimal;
 public interface PaymentGateway {
 
     /**
-     * Démarre l'achat d'un cours (paiement unique), renvoie l'URL de paiement hébergée à laquelle
-     * rediriger l'utilisateur. {@code amount} vient du prix du cours ; la devise est celle configurée
-     * pour ce prestataire (voir {@code educa.payment.stripe.currency}/{@code orange-money.currency}).
+     * Démarre un paiement unique (achat d'un cours ou pass d'abonnement), renvoie l'URL de paiement hébergée à
+     * laquelle rediriger l'utilisateur. {@code courseId} est {@code null} pour un abonnement ; {@code itemName} est le
+     * libellé affiché par le prestataire ; {@code returnPath} est la page du frontend où revenir (suivie de
+     * {@code ?payment=success|cancelled}). La devise est celle configurée pour ce prestataire (voir
+     * {@code educa.payment.stripe.currency}/{@code orange-money.currency}).
      */
-    CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug, String courseTitle,
-            BigDecimal amount);
+    CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String itemName, BigDecimal amount,
+            String returnPath);
 
     record CheckoutResult(String checkoutUrl, String providerReference, BigDecimal amount, String currency) {
     }

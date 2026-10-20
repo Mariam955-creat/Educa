@@ -46,8 +46,8 @@ public class OrangeMoneyPaymentGateway implements PaymentGateway {
 
     @Override
     @SuppressWarnings("unchecked")
-    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug,
-            String courseTitle, BigDecimal amount) {
+    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String itemName,
+            BigDecimal amount, String returnPath) {
         String currency = config.currency();
         long amountValue = amount.setScale(0, RoundingMode.HALF_UP).longValueExact();
         String orderId = "educa-" + userId + "-" + UUID.randomUUID();
@@ -58,11 +58,11 @@ public class OrangeMoneyPaymentGateway implements PaymentGateway {
                 "currency", currency,
                 "order_id", orderId,
                 "amount", amountValue,
-                "return_url", publicBaseUrl + "/courses/" + courseSlug + "?payment=success",
-                "cancel_url", publicBaseUrl + "/courses/" + courseSlug + "?payment=cancelled",
+                "return_url", publicBaseUrl + returnPath + "?payment=success",
+                "cancel_url", publicBaseUrl + returnPath + "?payment=cancelled",
                 "notif_url", webhookBaseUrl + "/api/v1/payments/webhooks/orange-money",
                 "lang", "fr",
-                "reference", courseTitle);
+                "reference", itemName);
 
         try {
             Map<String, Object> response = restClient.post()

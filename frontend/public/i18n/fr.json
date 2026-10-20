@@ -1,6 +1,7 @@
 {
   "lang": { "label": "Langue", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
   "nav": {
+    "subscription": "Abonnement",
     "dashboard": "Tableau de bord",
     "catalog": "Catalogue",
     "certificates": "Mes certificats",
@@ -78,6 +79,8 @@
     "verifyLink": "Vérifier publiquement"
   },
   "invoices": {
+    "subscription": "Abonnement — accès à tous les cours",
+    "accessUntil": "Accès jusqu'au {{date}}",
     "title": "Mes achats",
     "empty": "Aucun achat pour l'instant.",
     "line": "{{invoiceNumber}} · {{date}}",
@@ -93,6 +96,8 @@
     "invalid": "❌ Aucun certificat ne correspond à ce code."
   },
   "course": {
+    "orSubscribe": "Ou accédez à tous les cours :",
+    "subscribeLink": "abonnement à {{price}} par mois",
     "preview": "Aperçu du cours",
     "promoUntil": "Offre valable jusqu'au {{date}}",
     "backToCatalog": "‹ Catalogue",
@@ -682,5 +687,44 @@
     "coursesTitle": "Quelques cours du catalogue",
     "ctaTitle": "Prêt à commencer ?",
     "ctaText": "Créez votre compte gratuitement et découvrez le catalogue."
+  },
+  "subscription": {
+    "eyebrow": "Abonnement Ganndal",
+    "title": "Tous les cours, un seul prix",
+    "lead": "Accédez à l'ensemble du catalogue pendant 30 jours : suivez autant de cours que vous voulez, passez les évaluations et obtenez vos certificats.",
+    "planName": "Accès illimité",
+    "perMonth": "/ mois",
+    "days": "{{days}} jours d'accès à tous les cours",
+    "activeUntil": "Abonnement actif jusqu'au {{date}}",
+    "subscribeStripe": "S'abonner par carte (Europe)",
+    "subscribeOrangeMoney": "S'abonner avec Orange Money (Afrique)",
+    "renewStripe": "Prolonger par carte (Europe)",
+    "renewOrangeMoney": "Prolonger avec Orange Money (Afrique)",
+    "loginHint": "Créez un compte ou connectez-vous pour vous abonner.",
+    "renewHint": "Pas de prélèvement automatique : chaque paiement ajoute {{days}} jours, à la suite de l'accès en cours.",
+    "paymentSuccess": "Merci ! Votre abonnement sera actif dès la confirmation du paiement (quelques secondes).",
+    "paymentCancelled": "Paiement annulé : aucun montant n'a été débité.",
+    "error": "Impossible de démarrer le paiement pour le moment.",
+    "benefitsTitle": "Ce que comprend l'abonnement",
+    "benefits": {
+      "allCourses": {
+        "title": "Tous les cours payants",
+        "text": "Inscrivez-vous à n'importe quel cours du catalogue sans l'acheter à l'unité."
+      },
+      "newCourses": {
+        "title": "Les nouveaux cours aussi",
+        "text": "Chaque cours ajouté au catalogue est inclus dès sa publication."
+      },
+      "certificates": {
+        "title": "Certificats vérifiables",
+        "text": "Contrôles, examen final et certificat PDF, comme pour un cours acheté. Vos certificats restent acquis."
+      },
+      "noCommitment": {
+        "title": "Sans engagement",
+        "text": "Pas de reconduction automatique : vous renouvelez seulement si vous le souhaitez."
+      }
+    },
+    "compare": "Rentable dès le premier cours suivi : nos cours coûtent de 19,99 € à 44,99 € à l'unité.",
+    "seeCatalog": "Voir le catalogue"
   }
 }

@@ -33,8 +33,17 @@ public class Payment {
     private Long userId;
 
     /** Id du cours acheté (module {@code course}). Pas de relation JPA : couplage par id. */
-    @Column(name = "course_id", nullable = false)
+    /** Cours acheté ; {@code null} pour un pass d'abonnement. */
+    @Column(name = "course_id")
     private Long courseId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PaymentKind kind = PaymentKind.COURSE;
+
+    /** Abonnement : fin de l'accès accordé par ce paiement (fixée à la confirmation). */
+    @Column(name = "access_until")
+    private Instant accessUntil;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

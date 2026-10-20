@@ -13,6 +13,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ import com.educa.backend.payment.dto.CheckoutRequest;
 import com.educa.backend.payment.dto.CheckoutResponse;
 import com.educa.backend.payment.dto.InstructorSaleDto;
 import com.educa.backend.payment.dto.InvoiceDto;
+import com.educa.backend.payment.dto.SubscriptionDto;
 import com.educa.backend.user.UserService;
 import com.educa.backend.user.dto.UserDto;
 
@@ -47,12 +49,17 @@ public class PaymentService {
     private final PaymentGateway stripeGateway;
     private final PaymentGateway orangeMoneyGateway;
     private final EducaProperties educaProperties;
+    /** Prix d'un pass d'abonnement et durée d'accès accordée (educa.subscription.*). */
+    private final BigDecimal subscriptionPrice;
+    private final int subscriptionDays;
 
     public PaymentService(PaymentRepository paymentRepository, UserService userService, CourseService courseService,
                           PdfDocuments pdfDocuments,
                           @Qualifier("stripeGateway") PaymentGateway stripeGateway,
                           @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway,
-                          EducaProperties educaProperties) {
+                          EducaProperties educaProperties,
+                          @Value("${educa.subscription.monthly-price:19.99}") BigDecimal subscriptionPrice,
+                          @Value("${educa.subscription.days:30}") int subscriptionDays) {
         this.paymentRepository = paymentRepository;
         this.userService = userService;
         this.courseService = courseService;
@@ -60,6 +67,8 @@ public class PaymentService {
         this.stripeGateway = stripeGateway;
         this.orangeMoneyGateway = orangeMoneyGateway;
         this.educaProperties = educaProperties;
+        this.subscriptionPrice = subscriptionPrice;
+        this.subscriptionDays = subscriptionDays;
     }
 
     @Transactional
@@ -74,8 +83,8 @@ public class PaymentService {
         }
 
         PaymentGateway.CheckoutResult result = gatewayFor(request.provider())
-                .startCheckout(userId, user.email(), courseId, course.getSlug(), course.getTitle(),
-                        course.effectivePrice(Instant.now()));
+                .startCheckout(userId, user.email(), courseId, course.getTitle(), course.effectivePrice(Instant.now()),
+                        "/courses/" + course.getSlug());
 
         Payment payment = new Payment();
         payment.setUserId(userId);
@@ -88,6 +97,62 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         return new CheckoutResponse(result.checkoutUrl());
+    }
+
+    /** Démarre l'achat d'un pass d'abonnement (accès à tous les cours pendant {@code subscriptionDays} jours). */
+    @Transactional
+    public CheckoutResponse startSubscriptionCheckout(Long userId, CheckoutRequest request) {
+        UserDto user = userService.getById(userId);
+        PaymentGateway.CheckoutResult result = gatewayFor(request.provider())
+                .startCheckout(userId, user.email(), null, "Ganndal — abonnement " + subscriptionDays + " jours",
+                        subscriptionPrice, "/subscription");
+
+        Payment payment = new Payment();
+        payment.setUserId(userId);
+        payment.setKind(PaymentKind.SUBSCRIPTION);
+        payment.setProvider(request.provider());
+        payment.setProviderReference(result.providerReference());
+        payment.setAmount(result.amount());
+        payment.setCurrency(result.currency());
+        payment.setStatus(PaymentStatus.PENDING);
+        paymentRepository.save(payment);
+
+        return new CheckoutResponse(result.checkoutUrl());
+    }
+
+    /** L'apprenant a un abonnement en cours (pass réussi dont l'accès n'est pas terminé). */
+    @Transactional(readOnly = true)
+    public boolean hasActiveSubscription(Long userId) {
+        return paymentRepository.existsByUserIdAndKindAndStatusAndAccessUntilAfter(
+                userId, PaymentKind.SUBSCRIPTION, PaymentStatus.SUCCEEDED, Instant.now());
+    }
+
+    /** Offre d'abonnement, avec l'état de l'abonnement de {@code userId} s'il est connecté. */
+    @Transactional(readOnly = true)
+    public SubscriptionDto subscription(Long userId) {
+        Instant accessUntil = userId == null ? null : currentAccessUntil(userId);
+        boolean active = accessUntil != null && accessUntil.isAfter(Instant.now());
+        return new SubscriptionDto(subscriptionPrice, educaProperties.payment().stripe().currency().toUpperCase(),
+                subscriptionDays, active, active ? accessUntil : null);
+    }
+
+    /**
+     * Jeu de démo uniquement : enregistre un pass d'abonnement réussi (sans prestataire) si le compte n'a pas
+     * d'abonnement en cours.
+     */
+    @Transactional
+    public void recordDemoSubscription(Long userId) {
+        if (hasActiveSubscription(userId)) {
+            return;
+        }
+        Payment payment = new Payment();
+        payment.setUserId(userId);
+        payment.setKind(PaymentKind.SUBSCRIPTION);
+        payment.setProvider(PaymentProvider.STRIPE);
+        payment.setProviderReference("demo-subscription-" + userId + "-" + Instant.now().toEpochMilli());
+        payment.setAmount(subscriptionPrice);
+        payment.setCurrency("EUR");
+        markSucceeded(payment);
     }
 
     /** Apprenants : exige un paiement réussi pour ce cours précis. Formateurs/admins : toujours autorisés. */
@@ -117,16 +182,14 @@ public class PaymentService {
         payment.setProviderReference("demo-seed-" + userId + "-" + courseId);
         payment.setAmount(course.effectivePrice(Instant.now()));
         payment.setCurrency("EUR");
-        payment.setStatus(PaymentStatus.SUCCEEDED);
-        payment.setInvoiceNumber(nextInvoiceNumber());
-        paymentRepository.save(payment);
+        markSucceeded(payment);
     }
 
     @Transactional(readOnly = true)
     public Page<AdminPaymentDto> registry(Pageable pageable) {
         return paymentRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(p -> new AdminPaymentDto(p.getId(), userService.displayNameById(p.getUserId()),
-                        courseService.summary(p.getCourseId()).title(), p.getProvider(), p.getAmount(),
+                        itemTitle(p), p.getKind(), p.getProvider(), p.getAmount(),
                         p.getCurrency(), p.getStatus(), p.getInvoiceNumber(), p.getCreatedAt()));
     }
 
@@ -163,7 +226,7 @@ public class PaymentService {
     public List<InvoiceDto> myInvoices(Long userId) {
         return paymentRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, PaymentStatus.SUCCEEDED).stream()
                 .map(p -> new InvoiceDto(p.getId(), p.getInvoiceNumber(), p.getCourseId(),
-                        courseService.summary(p.getCourseId()).title(), p.getProvider(), p.getAmount(),
+                        itemTitle(p), p.getKind(), p.getAccessUntil(), p.getProvider(), p.getAmount(),
                         p.getCurrency(), p.getStatus(), p.getCreatedAt()))
                 .toList();
     }
@@ -185,9 +248,8 @@ public class PaymentService {
         }
         String resolvedLang = pdfDocuments.resolveLang(lang, userService.getById(payment.getUserId()).preferredLanguage());
         String buyerName = userService.displayNameById(payment.getUserId());
-        String courseTitle = courseService.summary(payment.getCourseId()).title();
         try {
-            return new ByteArrayResource(renderInvoicePdf(payment, buyerName, courseTitle, resolvedLang));
+            return new ByteArrayResource(renderInvoicePdf(payment, buyerName, resolvedLang));
         } catch (RuntimeException e) {
             log.error("Génération du PDF de la facture {} échouée", payment.getId(), e);
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Facture indisponible");
@@ -220,9 +282,7 @@ public class PaymentService {
         if (payment.getStatus() == PaymentStatus.SUCCEEDED) {
             return;
         }
-        payment.setStatus(PaymentStatus.SUCCEEDED);
-        payment.setInvoiceNumber(nextInvoiceNumber());
-        paymentRepository.save(payment);
+        markSucceeded(payment);
     }
 
     /** Orange Money : paiement ponctuel, pas de prélèvement récurrent — un webhook confirmé suffit à débloquer le cours. */
@@ -256,12 +316,39 @@ public class PaymentService {
             paymentRepository.save(payment);
             return;
         }
+        markSucceeded(payment);
+    }
+
+    // ---------- privé ----------
+
+    /**
+     * Confirme un paiement : statut, n° de facture et, pour un abonnement, fin d'accès prolongée de
+     * {@code subscriptionDays} jours à partir de l'accès en cours (renouvellement anticipé) ou de maintenant.
+     */
+    private void markSucceeded(Payment payment) {
+        if (payment.getKind() == PaymentKind.SUBSCRIPTION) {
+            Instant now = Instant.now();
+            Instant current = currentAccessUntil(payment.getUserId());
+            Instant from = current != null && current.isAfter(now) ? current : now;
+            payment.setAccessUntil(from.plus(subscriptionDays, java.time.temporal.ChronoUnit.DAYS));
+        }
         payment.setStatus(PaymentStatus.SUCCEEDED);
         payment.setInvoiceNumber(nextInvoiceNumber());
         paymentRepository.save(payment);
     }
 
-    // ---------- privé ----------
+    private Instant currentAccessUntil(Long userId) {
+        return paymentRepository
+                .findFirstByUserIdAndKindAndStatusOrderByAccessUntilDesc(userId, PaymentKind.SUBSCRIPTION, PaymentStatus.SUCCEEDED)
+                .map(Payment::getAccessUntil)
+                .orElse(null);
+    }
+
+    /** Libellé d'un paiement : titre du cours acheté, ou « Abonnement » pour un pass. */
+    private String itemTitle(Payment payment) {
+        return payment.getKind() == PaymentKind.SUBSCRIPTION ? "Abonnement"
+                : courseService.summary(payment.getCourseId()).title();
+    }
 
     private PaymentGateway gatewayFor(PaymentProvider provider) {
         return provider == PaymentProvider.STRIPE ? stripeGateway : orangeMoneyGateway;
@@ -273,7 +360,12 @@ public class PaymentService {
         return "INV-" + Year.now().getValue() + "-" + String.format("%06d", sequence);
     }
 
-    private byte[] renderInvoicePdf(Payment payment, String buyerName, String courseTitle, String lang) {
+    private byte[] renderInvoicePdf(Payment payment, String buyerName, String lang) {
+        String description = payment.getKind() == PaymentKind.SUBSCRIPTION
+                ? pdfDocuments.text("invoice.subscription", lang, String.valueOf(subscriptionDays),
+                        pdfDocuments.dateTime(payment.getAccessUntil(), lang))
+                : pdfDocuments.text("invoice.courseAccess", lang,
+                        PdfDocuments.escape(courseService.summary(payment.getCourseId()).title()));
         String html = """
                 <html lang="%s"><head><meta charset="utf-8"/><style>
                   @page { size: A4; margin: 0; }
@@ -311,7 +403,7 @@ public class PaymentService {
                 pdfDocuments.text("invoice.billedTo", lang), PdfDocuments.escape(buyerName),
                 pdfDocuments.text("invoice.description", lang), pdfDocuments.text("invoice.paymentMethod", lang),
                 pdfDocuments.text("invoice.amount", lang),
-                pdfDocuments.text("invoice.courseAccess", lang, PdfDocuments.escape(courseTitle)),
+                description,
                 pdfDocuments.text("invoice.provider." + payment.getProvider().name(), lang),
                 formatAmount(payment.getAmount(), payment.getCurrency(), pdfDocuments.locale(lang)),
                 pdfDocuments.text("invoice.status", lang),

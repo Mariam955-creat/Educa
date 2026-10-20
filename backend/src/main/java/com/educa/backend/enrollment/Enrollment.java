@@ -41,4 +41,8 @@ public class Enrollment {
 
     @Column(name = "completed_at")
     private Instant completedAt;
+
+    /** Inscription obtenue grâce à l'abonnement (pas d'achat) : l'accès au contenu suit l'abonnement. */
+    @Column(name = "via_subscription", nullable = false)
+    private boolean viaSubscription;
 }

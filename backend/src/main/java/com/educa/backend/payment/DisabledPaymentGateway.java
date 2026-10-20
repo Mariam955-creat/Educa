@@ -16,8 +16,8 @@ public class DisabledPaymentGateway implements PaymentGateway {
     }
 
     @Override
-    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String courseSlug,
-            String courseTitle, BigDecimal amount) {
+    public CheckoutResult startCheckout(Long userId, String userEmail, Long courseId, String itemName,
+            BigDecimal amount, String returnPath) {
         throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE,
                 "Paiement " + providerLabel + " indisponible pour le moment");
     }

@@ -11,7 +11,10 @@
         <article class="invoice-card">
           <span class="badge" aria-hidden="true">🧾</span>
           <div class="invoice-main">
-            <h3>{{ i.courseTitle }}</h3>
+            <h3>{{ i.kind === 'SUBSCRIPTION' ? ('invoices.subscription' | translate) : i.courseTitle }}</h3>
+            @if (i.kind === 'SUBSCRIPTION' && i.accessUntil) {
+              <p class="meta">{{ 'invoices.accessUntil' | translate: { date: (i.accessUntil | localDate: 'long' : lang.current()) } }}</p>
+            }
             <p class="meta">
               {{ 'invoices.line' | translate: { invoiceNumber: i.invoiceNumber, date: (i.createdAt | localDate: 'long' : lang.current()) } }}
             </p>

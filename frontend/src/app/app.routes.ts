@@ -74,6 +74,11 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'subscription',
+    loadComponent: () =>
+      import('./feature/subscription/subscription.component').then((m) => m.SubscriptionComponent),
+  },
+  {
     path: 'verify/:code',
     loadComponent: () => import('./feature/certificate/verify.component').then((m) => m.VerifyComponent),
   },

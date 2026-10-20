@@ -1,6 +1,7 @@
 {
   "lang": { "label": "Taal", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
   "nav": {
+    "subscription": "Abonnement",
     "dashboard": "Dashboard",
     "catalog": "Catalogus",
     "certificates": "Mijn certificaten",
@@ -78,6 +79,8 @@
     "verifyLink": "Openbaar verifiëren"
   },
   "invoices": {
+    "subscription": "Abonnement — toegang tot alle cursussen",
+    "accessUntil": "Toegang tot {{date}}",
     "title": "Mijn aankopen",
     "empty": "Nog geen aankopen.",
     "line": "{{invoiceNumber}} · {{date}}",
@@ -93,6 +96,8 @@
     "invalid": "❌ Geen certificaat gevonden voor deze code."
   },
   "course": {
+    "orSubscribe": "Of krijg toegang tot alle cursussen:",
+    "subscribeLink": "abonnement voor {{price}} per maand",
     "preview": "Voorproefje van de cursus",
     "promoUntil": "Aanbieding geldig tot {{date}}",
     "backToCatalog": "‹ Catalogus",
@@ -682,5 +687,44 @@
     "coursesTitle": "Enkele cursussen uit de catalogus",
     "ctaTitle": "Klaar om te beginnen?",
     "ctaText": "Maak gratis je account aan en ontdek de catalogus."
+  },
+  "subscription": {
+    "eyebrow": "Ganndal-abonnement",
+    "title": "Alle cursussen, één prijs",
+    "lead": "Toegang tot de hele catalogus gedurende 30 dagen: volg zoveel cursussen als je wilt, leg de evaluaties af en behaal je certificaten.",
+    "planName": "Onbeperkte toegang",
+    "perMonth": "/ maand",
+    "days": "{{days}} dagen toegang tot alle cursussen",
+    "activeUntil": "Abonnement actief tot {{date}}",
+    "subscribeStripe": "Abonneren met kaart (Europa)",
+    "subscribeOrangeMoney": "Abonneren met Orange Money (Afrika)",
+    "renewStripe": "Verlengen met kaart (Europa)",
+    "renewOrangeMoney": "Verlengen met Orange Money (Afrika)",
+    "loginHint": "Maak een account aan of log in om te abonneren.",
+    "renewHint": "Geen automatische afschrijving: elke betaling voegt {{days}} dagen toe na je huidige toegang.",
+    "paymentSuccess": "Bedankt! Je abonnement is actief zodra de betaling bevestigd is (enkele seconden).",
+    "paymentCancelled": "Betaling geannuleerd: er is niets afgeschreven.",
+    "error": "De betaling kan nu niet worden gestart.",
+    "benefitsTitle": "Wat het abonnement omvat",
+    "benefits": {
+      "allCourses": {
+        "title": "Alle betalende cursussen",
+        "text": "Schrijf je in voor elke cursus uit de catalogus zonder ze apart te kopen."
+      },
+      "newCourses": {
+        "title": "Ook nieuwe cursussen",
+        "text": "Elke nieuwe cursus in de catalogus is inbegrepen vanaf de publicatie."
+      },
+      "certificates": {
+        "title": "Verifieerbare certificaten",
+        "text": "Toetsen, eindexamen en pdf-certificaat, net als bij een gekochte cursus. Je certificaten blijven van jou."
+      },
+      "noCommitment": {
+        "title": "Zonder verplichting",
+        "text": "Geen automatische verlenging: je verlengt alleen als je dat wilt."
+      }
+    },
+    "compare": "Voordelig vanaf de eerste cursus: onze cursussen kosten apart € 19,99 tot € 44,99.",
+    "seeCatalog": "Naar de catalogus"
   }
 }

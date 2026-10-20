@@ -1,6 +1,7 @@
 {
   "lang": { "label": "Sprache", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
   "nav": {
+    "subscription": "Abonnement",
     "dashboard": "Übersicht",
     "catalog": "Katalog",
     "certificates": "Meine Zertifikate",
@@ -78,6 +79,8 @@
     "verifyLink": "Öffentlich prüfen"
   },
   "invoices": {
+    "subscription": "Abonnement — Zugang zu allen Kursen",
+    "accessUntil": "Zugang bis {{date}}",
     "title": "Meine Käufe",
     "empty": "Noch keine Käufe.",
     "line": "{{invoiceNumber}} · {{date}}",
@@ -93,6 +96,8 @@
     "invalid": "❌ Zu diesem Code gibt es kein Zertifikat."
   },
   "course": {
+    "orSubscribe": "Oder Zugang zu allen Kursen:",
+    "subscribeLink": "Abonnement für {{price}} im Monat",
     "preview": "Kursvorschau",
     "promoUntil": "Angebot gültig bis {{date}}",
     "backToCatalog": "‹ Katalog",
@@ -682,5 +687,44 @@
     "coursesTitle": "Einige Kurse aus dem Katalog",
     "ctaTitle": "Bereit loszulegen?",
     "ctaText": "Erstellen Sie kostenlos Ihr Konto und entdecken Sie den Katalog."
+  },
+  "subscription": {
+    "eyebrow": "Ganndal-Abonnement",
+    "title": "Alle Kurse, ein Preis",
+    "lead": "Zugang zum gesamten Katalog für 30 Tage: Belegen Sie so viele Kurse, wie Sie möchten, legen Sie die Prüfungen ab und erhalten Sie Ihre Zertifikate.",
+    "planName": "Unbegrenzter Zugang",
+    "perMonth": "/ Monat",
+    "days": "{{days}} Tage Zugang zu allen Kursen",
+    "activeUntil": "Abonnement aktiv bis {{date}}",
+    "subscribeStripe": "Mit Karte abonnieren (Europa)",
+    "subscribeOrangeMoney": "Mit Orange Money abonnieren (Afrika)",
+    "renewStripe": "Mit Karte verlängern (Europa)",
+    "renewOrangeMoney": "Mit Orange Money verlängern (Afrika)",
+    "loginHint": "Erstellen Sie ein Konto oder melden Sie sich an, um zu abonnieren.",
+    "renewHint": "Keine automatische Abbuchung: Jede Zahlung fügt {{days}} Tage an den laufenden Zugang an.",
+    "paymentSuccess": "Danke! Ihr Abonnement ist aktiv, sobald die Zahlung bestätigt ist (wenige Sekunden).",
+    "paymentCancelled": "Zahlung abgebrochen: Es wurde nichts abgebucht.",
+    "error": "Die Zahlung kann gerade nicht gestartet werden.",
+    "benefitsTitle": "Was das Abonnement umfasst",
+    "benefits": {
+      "allCourses": {
+        "title": "Alle kostenpflichtigen Kurse",
+        "text": "Schreiben Sie sich in jeden Kurs des Katalogs ein, ohne ihn einzeln zu kaufen."
+      },
+      "newCourses": {
+        "title": "Auch neue Kurse",
+        "text": "Jeder neue Kurs im Katalog ist ab seiner Veröffentlichung enthalten."
+      },
+      "certificates": {
+        "title": "Überprüfbare Zertifikate",
+        "text": "Tests, Abschlussprüfung und PDF-Zertifikat wie bei einem gekauften Kurs. Ihre Zertifikate bleiben Ihnen."
+      },
+      "noCommitment": {
+        "title": "Ohne Bindung",
+        "text": "Keine automatische Verlängerung: Sie verlängern nur, wenn Sie möchten."
+      }
+    },
+    "compare": "Lohnt sich ab dem ersten Kurs: Unsere Kurse kosten einzeln 19,99 € bis 44,99 €.",
+    "seeCatalog": "Zum Katalog"
   }
 }

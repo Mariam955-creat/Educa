@@ -63,7 +63,7 @@
       }
 
       @if (canEnroll()) {
-        @if (c.price === 0 || purchased()) {
+        @if (c.price === 0 || purchased() || subscription()?.active) {
           <button type="button" (click)="enroll()" [disabled]="enrolling()">
             {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
           </button>
@@ -76,6 +76,12 @@
               {{ 'course.buyOrangeMoney' | translate }}
             </button>
           </div>
+          @if (subscription(); as s) {
+            <p class="sub-offer">
+              {{ 'course.orSubscribe' | translate }}
+              <a routerLink="/subscription">{{ 'course.subscribeLink' | translate: { price: (s.price | money: s.currency : lang.current()) } }}</a>
+            </p>
+          }
         }
         @if (enrollError()) {
           <p class="enroll-error">{{ enrollError() }}</p>

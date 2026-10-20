@@ -428,3 +428,16 @@ button:disabled {
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+/* Proposition d'abonnement sous les boutons d'achat */
+.sub-offer {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: var(--accent-soft, #eff6ff);
+  font-size: 0.9rem;
+}
+
+.sub-offer a {
+  font-weight: 700;
+}

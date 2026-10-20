@@ -15,7 +15,7 @@ main {
   justify-content: flex-end;
   gap: 1.5rem;
   padding: 0.75rem 1.25rem;
-  border-bottom: 3px solid var(--accent, #8b5cf6);
+  border-bottom: 3px solid var(--accent, #2563eb);
   background: var(--surface, #ffffff);
   box-shadow: 0 2px 8px rgba(31, 41, 55, 0.06);
   color: var(--text, #1f2937);
@@ -29,7 +29,7 @@ main {
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.01em;
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
   text-decoration: none;
 }
 
@@ -48,17 +48,17 @@ main {
 }
 
 .nav a:hover {
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
 }
 
 .nav a.active {
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
   border-bottom-color: var(--warning, #f59e0b);
 }
 
 .lang {
   padding: 0.35rem 0.5rem;
-  border: 1px solid var(--border, #e9e2fb);
+  border: 1px solid var(--border, #dbe3ef);
   border-radius: 8px;
   font: inherit;
   font-size: 0.85rem;
@@ -136,8 +136,8 @@ main {
 }
 
 .footer-langs button.active {
-  border-color: var(--accent, #8b5cf6);
-  background: var(--accent, #8b5cf6);
+  border-color: var(--accent, #2563eb);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 

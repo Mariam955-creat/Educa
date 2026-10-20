@@ -10,7 +10,7 @@ h2 {
 
 /* --- Bandeau d'accueil --- */
 .hero {
-  background: var(--brand-gradient, linear-gradient(135deg, #a78bfa, #7c3aed));
+  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
   color: #fff;
 }
 
@@ -45,7 +45,7 @@ h1 {
   max-width: 34rem;
   font-size: 1.05rem;
   line-height: 1.55;
-  color: #ede9fe;
+  color: #dbeafe;
 }
 
 .actions {
@@ -85,7 +85,7 @@ h1 {
 
 .btn.light {
   background: #fff;
-  color: var(--accent-strong, #6d28d9);
+  color: var(--accent-strong, #1e40af);
 }
 
 .trust {
@@ -96,7 +96,7 @@ h1 {
   padding: 0;
   list-style: none;
   font-size: 0.85rem;
-  color: #ede9fe;
+  color: #dbeafe;
 }
 
 .trust li::before {
@@ -142,7 +142,7 @@ h1 {
   justify-content: space-between;
   margin: 0;
   padding: 0.55rem 0;
-  border-top: 1px solid var(--border, #e9e2fb);
+  border-top: 1px solid var(--border, #dbe3ef);
   font-size: 0.9rem;
 }
 
@@ -173,7 +173,7 @@ h1 {
 .feature,
 .steps li {
   padding: 1.5rem;
-  border: 1px solid var(--border, #e9e2fb);
+  border: 1px solid var(--border, #dbe3ef);
   border-radius: 12px;
   background: var(--surface, #ffffff);
 }
@@ -184,7 +184,7 @@ h1 {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--accent-soft, #f5f3ff);
+  background: var(--accent-soft, #eff6ff);
   font-size: 1.35rem;
 }
 
@@ -216,7 +216,7 @@ h3 {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 700;
 }
@@ -255,7 +255,7 @@ h3 {
   margin: 3.5rem auto;
   padding: 2.5rem 1.5rem;
   border-radius: 16px;
-  background: var(--brand-gradient, linear-gradient(135deg, #a78bfa, #7c3aed));
+  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
   color: #fff;
   text-align: center;
 }
@@ -266,7 +266,7 @@ h3 {
 
 .cta p {
   margin: 0 0 1.5rem;
-  color: #ede9fe;
+  color: #dbeafe;
 }
 
 @media (max-width: 1132px) {

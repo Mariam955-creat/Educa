@@ -1,11 +1,11 @@
-/** Dégradés de repli, déclinés de la palette (mauves, verts, touche de jaune). */
+/** Dégradés de repli, déclinés de la palette (bleus, verts, touche de jaune). */
 const FALLBACK_GRADIENTS: [string, string][] = [
-  ['#a78bfa', '#7c3aed'],
+  ['#2563eb', '#1e40af'],
   ['#10b981', '#047857'],
-  ['#c084fc', '#8b5cf6'],
-  ['#8b5cf6', '#10b981'],
+  ['#3b82f6', '#06b6d4'],
+  ['#1d4ed8', '#10b981'],
   ['#f59e0b', '#d97706'],
-  ['#e879f9', '#a78bfa'],
+  ['#0ea5e9', '#2563eb'],
 ];
 
 /** Visuel de repli d'un cours sans image de couverture : dégradé stable, déterminé par l'id du cours. */

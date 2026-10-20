@@ -43,7 +43,7 @@ import { CertificateApiService, CertificateVerification } from '../../core/certi
         color: var(--muted);
       }
       .ok {
-        border: 1px solid var(--border, #e9e2fb);
+        border: 1px solid var(--border, #dbe3ef);
         border-top: 6px solid var(--success, #10b981);
         background: var(--surface, #ffffff);
         border-radius: 12px;

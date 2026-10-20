@@ -47,15 +47,15 @@
 
 .buy-buttons button.ghost {
   background: transparent;
-  color: var(--accent, #8b5cf6);
-  border: 1px solid var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
 }
 
 button {
   padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -101,7 +101,7 @@ button:disabled {
 }
 
 .enroll-error a {
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
   margin-left: 0.4rem;
 }
 
@@ -159,7 +159,7 @@ button:disabled {
 
 .link-btn {
   background: transparent;
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
   border: 1px solid var(--border);
   padding: 0.4rem 0.7rem;
   margin-bottom: 0.5rem;
@@ -169,8 +169,8 @@ button:disabled {
   display: block;
   margin-top: 0.5rem;
   background: transparent;
-  color: var(--accent, #8b5cf6);
-  border: 1px solid var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
 }
@@ -196,7 +196,7 @@ button:disabled {
 }
 
 .btn-sm {
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   text-decoration: none;
   padding: 0.4rem 0.75rem;
@@ -298,8 +298,8 @@ button:disabled {
 .tag {
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  background: var(--accent-soft, #f5f3ff);
-  color: var(--accent, #8b5cf6);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -312,8 +312,8 @@ button:disabled {
 .course-head {
   overflow: hidden;
   padding: 1.75rem;
-  border: 1px solid var(--border, #e9e2fb);
-  border-top: 4px solid var(--accent, #8b5cf6);
+  border: 1px solid var(--border, #dbe3ef);
+  border-top: 4px solid var(--accent, #2563eb);
   border-radius: 12px;
   background: var(--surface, #ffffff);
   box-shadow: var(--shadow-card, 0 1px 2px rgba(31, 41, 55, 0.05));
@@ -338,7 +338,7 @@ button:disabled {
 .price {
   display: block;
   font-size: 1.6rem;
-  color: var(--accent-strong, #6d28d9);
+  color: var(--accent-strong, #1e40af);
 }
 
 .course-head > button,
@@ -349,7 +349,7 @@ button:disabled {
 .progress {
   padding: 0.85rem 1rem;
   border-radius: 8px;
-  background: var(--accent-soft, #f5f3ff);
+  background: var(--accent-soft, #eff6ff);
   font-weight: 700;
   color: var(--success-strong, #047857);
 }
@@ -365,7 +365,7 @@ button:disabled {
 
 .chapter h2 {
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--accent-soft, #f5f3ff);
+  border-bottom: 2px solid var(--accent-soft, #eff6ff);
 }
 
 @media (max-width: 640px) {

@@ -1,14 +1,14 @@
 /*
- * Palette Ganndal — mauve clair (identité, boutons, liens), vert (progression, réussite), jaune (mise en avant,
- * récompense), fond blanc / mauve très clair, texte gris foncé. Les couleurs de l'application passent par ces variables.
+ * Palette educa — bleu (confiance, sérieux), vert (progression, réussite), jaune (mise en avant, récompense),
+ * fond blanc / bleu très clair, texte gris foncé. Les couleurs de l'application passent par ces variables.
  */
 :root {
-  /* Mauve : boutons, liens, éléments importants, en-tête */
-  --accent: #8b5cf6;
-  --accent-hover: #7c3aed;
-  --accent-strong: #6d28d9;
-  --accent-soft: #f5f3ff;
-  --brand-gradient: linear-gradient(135deg, #a78bfa, #7c3aed);
+  /* Bleu : boutons, liens, éléments importants, en-tête */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-strong: #1e40af;
+  --accent-soft: #eff6ff;
+  --brand-gradient: linear-gradient(135deg, #2563eb, #1e40af);
 
   /* Vert : progression, réussite, validation */
   --success: #10b981;
@@ -25,10 +25,10 @@
 
   /* Fonds, texte, bordures */
   --surface: #ffffff;
-  --bg: #f5f3ff;
+  --bg: #eff6ff;
   --text: #1f2937;
   --muted: #6b7280;
-  --border: #e9e2fb;
+  --border: #dbe3ef;
 
   /* Formes et ombres communes */
   --radius: 8px;
@@ -74,7 +74,7 @@ h3 {
 }
 
 ::selection {
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 
@@ -112,17 +112,17 @@ textarea {
 
 /* Anneau de focus identique sur tout le site (navigation au clavier) */
 :focus-visible {
-  outline: 2px solid var(--accent, #8b5cf6);
+  outline: 2px solid var(--accent, #2563eb);
   outline-offset: 2px;
 }
 
 a {
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
   text-underline-offset: 2px;
 }
 
 a:hover {
-  color: var(--accent-hover, #7c3aed);
+  color: var(--accent-hover, #1d4ed8);
 }
 
 /* --- Responsive --- */
@@ -155,7 +155,7 @@ video {
 
   tr {
     padding: 0.75rem 0.9rem;
-    border-bottom: 1px solid var(--border, #e9e2fb);
+    border-bottom: 1px solid var(--border, #dbe3ef);
   }
 
   tr:last-child {

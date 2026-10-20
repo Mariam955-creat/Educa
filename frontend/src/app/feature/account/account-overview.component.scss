@@ -40,12 +40,12 @@ h2 {
 }
 
 .kpi:hover {
-  border-color: var(--accent, #8b5cf6);
+  border-color: var(--accent, #2563eb);
   transform: translateY(-2px);
 }
 
 .kpi.teach {
-  background: linear-gradient(135deg, var(--accent-soft, #f5f3ff), var(--surface));
+  background: linear-gradient(135deg, var(--accent-soft, #eff6ff), var(--surface));
 }
 
 .kpi-icon {
@@ -152,5 +152,5 @@ h2 {
 }
 
 .kpi:not(.highlight) .kpi-value {
-  color: var(--accent-strong, #6d28d9);
+  color: var(--accent-strong, #1e40af);
 }

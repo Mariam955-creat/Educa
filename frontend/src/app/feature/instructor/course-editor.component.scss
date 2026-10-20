@@ -97,7 +97,7 @@ button {
   padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -163,8 +163,8 @@ button {
 
 .ghost {
   background: transparent;
-  color: var(--accent, #8b5cf6);
-  border: 1px solid var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
   border-radius: 8px;
   padding: 0.3rem 0.6rem;
   font: inherit;
@@ -223,7 +223,7 @@ button {
   display: inline-block;
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

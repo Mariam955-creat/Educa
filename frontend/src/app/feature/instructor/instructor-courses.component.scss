@@ -25,7 +25,7 @@ h1 {
 .btn {
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 700;
   text-decoration: none;
@@ -65,8 +65,8 @@ h1 {
 }
 
 .tabs button.active {
-  border-color: var(--accent, #8b5cf6);
-  background: var(--accent, #8b5cf6);
+  border-color: var(--accent, #2563eb);
+  background: var(--accent, #2563eb);
   color: #fff;
 }
 
@@ -141,7 +141,7 @@ h1 {
 }
 
 .title:hover {
-  color: var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
 }
 
 .badge {
@@ -204,12 +204,12 @@ h1 {
 }
 
 .action:hover {
-  border-color: var(--accent, #8b5cf6);
+  border-color: var(--accent, #2563eb);
 }
 
 .action.primary {
-  border-color: var(--accent, #8b5cf6);
-  color: var(--accent, #8b5cf6);
+  border-color: var(--accent, #2563eb);
+  color: var(--accent, #2563eb);
   font-weight: 600;
 }
 

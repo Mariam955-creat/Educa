@@ -59,8 +59,8 @@
 }
 
 .drawer a.active {
-  background: var(--accent-soft, #f5f3ff);
-  color: var(--accent, #8b5cf6);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-weight: 700;
 }
 
@@ -149,13 +149,13 @@
   margin: 0.85rem 0.85rem 0.25rem;
   padding: 0.6rem 0.75rem;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font-weight: 700;
 }
 
 .drawer a.cta:hover {
-  background: var(--accent-hover, #7c3aed);
+  background: var(--accent-hover, #1d4ed8);
 }
 
 /* --- Titre de l’espace et repère du lien actif --- */
@@ -174,12 +174,12 @@
 }
 
 .drawer a.active {
-  box-shadow: inset 3px 0 0 var(--accent, #8b5cf6);
+  box-shadow: inset 3px 0 0 var(--accent, #2563eb);
 }
 
 .drawer a:not(.cta):hover,
 .logout:hover {
-  background: var(--accent-soft, #f5f3ff);
+  background: var(--accent-soft, #eff6ff);
 }
 
 .content {

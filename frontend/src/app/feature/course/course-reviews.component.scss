@@ -68,7 +68,7 @@ button {
   padding: 0.6rem 1rem;
   border: 0;
   border-radius: 8px;
-  background: var(--accent, #8b5cf6);
+  background: var(--accent, #2563eb);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -83,8 +83,8 @@ button:disabled {
 button.more {
   margin-top: 1rem;
   background: transparent;
-  color: var(--accent, #8b5cf6);
-  border: 1px solid var(--accent, #8b5cf6);
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--accent, #2563eb);
 }
 
 .thanks {
@@ -110,8 +110,8 @@ button.more {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 50%;
-  background: var(--accent-soft, #f5f3ff);
-  color: var(--accent, #8b5cf6);
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent, #2563eb);
   font-weight: 800;
   text-transform: uppercase;
 }

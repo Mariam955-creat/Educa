@@ -1363,3 +1363,20 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 Les catégories bureautique, langues, design et business avaient jusqu'ici aucun cours. Sept cours sont désormais en promotion (avec Python, SQL et Java).
 
 **Vérifié** : `./mvnw compile` OK. Création des cours non encore observée : le backend en cours d'exécution doit être redémarré (migration `V17` + seed).
+
+## 2026-10-20 — Retour au bleu et abonnement mensuel
+
+**Fait**
+- **Charte** : retour au bleu demandé par l'utilisatrice ; le commit de passage au mauve est annulé tel quel (couleurs identiques à avant).
+- **Abonnement mensuel** (choix validé : 19,99 €/mois, pass de 30 jours) — en plus de l'achat à l'unité, pas à sa place :
+  - `V18__subscription_pass.sql` : `payments.kind` (`COURSE` | `SUBSCRIPTION`), `payments.access_until`, `payments.course_id` devenu facultatif (contrainte : obligatoire pour un achat de cours, absent pour un abonnement) ; `enrollments.via_subscription`.
+  - `PaymentService` : `startSubscriptionCheckout`, `hasActiveSubscription`, `subscription(userId)`, `recordDemoSubscription` ; confirmation commune `markSucceeded` qui prolonge l'accès de 30 jours à partir de la fin de l'accès en cours (renouvellement anticipé) ou de maintenant. Passerelles (Stripe, Orange Money) rendues génériques : libellé et page de retour fournis par l'appelant.
+  - `SubscriptionController` : `GET /subscription` (public : prix, durée, état si connecté), `POST /subscription/checkout`.
+  - `EnrollmentService` : inscription possible avec un abonnement actif (`via_subscription = true`) ; à la fin de l'abonnement, `isEnrolled` devient faux et les accès au contenu/quiz renvoient `402` pour ces inscriptions, tant qu'il n'y a ni renouvellement ni achat du cours ; progression et certificats conservés ; la même inscription est réactivée au renouvellement.
+  - Factures : libellé « Abonnement Ganndal : accès à tous les cours pendant 30 jours (jusqu'au …) » en FR/EN/DE/NL.
+  - Frontend : page publique `/subscription` (offre, avantages, boutons Stripe / Orange Money, état et « Prolonger »), lien « Abonnement » dans l'en-tête et le pied de page, encadré « Ou accédez à tous les cours » sur la page d'un cours payant, bouton « S'inscrire » direct pour un abonné, factures d'abonnement dans « Mes achats ».
+  - Démo : compte `abonne@educa.dev` (abonnement actif, renouvelé au démarrage s'il a expiré).
+
+**Vérifié** : `./mvnw test` → **109/109** (5 nouveaux `SubscriptionTest` : offre publique, inscription d'un abonné, verrouillage puis réouverture, renouvellement anticipé, facture), `npm run build` OK, `npm run test:ci` → 27/27. Non vu à l'écran : le backend lancé par l'utilisatrice doit être redémarré (migrations `V17` et `V18`).
+
+**Limite** : les revenus d'abonnement ne sont pas répartis entre les formateurs (leur page « Ventes » ne compte que les achats à l'unité).

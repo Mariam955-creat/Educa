@@ -438,6 +438,21 @@ courses.preview_video_type  VARCHAR(100)  NULL  -- type détecté (video/mp4, vi
 - Vidéo de démo : `POST/DELETE /courses/{id}/preview` (propriétaire/ADMIN), `GET` public si le cours est publié
   (lecture par `<video>`, sans jeton ; requêtes `Range` gérées par Spring).
 
+### Abonnement mensuel (migré, `V18__subscription_pass.sql`, 2026-10-20)
+
+```
+payments.kind          VARCHAR(20) NOT NULL DEFAULT 'COURSE'  -- COURSE | SUBSCRIPTION
+payments.access_until  TIMESTAMPTZ NULL                       -- abonnement : fin de l'accès accordé
+payments.course_id     BIGINT NULL                            -- obligatoire si COURSE, absent si SUBSCRIPTION
+enrollments.via_subscription BOOLEAN NOT NULL DEFAULT false   -- inscription obtenue par l'abonnement
+```
+
+- Pass de 30 jours (`educa.subscription.days`) à 19,99 € (`educa.subscription.monthly-price`), sans prélèvement
+  automatique (Orange Money ne le permet pas) : chaque paiement confirmé prolonge l'accès à la suite de l'accès en cours.
+- Accès à un cours payant : achat du cours **ou** abonnement actif. Une inscription `via_subscription` ne donne accès
+  au contenu que tant que l'abonnement court (ou si le cours a été acheté depuis) ; sinon `402`.
+- Écart assumé avec le choix du 2026-09-22 (achat à l'unité seul) : les deux modèles coexistent.
+
 ### Profil utilisateur (migré, `V15__user_profile.sql`, 2026-10-04)
 
 ```

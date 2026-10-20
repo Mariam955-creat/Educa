@@ -3,8 +3,15 @@
 
   @if (course(); as c) {
     <header class="course-head">
-      @if (api.coverSrc(c.coverImageUrl); as src) {
-        <img class="cover" [src]="src" alt="" />
+      @let video = api.coverSrc(c.previewVideoUrl);
+      @let cover = api.coverSrc(c.coverImageUrl);
+      @if (video) {
+        <figure class="preview">
+          <video class="cover" [src]="video" [poster]="cover ?? ''" controls preload="metadata"></video>
+          <figcaption>🎬 {{ 'course.preview' | translate }}</figcaption>
+        </figure>
+      } @else if (cover) {
+        <img class="cover" [src]="cover" alt="" />
       }
       <h1>{{ c.title }}</h1>
       @if (c.subtitle) {
@@ -34,9 +41,20 @@
         <span>{{ (c.learnerCount === 1 ? 'catalog.learnerOne' : 'catalog.learners') | translate: { count: c.learnerCount } }}</span>
       </p>
       <p class="desc">{{ c.description }}</p>
-      <p class="price" [class.free]="c.price === 0">
-        {{ c.price === 0 ? ('course.free' | translate) : (c.price | money: 'EUR' : lang.current()) }}
-      </p>
+      @if (discount() && c.promoPrice != null) {
+        <div class="promo">
+          <p class="price promo-price">{{ c.promoPrice | money: 'EUR' : lang.current() }}</p>
+          <s class="old-price">{{ c.price | money: 'EUR' : lang.current() }}</s>
+          <span class="promo-badge">-{{ discount() }} %</span>
+          @if (c.promoEndsAt) {
+            <p class="promo-until">⏰ {{ 'course.promoUntil' | translate: { date: (c.promoEndsAt | localDate: 'long' : lang.current()) } }}</p>
+          }
+        </div>
+      } @else {
+        <p class="price" [class.free]="c.price === 0">
+          {{ c.price === 0 ? ('course.free' | translate) : (c.price | money: 'EUR' : lang.current()) }}
+        </p>
+      }
 
       @if (paymentNotice() === 'success') {
         <p class="muted">{{ 'course.paymentSuccess' | translate }}</p>

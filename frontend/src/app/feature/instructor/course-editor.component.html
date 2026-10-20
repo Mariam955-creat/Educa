@@ -35,6 +35,27 @@
       </div>
     </div>
 
+    <h2>{{ 'courseEditor.preview' | translate }}</h2>
+    <div class="card cover-card">
+      <div class="cover-preview">
+        @if (previewVideo(); as video) {
+          <video [src]="video" controls preload="metadata"></video>
+        } @else {
+          <span class="muted">{{ 'courseEditor.noPreview' | translate }}</span>
+        }
+      </div>
+      <div class="cover-actions">
+        <p class="muted">{{ 'courseEditor.previewHint' | translate }}</p>
+        <label class="file-btn">
+          {{ (c.previewVideoUrl ? 'courseEditor.previewReplace' : 'courseEditor.previewUpload') | translate }}
+          <input type="file" accept="video/mp4,video/webm" (change)="onPreviewPicked($event)" hidden />
+        </label>
+        @if (c.previewVideoUrl) {
+          <button type="button" class="danger" (click)="removePreview()">{{ 'courseEditor.previewRemove' | translate }}</button>
+        }
+      </div>
+    </div>
+
     <h2>{{ 'courseEditor.chapters' | translate }}</h2>
     @if (c.chapters.length === 0) {
       <p class="muted">{{ 'courseEditor.noChapters' | translate }}</p>

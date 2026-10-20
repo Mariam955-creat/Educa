@@ -103,9 +103,36 @@ public class Course {
     @Column(name = "cover_image_type", length = 100)
     private String coverImageType;
 
+    /** Prix promotionnel (strictement inférieur à {@code price}), {@code null} = pas de promotion. */
+    @Column(name = "promo_price", precision = 10, scale = 2)
+    private BigDecimal promoPrice;
+
+    /** Fin de la promotion ; {@code null} = sans date de fin. */
+    @Column(name = "promo_ends_at")
+    private Instant promoEndsAt;
+
+    /** Clé de stockage de la vidéo de démo (environ une minute), {@code null} si aucune. */
+    @Column(name = "preview_video_key", length = 500)
+    private String previewVideoKey;
+
+    /** Type MIME détecté de la vidéo de démo. */
+    @Column(name = "preview_video_type", length = 100)
+    private String previewVideoType;
+
     /** Date de mise à la corbeille ; {@code null} = cours actif. */
     @Column(name = "deleted_at")
     private Instant deletedAt;
+
+    /** Promotion en cours à l'instant {@code now} (définie, moins chère, pas encore terminée). */
+    public boolean isPromoActive(Instant now) {
+        return promoPrice != null && promoPrice.compareTo(price) < 0
+                && (promoEndsAt == null || now.isBefore(promoEndsAt));
+    }
+
+    /** Prix réellement payé à l'instant {@code now} : le prix promotionnel s'il est actif, sinon le prix normal. */
+    public BigDecimal effectivePrice(Instant now) {
+        return isPromoActive(now) ? promoPrice : price;
+    }
 
     public boolean isDeleted() {
         return deletedAt != null;

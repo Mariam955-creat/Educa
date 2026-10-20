@@ -93,6 +93,8 @@
     "invalid": "❌ Aucun certificat ne correspond à ce code."
   },
   "course": {
+    "preview": "Aperçu du cours",
+    "promoUntil": "Offre valable jusqu'au {{date}}",
     "backToCatalog": "‹ Catalogue",
     "by": "Par {{instructor}} · {{language}}",
     "enroll": "S'inscrire à cette formation",
@@ -146,6 +148,14 @@
     "unavailable": "L'assistant est indisponible pour le moment."
   },
   "courseEditor": {
+    "preview": "Vidéo de démo (environ 1 minute)",
+    "previewHint": "MP4 ou WEBM, 50 Mo maximum. Visible par tous sur la page du cours, avant l'achat.",
+    "previewUpload": "Ajouter une vidéo",
+    "previewReplace": "Remplacer la vidéo",
+    "previewRemove": "Retirer la vidéo",
+    "noPreview": "Aucune vidéo de démo",
+    "previewSaved": "Vidéo de démo enregistrée.",
+    "previewError": "Impossible d'enregistrer la vidéo.",
     "newTitle": "Nouveau cours",
     "editTitle": "Éditer le cours",
     "titleField": "Titre",
@@ -483,6 +493,10 @@
     }
   },
   "courseForm": {
+    "promoPrice": "Prix promotionnel (facultatif)",
+    "promoEndsAt": "Fin de la promotion (facultatif)",
+    "promoHint": "Affiché à côté du prix normal barré. Sans date de fin, la promotion dure jusqu'à ce que vous la retiriez.",
+    "promoTooHigh": "Le prix promotionnel doit être inférieur au prix normal.",
     "general": "Informations générales",
     "generalHint": "Ce que les apprenants voient en premier dans le catalogue.",
     "titlePlaceholder": "Ex. : Introduction à Python",

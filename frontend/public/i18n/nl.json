@@ -93,6 +93,8 @@
     "invalid": "❌ Geen certificaat gevonden voor deze code."
   },
   "course": {
+    "preview": "Voorproefje van de cursus",
+    "promoUntil": "Aanbieding geldig tot {{date}}",
     "backToCatalog": "‹ Catalogus",
     "by": "Door {{instructor}} · {{language}}",
     "enroll": "Inschrijven voor deze cursus",
@@ -146,6 +148,14 @@
     "unavailable": "De assistent is momenteel niet beschikbaar."
   },
   "courseEditor": {
+    "preview": "Demovideo (ongeveer 1 minuut)",
+    "previewHint": "MP4 of WEBM, maximaal 50 MB. Voor iedereen zichtbaar op de cursuspagina, vóór de aankoop.",
+    "previewUpload": "Video toevoegen",
+    "previewReplace": "Video vervangen",
+    "previewRemove": "Video verwijderen",
+    "noPreview": "Geen demovideo",
+    "previewSaved": "Demovideo opgeslagen.",
+    "previewError": "De video kon niet worden opgeslagen.",
     "newTitle": "Nieuwe cursus",
     "editTitle": "Cursus bewerken",
     "titleField": "Titel",
@@ -483,6 +493,10 @@
     }
   },
   "courseForm": {
+    "promoPrice": "Actieprijs (optioneel)",
+    "promoEndsAt": "Einde van de actie (optioneel)",
+    "promoHint": "Getoond naast de doorgestreepte normale prijs. Zonder einddatum loopt de actie tot je ze verwijdert.",
+    "promoTooHigh": "De actieprijs moet lager zijn dan de normale prijs.",
     "general": "Algemene informatie",
     "generalHint": "Wat cursisten als eerste zien in de catalogus.",
     "titlePlaceholder": "Bv. Inleiding tot Python",

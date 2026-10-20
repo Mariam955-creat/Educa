@@ -41,6 +41,8 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
   readonly course = signal<CourseDetail | null>(null);
   /** Aperçu de la couverture (URL objet) : lu avec le jeton, la couverture d'un brouillon n'est pas publique. */
   readonly coverPreview = signal<string | null>(null);
+  /** Vidéo de démo chargée avec le jeton (URL locale), pour la revoir avant publication. */
+  readonly previewVideo = signal<string | null>(null);
   readonly quizzes = signal<CourseQuizzes | null>(null);
   readonly languages = signal<CourseLanguage[]>([]);
   readonly isNew = computed(() => this.course() === null);
@@ -119,6 +121,27 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
         this.flash(err.error?.message ?? this.translate.instant('courseEditor.coverError'), true);
       },
     });
+  }
+
+  onPreviewPicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const c = this.course();
+    input.value = '';
+    if (!file || !c) return;
+    this.api.uploadPreview(c.id, file).subscribe({
+      next: () => {
+        this.flash(this.translate.instant('courseEditor.previewSaved'));
+        this.loadCourse(c.slug);
+      },
+      error: (err) => this.flash(err.error?.message ?? this.translate.instant('courseEditor.previewError'), true),
+    });
+  }
+
+  removePreview(): void {
+    const c = this.course();
+    if (!c) return;
+    this.api.removePreview(c.id).subscribe(() => this.loadCourse(c.slug));
   }
 
   removeCover(): void {
@@ -298,6 +321,7 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
     this.api.detail(slug).subscribe((course) => {
       this.course.set(course);
       this.loadCoverPreview(course);
+      this.loadPreviewVideo(course);
       if (course.chapters.length > 0 && this.contentForm.controls.chapterId.value === 0) {
         this.contentForm.patchValue({ chapterId: course.chapters[0].id });
       }
@@ -309,6 +333,23 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
       this.translationDraft.set(null);
       this.loadTranslationLanguages(course.id);
     });
+  }
+
+  private loadPreviewVideo(course: CourseDetail): void {
+    if (!course.previewVideoUrl) {
+      this.setPreviewVideo(null);
+      return;
+    }
+    this.api.previewBlob(course.id).subscribe({
+      next: (blob) => this.setPreviewVideo(URL.createObjectURL(blob)),
+      error: () => this.setPreviewVideo(null),
+    });
+  }
+
+  private setPreviewVideo(url: string | null): void {
+    const previous = this.previewVideo();
+    if (previous) URL.revokeObjectURL(previous);
+    this.previewVideo.set(url);
   }
 
   private loadCoverPreview(course: CourseDetail): void {

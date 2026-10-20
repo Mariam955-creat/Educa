@@ -93,6 +93,8 @@
     "invalid": "❌ No certificate matches this code."
   },
   "course": {
+    "preview": "Course preview",
+    "promoUntil": "Offer valid until {{date}}",
     "backToCatalog": "‹ Catalog",
     "by": "By {{instructor}} · {{language}}",
     "enroll": "Enroll in this course",
@@ -146,6 +148,14 @@
     "unavailable": "The assistant is currently unavailable."
   },
   "courseEditor": {
+    "preview": "Preview video (about 1 minute)",
+    "previewHint": "MP4 or WEBM, 50 MB max. Visible to everyone on the course page, before purchase.",
+    "previewUpload": "Add a video",
+    "previewReplace": "Replace the video",
+    "previewRemove": "Remove the video",
+    "noPreview": "No preview video",
+    "previewSaved": "Preview video saved.",
+    "previewError": "Could not save the video.",
     "newTitle": "New course",
     "editTitle": "Edit course",
     "titleField": "Title",
@@ -483,6 +493,10 @@
     }
   },
   "courseForm": {
+    "promoPrice": "Sale price (optional)",
+    "promoEndsAt": "Sale ends on (optional)",
+    "promoHint": "Shown next to the struck-through regular price. Without an end date, the sale runs until you remove it.",
+    "promoTooHigh": "The sale price must be lower than the regular price.",
     "general": "General information",
     "generalHint": "What learners see first in the catalogue.",
     "titlePlaceholder": "E.g. Introduction to Python",

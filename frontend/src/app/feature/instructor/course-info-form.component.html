@@ -133,6 +133,22 @@
       </label>
     </div>
 
+    <div class="grid-2">
+      <label>
+        {{ 'courseForm.promoPrice' | translate }}
+        <input type="number" formControlName="promoPrice" min="0.01" step="0.01" placeholder="14.99" />
+        @if (promoTooHigh()) {
+          <small class="field-error">{{ 'courseForm.promoTooHigh' | translate }}</small>
+        } @else {
+          <small class="hint">{{ 'courseForm.promoHint' | translate }}</small>
+        }
+      </label>
+      <label>
+        {{ 'courseForm.promoEndsAt' | translate }}
+        <input type="date" formControlName="promoEndsAt" />
+      </label>
+    </div>
+
     <label>
       {{ 'courseForm.weighting' | translate }}
       <input type="range" formControlName="controlWeight" min="0" max="100" step="5" />

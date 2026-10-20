@@ -1,11 +1,17 @@
 package com.educa.backend.course.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 import com.educa.backend.course.CourseCategory;
 import com.educa.backend.course.CourseLevel;
 
+/**
+ * @param promoPrice      prix promotionnel configuré ({@code null} si aucun) — actif seulement si {@code promoActive}
+ * @param promoActive     la promotion s'applique maintenant (prix barré + prix promo affichés, montant payé)
+ * @param previewVideoUrl URL de la vidéo de démo ({@code null} si aucune), visible avant l'achat
+ */
 public record CourseDetailDto(
         Long id,
         String slug,
@@ -32,5 +38,9 @@ public record CourseDetailDto(
         List<String> prerequisites,
         String targetAudience,
         String instructorHeadline,
-        String instructorBio) {
+        String instructorBio,
+        BigDecimal promoPrice,
+        Instant promoEndsAt,
+        boolean promoActive,
+        String previewVideoUrl) {
 }

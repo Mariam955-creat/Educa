@@ -1,6 +1,8 @@
 package com.educa.backend.config;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -101,12 +103,30 @@ public class DevDataInitializer implements ApplicationRunner {
         seedPythonCourse(instructor);
         Course gitCourse = seedGitCourse(instructor);
         catalogCourses().forEach(spec -> seedCatalogCourse(instructor, spec));
+        seedDemoPromotion(PYTHON_COURSE_SLUG, "14.99");
+        seedDemoPromotion("sql-et-bases-de-donnees-relationnelles", "17.99");
+        seedDemoPromotion("java-programmation-orientee-objet", "19.99");
 
         seedCertifiedLearner(graduate, gitCourse);
 
         seedInstructorProfile(instructor);
         presentations().forEach(this::seedPresentation);
         seedReviews();
+    }
+
+    /**
+     * Promotion de démo (prix barré) valable 14 jours : posée si le cours n'en a pas, ou si la précédente est
+     * terminée, pour que la démo montre toujours des prix promotionnels. Une promotion en cours n'est pas touchée.
+     */
+    private void seedDemoPromotion(String slug, String promoPrice) {
+        Instant now = Instant.now();
+        courseRepository.findBySlug(slug)
+                .filter(course -> !course.isPromoActive(now))
+                .ifPresent(course -> {
+                    course.setPromoPrice(new BigDecimal(promoPrice));
+                    course.setPromoEndsAt(now.plus(14, ChronoUnit.DAYS));
+                    log.info("Promotion de démo : « {} » {} € au lieu de {} €", course.getTitle(), promoPrice, course.getPrice());
+                });
     }
 
     private User seedUser(String email, String fullName, RoleName roleName) {

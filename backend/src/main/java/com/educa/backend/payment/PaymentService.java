@@ -2,6 +2,7 @@ package com.educa.backend.payment;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.Instant;
 import java.time.Year;
 import java.util.Currency;
 import java.util.HashMap;
@@ -73,7 +74,8 @@ public class PaymentService {
         }
 
         PaymentGateway.CheckoutResult result = gatewayFor(request.provider())
-                .startCheckout(userId, user.email(), courseId, course.getSlug(), course.getTitle(), course.getPrice());
+                .startCheckout(userId, user.email(), courseId, course.getSlug(), course.getTitle(),
+                        course.effectivePrice(Instant.now()));
 
         Payment payment = new Payment();
         payment.setUserId(userId);
@@ -113,7 +115,7 @@ public class PaymentService {
         payment.setCourseId(courseId);
         payment.setProvider(PaymentProvider.STRIPE);
         payment.setProviderReference("demo-seed-" + userId + "-" + courseId);
-        payment.setAmount(course.getPrice());
+        payment.setAmount(course.effectivePrice(Instant.now()));
         payment.setCurrency("EUR");
         payment.setStatus(PaymentStatus.SUCCEEDED);
         payment.setInvoiceNumber(nextInvoiceNumber());

@@ -141,6 +141,21 @@ export class CourseApiService {
   }
 
   /** Couverture lue avec le jeton (aperçu de l'éditeur : un cours non publié n'a pas de couverture publique). */
+  /** Vidéo de démo lue avec le jeton (aperçu de l'éditeur : un brouillon n'a pas de vidéo publique). */
+  previewBlob(courseId: number): Observable<Blob> {
+    return this.http.get(`${this.base}/courses/${courseId}/preview`, { responseType: 'blob' });
+  }
+
+  uploadPreview(courseId: number, file: File): Observable<CourseSummary> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<CourseSummary>(`${this.base}/courses/${courseId}/preview`, form);
+  }
+
+  removePreview(courseId: number): Observable<CourseSummary> {
+    return this.http.delete<CourseSummary>(`${this.base}/courses/${courseId}/preview`);
+  }
+
   coverBlob(courseId: number): Observable<Blob> {
     return this.http.get(`${this.base}/courses/${courseId}/cover`, { responseType: 'blob' });
   }

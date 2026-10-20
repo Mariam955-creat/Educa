@@ -1,6 +1,7 @@
 package com.educa.backend.course.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 import com.educa.backend.course.CourseCategory;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.Size;
 /**
  * Création (POST) et remplacement (PUT) d'un cours. {@code price} reste optionnel côté API (défaut
  * gratuit si absent) — le formulaire formateur, lui, l'exige toujours (0 = gratuit, explicite).
+ * {@code promoPrice} / {@code promoEndsAt} : promotion facultative (prix barré), date de fin facultative.
  * Les champs de présentation (sous-titre … public visé) sont facultatifs ; absents = vides.
  */
 public record CourseRequest(
@@ -33,5 +35,7 @@ public record CourseRequest(
         @DecimalMin("0") @DecimalMax("999") BigDecimal durationHours,
         @Size(max = 12) List<@Size(max = 200) String> objectives,
         @Size(max = 12) List<@Size(max = 200) String> prerequisites,
-        @Size(max = 2000) String targetAudience) {
+        @Size(max = 2000) String targetAudience,
+        @DecimalMin(value = "0.01", message = "Le prix promotionnel doit être positif") BigDecimal promoPrice,
+        Instant promoEndsAt) {
 }

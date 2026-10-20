@@ -23,6 +23,22 @@ export const COURSE_CATEGORIES: CourseCategory[] = [
   'OTHER',
 ];
 
+/** Promotion (prix barré) et vidéo de démo, communes au résumé et au détail d'un cours. */
+export interface CourseOffer {
+  /** Prix promotionnel configuré ; ne s'applique que si `promoActive`. */
+  promoPrice?: number;
+  /** Fin de la promotion (ISO), absente = sans date de fin. */
+  promoEndsAt?: string;
+  promoActive: boolean;
+  /** URL de la vidéo de démo (chemin API), absente si le formateur n'en a pas mis. */
+  previewVideoUrl?: string;
+}
+
+/** Réduction affichée sur un badge : « -50 % ». */
+export function discountPercent(price: number, promoPrice: number): number {
+  return Math.round((1 - promoPrice / price) * 100);
+}
+
 /** Champs de présentation communs au résumé et au détail d'un cours. */
 export interface CoursePresentation {
   subtitle?: string;
@@ -31,7 +47,7 @@ export interface CoursePresentation {
   durationHours?: number;
 }
 
-export interface CourseSummary extends CoursePresentation {
+export interface CourseSummary extends CoursePresentation, CourseOffer {
   id: number;
   slug: string;
   title: string;
@@ -67,7 +83,7 @@ export interface ChapterItem {
   contents: ContentItem[];
 }
 
-export interface CourseDetail extends CoursePresentation {
+export interface CourseDetail extends CoursePresentation, CourseOffer {
   id: number;
   slug: string;
   title: string;
@@ -163,6 +179,8 @@ export interface CourseProgress {
 }
 
 export interface CourseFormValue extends CoursePresentation {
+  promoPrice?: number;
+  promoEndsAt?: string;
   title: string;
   description?: string;
   language: string;

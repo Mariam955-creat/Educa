@@ -6,10 +6,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/auth.service';
 import { CertificateApiService } from '../../core/certificates/certificate-api.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
-import { ContentItem, CourseDetail, CourseRating } from '../../core/courses/course.models';
+import { ContentItem, CourseDetail, CourseRating, discountPercent } from '../../core/courses/course.models';
 import { EnrollmentApiService } from '../../core/enrollments/enrollment-api.service';
 import { intlLocale } from '../../core/i18n/intl-locale';
 import { LanguageService } from '../../core/i18n/language.service';
+import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { PaymentApiService, PaymentProvider } from '../../core/payment/payment-api.service';
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
@@ -24,7 +25,7 @@ const ENROLL_RETRIES_AFTER_PAYMENT = 5;
 
 @Component({
   selector: 'app-course-detail',
-  imports: [RouterLink, CourseChatComponent, CoursePresentationComponent, CourseReviewsComponent, TranslatePipe, MoneyPipe, StarRatingComponent],
+  imports: [RouterLink, CourseChatComponent, CoursePresentationComponent, CourseReviewsComponent, TranslatePipe, MoneyPipe, LocalDatePipe, StarRatingComponent],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.scss',
 })
@@ -102,6 +103,12 @@ export class CourseDetailComponent implements OnInit {
   }
 
   /** Note moyenne dans la langue de l'interface : « 4,5 » (fr), « 4.5 » (en). */
+  /** Réduction en cours (« -50 % »), ou null sans promotion active. */
+  readonly discount = computed(() => {
+    const c = this.course();
+    return c?.promoActive && c.promoPrice != null ? discountPercent(c.price, c.promoPrice) : null;
+  });
+
   formatRating(value: number): string {
     return new Intl.NumberFormat(intlLocale(this.lang.current()), {
       minimumFractionDigits: 1,

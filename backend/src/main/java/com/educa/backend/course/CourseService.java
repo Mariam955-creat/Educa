@@ -218,7 +218,8 @@ public class CourseService {
                 rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
                 course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
                 splitLines(course.getObjectives()), splitLines(course.getPrerequisites()), course.getTargetAudience(),
-                instructor.headline(), instructor.bio());
+                instructor.headline(), instructor.bio(),
+                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course));
     }
 
     // ---------- helpers inter-modules ----------
@@ -304,6 +305,11 @@ public class CourseService {
         if (request.examWeight() != null) course.setExamWeight(request.examWeight());
         if (request.passThreshold() != null) course.setPassThreshold(request.passThreshold());
         course.setPrice(request.price() != null ? request.price() : BigDecimal.ZERO);
+        if (request.promoPrice() != null && request.promoPrice().compareTo(course.getPrice()) >= 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Le prix promotionnel doit être inférieur au prix normal");
+        }
+        course.setPromoPrice(request.promoPrice());
+        course.setPromoEndsAt(request.promoPrice() != null ? request.promoEndsAt() : null);
         // Présentation : remplacée en bloc (PUT), un champ absent est vidé
         course.setSubtitle(StringUtils.hasText(request.subtitle()) ? request.subtitle().trim() : null);
         course.setCategory(request.category());
@@ -331,13 +337,22 @@ public class CourseService {
                 userService.displayNameById(course.getInstructorId()), course.getChapters().size(),
                 course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
                 rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
-                course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours());
+                course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
+                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course));
     }
 
     /**
      * URL publique de la couverture, ou {@code null}. Le paramètre {@code v} change à chaque nouvelle image
      * (la clé de stockage est unique) : le navigateur peut la garder en cache sans jamais servir l'ancienne.
      */
+    static String previewVideoUrl(Course course) {
+        if (course.getPreviewVideoKey() == null) {
+            return null;
+        }
+        return "/api/v1/courses/" + course.getId() + "/preview?v="
+                + Integer.toHexString(course.getPreviewVideoKey().hashCode());
+    }
+
     static String coverImageUrl(Course course) {
         if (course.getCoverImageKey() == null) {
             return null;

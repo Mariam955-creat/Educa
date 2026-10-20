@@ -378,3 +378,53 @@ button:disabled {
     margin: -1.25rem -1.25rem 1.25rem;
   }
 }
+
+/* --- Vidéo de démo et promotion --- */
+.preview {
+  margin: 0;
+}
+
+.course-head .preview .cover {
+  margin-bottom: 0;
+  background: #0f172a;
+}
+
+.preview figcaption {
+  margin: 0.5rem 0 1.25rem;
+  color: var(--muted, #6b7280);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.promo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.promo .price {
+  margin: 0;
+  color: #b45309;
+}
+
+.old-price {
+  color: var(--muted, #6b7280);
+}
+
+.promo-badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--warning, #f59e0b);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.promo-until {
+  flex-basis: 100%;
+  margin: 0;
+  color: #b45309;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

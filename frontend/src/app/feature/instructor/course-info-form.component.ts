@@ -15,6 +15,13 @@ import { CourseLanguage } from '../../core/language/language-api.service';
 
 const MAX_LIST_ITEMS = 12;
 
+/** Date ISO → « AAAA-MM-JJ » dans le fuseau du navigateur (valeur d'un champ <input type="date">). */
+function localDay(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 export interface CourseFormSubmit {
   value: CourseFormValue;
   /** Image de couverture choisie à la création (téléversée une fois le cours créé). */
@@ -57,6 +64,9 @@ export class CourseInfoFormComponent implements OnDestroy {
     durationHours: this.fb.control<number | null>(null, [Validators.min(0), Validators.max(999)]),
     // Pas de prix par défaut : le formateur doit le saisir explicitement (0 = gratuit reste possible).
     price: this.fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
+    // Promotion facultative : prix barré, avec ou sans date de fin (AAAA-MM-JJ)
+    promoPrice: this.fb.control<number | null>(null, [Validators.min(0.01)]),
+    promoEndsAt: this.fb.nonNullable.control(''),
     passThreshold: this.fb.nonNullable.control(70, [Validators.required, Validators.min(0), Validators.max(100)]),
     controlWeight: this.fb.nonNullable.control(40, [Validators.required, Validators.min(0), Validators.max(100)]),
   });
@@ -65,6 +75,11 @@ export class CourseInfoFormComponent implements OnDestroy {
   readonly titleLength = computed(() => this.formValue().title?.length ?? 0);
   readonly subtitleLength = computed(() => this.formValue().subtitle?.length ?? 0);
   readonly controlWeight = computed(() => this.formValue().controlWeight ?? 40);
+  /** Une promotion doit être strictement moins chère que le prix normal. */
+  readonly promoTooHigh = computed(() => {
+    const { price, promoPrice } = this.formValue();
+    return promoPrice != null && price != null && promoPrice >= price;
+  });
 
   /** Couverture choisie avant la création du cours (aperçu local). */
   readonly coverFile = signal<File | null>(null);
@@ -104,7 +119,7 @@ export class CourseInfoFormComponent implements OnDestroy {
   }
 
   submit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.promoTooHigh()) {
       this.form.markAllAsTouched();
       return;
     }
@@ -123,6 +138,10 @@ export class CourseInfoFormComponent implements OnDestroy {
         targetAudience: raw.targetAudience.trim() || undefined,
         durationHours: raw.durationHours ?? undefined,
         price: raw.price ?? 0, // non null ici : le formulaire est valide
+        promoPrice: raw.promoPrice ?? undefined,
+        // Fin de journée locale : la promotion reste valable toute la journée choisie
+        promoEndsAt:
+          raw.promoPrice != null && raw.promoEndsAt ? new Date(raw.promoEndsAt + 'T23:59:59').toISOString() : undefined,
         passThreshold: raw.passThreshold,
         controlWeight,
         examWeight: 100 - controlWeight,
@@ -146,6 +165,8 @@ export class CourseInfoFormComponent implements OnDestroy {
       targetAudience: course?.targetAudience ?? '',
       durationHours: course?.durationHours ?? null,
       price: course ? course.price : null,
+      promoPrice: course?.promoPrice ?? null,
+      promoEndsAt: course?.promoEndsAt ? localDay(course.promoEndsAt) : '',
       passThreshold: course?.passThreshold ?? 70,
       controlWeight: course?.controlWeight ?? 40,
     });

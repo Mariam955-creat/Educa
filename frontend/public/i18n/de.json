@@ -93,6 +93,8 @@
     "invalid": "❌ Zu diesem Code gibt es kein Zertifikat."
   },
   "course": {
+    "preview": "Kursvorschau",
+    "promoUntil": "Angebot gültig bis {{date}}",
     "backToCatalog": "‹ Katalog",
     "by": "Von {{instructor}} · {{language}}",
     "enroll": "Für diesen Kurs einschreiben",
@@ -146,6 +148,14 @@
     "unavailable": "Der Assistent ist derzeit nicht verfügbar."
   },
   "courseEditor": {
+    "preview": "Vorschauvideo (etwa 1 Minute)",
+    "previewHint": "MP4 oder WEBM, höchstens 50 MB. Für alle auf der Kursseite sichtbar, vor dem Kauf.",
+    "previewUpload": "Video hinzufügen",
+    "previewReplace": "Video ersetzen",
+    "previewRemove": "Video entfernen",
+    "noPreview": "Kein Vorschauvideo",
+    "previewSaved": "Vorschauvideo gespeichert.",
+    "previewError": "Das Video konnte nicht gespeichert werden.",
     "newTitle": "Neuer Kurs",
     "editTitle": "Kurs bearbeiten",
     "titleField": "Titel",
@@ -483,6 +493,10 @@
     }
   },
   "courseForm": {
+    "promoPrice": "Aktionspreis (optional)",
+    "promoEndsAt": "Aktion endet am (optional)",
+    "promoHint": "Wird neben dem durchgestrichenen Normalpreis angezeigt. Ohne Enddatum läuft die Aktion, bis Sie sie entfernen.",
+    "promoTooHigh": "Der Aktionspreis muss unter dem Normalpreis liegen.",
     "general": "Allgemeine Informationen",
     "generalHint": "Was Lernende im Katalog zuerst sehen.",
     "titlePlaceholder": "z. B. Einführung in Python",

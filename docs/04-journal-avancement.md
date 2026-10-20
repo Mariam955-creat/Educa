@@ -1346,3 +1346,20 @@ Chaque cours : 3 chapitres × 2 contenus texte, **un contrôle par chapitre** (2
 **Vérifié** : `./mvnw test` → **104/104** (4 nouveaux `CoursePromotionTest`), `npm run build` OK, `npm run test:ci` → 27/27, captures avant/après du catalogue et de l'accueil. Promotions non vues à l'écran : le backend lancé par l'utilisatrice doit être redémarré pour appliquer `V17`.
 
 **Reste** : certificat et facture PDF encore en bleu ; pas de vidéo de démo dans le jeu de données.
+
+## 2026-10-20 — Six nouveaux cours de démo
+
+**Fait** : `DevDataInitializer.catalogCourses()` crée six cours de plus (13 au total), chacun avec 3 chapitres de contenus texte, un contrôle par chapitre, un examen final et une page de présentation. Prix au niveau du marché et promotions de démo :
+
+| Cours | Catégorie | Prix | Promotion |
+|---|---|---|---|
+| HTML et CSS : créer son premier site web | Développement | 19,99 € | 9,99 € |
+| Excel : de débutant à efficace | Bureautique | 24,99 € | — |
+| Anglais professionnel : communiquer au travail | Langues | 29,99 € | — |
+| Design d'interfaces : les bases de l'UI/UX | Design | 34,99 € | 17,99 € |
+| Marketing digital : attirer ses premiers clients | Business | 39,99 € | 24,99 € |
+| Gestion de projet : méthodes agiles et Scrum | Business | 44,99 € | 22,99 € |
+
+Les catégories bureautique, langues, design et business avaient jusqu'ici aucun cours. Sept cours sont désormais en promotion (avec Python, SQL et Java).
+
+**Vérifié** : `./mvnw compile` OK. Création des cours non encore observée : le backend en cours d'exécution doit être redémarré (migration `V17` + seed).

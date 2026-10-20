@@ -67,6 +67,9 @@
           <button type="button" (click)="enroll()" [disabled]="enrolling()">
             {{ (enrolling() ? 'course.enrolling' : 'course.enroll') | translate }}
           </button>
+          @if (c.price > 0 && !purchased() && subscription()?.active) {
+            <p class="sub-included">✓ {{ 'course.includedInSubscription' | translate }}</p>
+          }
         } @else {
           <div class="buy-buttons">
             <button type="button" (click)="buy('STRIPE')" [disabled]="buying() !== null">

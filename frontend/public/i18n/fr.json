@@ -96,6 +96,7 @@
     "invalid": "❌ Aucun certificat ne correspond à ce code."
   },
   "course": {
+    "includedInSubscription": "Inclus dans votre abonnement",
     "orSubscribe": "Ou accédez à tous les cours :",
     "subscribeLink": "abonnement à {{price}} par mois",
     "preview": "Aperçu du cours",

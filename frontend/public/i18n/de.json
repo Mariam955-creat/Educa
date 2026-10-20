@@ -96,6 +96,7 @@
     "invalid": "❌ Zu diesem Code gibt es kein Zertifikat."
   },
   "course": {
+    "includedInSubscription": "In Ihrem Abonnement enthalten",
     "orSubscribe": "Oder Zugang zu allen Kursen:",
     "subscribeLink": "Abonnement für {{price}} im Monat",
     "preview": "Kursvorschau",

@@ -96,6 +96,7 @@
     "invalid": "❌ Geen certificaat gevonden voor deze code."
   },
   "course": {
+    "includedInSubscription": "Inbegrepen in je abonnement",
     "orSubscribe": "Of krijg toegang tot alle cursussen:",
     "subscribeLink": "abonnement voor {{price}} per maand",
     "preview": "Voorproefje van de cursus",

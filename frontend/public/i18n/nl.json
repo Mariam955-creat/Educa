@@ -20,7 +20,7 @@
   "auth": {
     "login": {
       "title": "Aanmelden",
-      "subtitle": "educa — e-learningplatform",
+      "subtitle": "Ganndal — e-learningplatform",
       "email": "E-mail",
       "password": "Wachtwoord",
       "submit": "Aanmelden",
@@ -407,7 +407,7 @@
       "instructorSpace": "Docentenruimte"
     },
     "overview": {
-      "subtitle": "Je activiteit op educa in één oogopslag.",
+      "subtitle": "Je activiteit op Ganndal in één oogopslag.",
       "learning": "Mijn leren",
       "enrolled": "Gevolgde cursussen",
       "completed": "Afgeronde cursussen",

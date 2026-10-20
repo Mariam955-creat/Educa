@@ -290,7 +290,7 @@ public class PaymentService {
                 <h1>%s</h1>
                 <p class="sub">%s</p>
                 <table class="parties"><tr>
-                  <td><div class="label">%s</div><strong>educa</strong><br/>%s<br/>%s</td>
+                  <td><div class="label">%s</div><strong>Ganndal</strong><br/>%s<br/>%s</td>
                   <td><div class="label">%s</div><strong>%s</strong></td>
                 </tr></table>
                 <table>

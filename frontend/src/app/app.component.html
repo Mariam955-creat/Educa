@@ -1,5 +1,5 @@
 <header class="topbar">
-  <a class="brand" [routerLink]="auth.isAuthenticated() ? '/catalog' : '/'">educa</a>
+  <a class="brand" [routerLink]="auth.isAuthenticated() ? '/catalog' : '/'">Ganndal</a>
 
   @if (auth.isAuthenticated()) {
     <nav class="nav">
@@ -32,7 +32,7 @@
 <footer class="footer">
   <div class="footer-inner">
     <section class="footer-brand">
-      <a class="brand" routerLink="/catalog" [attr.title]="'nav.catalog' | translate">educa</a>
+      <a class="brand" routerLink="/catalog" [attr.title]="'nav.catalog' | translate">Ganndal</a>
       <p class="tagline">{{ 'footer.tagline' | translate }}</p>
       <div class="footer-langs" role="group" [attr.aria-label]="'footer.languages' | translate">
         @for (code of lang.supported; track code) {
@@ -80,7 +80,7 @@
   </div>
 
   <div class="footer-bottom">
-    <span>© {{ year }} educa. {{ 'footer.rights' | translate }}</span>
+    <span>© {{ year }} Ganndal. {{ 'footer.rights' | translate }}</span>
     <span>{{ 'footer.project' | translate }}</span>
   </div>
 </footer>

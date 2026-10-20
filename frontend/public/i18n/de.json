@@ -20,7 +20,7 @@
   "auth": {
     "login": {
       "title": "Anmelden",
-      "subtitle": "educa — E-Learning-Plattform",
+      "subtitle": "Ganndal — E-Learning-Plattform",
       "email": "E-Mail",
       "password": "Passwort",
       "submit": "Anmelden",
@@ -407,7 +407,7 @@
       "instructorSpace": "Kursleiterbereich"
     },
     "overview": {
-      "subtitle": "Ihre Aktivität auf educa auf einen Blick.",
+      "subtitle": "Ihre Aktivität auf Ganndal auf einen Blick.",
       "learning": "Mein Lernen",
       "enrolled": "Belegte Kurse",
       "completed": "Abgeschlossene Kurse",

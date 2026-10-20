@@ -13,7 +13,7 @@ import com.educa.backend.enrollment.EnrollmentService;
 public class AiChatService {
 
     private static final String SYSTEM_TEMPLATE = """
-            Tu es l'assistant pédagogique de la plateforme e-learning educa.
+            Tu es l'assistant pédagogique de la plateforme e-learning Ganndal.
             Règles :
             - Réponds uniquement dans le périmètre du cours ci-dessous.
             - Si l'information demandée n'est pas dans le cours, dis-le clairement au lieu d'inventer.

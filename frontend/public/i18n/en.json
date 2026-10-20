@@ -20,7 +20,7 @@
   "auth": {
     "login": {
       "title": "Sign in",
-      "subtitle": "educa — e-learning platform",
+      "subtitle": "Ganndal — e-learning platform",
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
@@ -407,7 +407,7 @@
       "instructorSpace": "Instructor space"
     },
     "overview": {
-      "subtitle": "Your activity on educa at a glance.",
+      "subtitle": "Your activity on Ganndal at a glance.",
       "learning": "My learning",
       "enrolled": "Courses taken",
       "completed": "Courses completed",

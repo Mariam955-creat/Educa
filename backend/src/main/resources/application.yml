@@ -60,7 +60,7 @@ educa:
     max-context-chars: ${AI_MAX_CONTEXT_CHARS:4000}
   subscription:
     # Abonnement « accès à tous les cours » : pass de N jours renouvelable (Stripe et Orange Money).
-    monthly-price: ${SUBSCRIPTION_MONTHLY_PRICE:19.99}
+    monthly-price: ${SUBSCRIPTION_MONTHLY_PRICE:39.99}
     days: ${SUBSCRIPTION_DAYS:30}
   payment:
     # Origine où l'API est joignable par les prestataires (webhooks serveur-à-serveur).

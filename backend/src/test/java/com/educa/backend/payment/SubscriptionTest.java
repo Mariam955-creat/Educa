@@ -51,7 +51,7 @@ class SubscriptionTest {
     void loffre_est_visible_sans_compte() throws Exception {
         mvc.perform(get("/api/v1/subscription"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.price").value(19.99))
+                .andExpect(jsonPath("$.price").value(39.99))
                 .andExpect(jsonPath("$.days").value(30))
                 .andExpect(jsonPath("$.active").value(false));
     }
@@ -86,13 +86,13 @@ class SubscriptionTest {
                     .andExpect(status().isCreated());
         }
 
-        // 19,99 € partagés entre deux cours : 9,99 € chacun (arrondi inférieur)
+        // 39,99 € partagés entre deux cours : 19,99 € chacun (arrondi inférieur)
         for (String prof : new String[] {prof1, prof2}) {
             mvc.perform(get("/api/v1/instructor/sales").header("Authorization", "Bearer " + prof))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(1))
                     .andExpect(jsonPath("$[0].kind").value("SUBSCRIPTION"))
-                    .andExpect(jsonPath("$[0].amount").value(9.99));
+                    .andExpect(jsonPath("$[0].amount").value(19.99));
         }
     }
 
@@ -131,7 +131,7 @@ class SubscriptionTest {
         early.setKind(PaymentKind.SUBSCRIPTION);
         early.setProvider(PaymentProvider.STRIPE);
         early.setProviderReference("sub-test-renouvellement");
-        early.setAmount(new java.math.BigDecimal("19.99"));
+        early.setAmount(new java.math.BigDecimal("39.99"));
         early.setCurrency("EUR");
         early.setStatus(PaymentStatus.PENDING);
         paymentRepository.save(early);

@@ -64,7 +64,7 @@ public class PaymentService {
                           @Qualifier("stripeGateway") PaymentGateway stripeGateway,
                           @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway,
                           EducaProperties educaProperties, SubscriptionUsageProvider subscriptionUsage,
-                          @Value("${educa.subscription.monthly-price:19.99}") BigDecimal subscriptionPrice,
+                          @Value("${educa.subscription.monthly-price:39.99}") BigDecimal subscriptionPrice,
                           @Value("${educa.subscription.days:30}") int subscriptionDays) {
         this.paymentRepository = paymentRepository;
         this.userService = userService;

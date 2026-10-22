@@ -1394,3 +1394,5 @@ Les catégories bureautique, langues, design et business avaient jusqu'ici aucun
 **Vérifié** : `./mvnw test` → **110/110** (nouveau test de partage entre deux formateurs), `npm run build` OK, `npm run test:ci` → 27/27.
 
 **Limite** : si un abonné achète ensuite un cours qu'il suivait par abonnement, l'inscription n'est plus marquée « par abonnement » et ses anciens pass ne comptent plus ce cours.
+
+**Suite (même jour)** : abonnement passé de 19,99 € à **39,99 €** par mois à la demande de l'utilisatrice (`educa.subscription.monthly-price`, variable `SUBSCRIPTION_MONTHLY_PRICE`) ; argument « rentable dès deux cours suivis dans le mois » (FR/EN/DE/NL). Les pass déjà payés gardent leur montant. Page `/subscription` revérifiée à l'écran, paiement Stripe de test lancé (lien de paiement reçu). Le site ne marchait pas parce que le backend était arrêté (proxy en `500`) ; classes compilées corrompues à nouveau (`NoClassDefFoundError`), corrigé par `./mvnw clean`. `SubscriptionTest` → 6/6.

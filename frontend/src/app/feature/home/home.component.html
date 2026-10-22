@@ -63,6 +63,22 @@
   </section>
 }
 
+@if (offer(); as o) {
+  <section class="block">
+    <div class="plan">
+      <div>
+        <span class="plan-tag">{{ 'nav.subscription' | translate }}</span>
+        <h2>{{ 'home.planTitle' | translate }}</h2>
+        <p>{{ 'home.planText' | translate: { days: o.days } }}</p>
+      </div>
+      <div class="plan-side">
+        <p class="plan-price"><strong>{{ o.price | money: o.currency : lang.current() }}</strong> {{ 'subscription.perMonth' | translate }}</p>
+        <a class="btn primary" routerLink="/subscription">{{ 'home.planCta' | translate }}</a>
+      </div>
+    </div>
+  </section>
+}
+
 <section class="cta">
   <h2>{{ 'home.ctaTitle' | translate }}</h2>
   <p>{{ 'home.ctaText' | translate }}</p>

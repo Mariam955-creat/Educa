@@ -423,6 +423,10 @@
       "instructorSpace": "Espace formateur"
     },
     "overview": {
+      "subscriptionActive": "Abonné",
+      "subscriptionNone": "Sans abonnement",
+      "subscriptionUntil": "Accès à tous les cours jusqu'au {{date}}",
+      "subscriptionOffer": "Tous les cours pour {{price}} par mois",
       "subtitle": "Votre activité sur Ganndal en un coup d'œil.",
       "learning": "Mon apprentissage",
       "enrolled": "Cours suivis",
@@ -635,6 +639,9 @@
     "confirmWord": "SUPPRIMER"
   },
   "home": {
+    "planTitle": "Tous les cours en illimité",
+    "planText": "Un abonnement pour suivre tous les cours du catalogue pendant {{days}} jours, nouveaux cours compris. Sans engagement.",
+    "planCta": "Découvrir l'abonnement",
     "eyebrow": "Plateforme e-learning",
     "title": "Apprenez à votre rythme, prouvez vos compétences",
     "lead": "Suivez des cours structurés, validez chaque chapitre par un contrôle, passez l’examen final et obtenez un certificat vérifiable.",

@@ -4,19 +4,25 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { CourseSummary } from '../../core/courses/course.models';
+import { LanguageService } from '../../core/i18n/language.service';
+import { MoneyPipe } from '../../core/i18n/money.pipe';
+import { PaymentApiService, Subscription } from '../../core/payment/payment-api.service';
 import { CourseCardComponent } from '../../shared/course-card/course-card.component';
 
 /** Page d'accueil publique : présentation de la plateforme et aperçu du catalogue. */
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, TranslatePipe, CourseCardComponent],
+  imports: [RouterLink, TranslatePipe, MoneyPipe, CourseCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
   private readonly api = inject(CourseApiService);
+  private readonly paymentApi = inject(PaymentApiService);
+  readonly lang = inject(LanguageService);
 
   readonly courses = signal<CourseSummary[]>([]);
+  readonly offer = signal<Subscription | null>(null);
   readonly features = ['courses', 'quiz', 'certificate', 'ai'] as const;
   readonly featureIcons: Record<string, string> = { courses: '📚', quiz: '✅', certificate: '🎓', ai: '🤖' };
   readonly steps = ['one', 'two', 'three', 'four'] as const;
@@ -26,6 +32,10 @@ export class HomeComponent implements OnInit {
     this.api.catalog().subscribe({
       next: (page) => this.courses.set(page.content.slice(0, 4)),
       error: () => this.courses.set([]),
+    });
+    this.paymentApi.subscription().subscribe({
+      next: (offer) => this.offer.set(offer),
+      error: () => this.offer.set(null),
     });
   }
 }

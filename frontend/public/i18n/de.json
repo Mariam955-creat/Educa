@@ -423,6 +423,10 @@
       "instructorSpace": "Kursleiterbereich"
     },
     "overview": {
+      "subscriptionActive": "Abonniert",
+      "subscriptionNone": "Kein Abonnement",
+      "subscriptionUntil": "Zugang zu allen Kursen bis {{date}}",
+      "subscriptionOffer": "Alle Kurse für {{price}} im Monat",
       "subtitle": "Ihre Aktivität auf Ganndal auf einen Blick.",
       "learning": "Mein Lernen",
       "enrolled": "Belegte Kurse",
@@ -635,6 +639,9 @@
     "confirmWord": "LÖSCHEN"
   },
   "home": {
+    "planTitle": "Unbegrenzter Zugang zu allen Kursen",
+    "planText": "Ein Abonnement für alle Kurse des Katalogs während {{days}} Tagen, neue Kurse inklusive. Ohne Bindung.",
+    "planCta": "Abonnement entdecken",
     "eyebrow": "E-Learning-Plattform",
     "title": "Lernen Sie in Ihrem Tempo, belegen Sie Ihre Kompetenzen",
     "lead": "Belegen Sie strukturierte Kurse, schließen Sie jedes Kapitel mit einem Test ab, legen Sie die Abschlussprüfung ab und erhalten Sie ein überprüfbares Zertifikat.",

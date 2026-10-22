@@ -12,7 +12,7 @@ import { intlLocale } from '../../core/i18n/intl-locale';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
-import { Invoice, PaymentApiService } from '../../core/payment/payment-api.service';
+import { Invoice, PaymentApiService, Subscription } from '../../core/payment/payment-api.service';
 
 /** Tableau de bord de l'espace compte : indicateurs (apprenant, et formateur le cas échéant) + cours à reprendre. */
 @Component({
@@ -35,6 +35,8 @@ export class AccountOverviewComponent implements OnInit {
   readonly invoices = signal<Invoice[]>([]);
   readonly reviews = signal<MyReview[]>([]);
   readonly taughtCourses = signal<CourseSummary[]>([]);
+  /** État de l'abonnement (carte du tableau de bord) ; `null` si indisponible. */
+  readonly subscription = signal<Subscription | null>(null);
 
   readonly isInstructor = computed(() => this.auth.hasAnyRole(['INSTRUCTOR', 'ADMIN']));
 
@@ -82,6 +84,10 @@ export class AccountOverviewComponent implements OnInit {
       this.taughtCourses.set(data.taught);
       this.loading.set(false);
     });
+    this.paymentApi
+      .subscription()
+      .pipe(catchError(() => of(null)))
+      .subscribe((s) => this.subscription.set(s));
   }
 
   formatRating(value: number): string {

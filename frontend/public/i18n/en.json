@@ -423,6 +423,10 @@
       "instructorSpace": "Instructor space"
     },
     "overview": {
+      "subscriptionActive": "Subscribed",
+      "subscriptionNone": "No subscription",
+      "subscriptionUntil": "Access to every course until {{date}}",
+      "subscriptionOffer": "Every course for {{price}} a month",
       "subtitle": "Your activity on Ganndal at a glance.",
       "learning": "My learning",
       "enrolled": "Courses taken",
@@ -635,6 +639,9 @@
     "confirmWord": "DELETE"
   },
   "home": {
+    "planTitle": "Unlimited access to every course",
+    "planText": "One subscription to take every course in the catalogue for {{days}} days, new courses included. No commitment.",
+    "planCta": "Discover the subscription",
     "eyebrow": "E-learning platform",
     "title": "Learn at your own pace, prove your skills",
     "lead": "Follow structured courses, validate each chapter with a quiz, take the final exam and earn a verifiable certificate.",

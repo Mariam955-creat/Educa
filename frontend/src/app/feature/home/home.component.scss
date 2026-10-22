@@ -249,6 +249,56 @@ h3 {
   text-decoration: none;
 }
 
+/* --- Encadré abonnement --- */
+.plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 2px solid var(--warning, #f59e0b);
+  border-radius: 16px;
+  background: var(--surface, #ffffff);
+  box-shadow: var(--shadow-card, 0 1px 2px rgba(31, 41, 55, 0.05));
+}
+
+.plan h2 {
+  margin: 0.5rem 0 0.4rem;
+  text-align: start;
+}
+
+.plan p {
+  margin: 0;
+  max-width: 36rem;
+  color: var(--muted, #6b7280);
+}
+
+.plan-tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.plan-side {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+}
+
+.plan-side .plan-price {
+  color: var(--muted, #6b7280);
+}
+
+.plan-price strong {
+  color: var(--accent-strong, #1e40af);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
 /* --- Appel final --- */
 .cta {
   max-width: 1100px;

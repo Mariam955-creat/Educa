@@ -27,6 +27,19 @@
         <span class="kpi-value">{{ certificates().length }}</span>
         <span class="kpi-label">{{ 'account.overview.certificates' | translate }}</span>
       </a>
+      @if (subscription(); as s) {
+        <a class="kpi" [class.subscribed]="s.active" routerLink="/subscription">
+          <span class="kpi-icon" aria-hidden="true">♾️</span>
+          <span class="kpi-value">{{ (s.active ? 'account.overview.subscriptionActive' : 'account.overview.subscriptionNone') | translate }}</span>
+          <span class="kpi-label">
+            @if (s.active && s.accessUntil) {
+              {{ 'account.overview.subscriptionUntil' | translate: { date: (s.accessUntil | localDate: 'long' : lang.current()) } }}
+            } @else {
+              {{ 'account.overview.subscriptionOffer' | translate: { price: (s.price | money: s.currency : lang.current()) } }}
+            }
+          </span>
+        </a>
+      }
       <a class="kpi" routerLink="../invoices">
         <span class="kpi-icon" aria-hidden="true">🧾</span>
         <span class="kpi-value">{{ totalSpent() | money: spentCurrency() : lang.current() }}</span>

@@ -154,3 +154,13 @@ h2 {
 .kpi:not(.highlight) .kpi-value {
   color: var(--accent-strong, #1e40af);
 }
+
+/* Abonnement actif : carte verte */
+.kpi.subscribed {
+  border-color: var(--success, #10b981);
+  background: var(--success-soft, #d1fae5);
+}
+
+.kpi.subscribed .kpi-value {
+  color: var(--success-strong, #047857);
+}

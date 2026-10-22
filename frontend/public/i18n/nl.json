@@ -423,6 +423,10 @@
       "instructorSpace": "Docentenruimte"
     },
     "overview": {
+      "subscriptionActive": "Geabonneerd",
+      "subscriptionNone": "Geen abonnement",
+      "subscriptionUntil": "Toegang tot alle cursussen tot {{date}}",
+      "subscriptionOffer": "Alle cursussen voor {{price}} per maand",
       "subtitle": "Je activiteit op Ganndal in één oogopslag.",
       "learning": "Mijn leren",
       "enrolled": "Gevolgde cursussen",
@@ -635,6 +639,9 @@
     "confirmWord": "VERWIJDEREN"
   },
   "home": {
+    "planTitle": "Onbeperkt toegang tot alle cursussen",
+    "planText": "Eén abonnement voor alle cursussen uit de catalogus gedurende {{days}} dagen, nieuwe cursussen inbegrepen. Zonder verplichting.",
+    "planCta": "Ontdek het abonnement",
     "eyebrow": "E-learningplatform",
     "title": "Leer in je eigen tempo, bewijs je vaardigheden",
     "lead": "Volg gestructureerde cursussen, sluit elk hoofdstuk af met een toets, leg het eindexamen af en behaal een verifieerbaar certificaat.",

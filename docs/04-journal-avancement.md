@@ -1380,3 +1380,17 @@ Les catégories bureautique, langues, design et business avaient jusqu'ici aucun
 **Vérifié** : `./mvnw test` → **109/109** (5 nouveaux `SubscriptionTest` : offre publique, inscription d'un abonné, verrouillage puis réouverture, renouvellement anticipé, facture), `npm run build` OK, `npm run test:ci` → 27/27. Non vu à l'écran : le backend lancé par l'utilisatrice doit être redémarré (migrations `V17` et `V18`).
 
 **Limite** : les revenus d'abonnement ne sont pas répartis entre les formateurs (leur page « Ventes » ne compte que les achats à l'unité).
+
+**Suite (même jour)** : encadré abonnement sur l'accueil (avant l'appel final, masqué si l'offre ne se charge pas) et carte « Abonnement » dans le tableau de bord du compte (« Abonné » + date de fin, ou l'offre avec son prix) ; sur les cartes de cours, le nombre d'apprenants ne passe plus à la ligne à côté d'un prix barré. `npm run build` OK.
+
+## 2026-10-22 — Revenus d'abonnement des formateurs
+
+**Fait**
+- Levée de la limite du 2026-10-20 : `GET /instructor/sales` renvoie, en plus des achats à l'unité, la part du formateur dans chaque pass d'abonnement (`kind = SUBSCRIPTION`).
+- Règle : un pass est partagé à parts égales entre les cours que l'abonné suit grâce à l'abonnement et où il s'est inscrit avant la fin du pass ; un cours suivi sur deux mois compte pour les deux pass. Parts arrondies au centime inférieur (19,99 € sur deux cours : 9,99 € chacun), la plateforme garde le reste.
+- `payment` lit les inscriptions par abonnement via l'interface `SubscriptionUsageProvider`, implémentée par `enrollment` (même inversion que `CourseAudienceProvider`, pas de cycle).
+- Site : étiquette « Abonnement » dans l'historique des ventes et les dernières ventes, total « Dont abonnements », note expliquant la règle (FR/EN/DE/NL).
+
+**Vérifié** : `./mvnw test` → **110/110** (nouveau test de partage entre deux formateurs), `npm run build` OK, `npm run test:ci` → 27/27.
+
+**Limite** : si un abonné achète ensuite un cours qu'il suivait par abonnement, l'inscription n'est plus marquée « par abonnement » et ses anciens pass ne comptent plus ce cours.

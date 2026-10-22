@@ -491,6 +491,9 @@
       "view": "Voir"
     },
     "sales": {
+      "viaSubscription": "Abonnement",
+      "subscriptionShare": "Dont abonnements",
+      "subscriptionNote": "Un abonnement est partagé à parts égales entre les cours que l'abonné suit grâce à lui pendant la période payée.",
       "byCourse": "Par cours",
       "history": "Historique des ventes",
       "date": "Date",

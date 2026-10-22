@@ -74,6 +74,29 @@ class SubscriptionTest {
     }
 
     @Test
+    void le_pass_est_partage_entre_les_formateurs_des_cours_suivis() throws Exception {
+        String prof1 = instructorToken("sub-share-prof1@example.com");
+        String prof2 = instructorToken("sub-share-prof2@example.com");
+        long course1 = createPublishedCourse(prof1, "29.99");
+        long course2 = createPublishedCourse(prof2, "39.99");
+        String eleve = learnerToken("sub-share-eleve@example.com");
+        paymentService.recordDemoSubscription(userId("sub-share-eleve@example.com"));
+        for (long id : new long[] {course1, course2}) {
+            mvc.perform(post("/api/v1/courses/" + id + "/enroll").header("Authorization", "Bearer " + eleve))
+                    .andExpect(status().isCreated());
+        }
+
+        // 19,99 € partagés entre deux cours : 9,99 € chacun (arrondi inférieur)
+        for (String prof : new String[] {prof1, prof2}) {
+            mvc.perform(get("/api/v1/instructor/sales").header("Authorization", "Bearer " + prof))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1))
+                    .andExpect(jsonPath("$[0].kind").value("SUBSCRIPTION"))
+                    .andExpect(jsonPath("$[0].amount").value(9.99));
+        }
+    }
+
+    @Test
     void a_la_fin_de_labonnement_le_contenu_est_verrouille_puis_rouvert_au_renouvellement() throws Exception {
         String prof = instructorToken("sub-prof2@example.com");
         long courseId = createPublishedCourse(prof, "39.99");

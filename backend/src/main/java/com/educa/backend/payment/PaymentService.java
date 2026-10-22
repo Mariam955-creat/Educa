@@ -1,14 +1,19 @@
 package com.educa.backend.payment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +54,7 @@ public class PaymentService {
     private final PaymentGateway stripeGateway;
     private final PaymentGateway orangeMoneyGateway;
     private final EducaProperties educaProperties;
+    private final SubscriptionUsageProvider subscriptionUsage;
     /** Prix d'un pass d'abonnement et durée d'accès accordée (educa.subscription.*). */
     private final BigDecimal subscriptionPrice;
     private final int subscriptionDays;
@@ -57,7 +63,7 @@ public class PaymentService {
                           PdfDocuments pdfDocuments,
                           @Qualifier("stripeGateway") PaymentGateway stripeGateway,
                           @Qualifier("orangeMoneyGateway") PaymentGateway orangeMoneyGateway,
-                          EducaProperties educaProperties,
+                          EducaProperties educaProperties, SubscriptionUsageProvider subscriptionUsage,
                           @Value("${educa.subscription.monthly-price:19.99}") BigDecimal subscriptionPrice,
                           @Value("${educa.subscription.days:30}") int subscriptionDays) {
         this.paymentRepository = paymentRepository;
@@ -67,6 +73,7 @@ public class PaymentService {
         this.stripeGateway = stripeGateway;
         this.orangeMoneyGateway = orangeMoneyGateway;
         this.educaProperties = educaProperties;
+        this.subscriptionUsage = subscriptionUsage;
         this.subscriptionPrice = subscriptionPrice;
         this.subscriptionDays = subscriptionDays;
     }
@@ -205,7 +212,12 @@ public class PaymentService {
     public record RevenueStats(BigDecimal total, long sales, BigDecimal recent, long recentSales, String currency) {
     }
 
-    /** Ventes (paiements réussis) des cours d'un formateur, de la plus récente à la plus ancienne. */
+    /**
+     * Ventes des cours d'un formateur, de la plus récente à la plus ancienne : achats à l'unité, plus sa part des
+     * pass d'abonnement. Un pass est partagé à parts égales entre les cours que l'abonné suit grâce à
+     * l'abonnement et où il s'est inscrit avant la fin de ce pass (un cours suivi sur deux mois compte pour
+     * les deux pass). Parts arrondies au centime inférieur : la somme ne dépasse jamais le prix du pass.
+     */
     @Transactional(readOnly = true)
     public List<InstructorSaleDto> instructorSales(Long instructorId) {
         List<Long> courseIds = courseService.courseIdsByInstructor(instructorId);
@@ -213,12 +225,47 @@ public class PaymentService {
             return List.of();
         }
         Map<Long, String> titles = new HashMap<>();
-        return paymentRepository.findByCourseIdInAndStatusOrderByCreatedAtDesc(courseIds, PaymentStatus.SUCCEEDED)
-                .stream()
-                .map(p -> new InstructorSaleDto(p.getId(), p.getCourseId(),
-                        titles.computeIfAbsent(p.getCourseId(), id -> courseService.requireCourse(id).getTitle()),
-                        userService.displayNameById(p.getUserId()), p.getAmount(), p.getCurrency(), p.getCreatedAt()))
-                .toList();
+        List<InstructorSaleDto> sales = new ArrayList<>();
+        for (Payment p : paymentRepository.findByCourseIdInAndStatusOrderByCreatedAtDesc(courseIds,
+                PaymentStatus.SUCCEEDED)) {
+            sales.add(new InstructorSaleDto(p.getId(), p.getCourseId(),
+                    titles.computeIfAbsent(p.getCourseId(), id -> courseService.requireCourse(id).getTitle()),
+                    userService.displayNameById(p.getUserId()), p.getAmount(), p.getCurrency(), p.getCreatedAt(),
+                    PaymentKind.COURSE));
+        }
+        sales.addAll(subscriptionShares(Set.copyOf(courseIds), titles));
+        sales.sort(Comparator.comparing(InstructorSaleDto::createdAt).reversed());
+        return sales;
+    }
+
+    private List<InstructorSaleDto> subscriptionShares(Set<Long> courseIds, Map<Long, String> titles) {
+        List<Payment> passes = paymentRepository.findByKindAndStatus(PaymentKind.SUBSCRIPTION, PaymentStatus.SUCCEEDED);
+        if (passes.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, List<SubscriptionUsageProvider.SubscriptionUse>> usesByUser = subscriptionUsage
+                .subscriptionUses(passes.stream().map(Payment::getUserId).collect(Collectors.toSet())).stream()
+                .collect(Collectors.groupingBy(SubscriptionUsageProvider.SubscriptionUse::userId));
+        List<InstructorSaleDto> shares = new ArrayList<>();
+        for (Payment pass : passes) {
+            List<Long> used = usesByUser.getOrDefault(pass.getUserId(), List.of()).stream()
+                    .filter(u -> !u.enrolledAt().isAfter(pass.getAccessUntil()))
+                    .map(SubscriptionUsageProvider.SubscriptionUse::courseId)
+                    .toList();
+            if (used.isEmpty()) {
+                continue;
+            }
+            BigDecimal share = pass.getAmount().divide(BigDecimal.valueOf(used.size()), 2, RoundingMode.DOWN);
+            for (Long courseId : used) {
+                if (courseIds.contains(courseId)) {
+                    shares.add(new InstructorSaleDto(pass.getId(), courseId,
+                            titles.computeIfAbsent(courseId, id -> courseService.requireCourse(id).getTitle()),
+                            userService.displayNameById(pass.getUserId()), share, pass.getCurrency(),
+                            pass.getCreatedAt(), PaymentKind.SUBSCRIPTION));
+                }
+            }
+        }
+        return shares;
     }
 
     /** Factures de l'apprenant connecté : un paiement réussi = une facture. */

@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../api';
 
-/** Vente (paiement réussi) d'un cours du formateur connecté. */
+/**
+ * Vente d'un cours du formateur connecté : achat à l'unité (`COURSE`) ou part d'un pass d'abonnement
+ * (`SUBSCRIPTION`, partagé entre les cours suivis par l'abonné).
+ */
 export interface InstructorSale {
   id: number;
   courseId: number;
@@ -13,6 +16,7 @@ export interface InstructorSale {
   amount: number;
   currency: string;
   createdAt: string;
+  kind: 'COURSE' | 'SUBSCRIPTION';
 }
 
 /** Avis reçu sur un cours du formateur connecté. */

@@ -491,6 +491,9 @@
       "view": "Ansehen"
     },
     "sales": {
+      "viaSubscription": "Abonnement",
+      "subscriptionShare": "Davon Abonnements",
+      "subscriptionNote": "Ein Abonnement wird zu gleichen Teilen auf die Kurse verteilt, die der Abonnent im bezahlten Zeitraum damit belegt.",
       "byCourse": "Nach Kurs",
       "history": "Verkaufsverlauf",
       "date": "Datum",

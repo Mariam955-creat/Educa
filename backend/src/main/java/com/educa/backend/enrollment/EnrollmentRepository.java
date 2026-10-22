@@ -20,6 +20,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     boolean existsByCourseId(Long courseId);
 
+    List<Enrollment> findByUserIdInAndViaSubscriptionTrue(Collection<Long> userIds);
+
     long countByEnrolledAtAfter(java.time.Instant since);
 
     /** Lignes {@code [courseId, nombre d'inscrits]} pour les cours donnés. */

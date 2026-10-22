@@ -22,6 +22,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     long countByInvoiceNumberIsNotNull();
 
+    List<Payment> findByKindAndStatus(PaymentKind kind, PaymentStatus status);
+
     /** Pass d'abonnement réussi dont l'accès court encore après {@code now}. */
     boolean existsByUserIdAndKindAndStatusAndAccessUntilAfter(Long userId, PaymentKind kind, PaymentStatus status,
                                                                java.time.Instant now);

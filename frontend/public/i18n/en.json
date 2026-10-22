@@ -491,6 +491,9 @@
       "view": "View"
     },
     "sales": {
+      "viaSubscription": "Subscription",
+      "subscriptionShare": "From subscriptions",
+      "subscriptionNote": "A subscription is shared equally between the courses the subscriber takes with it during the paid period.",
       "byCourse": "By course",
       "history": "Sales history",
       "date": "Date",

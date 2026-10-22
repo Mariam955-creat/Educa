@@ -491,6 +491,9 @@
       "view": "Bekijken"
     },
     "sales": {
+      "viaSubscription": "Abonnement",
+      "subscriptionShare": "Waarvan abonnementen",
+      "subscriptionNote": "Een abonnement wordt gelijk verdeeld over de cursussen die de abonnee er tijdens de betaalde periode mee volgt.",
       "byCourse": "Per cursus",
       "history": "Verkoopgeschiedenis",
       "date": "Datum",

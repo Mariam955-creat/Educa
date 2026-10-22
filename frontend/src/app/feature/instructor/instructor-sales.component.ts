@@ -35,6 +35,12 @@ interface CourseRevenue {
             <span class="label">{{ 'instructor.overview.sales' | translate }}</span>
             <strong>{{ sales().length }}</strong>
           </div>
+          @if (subscriptionTotal() > 0) {
+            <div>
+              <span class="label">{{ 'instructor.sales.subscriptionShare' | translate }}</span>
+              <strong>{{ subscriptionTotal() | money: currency() : lang.current() }}</strong>
+            </div>
+          }
         </div>
 
         <h2>{{ 'instructor.sales.byCourse' | translate }}</h2>
@@ -59,16 +65,24 @@ interface CourseRevenue {
             </tr>
           </thead>
           <tbody>
-            @for (s of sales(); track s.id) {
+            @for (s of sales(); track $index) {
               <tr>
                 <td>{{ s.createdAt | localDate: 'short' : lang.current() }}</td>
                 <td>{{ s.courseTitle }}</td>
-                <td>{{ s.buyerName }}</td>
+                <td>
+                  {{ s.buyerName }}
+                  @if (s.kind === 'SUBSCRIPTION') {
+                    <span class="tag">{{ 'instructor.sales.viaSubscription' | translate }}</span>
+                  }
+                </td>
                 <td class="num">{{ s.amount | money: s.currency : lang.current() }}</td>
               </tr>
             }
           </tbody>
         </table>
+        @if (subscriptionTotal() > 0) {
+          <p class="note">{{ 'instructor.sales.subscriptionNote' | translate }}</p>
+        }
       }
     </section>
   `,
@@ -94,6 +108,8 @@ interface CourseRevenue {
     th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
     tr:last-child td { border-bottom: 0; }
     .num { text-align: end; }
+    .tag { display: inline-block; margin-inline-start: 0.35rem; padding: 0.05rem 0.45rem; border-radius: 999px; background: var(--accent-soft, #eff6ff); color: var(--accent-strong, #1e40af); font-size: 0.7rem; font-weight: 700; white-space: nowrap; }
+    .note { margin: 0.75rem 0 0; color: var(--muted); font-size: 0.82rem; }
   `,
 })
 export class InstructorSalesComponent implements OnInit {
@@ -105,6 +121,10 @@ export class InstructorSalesComponent implements OnInit {
 
   readonly currency = computed(() => this.sales()[0]?.currency ?? 'EUR');
   readonly total = computed(() => this.sales().reduce((sum, s) => sum + s.amount, 0));
+  /** Part des abonnements comprise dans le total. */
+  readonly subscriptionTotal = computed(() =>
+    this.sales().filter((s) => s.kind === 'SUBSCRIPTION').reduce((sum, s) => sum + s.amount, 0),
+  );
   /** Revenus par cours, du plus rentable au moins rentable. */
   readonly byCourse = computed<CourseRevenue[]>(() => {
     const map = new Map<number, CourseRevenue>();

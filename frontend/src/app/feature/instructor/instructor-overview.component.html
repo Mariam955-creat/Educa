@@ -63,9 +63,9 @@
           <h2>{{ 'instructor.overview.latestSales' | translate }}</h2>
           <a routerLink="../sales">{{ 'instructor.overview.seeAll' | translate }}</a>
         </div>
-        @for (s of latestSales(); track s.id) {
+        @for (s of latestSales(); track $index) {
           <div class="row">
-            <span class="row-title">{{ s.courseTitle }}<small class="muted"> · {{ s.buyerName }}</small></span>
+            <span class="row-title">{{ s.courseTitle }}<small class="muted"> · {{ s.buyerName }}@if (s.kind === 'SUBSCRIPTION') { · {{ 'instructor.sales.viaSubscription' | translate }} }</small></span>
             <span class="muted">{{ s.createdAt | localDate: 'long' : lang.current() }}</span>
             <strong>{{ s.amount | money: s.currency : lang.current() }}</strong>
           </div>

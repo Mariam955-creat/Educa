@@ -212,6 +212,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  flex-wrap: wrap;
   margin-top: auto;
   padding-top: 0.75rem;
   border-top: 1px solid var(--border, #dbe3ef);
@@ -220,6 +221,7 @@ h3 {
 .learners {
   color: var(--muted, #6b7280);
   font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .price {

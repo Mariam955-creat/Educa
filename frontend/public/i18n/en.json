@@ -346,6 +346,8 @@
       "languages": "Languages"
     },
     "overview": {
+      "subscribers": "Active subscribers",
+      "subscriptionRevenue": "{{amount}} earned from subscriptions",
       "subtitle": "Platform activity: users, courses, sales and quality.",
       "loadError": "Could not load the indicators.",
       "revenue": "Revenue",

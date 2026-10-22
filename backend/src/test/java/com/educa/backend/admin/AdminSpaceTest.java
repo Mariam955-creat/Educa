@@ -63,6 +63,7 @@ class AdminSpaceTest {
                 .andExpect(jsonPath("$.courses.drafts").value(draftsBefore + 1))
                 .andExpect(jsonPath("$.revenue.sales").value(salesBefore + 1))
                 .andExpect(jsonPath("$.revenue.recentSales").value(greaterThanOrEqualTo(1)))
+                .andExpect(jsonPath("$.subscriptions.active").value(greaterThanOrEqualTo(0)))
                 .andExpect(jsonPath("$.users.recent").value(greaterThanOrEqualTo(3)))
                 .andExpect(jsonPath("$.users.admins").value(greaterThanOrEqualTo(1)));
     }

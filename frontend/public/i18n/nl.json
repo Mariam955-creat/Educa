@@ -346,6 +346,8 @@
       "languages": "Talen"
     },
     "overview": {
+      "subscribers": "Actieve abonnees",
+      "subscriptionRevenue": "{{amount}} uit abonnementen",
       "subtitle": "Activiteit van het platform: gebruikers, cursussen, verkopen en kwaliteit.",
       "loadError": "De indicatoren konden niet worden geladen.",
       "revenue": "Omzet",

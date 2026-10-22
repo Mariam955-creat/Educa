@@ -74,6 +74,19 @@ class SubscriptionTest {
     }
 
     @Test
+    void les_abonnes_actifs_sont_comptes_pour_ladmin() throws Exception {
+        learnerToken("sub-stats@example.com");
+        PaymentService.SubscriptionStats before = paymentService.subscriptionStats();
+        paymentService.recordDemoSubscription(userId("sub-stats@example.com"));
+        PaymentService.SubscriptionStats after = paymentService.subscriptionStats();
+        assertThat(after.active()).isEqualTo(before.active() + 1);
+        assertThat(after.revenue()).isEqualByComparingTo(before.revenue().add(new java.math.BigDecimal("39.99")));
+
+        expireSubscription(userId("sub-stats@example.com"));
+        assertThat(paymentService.subscriptionStats().active()).isEqualTo(before.active());
+    }
+
+    @Test
     void le_pass_est_partage_entre_les_formateurs_des_cours_suivis() throws Exception {
         String prof1 = instructorToken("sub-share-prof1@example.com");
         String prof2 = instructorToken("sub-share-prof2@example.com");

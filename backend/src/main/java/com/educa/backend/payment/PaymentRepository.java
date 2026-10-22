@@ -24,6 +24,13 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findByKindAndStatus(PaymentKind kind, PaymentStatus status);
 
+    /** Ligne {@code [abonnés dont l'accès court après now, montant total des pass]}. */
+    @org.springframework.data.jpa.repository.Query("""
+            select count(distinct case when p.accessUntil > :now then p.userId end), coalesce(sum(p.amount), 0)
+            from Payment p where p.kind = com.educa.backend.payment.PaymentKind.SUBSCRIPTION
+              and p.status = com.educa.backend.payment.PaymentStatus.SUCCEEDED""")
+    List<Object[]> subscriptionTotals(@org.springframework.data.repository.query.Param("now") java.time.Instant now);
+
     /** Pass d'abonnement réussi dont l'accès court encore après {@code now}. */
     boolean existsByUserIdAndKindAndStatusAndAccessUntilAfter(Long userId, PaymentKind kind, PaymentStatus status,
                                                                java.time.Instant now);

@@ -212,6 +212,16 @@ public class PaymentService {
     public record RevenueStats(BigDecimal total, long sales, BigDecimal recent, long recentSales, String currency) {
     }
 
+    /** Abonnés actifs (accès en cours) et montant total encaissé par les pass d'abonnement. */
+    @Transactional(readOnly = true)
+    public SubscriptionStats subscriptionStats() {
+        Object[] row = paymentRepository.subscriptionTotals(Instant.now()).get(0);
+        return new SubscriptionStats((Long) row[0], (BigDecimal) row[1]);
+    }
+
+    public record SubscriptionStats(long active, BigDecimal revenue) {
+    }
+
     /**
      * Ventes des cours d'un formateur, de la plus récente à la plus ancienne : achats à l'unité, plus sa part des
      * pass d'abonnement. Un pass est partagé à parts égales entre les cours que l'abonné suit grâce à

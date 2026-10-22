@@ -346,6 +346,8 @@
       "languages": "Langues"
     },
     "overview": {
+      "subscribers": "Abonnés actifs",
+      "subscriptionRevenue": "{{amount}} encaissés en abonnements",
       "subtitle": "Activité de la plateforme : utilisateurs, cours, ventes et qualité.",
       "loadError": "Impossible de charger les indicateurs.",
       "revenue": "Chiffre d'affaires",

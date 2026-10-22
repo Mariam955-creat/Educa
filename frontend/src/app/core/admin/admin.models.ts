@@ -52,6 +52,8 @@ export interface AdminStats {
   courses: { total: number; published: number; drafts: number };
   enrollments: { total: number; recent: number };
   revenue: { total: number; sales: number; recent: number; recentSales: number; currency: string };
+  /** `revenue` : part des abonnements, déjà comprise dans `revenue.total`. */
+  subscriptions: { active: number; revenue: number };
   certificates: number;
   reviews: { count: number; average: number | null };
 }

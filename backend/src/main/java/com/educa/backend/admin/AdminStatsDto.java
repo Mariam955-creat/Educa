@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 /** Indicateurs du tableau de bord admin ; « recent » = 30 derniers jours. */
 public record AdminStatsDto(Users users, Courses courses, Enrollments enrollments, Revenue revenue,
-                            long certificates, Reviews reviews) {
+                            Subscriptions subscriptions, long certificates, Reviews reviews) {
 
     public record Users(long total, long learners, long instructors, long admins, long disabled, long recent) {
     }
@@ -16,6 +16,10 @@ public record AdminStatsDto(Users users, Courses courses, Enrollments enrollment
     }
 
     public record Revenue(BigDecimal total, long sales, BigDecimal recent, long recentSales, String currency) {
+    }
+
+    /** @param revenue montant total des pass d'abonnement (déjà compris dans {@link Revenue#total}) */
+    public record Subscriptions(long active, BigDecimal revenue) {
     }
 
     /** @param average note moyenne sur 5, {@code null} sans avis */

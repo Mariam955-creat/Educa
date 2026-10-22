@@ -346,6 +346,8 @@
       "languages": "Sprachen"
     },
     "overview": {
+      "subscribers": "Aktive Abonnenten",
+      "subscriptionRevenue": "{{amount}} aus Abonnements",
       "subtitle": "Aktivität der Plattform: Nutzer, Kurse, Verkäufe und Qualität.",
       "loadError": "Die Kennzahlen konnten nicht geladen werden.",
       "revenue": "Umsatz",

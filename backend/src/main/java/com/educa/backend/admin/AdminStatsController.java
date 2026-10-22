@@ -50,6 +50,7 @@ public class AdminStatsController {
         long[] enrollments = enrollmentService.enrollmentCounts(since);
         PaymentService.RevenueStats revenue = paymentService.revenueStats(since);
         RatingStats ratings = ratingService.globalStats();
+        PaymentService.SubscriptionStats subscriptions = paymentService.subscriptionStats();
         return new AdminStatsDto(
                 new AdminStatsDto.Users(users.total(), users.learners(), users.instructors(), users.admins(),
                         users.disabled(), users.recent()),
@@ -57,6 +58,7 @@ public class AdminStatsController {
                 new AdminStatsDto.Enrollments(enrollments[0], enrollments[1]),
                 new AdminStatsDto.Revenue(revenue.total(), revenue.sales(), revenue.recent(), revenue.recentSales(),
                         revenue.currency()),
+                new AdminStatsDto.Subscriptions(subscriptions.active(), subscriptions.revenue()),
                 certificateService.count(),
                 new AdminStatsDto.Reviews(ratings.count(), ratings.count() == 0 ? null : ratings.average()));
     }

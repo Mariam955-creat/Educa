@@ -18,6 +18,11 @@
         <span class="kpi-value">{{ s.revenue.total | money: s.revenue.currency : lang.current() }}</span>
         <span class="kpi-sub">{{ 'admin.overview.last30' | translate: { amount: (s.revenue.recent | money: s.revenue.currency : lang.current()), count: s.revenue.recentSales } }}</span>
       </a>
+      <a class="kpi" routerLink="../payments">
+        <span class="kpi-label">♾️ {{ 'admin.overview.subscribers' | translate }}</span>
+        <span class="kpi-value">{{ s.subscriptions.active }}</span>
+        <span class="kpi-sub">{{ 'admin.overview.subscriptionRevenue' | translate: { amount: (s.subscriptions.revenue | money: s.revenue.currency : lang.current()) } }}</span>
+      </a>
       <a class="kpi" routerLink="../users">
         <span class="kpi-label">👥 {{ 'admin.overview.users' | translate }}</span>
         <span class="kpi-value">{{ s.users.total }}</span>

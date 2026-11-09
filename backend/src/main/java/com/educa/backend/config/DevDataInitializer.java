@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,20 @@ public class DevDataInitializer implements ApplicationRunner {
 
         seedPythonCourse(instructor);
         Course gitCourse = seedGitCourse(instructor);
-        catalogCourses().forEach(spec -> seedCatalogCourse(instructor, spec));
+        // Trois formateurs de plus, chacun avec les cours de son domaine ; Karim garde la programmation
+        User designer = seedUser("claire@educa.dev", "Claire Dubois", RoleName.INSTRUCTOR);
+        User manager = seedUser("ousmane@educa.dev", "Ousmane Diallo", RoleName.INSTRUCTOR);
+        User trainer = seedUser("emma@educa.dev", "Emma Janssens", RoleName.INSTRUCTOR);
+        Map<String, User> owners = Map.of(
+                "html-et-css-creer-son-premier-site", designer,
+                "design-d-interfaces-les-bases-ui-ux", designer,
+                "marketing-digital-attirer-ses-premiers-clients", manager,
+                "gestion-de-projet-agile-et-scrum", manager,
+                "excel-de-debutant-a-efficace", manager,
+                "anglais-professionnel-communiquer-au-travail", trainer,
+                "cybersecurite-les-bons-reflexes", trainer);
+        catalogCourses().forEach(spec -> seedCatalogCourse(owners.getOrDefault(spec.slug(), instructor), spec));
+        owners.forEach((slug, owner) -> reassignDemoCourse(slug, instructor, owner));
         seedDemoPromotion(PYTHON_COURSE_SLUG, "14.99");
         seedDemoPromotion("sql-et-bases-de-donnees-relationnelles", "17.99");
         seedDemoPromotion("java-programmation-orientee-objet", "19.99");
@@ -116,7 +130,22 @@ public class DevDataInitializer implements ApplicationRunner {
 
         seedCertifiedLearner(graduate, gitCourse);
 
-        seedInstructorProfile(instructor);
+        seedInstructorProfile(instructor, "Développeur full-stack, formateur depuis 2015", """
+                Ingénieur logiciel pendant dix ans (Java, Python, bases de données), j'enseigne aujourd'hui \
+                la programmation à des débutants comme à des développeurs en reconversion. Mes cours vont à \
+                l'essentiel : un concept, un exemple concret, un exercice.""", "FR");
+        seedInstructorProfile(designer, "Designer UI/UX et intégratrice web", """
+                Designer produit depuis huit ans, j'ai conçu des interfaces pour des start-up et des services \
+                publics. J'apprends à créer des pages claires et accessibles, du croquis au code HTML et CSS.""",
+                "BE");
+        seedInstructorProfile(manager, "Consultant en marketing et gestion de projet", """
+                Chef de projet puis consultant, j'accompagne des PME à Dakar et à Paris dans leur organisation \
+                et leur présence en ligne. Mes cours partent de cas réels : un tableau Excel, un sprint, une \
+                campagne.""", "SN");
+        seedInstructorProfile(trainer, "Formatrice en anglais et en cybersécurité", """
+                Ancienne responsable sécurité informatique dans une banque, je forme aujourd'hui les équipes aux \
+                bons réflexes numériques et à l'anglais du quotidien professionnel, avec des mises en situation.""",
+                "NL");
         presentations().forEach(this::seedPresentation);
         seedReviews();
     }
@@ -830,16 +859,29 @@ public class DevDataInitializer implements ApplicationRunner {
     private record ReviewSpec(String slug, String reviewerEmail, int stars, String comment) {
     }
 
-    private void seedInstructorProfile(User instructor) {
+    private void seedInstructorProfile(User instructor, String headline, String bio, String country) {
         if (instructor.getHeadline() != null) {
             return; // déjà renseigné (seed précédent ou saisie dans « Mon profil »)
         }
-        instructor.setHeadline("Développeur full-stack, formateur depuis 2015");
-        instructor.setBio("""
-                Ingénieur logiciel pendant dix ans (Java, Python, bases de données), j'enseigne aujourd'hui \
-                la programmation à des débutants comme à des développeurs en reconversion. Mes cours vont à \
-                l'essentiel : un concept, un exemple concret, un exercice.""");
+        instructor.setHeadline(headline);
+        instructor.setBio(bio);
+        if (instructor.getCountry() == null) {
+            instructor.setCountry(country);
+        }
         userRepository.save(instructor);
+    }
+
+    /**
+     * Confie à {@code owner} un cours de démo créé auparavant au nom de Karim (bases existantes). Un cours déjà
+     * passé à un autre formateur n'est pas touché.
+     */
+    private void reassignDemoCourse(String slug, User previous, User owner) {
+        courseRepository.findBySlug(slug)
+                .filter(course -> previous.getId().equals(course.getInstructorId()))
+                .ifPresent(course -> {
+                    course.setInstructorId(owner.getId());
+                    log.info("Cours de démo « {} » confié à {}", course.getTitle(), owner.getFullName());
+                });
     }
 
     /** Remplit la page de présentation d'un cours de démo, seulement si elle est encore vide. */

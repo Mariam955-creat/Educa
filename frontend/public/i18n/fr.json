@@ -67,7 +67,31 @@
     "learnerOne": "1 apprenant",
     "chapters": "{{count}} chapitres",
     "chapterOne": "1 chapitre",
-    "ratingLabel": "Note : {{value}} sur 5"
+    "ratingLabel": "Note : {{value}} sur 5",
+    "filters": {
+      "title": "Filtres",
+      "all": "Tous",
+      "language": "Langue du cours",
+      "price": "Prix",
+      "anyPrice": "Tous les prix",
+      "upTo": "Jusqu'à {{amount}}",
+      "rating": "Note",
+      "anyRating": "Toutes les notes",
+      "atLeast": "{{value}} ★ et plus",
+      "promo": "En promotion",
+      "results": "{{count}} cours",
+      "resultOne": "1 cours",
+      "reset": "Effacer les filtres",
+      "sortBy": "Trier par",
+      "error": "Le catalogue ne peut pas être chargé pour le moment. Réessayez dans un instant."
+    },
+    "sort": {
+      "NEWEST": "Les plus récents",
+      "POPULAR": "Les plus suivis",
+      "RATING": "Les mieux notés",
+      "PRICE_ASC": "Prix croissant",
+      "PRICE_DESC": "Prix décroissant"
+    }
   },
   "certificates": {
     "title": "Mes certificats",

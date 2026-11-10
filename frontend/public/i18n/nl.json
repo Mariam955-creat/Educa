@@ -67,7 +67,31 @@
     "learnerOne": "1 cursist",
     "chapters": "{{count}} hoofdstukken",
     "chapterOne": "1 hoofdstuk",
-    "ratingLabel": "Beoordeling: {{value}} van 5"
+    "ratingLabel": "Beoordeling: {{value}} van 5",
+    "filters": {
+      "title": "Filters",
+      "all": "Alle",
+      "language": "Taal van de cursus",
+      "price": "Prijs",
+      "anyPrice": "Alle prijzen",
+      "upTo": "Tot {{amount}}",
+      "rating": "Beoordeling",
+      "anyRating": "Alle beoordelingen",
+      "atLeast": "{{value}} ★ en hoger",
+      "promo": "In de aanbieding",
+      "results": "{{count}} cursussen",
+      "resultOne": "1 cursus",
+      "reset": "Filters wissen",
+      "sortBy": "Sorteren op",
+      "error": "De catalogus kan nu niet worden geladen. Probeer het zo meteen opnieuw."
+    },
+    "sort": {
+      "NEWEST": "Nieuwste",
+      "POPULAR": "Populairste",
+      "RATING": "Best beoordeeld",
+      "PRICE_ASC": "Prijs oplopend",
+      "PRICE_DESC": "Prijs aflopend"
+    }
   },
   "certificates": {
     "title": "Mijn certificaten",

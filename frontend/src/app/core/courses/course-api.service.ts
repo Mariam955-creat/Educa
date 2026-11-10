@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api';
 import { LanguageService } from '../i18n/language.service';
 import {
+  CatalogFilters,
   ChapterFormValue,
   ChapterItem,
   ContentFormValue,
@@ -32,13 +33,20 @@ export class CourseApiService {
     return this.language.current();
   }
 
-  catalog(q?: string, language?: string, page = 0, size = 20): Observable<Page<CourseSummary>> {
+  /** Catalogue public ; seuls les filtres renseignés sont envoyés. */
+  catalog(filters: CatalogFilters = {}, page = 0, size = 20): Observable<Page<CourseSummary>> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size)
       .set('displayLanguage', this.displayLanguage);
-    if (q) params = params.set('q', q);
-    if (language) params = params.set('language', language);
+    if (filters.q) params = params.set('q', filters.q);
+    if (filters.language) params = params.set('language', filters.language);
+    if (filters.category) params = params.set('category', filters.category);
+    if (filters.level) params = params.set('level', filters.level);
+    if (filters.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
+    if (filters.minRating != null) params = params.set('minRating', filters.minRating);
+    if (filters.promo) params = params.set('promo', true);
+    if (filters.sort) params = params.set('sort', filters.sort);
     return this.http.get<Page<CourseSummary>>(`${this.base}/courses`, { params });
   }
 

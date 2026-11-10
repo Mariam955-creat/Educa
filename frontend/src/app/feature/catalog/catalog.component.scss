@@ -48,6 +48,99 @@ h1 {
   color: var(--muted);
 }
 
+.error {
+  color: var(--danger, #b91c1c);
+}
+
+/* --- Filtres : une ligne qui passe à la ligne sur grand écran, panneau repliable sur téléphone --- */
+.toolbar {
+  margin-bottom: 1rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  padding: 1rem;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #dbe3ef);
+  border-radius: var(--radius-lg, 12px);
+}
+
+.filters label,
+.sort {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted, #6b7280);
+}
+
+.filters select {
+  min-width: 10rem;
+}
+
+.filters .check {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.55rem;
+  color: var(--text, #1f2937);
+}
+
+.filters-toggle {
+  display: none;
+}
+
+.badge {
+  display: inline-block;
+  min-width: 1.3rem;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--accent, #2563eb);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.3rem;
+}
+
+.results-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.count {
+  margin: 0;
+  color: var(--muted, #6b7280);
+}
+
+.link {
+  margin-left: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent, #2563eb);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sort {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
 /* Grille : 1 colonne (téléphone), 2 (tablette), 3 (ordinateur), 4 (grand écran) */
 .grid {
   display: grid;
@@ -76,6 +169,26 @@ h1 {
 
   .page {
     padding: 1.25rem 0.85rem 2rem;
+  }
+
+  .filters-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .filters {
+    display: none;
+    margin-top: 0.75rem;
+  }
+
+  .filters.open {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters select {
+    min-width: 0;
+    width: 100%;
   }
 
   .catalog-head-inner {

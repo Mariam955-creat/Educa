@@ -67,7 +67,31 @@
     "learnerOne": "1 Lernende(r)",
     "chapters": "{{count}} Kapitel",
     "chapterOne": "1 Kapitel",
-    "ratingLabel": "Bewertung: {{value}} von 5"
+    "ratingLabel": "Bewertung: {{value}} von 5",
+    "filters": {
+      "title": "Filter",
+      "all": "Alle",
+      "language": "Kurssprache",
+      "price": "Preis",
+      "anyPrice": "Alle Preise",
+      "upTo": "Bis {{amount}}",
+      "rating": "Bewertung",
+      "anyRating": "Alle Bewertungen",
+      "atLeast": "{{value}} ★ und mehr",
+      "promo": "Im Angebot",
+      "results": "{{count}} Kurse",
+      "resultOne": "1 Kurs",
+      "reset": "Filter zurücksetzen",
+      "sortBy": "Sortieren nach",
+      "error": "Der Katalog kann gerade nicht geladen werden. Bitte versuchen Sie es gleich noch einmal."
+    },
+    "sort": {
+      "NEWEST": "Neueste",
+      "POPULAR": "Beliebteste",
+      "RATING": "Beste Bewertung",
+      "PRICE_ASC": "Preis aufsteigend",
+      "PRICE_DESC": "Preis absteigend"
+    }
   },
   "certificates": {
     "title": "Meine Zertifikate",

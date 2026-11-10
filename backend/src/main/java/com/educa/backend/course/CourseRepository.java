@@ -30,14 +30,23 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     long countByDeletedAtIsNull();
 
+    /**
+     * Cours publiés filtrés sur les critères simples (texte, langue, catégorie, niveau), sans tri ni pagination :
+     * le prix payé, la note et les tris qui en dépendent sont appliqués ensuite par {@code CourseService.catalog}.
+     */
     @Query("""
             select c from Course c
             where c.published = true
-              and (cast(:q as string) is null or lower(c.title) like lower(concat('%', cast(:q as string), '%')))
+              and c.deletedAt is null
+              and (cast(:q as string) is null
+                   or lower(c.title) like lower(concat('%', cast(:q as string), '%'))
+                   or lower(coalesce(c.subtitle, '')) like lower(concat('%', cast(:q as string), '%')))
               and (cast(:language as string) is null or c.language = cast(:language as string))
-            order by c.createdAt desc
+              and (:category is null or c.category = :category)
+              and (:level is null or c.level = :level)
             """)
-    Page<Course> searchPublished(@Param("q") String q, @Param("language") String language, Pageable pageable);
+    List<Course> findPublished(@Param("q") String q, @Param("language") String language,
+            @Param("category") CourseCategory category, @Param("level") CourseLevel level);
 
     long countByInstructorId(Long instructorId);
 

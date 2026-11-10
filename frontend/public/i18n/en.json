@@ -67,7 +67,31 @@
     "learnerOne": "1 learner",
     "chapters": "{{count}} chapters",
     "chapterOne": "1 chapter",
-    "ratingLabel": "Rating: {{value}} out of 5"
+    "ratingLabel": "Rating: {{value}} out of 5",
+    "filters": {
+      "title": "Filters",
+      "all": "All",
+      "language": "Course language",
+      "price": "Price",
+      "anyPrice": "Any price",
+      "upTo": "Up to {{amount}}",
+      "rating": "Rating",
+      "anyRating": "Any rating",
+      "atLeast": "{{value}} ★ & up",
+      "promo": "On sale",
+      "results": "{{count}} courses",
+      "resultOne": "1 course",
+      "reset": "Clear filters",
+      "sortBy": "Sort by",
+      "error": "The catalog can't be loaded right now. Please try again in a moment."
+    },
+    "sort": {
+      "NEWEST": "Newest",
+      "POPULAR": "Most popular",
+      "RATING": "Highest rated",
+      "PRICE_ASC": "Price: low to high",
+      "PRICE_DESC": "Price: high to low"
+    }
   },
   "certificates": {
     "title": "My certificates",

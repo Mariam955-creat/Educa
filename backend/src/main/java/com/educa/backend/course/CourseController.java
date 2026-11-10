@@ -1,5 +1,6 @@
 package com.educa.backend.course;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -43,12 +44,19 @@ public class CourseController {
     public PageResponse<CourseSummaryDto> catalog(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String language,
+            @RequestParam(required = false) CourseCategory category,
+            @RequestParam(required = false) CourseLevel level,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(defaultValue = "false") boolean promo,
+            @RequestParam(defaultValue = "NEWEST") CatalogQuery.CatalogSort sort,
             @RequestParam(required = false) String displayLanguage,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         int safeSize = Math.min(Math.max(size, 1), 100);
+        CatalogQuery query = new CatalogQuery(q, language, category, level, maxPrice, minRating, promo, sort);
         return PageResponse.of(
-                courseService.catalog(q, language, displayLanguage, PageRequest.of(Math.max(page, 0), safeSize)));
+                courseService.catalog(query, displayLanguage, PageRequest.of(Math.max(page, 0), safeSize)));
     }
 
     @GetMapping("/courses/{slug}")

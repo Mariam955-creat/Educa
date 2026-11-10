@@ -23,6 +23,25 @@ export const COURSE_CATEGORIES: CourseCategory[] = [
   'OTHER',
 ];
 
+/** Ordre du catalogue (`GET /courses?sort=`). */
+export type CatalogSort = 'NEWEST' | 'POPULAR' | 'RATING' | 'PRICE_ASC' | 'PRICE_DESC';
+export const CATALOG_SORTS: CatalogSort[] = ['NEWEST', 'POPULAR', 'RATING', 'PRICE_ASC', 'PRICE_DESC'];
+
+/** Filtres du catalogue public ; un champ absent = pas de filtre. */
+export interface CatalogFilters {
+  q?: string;
+  language?: string;
+  category?: CourseCategory;
+  level?: CourseLevel;
+  /** Prix maximal, comparé au prix payé (promotion comprise). */
+  maxPrice?: number;
+  /** Note moyenne minimale sur 5 ; exclut les cours sans note. */
+  minRating?: number;
+  /** Seulement les cours en promotion. */
+  promo?: boolean;
+  sort?: CatalogSort;
+}
+
 /** Promotion (prix barré) et vidéo de démo, communes au résumé et au détail d'un cours. */
 export interface CourseOffer {
   /** Prix promotionnel configuré ; ne s'applique que si `promoActive`. */

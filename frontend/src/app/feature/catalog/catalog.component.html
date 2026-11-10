@@ -2,20 +2,121 @@
   <div class="catalog-head-inner">
     <h1>{{ 'catalog.title' | translate }}</h1>
     <p class="head-subtitle">{{ 'catalog.subtitle' | translate }}</p>
-    <input class="search" type="search" [formControl]="search" [placeholder]="'catalog.searchPlaceholder' | translate" />
+    <input
+      class="search"
+      type="search"
+      [formControl]="search"
+      [placeholder]="'catalog.searchPlaceholder' | translate"
+      [attr.aria-label]="'catalog.searchPlaceholder' | translate"
+    />
   </div>
 </header>
 
 <section class="page">
+  <div class="toolbar">
+    <button type="button" class="filters-toggle" [attr.aria-expanded]="filtersOpen()" aria-controls="catalog-filters" (click)="toggleFilters()">
+      {{ 'catalog.filters.title' | translate }}
+      @if (activeCount() > 0) {
+        <span class="badge">{{ activeCount() }}</span>
+      }
+    </button>
+
+    <form id="catalog-filters" class="filters" [class.open]="filtersOpen()" [formGroup]="filters" (submit)="$event.preventDefault()">
+      <label>
+        <span>{{ 'courseForm.category' | translate }}</span>
+        <select formControlName="category">
+          <option value="">{{ 'catalog.filters.all' | translate }}</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ 'courseForm.categories.' + cat | translate }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'courseForm.level' | translate }}</span>
+        <select formControlName="level">
+          <option value="">{{ 'catalog.filters.all' | translate }}</option>
+          @for (lvl of levels; track lvl) {
+            <option [value]="lvl">{{ 'courseForm.levels.' + lvl | translate }}</option>
+          }
+        </select>
+      </label>
+
+      @if (courseLanguages().length > 1) {
+        <label>
+          <span>{{ 'catalog.filters.language' | translate }}</span>
+          <select formControlName="language">
+            <option value="">{{ 'catalog.filters.all' | translate }}</option>
+            @for (l of courseLanguages(); track l.code) {
+              <option [value]="l.code">{{ l.name }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <label>
+        <span>{{ 'catalog.filters.price' | translate }}</span>
+        <select formControlName="maxPrice">
+          <option value="">{{ 'catalog.filters.anyPrice' | translate }}</option>
+          @for (cap of priceCaps; track cap) {
+            <option [value]="'' + cap">{{ 'catalog.filters.upTo' | translate: { amount: (cap | money: 'EUR' : lang.current()) } }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'catalog.filters.rating' | translate }}</span>
+        <select formControlName="minRating">
+          <option value="">{{ 'catalog.filters.anyRating' | translate }}</option>
+          @for (floor of ratingFloors; track floor) {
+            <option [value]="'' + floor">{{ 'catalog.filters.atLeast' | translate: { value: floor } }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" formControlName="promo" />
+        <span>{{ 'catalog.filters.promo' | translate }}</span>
+      </label>
+    </form>
+  </div>
+
+  <div class="results-bar" [formGroup]="filters">
+    <p class="count" aria-live="polite">
+      @if (!loading() && !error()) {
+        {{ (total() === 1 ? 'catalog.filters.resultOne' : 'catalog.filters.results') | translate: { count: total() } }}
+      }
+      @if (activeCount() > 0) {
+        <button type="button" class="link" (click)="reset()">{{ 'catalog.filters.reset' | translate }}</button>
+      }
+    </p>
+    <label class="sort">
+      <span>{{ 'catalog.filters.sortBy' | translate }}</span>
+      <select formControlName="sort">
+        @for (s of sorts; track s) {
+          <option [value]="s">{{ 'catalog.sort.' + s | translate }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
+  } @else if (error()) {
+    <p class="error">{{ 'catalog.filters.error' | translate }}</p>
   } @else if (courses().length === 0) {
-    <p class="muted">{{ 'catalog.empty' | translate }}</p>
+    <div class="empty">
+      <p class="muted">{{ 'catalog.empty' | translate }}</p>
+      @if (activeCount() > 0) {
+        <button type="button" (click)="reset()">{{ 'catalog.filters.reset' | translate }}</button>
+      }
+    </div>
   } @else {
     <div class="grid">
       @for (course of courses(); track course.id) {
         <app-course-card [course]="course" />
       }
     </div>
+    <app-pager [page]="page()" [totalPages]="totalPages()" (pageChange)="changePage($event)" />
   }
 </section>

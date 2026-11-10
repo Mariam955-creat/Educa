@@ -2,11 +2,13 @@ package com.educa.backend.course;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -132,14 +134,71 @@ public class CourseService {
 
     // ---------- lecture ----------
 
+    /**
+     * Catalogue public filtré, trié et paginé. Les critères simples sont filtrés en base ; le prix payé (promotion
+     * comprise), la note et les tris par popularité ou par note dépendent de données calculées ou tenues par
+     * d'autres modules, et sont donc appliqués en mémoire sur les cours retenus. Adapté à un catalogue de
+     * quelques centaines de cours ; au-delà, il faudrait dénormaliser ces valeurs dans {@code courses}.
+     */
     @Transactional(readOnly = true)
-    public Page<CourseSummaryDto> catalog(String q, String language, String displayLanguage, Pageable pageable) {
-        String normalizedQ = StringUtils.hasText(q) ? q.trim() : null;
-        String normalizedLang = StringUtils.hasText(language) ? language : null;
-        Page<Course> page = courseRepository.searchPublished(normalizedQ, normalizedLang, pageable);
-        Map<Long, CourseTranslation> translations = courseTranslationsFor(page.getContent(), displayLanguage);
-        CourseStats stats = statsFor(page.getContent());
-        return page.map(course -> toSummary(course, translations.get(course.getId()), stats));
+    public Page<CourseSummaryDto> catalog(CatalogQuery query, String displayLanguage, Pageable pageable) {
+        Instant now = Instant.now();
+        List<Course> matching = courseRepository.findPublished(
+                        StringUtils.hasText(query.q()) ? query.q().trim() : null,
+                        StringUtils.hasText(query.language()) ? query.language() : null,
+                        query.category(), query.level()).stream()
+                .filter(course -> query.maxPrice() == null
+                        || course.effectivePrice(now).compareTo(query.maxPrice()) <= 0)
+                .filter(course -> !query.promoOnly() || course.isPromoActive(now))
+                .toList();
+        CourseStats stats = statsFor(matching);
+        List<Course> sorted = matching.stream()
+                .filter(course -> query.minRating() == null || hasRatingAtLeast(stats.rating(course.getId()),
+                        query.minRating()))
+                .sorted(catalogOrder(query.sort(), stats, now))
+                .toList();
+
+        int from = (int) Math.min(pageable.getOffset(), sorted.size());
+        int to = Math.min(from + pageable.getPageSize(), sorted.size());
+        List<Course> pageContent = sorted.subList(from, to);
+        Map<Long, CourseTranslation> translations = courseTranslationsFor(pageContent, displayLanguage);
+        List<CourseSummaryDto> summaries = pageContent.stream()
+                .map(course -> toSummary(course, translations.get(course.getId()), stats))
+                .toList();
+        return new PageImpl<>(summaries, pageable, sorted.size());
+    }
+
+    private static boolean hasRatingAtLeast(CourseRatingProvider.RatingStats rating, double minimum) {
+        return rating != null && rating.count() > 0 && rating.average() >= minimum;
+    }
+
+    /** Ordre du catalogue ; à égalité, les plus récents d'abord, puis l'id pour un ordre stable entre les pages. */
+    private static Comparator<Course> catalogOrder(CatalogQuery.CatalogSort sort, CourseStats stats, Instant now) {
+        Comparator<Course> newest = Comparator.comparing(Course::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(Course::getId, Comparator.reverseOrder());
+        if (sort == null) {
+            return newest;
+        }
+        Comparator<Course> primary = switch (sort) {
+            case NEWEST -> null;
+            case POPULAR -> Comparator.comparingLong((Course c) -> stats.learners(c.getId())).reversed();
+            case RATING -> Comparator
+                    .comparingDouble((Course c) -> averageOrZero(stats.rating(c.getId()))).reversed()
+                    .thenComparing(Comparator.comparingLong((Course c) -> ratingCount(stats.rating(c.getId())))
+                            .reversed());
+            case PRICE_ASC -> Comparator.comparing((Course c) -> c.effectivePrice(now));
+            case PRICE_DESC -> Comparator.comparing((Course c) -> c.effectivePrice(now)).reversed();
+        };
+        return primary == null ? newest : primary.thenComparing(newest);
+    }
+
+    private static double averageOrZero(CourseRatingProvider.RatingStats rating) {
+        return rating == null ? 0 : rating.average();
+    }
+
+    private static long ratingCount(CourseRatingProvider.RatingStats rating) {
+        return rating == null ? 0 : rating.count();
     }
 
     @Transactional(readOnly = true)

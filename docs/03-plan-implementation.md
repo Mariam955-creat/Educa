@@ -75,7 +75,7 @@ Dernière mise à jour : 2026-09-08.
 | 2.10 | Frontend : `catalog` (liste publiés + recherche debounce) + `course-detail` (`/courses/:slug` : s'inscrire, contenus masqués si non inscrit, lecture TEXT, ouverture de fichier via blob, « marquer comme terminé », barre de progression) | `frontend/src/app/feature/catalog`, `.../course` | fait | 2026-09-08 |
 | 2.11 | Frontend : `learner-dashboard` branché sur `GET /enrollments/me` (cartes + barres de %) ; `EnrollmentApiService` | `frontend/src/app/feature/dashboard`, `core/enrollments` | fait | 2026-09-08 |
 | 2.12 | Tests backend : `CourseFlowTest` (5 tests) — création + slug, apprenant → 403, catalogue = publiés seulement, inscription + progression + doublon 409, contenus masqués si non inscrit. `./mvnw test` → **14 verts** | `backend/src/test/...` | fait | 2026-09-08 |
-| 2.13 | (S) Recherche/filtrage avancé du catalogue | — | à faire | — |
+| 2.13 | (S) Recherche/filtrage avancé du catalogue : `GET /courses` accepte `category`, `level`, `maxPrice` (prix payé, promotion comprise), `minRating`, `promo`, `sort` (`NEWEST`/`POPULAR`/`RATING`/`PRICE_ASC`/`PRICE_DESC`) ; texte cherché aussi dans le sous-titre ; page catalogue avec barre de filtres (repliable sur téléphone), tri, nombre de résultats, pagination, critères dans l’URL | `course` (`CatalogQuery`, `CourseService.catalog`), `feature/catalog` | fait | 2026-11-09 |
 
 **Livrable démontrable** : ✅ backend vérifié en conditions réelles (formateur crée « Bases du Git » + chapitre + contenus + fichier, publie ; apprenant s'inscrit, complète un contenu → 50 %, télécharge le fichier). Reste le frontend (2.9–2.11).
 

@@ -26,6 +26,51 @@
       </article>
     }
 
+    <section class="card ai-panel">
+      <h3>✨ {{ 'quizEditor.ai.title' | translate }}</h3>
+      <p class="muted">
+        {{ (q.type === 'FINAL_EXAM' ? 'quizEditor.ai.hintExam' : 'quizEditor.ai.hintControl') | translate }}
+      </p>
+      <div class="ai-row">
+        <label>
+          {{ 'quizEditor.ai.count' | translate }}
+          <select [formControl]="suggestCount">
+            @for (n of suggestCounts; track n) {
+              <option [ngValue]="n">{{ n }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" (click)="suggest()" [disabled]="suggesting() || adding()">
+          {{ (suggesting() ? 'quizEditor.ai.generating' : 'quizEditor.ai.generate') | translate }}
+        </button>
+      </div>
+      @if (suggestError()) {
+        <p class="form-error">{{ suggestError() }}</p>
+      }
+
+      @if (suggestions().length > 0) {
+        <p class="muted review">{{ 'quizEditor.ai.review' | translate }}</p>
+        @for (s of suggestions(); track s) {
+          <article class="suggestion">
+            <strong>{{ s.statement }}</strong>
+            <span class="kind">{{ (s.type === 'SINGLE_CHOICE' ? 'quizEditor.choiceSingle' : s.type === 'MULTIPLE_CHOICE' ? 'quizEditor.choiceMultiple' : 'quizEditor.choiceTrueFalse') | translate }}</span>
+            <ul>
+              @for (opt of s.options; track opt.position) {
+                <li [class.correct]="opt.correct">{{ opt.label }}</li>
+              }
+            </ul>
+            <div class="actions">
+              <button type="button" (click)="accept(s)" [disabled]="adding()">{{ 'quizEditor.ai.add' | translate }}</button>
+              <button type="button" class="ghost" (click)="dismiss(s)" [disabled]="adding()">{{ 'quizEditor.ai.dismiss' | translate }}</button>
+            </div>
+          </article>
+        }
+        <button type="button" class="ghost" (click)="acceptAll()" [disabled]="adding()">
+          {{ 'quizEditor.ai.addAll' | translate: { count: suggestions().length } }}
+        </button>
+      }
+    </section>
+
     <form class="card" [formGroup]="form" (ngSubmit)="submit()">
       <h3>{{ 'quizEditor.addQuestionTitle' | translate }}</h3>
       <label>{{ 'quizEditor.statement' | translate }} <textarea formControlName="statement" rows="2"></textarea></label>

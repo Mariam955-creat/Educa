@@ -319,13 +319,28 @@ public class CourseService {
     /** Contexte textuel borné d'un cours (titre + description + chapitres + contenus TEXT), pour le chatbot. */
     @Transactional(readOnly = true)
     public String aiContext(Long courseId, int maxChars) {
+        return aiContext(courseId, null, maxChars);
+    }
+
+    /**
+     * Comme {@link #aiContext(Long, int)}, limité à un chapitre si {@code chapterId} est renseigné (génération des
+     * questions d'un contrôle de chapitre). La langue du cours est indiquée en tête.
+     */
+    @Transactional(readOnly = true)
+    public String aiContext(Long courseId, Long chapterId, int maxChars) {
         Course course = requireCourse(courseId);
         StringBuilder sb = new StringBuilder();
         sb.append("Titre : ").append(course.getTitle()).append('\n');
+        if (course.getLanguage() != null) {
+            sb.append("Langue du cours : ").append(course.getLanguage()).append('\n');
+        }
         if (course.getDescription() != null && !course.getDescription().isBlank()) {
             sb.append("Description : ").append(course.getDescription()).append('\n');
         }
         for (Chapter chapter : course.getChapters()) {
+            if (chapterId != null && !chapterId.equals(chapter.getId())) {
+                continue;
+            }
             sb.append("\n## ").append(chapter.getPosition()).append(". ").append(chapter.getTitle()).append('\n');
             for (Content content : chapter.getContents()) {
                 sb.append("- ").append(content.getTitle());

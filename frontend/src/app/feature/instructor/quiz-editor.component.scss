@@ -139,3 +139,63 @@ button.ghost {
   cursor: pointer;
   padding: 0 0.25rem;
 }
+
+/* --- Suggestions de l'IA : brouillons à relire avant ajout --- */
+.ai-panel {
+  border-color: var(--accent-soft-border, #bfdbfe);
+  background: var(--accent-soft, #eff6ff);
+}
+
+.ai-panel h3 {
+  margin-top: 0;
+}
+
+.ai-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.ai-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.review {
+  margin: 1rem 0 0.5rem;
+}
+
+.suggestion {
+  margin-bottom: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--border, #dbe3ef);
+  border-radius: var(--radius, 8px);
+  background: var(--surface, #ffffff);
+}
+
+.suggestion .kind {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--muted, #6b7280);
+}
+
+.suggestion ul {
+  margin: 0.5rem 0;
+  padding-left: 1.1rem;
+}
+
+.suggestion li.correct {
+  color: var(--success-strong, #047857);
+  font-weight: 600;
+}
+
+.suggestion .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

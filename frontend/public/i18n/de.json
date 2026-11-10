@@ -275,7 +275,21 @@
     "added": "Frage hinzugefügt.",
     "addFailed": "Hinzufügen fehlgeschlagen.",
     "confirmDeleteQuestion": "Diese Frage löschen?",
-    "notFound": "Quiz nicht gefunden oder Zugriff verweigert."
+    "notFound": "Quiz nicht gefunden oder Zugriff verweigert.",
+    "ai": {
+      "title": "KI-Vorschläge",
+      "hintControl": "Die KI schlägt Fragen auf Grundlage dieses Kapitels vor. Prüfen Sie sie: Ohne Ihre Zustimmung wird nichts hinzugefügt.",
+      "hintExam": "Die KI schlägt Fragen auf Grundlage des gesamten Kurses vor. Prüfen Sie sie: Ohne Ihre Zustimmung wird nichts hinzugefügt.",
+      "count": "Anzahl der Fragen",
+      "generate": "Fragen vorschlagen",
+      "generating": "Wird erstellt…",
+      "review": "Prüfen Sie jede Frage und ihre richtigen Antworten (grün), bevor Sie sie hinzufügen.",
+      "add": "Zum Quiz hinzufügen",
+      "dismiss": "Verwerfen",
+      "addAll": "Alle {{count}} Fragen hinzufügen",
+      "none": "Die KI hat keine verwendbare Frage vorgeschlagen. Fügen Sie dem Kapitel Textinhalt hinzu und versuchen Sie es erneut.",
+      "failed": "Die Erstellung der Fragen ist fehlgeschlagen. Bitte versuchen Sie es gleich noch einmal."
+    }
   },
   "quizTake": {
     "passed": "✅ Bestanden",

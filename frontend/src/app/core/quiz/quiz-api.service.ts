@@ -49,6 +49,11 @@ export class QuizApiService {
     return this.http.post<QuizView>(`${this.base}/courses/${courseId}/final-exam`, { title, maxAttempts });
   }
 
+  /** Questions proposées par l'IA à partir du contenu du chapitre ou du cours ; rien n'est enregistré. */
+  suggestQuestions(quizId: number, count: number): Observable<QuestionInput[]> {
+    return this.http.post<QuestionInput[]>(`${this.base}/quizzes/${quizId}/question-suggestions`, { count });
+  }
+
   addQuestion(quizId: number, question: QuestionInput): Observable<QuizView> {
     return this.http.post<QuizView>(`${this.base}/quizzes/${quizId}/questions`, question);
   }

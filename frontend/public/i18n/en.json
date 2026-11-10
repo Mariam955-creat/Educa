@@ -275,7 +275,21 @@
     "added": "Question added.",
     "addFailed": "Failed to add.",
     "confirmDeleteQuestion": "Delete this question?",
-    "notFound": "Quiz not found or access denied."
+    "notFound": "Quiz not found or access denied.",
+    "ai": {
+      "title": "AI suggestions",
+      "hintControl": "The AI suggests questions based on this chapter’s content. Review them: nothing is added without your approval.",
+      "hintExam": "The AI suggests questions based on the whole course. Review them: nothing is added without your approval.",
+      "count": "Number of questions",
+      "generate": "Suggest questions",
+      "generating": "Generating…",
+      "review": "Check each question and its correct answers (in green) before adding it.",
+      "add": "Add to quiz",
+      "dismiss": "Dismiss",
+      "addAll": "Add all {{count}} questions",
+      "none": "The AI did not suggest any usable question. Add text content to the chapter, then try again.",
+      "failed": "Question generation failed. Please try again in a moment."
+    }
   },
   "quizTake": {
     "passed": "✅ Passed",

@@ -275,7 +275,21 @@
     "added": "Vraag toegevoegd.",
     "addFailed": "Toevoegen mislukt.",
     "confirmDeleteQuestion": "Deze vraag verwijderen?",
-    "notFound": "Quiz niet gevonden of geen toegang."
+    "notFound": "Quiz niet gevonden of geen toegang.",
+    "ai": {
+      "title": "Suggesties van de AI",
+      "hintControl": "De AI stelt vragen voor op basis van de inhoud van dit hoofdstuk. Controleer ze: zonder uw akkoord wordt niets toegevoegd.",
+      "hintExam": "De AI stelt vragen voor op basis van de hele cursus. Controleer ze: zonder uw akkoord wordt niets toegevoegd.",
+      "count": "Aantal vragen",
+      "generate": "Vragen voorstellen",
+      "generating": "Bezig met genereren…",
+      "review": "Controleer elke vraag en de juiste antwoorden (in het groen) voordat u ze toevoegt.",
+      "add": "Toevoegen aan de quiz",
+      "dismiss": "Negeren",
+      "addAll": "Alle {{count}} vragen toevoegen",
+      "none": "De AI heeft geen bruikbare vraag voorgesteld. Voeg tekst toe aan het hoofdstuk en probeer het opnieuw.",
+      "failed": "Het genereren van vragen is mislukt. Probeer het zo meteen opnieuw."
+    }
   },
   "quizTake": {
     "passed": "✅ Geslaagd",

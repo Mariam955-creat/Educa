@@ -275,7 +275,21 @@
     "added": "Question ajoutée.",
     "addFailed": "Échec de l'ajout.",
     "confirmDeleteQuestion": "Supprimer cette question ?",
-    "notFound": "Quiz introuvable ou accès refusé."
+    "notFound": "Quiz introuvable ou accès refusé.",
+    "ai": {
+      "title": "Suggestions de l'IA",
+      "hintControl": "L'IA propose des questions à partir du contenu de ce chapitre. Relisez-les : rien n'est ajouté sans votre accord.",
+      "hintExam": "L'IA propose des questions à partir du contenu de tout le cours. Relisez-les : rien n'est ajouté sans votre accord.",
+      "count": "Nombre de questions",
+      "generate": "Proposer des questions",
+      "generating": "Génération en cours…",
+      "review": "Vérifiez chaque question et ses bonnes réponses (en vert) avant de l’ajouter.",
+      "add": "Ajouter au quiz",
+      "dismiss": "Ignorer",
+      "addAll": "Ajouter les {{count}} questions",
+      "none": "L'IA n'a proposé aucune question exploitable. Ajoutez du contenu texte au chapitre, puis réessayez.",
+      "failed": "La génération de questions a échoué. Réessayez dans un instant."
+    }
   },
   "quizTake": {
     "passed": "✅ Réussi",

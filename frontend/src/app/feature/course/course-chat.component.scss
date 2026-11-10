@@ -6,9 +6,50 @@
   margin-top: 1.5rem;
 }
 
+.chat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
 h2 {
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: 1.1rem;
+}
+
+.confirm {
+  font-size: 0.85rem;
+  color: var(--muted, #6b7280);
+}
+
+.link {
+  margin-left: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent, #2563eb);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link.danger {
+  color: var(--danger, #b91c1c);
+}
+
+.msg.degraded {
+  border-style: dashed;
+  color: var(--muted, #6b7280);
+}
+
+.saved-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted, #6b7280);
 }
 
 .messages {

@@ -175,7 +175,12 @@
     "assistant": "Assistant",
     "placeholder": "Type a question…",
     "send": "Send",
-    "unavailable": "The assistant is currently unavailable."
+    "unavailable": "The assistant is currently unavailable.",
+    "clear": "Clear conversation",
+    "clearConfirm": "Clear the whole conversation?",
+    "clearYes": "Clear",
+    "clearNo": "Cancel",
+    "savedNote": "Your conversation is saved: you will find it again on your next visit."
   },
   "courseEditor": {
     "preview": "Preview video (about 1 minute)",

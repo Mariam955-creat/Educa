@@ -175,7 +175,12 @@
     "assistant": "Assistant",
     "placeholder": "Écrire une question…",
     "send": "Envoyer",
-    "unavailable": "L'assistant est indisponible pour le moment."
+    "unavailable": "L'assistant est indisponible pour le moment.",
+    "clear": "Effacer la conversation",
+    "clearConfirm": "Effacer toute la conversation ?",
+    "clearYes": "Effacer",
+    "clearNo": "Annuler",
+    "savedNote": "Votre conversation est enregistrée : vous la retrouverez à votre prochaine visite."
   },
   "courseEditor": {
     "preview": "Vidéo de démo (environ 1 minute)",

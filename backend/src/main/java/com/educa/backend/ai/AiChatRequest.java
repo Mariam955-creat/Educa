@@ -5,6 +5,11 @@ import java.util.List;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * @param history échanges précédents transmis à {@link AiAssistant}. Dans une requête HTTP, ce champ est
+ *                accepté (compatibilité) mais ignoré : {@link AiChatService} le remplace par l'historique
+ *                enregistré côté serveur.
+ */
 public record AiChatRequest(
         @NotNull Long courseId,
         @NotNull @Size(min = 1, max = 2000) String message,

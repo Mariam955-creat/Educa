@@ -175,7 +175,12 @@
     "assistant": "Assistent",
     "placeholder": "Frage eingeben…",
     "send": "Senden",
-    "unavailable": "Der Assistent ist derzeit nicht verfügbar."
+    "unavailable": "Der Assistent ist derzeit nicht verfügbar.",
+    "clear": "Unterhaltung löschen",
+    "clearConfirm": "Die gesamte Unterhaltung löschen?",
+    "clearYes": "Löschen",
+    "clearNo": "Abbrechen",
+    "savedNote": "Ihre Unterhaltung wird gespeichert: Beim nächsten Besuch finden Sie sie wieder."
   },
   "courseEditor": {
     "preview": "Vorschauvideo (etwa 1 Minute)",

@@ -1,12 +1,27 @@
 <section class="chat">
-  <h2>{{ 'chat.title' | translate }}</h2>
+  <div class="chat-head">
+    <h2>{{ 'chat.title' | translate }}</h2>
+    @if (turns().length > 0 && !pending()) {
+      @if (confirmingClear()) {
+        <span class="confirm">
+          {{ 'chat.clearConfirm' | translate }}
+          <button type="button" class="link danger" (click)="clear()">{{ 'chat.clearYes' | translate }}</button>
+          <button type="button" class="link" (click)="confirmingClear.set(false)">{{ 'chat.clearNo' | translate }}</button>
+        </span>
+      } @else {
+        <button type="button" class="link" (click)="confirmingClear.set(true)">{{ 'chat.clear' | translate }}</button>
+      }
+    }
+  </div>
 
-  <div class="messages">
-    @if (turns().length === 0) {
+  <div class="messages" #messages aria-live="polite">
+    @if (loadingHistory()) {
+      <p class="hint">{{ 'common.loading' | translate }}</p>
+    } @else if (turns().length === 0) {
       <p class="hint">{{ 'chat.hint' | translate }}</p>
     }
     @for (turn of turns(); track $index) {
-      <div class="msg" [class.user]="turn.role === 'user'">
+      <div class="msg" [class.user]="turn.role === 'user'" [class.degraded]="turn.degraded">
         <span class="who">{{ (turn.role === 'user' ? 'chat.you' : 'chat.assistant') | translate }}</span>
         <p>{{ turn.content }}</p>
       </div>
@@ -20,4 +35,5 @@
     <input type="text" [formControl]="input" [placeholder]="'chat.placeholder' | translate" [disabled]="pending()" />
     <button type="submit" [disabled]="!canSend()">{{ 'chat.send' | translate }}</button>
   </form>
+  <p class="saved-note">{{ 'chat.savedNote' | translate }}</p>
 </section>

@@ -175,7 +175,12 @@
     "assistant": "Assistent",
     "placeholder": "Typ een vraag…",
     "send": "Versturen",
-    "unavailable": "De assistent is momenteel niet beschikbaar."
+    "unavailable": "De assistent is momenteel niet beschikbaar.",
+    "clear": "Gesprek wissen",
+    "clearConfirm": "Het hele gesprek wissen?",
+    "clearYes": "Wissen",
+    "clearNo": "Annuleren",
+    "savedNote": "Uw gesprek wordt bewaard: bij uw volgende bezoek vindt u het terug."
   },
   "courseEditor": {
     "preview": "Demovideo (ongeveer 1 minuut)",

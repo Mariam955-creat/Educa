@@ -1451,3 +1451,16 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Admin → Avis : lien « Corbeille » comme sur Utilisateurs ; la corbeille s'ouvre directement sur l'onglet Avis (ou Comptes depuis Utilisateurs) via `?tab=`.
 - Back-office : tiroir de l'espace admin passé à gauche (`side="left"` sur `drawer-layout`, compte et formateur restent à droite).
 - Admin → Cours : lien « Corbeille » (onglet Cours). Pas de lien sur Certificats et Langues : ils ne passent pas par la corbeille.
+
+## [2026-11-26] Inscription formateur (demande de rôle validée par l'administration)
+
+**Fait**
+- Inscription : case « Je veux enseigner sur Omnia ». Le compte est créé apprenant avec une demande de rôle formateur (`users.instructor_requested_at`, migration `V20__instructor_requests.sql`, champ `wantsToTeach` de `POST /auth/register`, exposé dans `/auth/me` et la liste admin).
+- Admin → Utilisateurs : demandes en tête de liste, badge « Demande formateur », filtre « Demandes formateur uniquement » (`?instructorRequests=true` côté API, `?requests=1` côté page), boutons Accepter (`POST /admin/users/{id}/instructor-request/approve` : ajoute INSTRUCTOR, garde LEARNER) et Refuser (`…/reject`). `409` si le compte n'a pas de demande. Un changement de rôle manuel vers formateur ou admin solde aussi la demande.
+- Tableau de bord admin : lien « N demande(s) de rôle formateur en attente » (`instructorRequests` dans `GET /admin/stats`). Espace compte : encart « demande en attente » tant qu'elle n'est pas traitée.
+- Guide « Devenir formateur sur Omnia » (Claude Docs) rédigé, avec comparaison Udemy / Coursera.
+
+**Décisions techniques**
+- Pas de rôle formateur sans validation : une case à cocher qui donnerait le rôle directement permettrait à n'importe qui de publier et vendre des cours.
+
+**Vérifié** : `./mvnw test` → **130/130** (5 nouveaux `InstructorRequestTest`), `npm run build` + `test:ci` → **27/27**. Non revérifié sur l'API en marche (backend à redémarrer pour appliquer `V20`).

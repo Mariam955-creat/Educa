@@ -1464,3 +1464,20 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Pas de rôle formateur sans validation : une case à cocher qui donnerait le rôle directement permettrait à n'importe qui de publier et vendre des cours.
 
 **Vérifié** : `./mvnw test` → **130/130** (5 nouveaux `InstructorRequestTest`), `npm run build` + `test:ci` → **27/27**. Non revérifié sur l'API en marche (backend à redémarrer pour appliquer `V20`).
+
+## [2026-11-26] Demandes formateur : page admin dédiée, refus motivé, notifications
+
+**Fait**
+- Un apprenant peut demander à devenir formateur à tout moment, depuis le tableau de bord de son compte (« Devenir formateur », message de motivation facultatif). Il y suit sa demande : en attente, ou refusée avec le motif (nouvelle demande alors possible).
+- Admin : page « Demandes formateur » (menu, pastille du nombre en attente), onglets En attente / Acceptées / Refusées, cartes avec nom, email, titre, motivation. **Valider** ajoute le rôle formateur (apprenant conservé) ; **Refuser** ouvre un champ de motif obligatoire. Les demandes ne sont plus dans la liste des utilisateurs. Le lien du tableau de bord admin y mène.
+- Notifications : module `notification` (table `notifications`, type traduit côté interface + détail libre + lien), cloche dans l'en-tête (pastille des non lues, liste, « Tout marquer comme lu »). Le candidat est notifié de la décision. Un clic sur l'acceptation rafraîchit la session (nouveaux rôles) et ouvre l'espace formateur sans reconnexion.
+- Migration `V21__instructor_requests_and_notifications.sql` : table `instructor_requests` (une seule demande en attente par compte, index unique partiel), reprise des demandes `V20`, suppression de `users.instructor_requested_at`.
+
+**Décisions techniques**
+- Notifications stockées par type, pas en phrase : le texte suit la langue de l'interface (FR/EN/DE/NL).
+- Changement de rôle manuel vers formateur/admin : la demande en attente est close comme acceptée, sans notification.
+
+**Écarts**
+- Correctif : `markAllRead` (mise à jour groupée) vide désormais le cache JPA (`clearAutomatically`), sinon la liste relue dans la même transaction montrait encore « non lu ».
+
+**Vérifié** : `./mvnw test` → **132/132** (`InstructorRequestTest` 7), `npm run build` + `test:ci` → **27/27**. Non vérifié sur l'API en marche ni au navigateur : le backend lancé sur :8081 est l'ancienne version (à redémarrer pour appliquer `V20`/`V21`).

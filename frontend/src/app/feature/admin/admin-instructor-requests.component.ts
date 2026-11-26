@@ -72,9 +72,14 @@ const PAGE_SIZE = 20;
                 <ul class="docs">
                   @for (d of r.documents; track d.id) {
                     <li>
-                      <span class="doc-kind">{{ 'admin.requests.documents.' + d.kind | translate }}</span>
-                      <button type="button" class="doc-link" (click)="download(r, d)" [title]="d.originalName">
-                        ⬇ {{ d.originalName }} <small>({{ size(d.sizeBytes) }})</small>
+                      <button type="button" class="doc" (click)="download(r, d)" [title]="d.originalName">
+                        <span class="doc-icon" aria-hidden="true">{{ d.mimeType.startsWith('image/') ? '🖼' : '📄' }}</span>
+                        <span class="doc-text">
+                          <span class="doc-kind">{{ 'admin.requests.documents.' + d.kind | translate }}</span>
+                          <span class="doc-name">{{ d.originalName }}</span>
+                        </span>
+                        <span class="doc-size">{{ size(d.sizeBytes) }}</span>
+                        <span class="doc-dl" aria-hidden="true">⬇</span>
                       </button>
                     </li>
                   }
@@ -97,14 +102,14 @@ const PAGE_SIZE = 20;
                     <textarea rows="3" maxlength="1000" [value]="reason()" (input)="reason.set($any($event.target).value)"
                               [placeholder]="'admin.requests.reasonPlaceholder' | translate"></textarea>
                   </label>
-                  <div class="actions">
+                  <div class="decision">
                     <button type="button" (click)="cancelReject()">{{ 'trash.cancel' | translate }}</button>
                     <button type="button" class="danger" [disabled]="!reason().trim() || busy()" (click)="confirmReject(r)">
                       {{ 'admin.requests.confirmReject' | translate }}
                     </button>
                   </div>
                 } @else {
-                  <div class="actions">
+                  <div class="decision">
                     <button type="button" class="danger" [disabled]="busy()" (click)="startReject(r)">
                       {{ 'admin.requests.reject' | translate }}
                     </button>
@@ -125,24 +130,46 @@ const PAGE_SIZE = 20;
   styles: `
     .count { margin-inline-start: 0.3rem; padding: 0 0.4rem; border-radius: 999px; background: var(--warning, #f59e0b); color: var(--text, #1f2937); font-size: 0.75rem; font-weight: 700; }
     .flash.ok-flash { border-color: #a7f3d0; background: var(--success-soft, #d1fae5); color: var(--success-strong, #047857); }
-    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 1rem; }
-    .request { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
-    .who { display: flex; align-items: center; gap: 0.7rem; }
-    .who div { display: flex; flex-direction: column; }
+
+    /* Grille de cartes : min-width: 0 empêche un contenu long d'élargir la colonne */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 1rem; }
+    .request { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; padding: 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-card, 0 1px 2px rgba(31, 41, 55, 0.05)); }
+
+    .who { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+    .who .avatar { flex-shrink: 0; }
+    .who div { display: flex; flex-direction: column; min-width: 0; }
+    .who strong, .who small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .who small, .date { color: var(--muted); font-size: 0.8rem; }
     .date { margin: 0; }
-    .motivation { margin: 0; padding: 0.6rem 0.75rem; border-radius: 8px; background: var(--bg); font-size: 0.88rem; white-space: pre-line; }
+
+    /* Texte libre du candidat : coupé même sans espaces, hauteur bornée avec défilement */
+    .motivation, .reason { margin: 0; padding: 0.6rem 0.75rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.45; white-space: pre-line; overflow-wrap: anywhere; }
+    .motivation { max-height: 9.5rem; overflow-y: auto; background: var(--bg); }
     .motivation.empty { color: var(--muted); font-style: italic; }
-    .reason { margin: 0; padding: 0.6rem 0.75rem; border-radius: 8px; background: #fef2f2; color: var(--danger, #b91c1c); font-size: 0.85rem; white-space: pre-line; }
+    .reason { background: #fef2f2; color: var(--danger, #b91c1c); font-size: 0.85rem; }
+
+    /* Pièces jointes : une ligne par pièce, nom tronqué (complet au survol) */
+    .docs { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+    .doc { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 0.6rem; width: 100%; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: inherit; font: inherit; text-align: start; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .doc:hover { border-color: var(--accent, #2563eb); background: var(--accent-soft, #eff6ff); }
+    .doc-icon { font-size: 1.1rem; }
+    .doc-text { display: flex; flex-direction: column; min-width: 0; }
+    .doc-kind { color: var(--muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+    .doc-name { overflow: hidden; color: var(--accent, #2563eb); font-size: 0.85rem; text-overflow: ellipsis; white-space: nowrap; }
+    .doc-size { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
+    .doc-dl { color: var(--accent, #2563eb); font-weight: 700; }
+
     .reject-box { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 600; }
     .reject-box textarea { padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-weight: 400; resize: vertical; }
-    .docs { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
-    .docs li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
-    .doc-kind { min-width: 7.5rem; color: var(--muted); font-weight: 600; }
-    .doc-link { max-width: 100%; overflow: hidden; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--accent, #2563eb); font: inherit; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
-    .doc-link:hover { border-color: var(--accent, #2563eb); }
-    .actions { margin-top: auto; }
-    .actions .approve { border-color: var(--success, #10b981); background: var(--success, #10b981); color: #fff; font-weight: 600; }
+
+    /* Décision : deux boutons de même largeur, en bas de la carte */
+    .decision { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: auto; }
+    .decision button { padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: inherit; font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .decision button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .decision .danger { border-color: #fecaca; color: var(--danger, #b91c1c); }
+    .decision .danger:hover:not(:disabled) { background: #fef2f2; }
+    .decision .approve { border-color: var(--success, #10b981); background: var(--success, #10b981); color: #fff; }
+    .decision .approve:hover:not(:disabled) { background: var(--success-strong, #047857); }
   `,
 })
 export class AdminInstructorRequestsComponent implements OnInit {

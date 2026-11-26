@@ -10,6 +10,8 @@ import {
   AdminStats,
   AdminUser,
   CertificateRegistryEntry,
+  InstructorRequest,
+  InstructorRequestStatus,
   Page,
   PaymentRegistryEntry,
   ReviewRegistryEntry,
@@ -33,19 +35,29 @@ export class AdminApiService {
     return this.http.get<Page<CourseSummary>>(`${this.base}/admin/courses`, { params });
   }
 
-  users(q?: string, page = 0, size = 50, instructorRequests = false): Observable<Page<AdminUser>> {
+  // --- Demandes de rôle formateur ---
+
+  instructorRequests(status: InstructorRequestStatus, page = 0, size = 20): Observable<Page<InstructorRequest>> {
+    const params = new HttpParams().set('status', status).set('page', page).set('size', size);
+    return this.http.get<Page<InstructorRequest>>(`${this.base}/admin/instructor-requests`, { params });
+  }
+
+  instructorRequestCount(): Observable<{ pending: number }> {
+    return this.http.get<{ pending: number }>(`${this.base}/admin/instructor-requests/count`);
+  }
+
+  approveInstructorRequest(id: number): Observable<InstructorRequest> {
+    return this.http.post<InstructorRequest>(`${this.base}/admin/instructor-requests/${id}/approve`, {});
+  }
+
+  rejectInstructorRequest(id: number, reason: string): Observable<InstructorRequest> {
+    return this.http.post<InstructorRequest>(`${this.base}/admin/instructor-requests/${id}/reject`, { reason });
+  }
+
+  users(q?: string, page = 0, size = 50): Observable<Page<AdminUser>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (q) params = params.set('q', q);
-    if (instructorRequests) params = params.set('instructorRequests', true);
     return this.http.get<Page<AdminUser>>(`${this.base}/admin/users`, { params });
-  }
-
-  approveInstructorRequest(id: number): Observable<AdminUser> {
-    return this.http.post<AdminUser>(`${this.base}/admin/users/${id}/instructor-request/approve`, {});
-  }
-
-  rejectInstructorRequest(id: number): Observable<AdminUser> {
-    return this.http.post<AdminUser>(`${this.base}/admin/users/${id}/instructor-request/reject`, {});
   }
 
   updateRoles(id: number, roles: RoleName[]): Observable<AdminUser> {

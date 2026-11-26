@@ -65,10 +65,6 @@ public class User {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    /** Demande de rôle formateur faite à l'inscription, en attente d'une décision de l'administration ; {@code null} sinon. */
-    @Column(name = "instructor_requested_at")
-    private Instant instructorRequestedAt;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

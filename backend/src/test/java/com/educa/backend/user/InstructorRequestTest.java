@@ -1,10 +1,9 @@
 package com.educa.backend.user;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,14 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jayway.jsonpath.JsonPath;
 
-/** Inscription « Je veux enseigner » : demande de rôle formateur, acceptée ou refusée par l'administration. */
+/**
+ * Demandes de rôle formateur (à l'inscription ou depuis l'espace compte), traitées par l'administration,
+ * et notification du candidat.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
 class InstructorRequestTest {
 
-    private static final String USERS = "/api/v1/admin/users";
+    private static final String ADMIN = "/api/v1/admin/instructor-requests";
+    private static final String MINE = "/api/v1/me/instructor-request";
 
     @Autowired
     private MockMvc mvc;
@@ -37,75 +40,139 @@ class InstructorRequestTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private InstructorRequestRepository requestRepository;
+
     @Test
-    void inscription_formateur_cree_un_apprenant_avec_une_demande() throws Exception {
+    void inscription_formateur_cree_une_demande_en_attente() throws Exception {
         register("veut-enseigner@example.com", true);
-        User user = userRepository.findByEmailIgnoreCase("veut-enseigner@example.com").orElseThrow();
-        assertThat(user.getInstructorRequestedAt()).isNotNull();
-        assertThat(user.getRoles()).extracting(r -> r.getName()).containsExactly(RoleName.LEARNER);
-
         String token = login("veut-enseigner@example.com");
-        mvc.perform(get("/api/v1/auth/me").header("Authorization", "Bearer " + token))
+
+        mvc.perform(get(MINE).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.instructorRequestedAt").isNotEmpty());
+                .andExpect(jsonPath("$.status").value("PENDING"));
     }
 
     @Test
-    void inscription_simple_ne_cree_pas_de_demande() throws Exception {
-        register("simple-apprenant@example.com", false);
-        assertThat(userRepository.findByEmailIgnoreCase("simple-apprenant@example.com").orElseThrow()
-                .getInstructorRequestedAt()).isNull();
-    }
+    void apprenant_demande_plus_tard_une_seule_demande_en_attente() throws Exception {
+        String token = learnerToken("plus-tard@example.com");
+        mvc.perform(get(MINE).header("Authorization", "Bearer " + token)).andExpect(status().isNoContent());
 
-    @Test
-    void admin_filtre_et_accepte_une_demande() throws Exception {
-        String adminTok = adminToken("admin-demandes@example.com");
-        register("candidat-ok@example.com", true);
-        register("pas-candidat@example.com", false);
+        mvc.perform(post(MINE).header("Authorization", "Bearer " + token).contentType(APPLICATION_JSON)
+                        .content("{\"motivation\":\"Développeuse Java depuis 10 ans\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(jsonPath("$.motivation").value("Développeuse Java depuis 10 ans"));
 
-        mvc.perform(get(USERS).param("instructorRequests", "true").param("q", "candidat")
-                        .header("Authorization", "Bearer " + adminTok))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(1))
-                .andExpect(jsonPath("$.content[0].email").value("candidat-ok@example.com"));
-
-        Long id = idOf("candidat-ok@example.com");
-        mvc.perform(post(USERS + "/" + id + "/instructor-request/approve").header("Authorization", "Bearer " + adminTok))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.roles", containsInAnyOrder("LEARNER", "INSTRUCTOR")))
-                .andExpect(jsonPath("$.instructorRequestedAt").value(nullValue()));
-
-        // Déjà traitée : une seconde décision est refusée
-        mvc.perform(post(USERS + "/" + id + "/instructor-request/reject").header("Authorization", "Bearer " + adminTok))
+        mvc.perform(post(MINE).header("Authorization", "Bearer " + token).contentType(APPLICATION_JSON).content("{}"))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    void admin_refuse_une_demande_le_compte_reste_apprenant() throws Exception {
-        String adminTok = adminToken("admin-refus@example.com");
-        register("candidat-refuse@example.com", true);
-        Long id = idOf("candidat-refuse@example.com");
+    void admin_compte_liste_et_accepte_le_candidat_est_notifie() throws Exception {
+        String adminTok = adminToken("admin-demandes@example.com");
+        register("candidat-ok@example.com", true);
+        long pending = requestRepository.countByStatus(InstructorRequest.Status.PENDING);
 
-        mvc.perform(post(USERS + "/" + id + "/instructor-request/reject").header("Authorization", "Bearer " + adminTok))
+        mvc.perform(get(ADMIN + "/count").header("Authorization", "Bearer " + adminTok))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.roles", containsInAnyOrder("LEARNER")))
-                .andExpect(jsonPath("$.instructorRequestedAt").value(nullValue()));
+                .andExpect(jsonPath("$.pending").value(pending));
+
+        Long requestId = pendingRequestId("candidat-ok@example.com");
+        mvc.perform(post(ADMIN + "/" + requestId + "/approve").header("Authorization", "Bearer " + adminTok))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("APPROVED"));
+
+        User user = userRepository.findByEmailIgnoreCase("candidat-ok@example.com").orElseThrow();
+        org.assertj.core.api.Assertions.assertThat(user.getRoles()).extracting(Role::getName)
+                .containsExactlyInAnyOrder(RoleName.LEARNER, RoleName.INSTRUCTOR);
+
+        String candidateTok = login("candidat-ok@example.com");
+        mvc.perform(get("/api/v1/me/notifications").header("Authorization", "Bearer " + candidateTok))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.unreadCount").value(1))
+                .andExpect(jsonPath("$.items[0].type").value("INSTRUCTOR_REQUEST_APPROVED"));
+
+        // Déjà traitée : une seconde décision est refusée
+        mvc.perform(post(ADMIN + "/" + requestId + "/reject").header("Authorization", "Bearer " + adminTok)
+                        .contentType(APPLICATION_JSON).content("{\"reason\":\"trop tard\"}"))
+                .andExpect(status().isConflict());
     }
 
     @Test
-    void apprenant_ne_peut_pas_accepter_une_demande() throws Exception {
-        register("candidat-x@example.com", true);
-        String learnerTok = loginAfterRegister("intrus@example.com");
-        mvc.perform(post(USERS + "/" + idOf("candidat-x@example.com") + "/instructor-request/approve")
-                        .header("Authorization", "Bearer " + learnerTok))
-                .andExpect(status().isForbidden());
+    void refus_exige_un_motif_transmis_au_candidat_qui_peut_redemander() throws Exception {
+        String adminTok = adminToken("admin-refus@example.com");
+        register("candidat-refuse@example.com", true);
+        Long requestId = pendingRequestId("candidat-refuse@example.com");
+
+        mvc.perform(post(ADMIN + "/" + requestId + "/reject").header("Authorization", "Bearer " + adminTok)
+                        .contentType(APPLICATION_JSON).content("{\"reason\":\"  \"}"))
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(post(ADMIN + "/" + requestId + "/reject").header("Authorization", "Bearer " + adminTok)
+                        .contentType(APPLICATION_JSON).content("{\"reason\":\"Présentez un plan de cours détaillé\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("REJECTED"));
+
+        String candidateTok = login("candidat-refuse@example.com");
+        mvc.perform(get("/api/v1/me/notifications").header("Authorization", "Bearer " + candidateTok))
+                .andExpect(jsonPath("$.items[0].type").value("INSTRUCTOR_REQUEST_REJECTED"))
+                .andExpect(jsonPath("$.items[0].detail").value("Présentez un plan de cours détaillé"));
+        mvc.perform(get(MINE).header("Authorization", "Bearer " + candidateTok))
+                .andExpect(jsonPath("$.status").value("REJECTED"))
+                .andExpect(jsonPath("$.rejectionReason").value("Présentez un plan de cours détaillé"));
+
+        // Après un refus, une nouvelle demande est possible
+        mvc.perform(post(MINE).header("Authorization", "Bearer " + candidateTok).contentType(APPLICATION_JSON)
+                        .content("{\"motivation\":\"Voici mon plan\"}"))
+                .andExpect(status().isCreated());
     }
 
-    private Long idOf(String email) {
-        return userRepository.findByEmailIgnoreCase(email).orElseThrow().getId();
+    @Test
+    void notifications_marquees_lues() throws Exception {
+        String adminTok = adminToken("admin-notif@example.com");
+        register("candidat-notif@example.com", true);
+        mvc.perform(post(ADMIN + "/" + pendingRequestId("candidat-notif@example.com") + "/approve")
+                .header("Authorization", "Bearer " + adminTok)).andExpect(status().isOk());
+
+        String tok = login("candidat-notif@example.com");
+        mvc.perform(post("/api/v1/me/notifications/read-all").header("Authorization", "Bearer " + tok))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/v1/me/notifications").header("Authorization", "Bearer " + tok))
+                .andExpect(jsonPath("$.unreadCount").value(0))
+                .andExpect(jsonPath("$.items[0].read").value(true));
     }
 
-    private String loginAfterRegister(String email) throws Exception {
+    @Test
+    void formateur_ne_peut_pas_redemander_et_role_manuel_solde_la_demande() throws Exception {
+        String adminTok = adminToken("admin-manuel@example.com");
+        register("promu-main@example.com", true);
+        Long userId = userRepository.findByEmailIgnoreCase("promu-main@example.com").orElseThrow().getId();
+
+        mvc.perform(patch("/api/v1/admin/users/" + userId + "/roles").header("Authorization", "Bearer " + adminTok)
+                        .contentType(APPLICATION_JSON).content("{\"roles\":[\"LEARNER\",\"INSTRUCTOR\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roles", containsInAnyOrder("LEARNER", "INSTRUCTOR")));
+        org.assertj.core.api.Assertions.assertThat(
+                requestRepository.existsByUserIdAndStatus(userId, InstructorRequest.Status.PENDING)).isFalse();
+
+        String tok = login("promu-main@example.com");
+        mvc.perform(post(MINE).header("Authorization", "Bearer " + tok).contentType(APPLICATION_JSON).content("{}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void apprenant_ne_peut_pas_traiter_les_demandes() throws Exception {
+        String tok = learnerToken("intrus@example.com");
+        mvc.perform(get(ADMIN).header("Authorization", "Bearer " + tok)).andExpect(status().isForbidden());
+    }
+
+    private Long pendingRequestId(String email) {
+        Long userId = userRepository.findByEmailIgnoreCase(email).orElseThrow().getId();
+        return requestRepository.findByUserIdAndStatus(userId, InstructorRequest.Status.PENDING).orElseThrow().getId();
+    }
+
+    private String learnerToken(String email) throws Exception {
         register(email, false);
         return login(email);
     }

@@ -22,6 +22,9 @@
       @for (link of links(); track link.path) {
         <a [routerLink]="link.path" routerLinkActive="active">
           <span class="icon" aria-hidden="true">{{ link.icon }}</span>{{ link.labelKey | translate }}
+          @if (link.badge) {
+            <span class="badge">{{ link.badge }}</span>
+          }
         </a>
       }
     </nav>

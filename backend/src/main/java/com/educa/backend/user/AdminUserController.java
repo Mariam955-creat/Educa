@@ -38,11 +38,10 @@ public class AdminUserController {
     @GetMapping
     public PageResponse<AdminUserDto> list(
             @RequestParam(required = false) String q,
-            @RequestParam(defaultValue = "false") boolean instructorRequests,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         int safeSize = Math.min(Math.max(size, 1), 100);
-        return PageResponse.of(userService.adminList(q, instructorRequests, PageRequest.of(Math.max(page, 0), safeSize)));
+        return PageResponse.of(userService.adminList(q, PageRequest.of(Math.max(page, 0), safeSize)));
     }
 
     @PatchMapping("/{id}/roles")
@@ -53,18 +52,6 @@ public class AdminUserController {
     @PatchMapping("/{id}/status")
     public AdminUserDto updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateStatusRequest request) {
         return userService.updateStatus(id, request.enabled());
-    }
-
-    /** Accepte la demande de rôle formateur faite à l'inscription. */
-    @PostMapping("/{id}/instructor-request/approve")
-    public AdminUserDto approveInstructorRequest(@PathVariable Long id) {
-        return userService.approveInstructorRequest(id);
-    }
-
-    /** Refuse la demande de rôle formateur : le compte reste apprenant. */
-    @PostMapping("/{id}/instructor-request/reject")
-    public AdminUserDto rejectInstructorRequest(@PathVariable Long id) {
-        return userService.rejectInstructorRequest(id);
     }
 
     /** Met le compte à la corbeille (restaurable). */

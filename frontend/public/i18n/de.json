@@ -394,7 +394,8 @@
       "payments": "Zahlungen",
       "certificates": "Zertifikate",
       "reviews": "Bewertungen",
-      "languages": "Sprachen"
+      "languages": "Sprachen",
+      "instructorRequests": "Anträge Lehrkraft"
     },
     "overview": {
       "subscribers": "Aktive Abonnenten",
@@ -419,14 +420,7 @@
     "usersPage": {
       "subtitle": "{{count}} Konto/Konten",
       "joined": "Registriert am",
-      "you": "Sie",
-      "request": "Antrag Lehrkraft",
-      "requestsOnly": "Nur Anträge als Lehrkraft",
-      "approve": "Annehmen",
-      "reject": "Ablehnen",
-      "approved": "{{name}} ist jetzt Lehrkraft.",
-      "rejected": "Antrag von {{name}} abgelehnt.",
-      "confirmReject": "Antrag von {{name}} als Lehrkraft ablehnen? Das Konto bleibt ein Lernkonto."
+      "you": "Sie"
     },
     "coursesPage": {
       "subtitle": "{{count}} Kurse, veröffentlicht und Entwürfe",
@@ -440,6 +434,30 @@
     },
     "languagesPage": {
       "subtitle": "Sprachen für Kursinhalte. Die Sprache der Oberfläche hängt nicht von dieser Einstellung ab."
+    },
+    "requests": {
+      "pendingCount": "{{count}} offene Anträge",
+      "status": {
+        "PENDING": "Offen",
+        "APPROVED": "Angenommen",
+        "REJECTED": "Abgelehnt"
+      },
+      "empty": {
+        "PENDING": "Keine offenen Anträge.",
+        "APPROVED": "Keine angenommenen Anträge.",
+        "REJECTED": "Keine abgelehnten Anträge."
+      },
+      "sentOn": "Beantragt am {{date}}",
+      "decidedOn": "Entschieden am {{date}}",
+      "noMotivation": "Keine Motivation angegeben.",
+      "reason": "Grund",
+      "reasonLabel": "Ablehnungsgrund (wird der Person mitgeteilt)",
+      "reasonPlaceholder": "Z. B.: Bitte reichen Sie einen detaillierten Kursplan ein",
+      "approve": "Annehmen",
+      "reject": "Ablehnen",
+      "confirmReject": "Ablehnung bestätigen",
+      "approved": "{{name}} ist jetzt Lehrkraft und wurde benachrichtigt.",
+      "rejected": "Antrag von {{name}} abgelehnt; der Grund wurde mitgeteilt."
     }
   },
   "footer": {
@@ -507,14 +525,23 @@
       "progressTitle": "Ihr Fortschritt",
       "controlsAverage": "Durchschnitt der Tests",
       "finalExam": "Abschlussprüfung",
-      "certificateObtained": "Zertifikat erhalten",
-      "requestPending": "Ihr Antrag, Lehrkraft zu werden, wartet auf die Bestätigung der Administration."
+      "certificateObtained": "Zertifikat erhalten"
     },
     "reviews": {
       "noText": "Bewertung ohne Kommentar.",
       "edit": "Auf der Kursseite ändern",
       "empty": "Sie haben noch keinen Kurs bewertet.",
       "confirmDelete": "Ihre Bewertung zu „{{course}}“ löschen?"
+    },
+    "instructorRequest": {
+      "title": "Lehrkraft werden",
+      "intro": "Möchten Sie eigene Kurse veröffentlichen? Senden Sie einen Antrag: Die Administration prüft ihn und antwortet per Benachrichtigung.",
+      "motivation": "Stellen Sie sich vor (optional)",
+      "motivationPlaceholder": "Ihre Expertise, der geplante Kurs…",
+      "submit": "Antrag senden",
+      "pending": "Antrag vom {{date}}, wartet auf Bestätigung durch die Administration.",
+      "rejected": "Ihr letzter Antrag wurde abgelehnt. Sie können einen neuen senden.",
+      "error": "Der Antrag konnte nicht gesendet werden."
     }
   },
   "instructor": {
@@ -797,5 +824,15 @@
     },
     "compare": "Lohnt sich ab zwei Kursen im Monat: Unsere Kurse kosten einzeln bis zu 44,99 €.",
     "seeCatalog": "Zum Katalog"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "markAllRead": "Alle als gelesen markieren",
+    "empty": "Keine Benachrichtigungen.",
+    "detail": "Grund",
+    "types": {
+      "INSTRUCTOR_REQUEST_APPROVED": "Ihr Antrag wurde angenommen: Sie sind jetzt Lehrkraft. Klicken Sie, um den Lehrbereich zu öffnen.",
+      "INSTRUCTOR_REQUEST_REJECTED": "Ihr Antrag, Lehrkraft zu werden, wurde abgelehnt."
+    }
   }
 }

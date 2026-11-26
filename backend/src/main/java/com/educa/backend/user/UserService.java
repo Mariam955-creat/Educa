@@ -29,9 +29,12 @@ public class UserService {
     private final UserMapper userMapper;
     private final RefreshTokenRepository refreshTokenRepository;
     private final List<UserDeletionGuard> deletionGuards;
+    private final InstructorRequestService instructorRequestService;
 
     public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper,
-                       RefreshTokenRepository refreshTokenRepository, List<UserDeletionGuard> deletionGuards) {
+                       RefreshTokenRepository refreshTokenRepository, List<UserDeletionGuard> deletionGuards,
+                       InstructorRequestService instructorRequestService) {
+        this.instructorRequestService = instructorRequestService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
@@ -95,7 +98,7 @@ public class UserService {
                 userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.ADMIN),
                 userRepository.countByEnabledFalseAndDeletedAtIsNull(),
                 userRepository.countByCreatedAtAfterAndDeletedAtIsNull(newSince),
-                userRepository.countByInstructorRequestedAtIsNotNullAndDeletedAtIsNull());
+                instructorRequestService.countPending());
     }
 
     public record UserStats(long total, long learners, long instructors, long admins, long disabled, long recent,
@@ -103,9 +106,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AdminUserDto> adminList(String q, boolean requestsOnly, Pageable pageable) {
+    public Page<AdminUserDto> adminList(String q, Pageable pageable) {
         String normalizedQ = StringUtils.hasText(q) ? q.trim() : null;
-        return userRepository.search(normalizedQ, requestsOnly, pageable).map(userMapper::toAdminDto);
+        return userRepository.search(normalizedQ, pageable).map(userMapper::toAdminDto);
     }
 
     @Transactional
@@ -122,7 +125,7 @@ public class UserService {
         }
         user.setRoles(resolved);
         if (resolved.stream().anyMatch(r -> r.getName() != RoleName.LEARNER)) {
-            user.setInstructorRequestedAt(null); // rôle formateur (ou admin) accordé : la demande est traitée
+            instructorRequestService.closePendingAsApproved(id); // rôle accordé à la main : la demande est soldée
         }
         return userMapper.toAdminDto(userRepository.save(user));
     }
@@ -134,32 +137,6 @@ public class UserService {
         }
         User user = loadById(id);
         user.setEnabled(enabled);
-        return userMapper.toAdminDto(userRepository.save(user));
-    }
-
-    // ---------- demandes de rôle formateur ----------
-
-    /** Accepte la demande : ajoute le rôle formateur (le rôle apprenant est conservé). */
-    @Transactional
-    public AdminUserDto approveInstructorRequest(Long id) {
-        User user = loadById(id);
-        if (user.getInstructorRequestedAt() == null) {
-            throw new ConflictException("Aucune demande de rôle formateur pour ce compte");
-        }
-        user.addRole(roleRepository.findByName(RoleName.INSTRUCTOR)
-                .orElseThrow(() -> new IllegalStateException("Rôle INSTRUCTOR absent — vérifier les migrations")));
-        user.setInstructorRequestedAt(null);
-        return userMapper.toAdminDto(userRepository.save(user));
-    }
-
-    /** Refuse la demande : le compte reste apprenant. */
-    @Transactional
-    public AdminUserDto rejectInstructorRequest(Long id) {
-        User user = loadById(id);
-        if (user.getInstructorRequestedAt() == null) {
-            throw new ConflictException("Aucune demande de rôle formateur pour ce compte");
-        }
-        user.setInstructorRequestedAt(null);
         return userMapper.toAdminDto(userRepository.save(user));
     }
 

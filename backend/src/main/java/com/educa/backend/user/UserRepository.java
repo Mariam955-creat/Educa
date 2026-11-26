@@ -25,17 +25,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailIgnoreCase(String email);
 
-    long countByInstructorRequestedAtIsNotNullAndDeletedAtIsNull();
-
-    /** Recherche admin ; les demandes de rôle formateur en attente passent en tête. */
     @Query("""
             select u from User u
             where u.deletedAt is null
-              and (:requestsOnly = false or u.instructorRequestedAt is not null)
               and (cast(:q as string) is null
                or lower(u.fullName) like lower(concat('%', cast(:q as string), '%'))
                or lower(u.email) like lower(concat('%', cast(:q as string), '%')))
-            order by case when u.instructorRequestedAt is null then 1 else 0 end, u.createdAt desc
+            order by u.createdAt desc
             """)
-    Page<User> search(@Param("q") String q, @Param("requestsOnly") boolean requestsOnly, Pageable pageable);
+    Page<User> search(@Param("q") String q, Pageable pageable);
 }

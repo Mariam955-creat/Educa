@@ -13,11 +13,12 @@ import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { MoneyPipe } from '../../core/i18n/money.pipe';
 import { Invoice, PaymentApiService, Subscription } from '../../core/payment/payment-api.service';
+import { BecomeInstructorComponent } from './become-instructor.component';
 
 /** Tableau de bord de l'espace compte : indicateurs (apprenant, et formateur le cas échéant) + cours à reprendre. */
 @Component({
   selector: 'app-account-overview',
-  imports: [RouterLink, TranslatePipe, MoneyPipe, LocalDatePipe],
+  imports: [RouterLink, TranslatePipe, MoneyPipe, LocalDatePipe, BecomeInstructorComponent],
   templateUrl: './account-overview.component.html',
   styleUrl: './account-overview.component.scss',
 })

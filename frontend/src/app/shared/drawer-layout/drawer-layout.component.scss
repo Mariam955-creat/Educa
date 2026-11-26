@@ -216,3 +216,16 @@
     margin: 0.5rem 0.5rem 0 0;
   }
 }
+
+/* Pastille de compteur d'un lien (ex. demandes formateur en attente) */
+.badge {
+  margin-inline-start: auto;
+  min-width: 1.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--warning, #f59e0b);
+  color: var(--text, #1f2937);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}

@@ -9,7 +9,5 @@ public record AdminUserDto(
         String fullName,
         Set<String> roles,
         boolean enabled,
-        Instant createdAt,
-        /** Demande de rôle formateur en attente ; {@code null} si aucune. */
-        Instant instructorRequestedAt) {
+        Instant createdAt) {
 }

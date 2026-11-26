@@ -1,9 +1,6 @@
 <section class="page">
   <h1>{{ 'dashboard.greeting' | translate: { name: auth.user()?.fullName } }}</h1>
   <p class="muted">{{ 'account.overview.subtitle' | translate }}</p>
-  @if (auth.user()?.instructorRequestedAt && !isInstructor()) {
-    <p class="request-note">🧑‍🏫 {{ 'account.overview.requestPending' | translate }}</p>
-  }
 
   @if (loading()) {
     <p class="muted">{{ 'common.loading' | translate }}</p>
@@ -125,5 +122,9 @@
         }
       </article>
     </div>
+
+    @if (!isInstructor()) {
+      <app-become-instructor />
+    }
   }
 </section>

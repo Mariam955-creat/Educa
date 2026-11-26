@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -37,10 +37,6 @@ const PAGE_SIZE = 20;
       <div class="toolbar">
         <input class="search" type="search" [value]="query()" (input)="onSearch($any($event.target).value)"
                [placeholder]="'admin.users.searchPlaceholder' | translate" />
-        <label class="filter">
-          <input type="checkbox" [checked]="requestsOnly()" (change)="toggleRequestsOnly($any($event.target).checked)" />
-          {{ 'admin.usersPage.requestsOnly' | translate }}
-        </label>
       </div>
 
       @if (loading()) {
@@ -87,16 +83,9 @@ const PAGE_SIZE = 20;
                     <span class="badge" [class.ok]="user.enabled" [class.ko]="!user.enabled">
                       {{ (user.enabled ? 'admin.users.enabled' : 'admin.users.disabled') | translate }}
                     </span>
-                    @if (user.instructorRequestedAt) {
-                      <span class="badge request">🧑‍🏫 {{ 'admin.usersPage.request' | translate }}</span>
-                    }
                   </td>
                   <td>
                     <div class="actions">
-                      @if (user.instructorRequestedAt) {
-                        <button type="button" class="approve" (click)="approve(user)">✓ {{ 'admin.usersPage.approve' | translate }}</button>
-                        <button type="button" (click)="reject(user)">{{ 'admin.usersPage.reject' | translate }}</button>
-                      }
                       <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
                         {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
                       </button>
@@ -115,11 +104,6 @@ const PAGE_SIZE = 20;
     </section>
   `,
   styleUrl: './admin-shared.scss',
-  styles: `
-    .filter { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer; }
-    .badge.request { margin-inline-start: 0.3rem; background: #fef3c7; color: #92400e; }
-    .actions .approve { border-color: var(--success, #10b981); color: var(--success-strong, #047857); font-weight: 600; }
-  `,
 })
 export class AdminUsersComponent implements OnInit {
   private readonly api = inject(AdminApiService);
@@ -137,8 +121,6 @@ export class AdminUsersComponent implements OnInit {
   readonly totalPages = signal(0);
   readonly total = signal(0);
   readonly message = signal<string | null>(null);
-  /** Filtre « demandes de rôle formateur » ; `?requests=1` (lien du tableau de bord) l'active. */
-  readonly requestsOnly = signal(inject(ActivatedRoute).snapshot.queryParamMap.has('requests'));
 
   private readonly search$ = new Subject<string>();
 
@@ -154,7 +136,7 @@ export class AdminUsersComponent implements OnInit {
 
   load(page: number): void {
     this.loading.set(true);
-    this.api.users(this.query().trim() || undefined, page, PAGE_SIZE, this.requestsOnly()).subscribe({
+    this.api.users(this.query().trim() || undefined, page, PAGE_SIZE).subscribe({
       next: (res) => {
         this.users.set(res.content);
         this.page.set(res.page);
@@ -164,47 +146,6 @@ export class AdminUsersComponent implements OnInit {
       },
       error: () => this.loading.set(false),
     });
-  }
-
-  toggleRequestsOnly(checked: boolean): void {
-    this.requestsOnly.set(checked);
-    this.load(0);
-  }
-
-  /** Accepte la demande : le compte devient formateur (il garde son accès apprenant). */
-  approve(user: AdminUser): void {
-    this.api.approveInstructorRequest(user.id).subscribe({
-      next: (updated) => {
-        this.flash(this.translate.instant('admin.usersPage.approved', { name: user.fullName }));
-        this.afterDecision(updated);
-      },
-      error: (err: HttpErrorResponse) => this.fail(err),
-    });
-  }
-
-  reject(user: AdminUser): void {
-    if (!confirm(this.translate.instant('admin.usersPage.confirmReject', { name: user.fullName }))) return;
-    this.api.rejectInstructorRequest(user.id).subscribe({
-      next: (updated) => {
-        this.flash(this.translate.instant('admin.usersPage.rejected', { name: user.fullName }));
-        this.afterDecision(updated);
-      },
-      error: (err: HttpErrorResponse) => this.fail(err),
-    });
-  }
-
-  /** Avec le filtre actif, la demande traitée sort de la liste ; sinon la ligne est mise à jour. */
-  private afterDecision(updated: AdminUser): void {
-    if (this.requestsOnly()) {
-      this.load(this.page());
-    } else {
-      this.replace(updated);
-    }
-  }
-
-  private flash(text: string): void {
-    this.message.set(text);
-    setTimeout(() => this.message.set(null), 4000);
   }
 
   primaryRole(user: AdminUser): RoleName {

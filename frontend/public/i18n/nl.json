@@ -394,7 +394,8 @@
       "payments": "Betalingen",
       "certificates": "Certificaten",
       "reviews": "Beoordelingen",
-      "languages": "Talen"
+      "languages": "Talen",
+      "instructorRequests": "Docentaanvragen"
     },
     "overview": {
       "subscribers": "Actieve abonnees",
@@ -419,14 +420,7 @@
     "usersPage": {
       "subtitle": "{{count}} account(s)",
       "joined": "Ingeschreven op",
-      "you": "Jij",
-      "request": "Aanvraag docent",
-      "requestsOnly": "Alleen docentaanvragen",
-      "approve": "Accepteren",
-      "reject": "Weigeren",
-      "approved": "{{name}} is nu docent.",
-      "rejected": "Aanvraag van {{name}} geweigerd.",
-      "confirmReject": "De docentaanvraag van {{name}} weigeren? Het account blijft cursist."
+      "you": "Jij"
     },
     "coursesPage": {
       "subtitle": "{{count}} cursussen, gepubliceerd en concepten",
@@ -440,6 +434,30 @@
     },
     "languagesPage": {
       "subtitle": "Talen voor cursusinhoud. De taal van de interface hangt niet af van deze instelling."
+    },
+    "requests": {
+      "pendingCount": "{{count}} aanvraag/aanvragen in afwachting",
+      "status": {
+        "PENDING": "In afwachting",
+        "APPROVED": "Geaccepteerd",
+        "REJECTED": "Geweigerd"
+      },
+      "empty": {
+        "PENDING": "Geen aanvragen in afwachting.",
+        "APPROVED": "Geen geaccepteerde aanvragen.",
+        "REJECTED": "Geen geweigerde aanvragen."
+      },
+      "sentOn": "Aangevraagd op {{date}}",
+      "decidedOn": "Behandeld op {{date}}",
+      "noMotivation": "Geen motivatie opgegeven.",
+      "reason": "Reden",
+      "reasonLabel": "Reden van weigering (wordt naar de aanvrager gestuurd)",
+      "reasonPlaceholder": "Bijv.: stuur een gedetailleerd cursusplan",
+      "approve": "Accepteren",
+      "reject": "Weigeren",
+      "confirmReject": "Weigering bevestigen",
+      "approved": "{{name}} is nu docent en is op de hoogte gebracht.",
+      "rejected": "Aanvraag van {{name}} geweigerd; de reden is verstuurd."
     }
   },
   "footer": {
@@ -507,14 +525,23 @@
       "progressTitle": "Je voortgang",
       "controlsAverage": "Gemiddelde van de toetsen",
       "finalExam": "Eindexamen",
-      "certificateObtained": "Certificaat behaald",
-      "requestPending": "Je aanvraag om docent te worden wacht op goedkeuring door de beheerder."
+      "certificateObtained": "Certificaat behaald"
     },
     "reviews": {
       "noText": "Score zonder opmerking.",
       "edit": "Wijzigen op de cursuspagina",
       "empty": "Je hebt nog geen cursus beoordeeld.",
       "confirmDelete": "Je beoordeling van \"{{course}}\" verwijderen?"
+    },
+    "instructorRequest": {
+      "title": "Docent worden",
+      "intro": "Wil je je eigen cursussen publiceren? Stuur een aanvraag: de beheerder bekijkt die en antwoordt met een melding.",
+      "motivation": "Stel jezelf voor (optioneel)",
+      "motivationPlaceholder": "Je expertise, de cursus die je plant…",
+      "submit": "Aanvraag versturen",
+      "pending": "Aanvraag verstuurd op {{date}}, wacht op goedkeuring door de beheerder.",
+      "rejected": "Je laatste aanvraag is geweigerd. Je kunt een nieuwe sturen.",
+      "error": "De aanvraag kon niet worden verstuurd."
     }
   },
   "instructor": {
@@ -797,5 +824,15 @@
     },
     "compare": "Voordelig vanaf twee cursussen per maand: onze cursussen kosten apart tot € 44,99.",
     "seeCatalog": "Naar de catalogus"
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "markAllRead": "Alles als gelezen markeren",
+    "empty": "Geen meldingen.",
+    "detail": "Reden",
+    "types": {
+      "INSTRUCTOR_REQUEST_APPROVED": "Je aanvraag is geaccepteerd: je bent nu docent. Klik om de docentenruimte te openen.",
+      "INSTRUCTOR_REQUEST_REJECTED": "Je aanvraag om docent te worden is geweigerd."
+    }
   }
 }

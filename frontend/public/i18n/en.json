@@ -394,7 +394,8 @@
       "payments": "Payments",
       "certificates": "Certificates",
       "reviews": "Reviews",
-      "languages": "Languages"
+      "languages": "Languages",
+      "instructorRequests": "Instructor requests"
     },
     "overview": {
       "subscribers": "Active subscribers",
@@ -419,14 +420,7 @@
     "usersPage": {
       "subtitle": "{{count}} account(s)",
       "joined": "Joined",
-      "you": "You",
-      "request": "Instructor request",
-      "requestsOnly": "Instructor requests only",
-      "approve": "Approve",
-      "reject": "Decline",
-      "approved": "{{name}} is now an instructor.",
-      "rejected": "{{name}}'s request declined.",
-      "confirmReject": "Decline {{name}}'s instructor request? The account will stay a learner."
+      "you": "You"
     },
     "coursesPage": {
       "subtitle": "{{count}} courses, published and drafts",
@@ -440,6 +434,30 @@
     },
     "languagesPage": {
       "subtitle": "Languages available for course content. The interface language does not depend on this setting."
+    },
+    "requests": {
+      "pendingCount": "{{count}} pending request(s)",
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Declined"
+      },
+      "empty": {
+        "PENDING": "No pending requests.",
+        "APPROVED": "No approved requests.",
+        "REJECTED": "No declined requests."
+      },
+      "sentOn": "Requested on {{date}}",
+      "decidedOn": "Decided on {{date}}",
+      "noMotivation": "No motivation message.",
+      "reason": "Reason",
+      "reasonLabel": "Reason for declining (sent to the applicant)",
+      "reasonPlaceholder": "E.g. please share a detailed course outline",
+      "approve": "Approve",
+      "reject": "Decline",
+      "confirmReject": "Confirm decline",
+      "approved": "{{name}} is now an instructor and has been notified.",
+      "rejected": "{{name}}'s request declined; the reason was sent."
     }
   },
   "footer": {
@@ -507,14 +525,23 @@
       "progressTitle": "Your progress",
       "controlsAverage": "Quiz average",
       "finalExam": "Final exam",
-      "certificateObtained": "Certificate earned",
-      "requestPending": "Your request to become an instructor is awaiting approval by the administration."
+      "certificateObtained": "Certificate earned"
     },
     "reviews": {
       "noText": "Rating without comment.",
       "edit": "Edit on the course page",
       "empty": "You haven't rated any course yet.",
       "confirmDelete": "Delete your review of \"{{course}}\"?"
+    },
+    "instructorRequest": {
+      "title": "Become an instructor",
+      "intro": "Want to publish your own courses? Send a request: the administration reviews it and answers with a notification.",
+      "motivation": "Introduce yourself (optional)",
+      "motivationPlaceholder": "Your expertise, the course you plan…",
+      "submit": "Send my request",
+      "pending": "Request sent on {{date}}, awaiting approval by the administration.",
+      "rejected": "Your last request was declined. You can send a new one.",
+      "error": "Could not send the request."
     }
   },
   "instructor": {
@@ -797,5 +824,15 @@
     },
     "compare": "Worth it from two courses a month: our courses cost up to €44.99 each.",
     "seeCatalog": "See the catalogue"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications.",
+    "detail": "Reason",
+    "types": {
+      "INSTRUCTOR_REQUEST_APPROVED": "Your request is approved: you are now an instructor. Click to open the instructor space.",
+      "INSTRUCTOR_REQUEST_REJECTED": "Your request to become an instructor was declined."
+    }
   }
 }

@@ -394,7 +394,8 @@
       "payments": "Paiements",
       "certificates": "Certificats",
       "reviews": "Avis",
-      "languages": "Langues"
+      "languages": "Langues",
+      "instructorRequests": "Demandes formateur"
     },
     "overview": {
       "subscribers": "Abonnés actifs",
@@ -419,14 +420,7 @@
     "usersPage": {
       "subtitle": "{{count}} compte(s)",
       "joined": "Inscrit le",
-      "you": "Vous",
-      "request": "Demande formateur",
-      "requestsOnly": "Demandes formateur uniquement",
-      "approve": "Accepter",
-      "reject": "Refuser",
-      "approved": "{{name}} est maintenant formateur.",
-      "rejected": "Demande de {{name}} refusée.",
-      "confirmReject": "Refuser la demande de formateur de {{name}} ? Le compte restera apprenant."
+      "you": "Vous"
     },
     "coursesPage": {
       "subtitle": "{{count}} cours, publiés et brouillons",
@@ -440,6 +434,30 @@
     },
     "languagesPage": {
       "subtitle": "Langues proposées pour le contenu des cours. La langue de l'interface ne dépend pas de ce réglage."
+    },
+    "requests": {
+      "pendingCount": "{{count}} demande(s) en attente",
+      "status": {
+        "PENDING": "En attente",
+        "APPROVED": "Acceptées",
+        "REJECTED": "Refusées"
+      },
+      "empty": {
+        "PENDING": "Aucune demande en attente.",
+        "APPROVED": "Aucune demande acceptée.",
+        "REJECTED": "Aucune demande refusée."
+      },
+      "sentOn": "Demande envoyée le {{date}}",
+      "decidedOn": "Traitée le {{date}}",
+      "noMotivation": "Pas de message de motivation.",
+      "reason": "Motif",
+      "reasonLabel": "Motif du refus (envoyé au candidat)",
+      "reasonPlaceholder": "Ex. : présentez un plan de cours détaillé",
+      "approve": "Valider",
+      "reject": "Refuser",
+      "confirmReject": "Confirmer le refus",
+      "approved": "{{name}} est maintenant formateur et en a été informé.",
+      "rejected": "Demande de {{name}} refusée ; le motif lui a été envoyé."
     }
   },
   "footer": {
@@ -507,14 +525,23 @@
       "progressTitle": "Votre progression",
       "controlsAverage": "Moyenne des contrôles",
       "finalExam": "Examen final",
-      "certificateObtained": "Certificat obtenu",
-      "requestPending": "Votre demande pour devenir formateur attend la validation de l'administration."
+      "certificateObtained": "Certificat obtenu"
     },
     "reviews": {
       "noText": "Note sans commentaire.",
       "edit": "Modifier sur la page du cours",
       "empty": "Vous n'avez encore noté aucun cours.",
       "confirmDelete": "Supprimer votre avis sur « {{course}} » ?"
+    },
+    "instructorRequest": {
+      "title": "Devenir formateur",
+      "intro": "Vous souhaitez publier vos propres cours ? Envoyez une demande : l'administration l'examine et vous répond par une notification.",
+      "motivation": "Présentez-vous (facultatif)",
+      "motivationPlaceholder": "Votre expertise, le cours que vous prévoyez…",
+      "submit": "Envoyer ma demande",
+      "pending": "Demande envoyée le {{date}}, en attente de validation par l'administration.",
+      "rejected": "Votre dernière demande a été refusée. Vous pouvez en envoyer une nouvelle.",
+      "error": "Impossible d'envoyer la demande."
     }
   },
   "instructor": {
@@ -797,5 +824,15 @@
     },
     "compare": "Rentable dès deux cours suivis dans le mois : nos cours coûtent jusqu'à 44,99 € à l'unité.",
     "seeCatalog": "Voir le catalogue"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "empty": "Aucune notification.",
+    "detail": "Motif",
+    "types": {
+      "INSTRUCTOR_REQUEST_APPROVED": "Votre demande est acceptée : vous êtes formateur. Cliquez pour ouvrir l'espace formateur.",
+      "INSTRUCTOR_REQUEST_REJECTED": "Votre demande pour devenir formateur a été refusée."
+    }
   }
 }

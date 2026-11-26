@@ -65,7 +65,7 @@
         }
         @if (s.users.instructorRequests) {
           <p class="note">
-            <a routerLink="../users" [queryParams]="{ requests: 1 }">
+            <a routerLink="../instructor-requests">
               🧑‍🏫 {{ 'admin.overview.instructorRequests' | translate: { count: s.users.instructorRequests } }}
             </a>
           </p>

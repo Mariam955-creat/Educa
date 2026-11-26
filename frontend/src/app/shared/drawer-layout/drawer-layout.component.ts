@@ -10,6 +10,8 @@ export interface DrawerLink {
   path: string;
   icon: string;
   labelKey: string;
+  /** Pastille de compteur à droite du lien (ex. demandes en attente) ; masquée si absente ou nulle. */
+  badge?: number;
 }
 
 /**

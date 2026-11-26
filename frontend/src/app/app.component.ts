@@ -4,12 +4,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from './core/auth/auth.service';
+import { NotificationBellComponent } from './core/layout/notification-bell.component';
 import { UserMenuComponent } from './core/layout/user-menu.component';
 import { AppLang, LanguageService } from './core/i18n/language.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, UpperCasePipe, UserMenuComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, UpperCasePipe, NotificationBellComponent, UserMenuComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

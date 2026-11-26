@@ -7,8 +7,22 @@ export interface AdminUser {
   roles: RoleName[];
   enabled: boolean;
   createdAt: string;
-  /** Demande de rôle formateur en attente (date) ; `null` si aucune. */
-  instructorRequestedAt: string | null;
+}
+
+export type InstructorRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+/** Demande de rôle formateur (vue admin, ou par son auteur dans l'espace compte). */
+export interface InstructorRequest {
+  id: number;
+  userId: number;
+  fullName: string | null;
+  email: string | null;
+  headline: string | null;
+  motivation: string | null;
+  status: InstructorRequestStatus;
+  rejectionReason: string | null;
+  createdAt: string;
+  decidedAt: string | null;
 }
 
 export interface CertificateRegistryEntry {

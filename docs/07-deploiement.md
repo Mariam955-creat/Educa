@@ -135,6 +135,7 @@ multi-instances ou sans volume persistant fiable, brancher l'implémentation S3 
 | `CORS_ALLOWED_ORIGINS` | origine(s) publiques autorisées | `http://localhost:8080` |
 | `STORAGE_MAX_FILE_SIZE_MB` | plafond upload (aligné avec `client_max_body_size` nginx) | `200` |
 | `AI_ENABLED` / `ANTHROPIC_API_KEY` | chatbot live ; sans clé → repli `degraded` | `false` / vide |
+| `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` / `MAIL_FROM` / `MAIL_STARTTLS` | serveur SMTP des emails (décision sur une demande de formateur) ; sans `MAIL_HOST` → emails écrits dans le journal du backend | vide / `587` / vide / vide / `Omnia <no-reply@omnia.local>` / `true` |
 
 ---
 
@@ -143,6 +144,7 @@ multi-instances ou sans volume persistant fiable, brancher l'implémentation S3 
 - [ ] `.env` rempli, **jamais** commité (déjà couvert par `.gitignore`).
 - [ ] `JWT_SECRET` et `POSTGRES_PASSWORD` propres à l'environnement (pas les valeurs d'exemple).
 - [ ] `CORS_ALLOWED_ORIGINS` = domaine public réel.
+- [ ] `MAIL_HOST` (+ identifiants) renseigné, sinon les candidats formateurs ne reçoivent pas d'email.
 - [ ] HTTPS terminé par un reverse-proxy devant le `frontend`.
 - [ ] Sauvegardes de la base (volume `db-data` ou base managée).
 - [ ] `docker compose logs backend` : Flyway OK, `Started BackendApplication`, pas d'erreur.

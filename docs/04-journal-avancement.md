@@ -1481,3 +1481,22 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Correctif : `markAllRead` (mise à jour groupée) vide désormais le cache JPA (`clearAutomatically`), sinon la liste relue dans la même transaction montrait encore « non lu ».
 
 **Vérifié** : `./mvnw test` → **132/132** (`InstructorRequestTest` 7), `npm run build` + `test:ci` → **27/27**. Backend redémarré (`V20` + `V21` appliquées à la base `educa`) : parcours rejoué sur l'API réelle → **26/26** (inscription « Je veux enseigner », refus sans motif `400`, refus motivé + notification, nouvelle demande, validation + notification, rôle formateur après rafraîchissement de session, `403`/`401`). Il a trouvé un oubli, corrigé : `GET /admin/stats` ne renvoyait pas `users.instructorRequests` (lien du tableau de bord admin jamais affiché) ; assertion ajoutée à `InstructorRequestTest`. Non vérifié au navigateur.
+
+## [2026-11-26] Candidature formateur avec pièces jointes, notification des admins, emails
+
+**Fait**
+- Inscription en deux étapes : « Je veux enseigner » coché, le bouton devient « Suivant » et ouvre la candidature (motivation, dernier diplôme, CV, pièce d'identité, tous obligatoires). Le compte est créé, la connexion faite, puis la candidature envoyée en multipart. Si cet envoi échoue, l'espace compte s'ouvre avec un message et le formulaire pour la renvoyer.
+- Même formulaire dans « Devenir formateur » (`shared/instructor-application`), contrôle côté client (fichier présent, 10 Mo max).
+- Backend : `POST /me/instructor-request` en multipart ; pièces vérifiées avant tout enregistrement (présence → `400`, taille → `413`, type réel détecté par Tika → `415` : PDF/PNG/JPEG/WEBP, + DOC/DOCX pour le CV) ; stockées sous `instructor-requests/<id>/` ; table `instructor_request_documents` (`V22`). Admin : pièces listées sur chaque carte, téléchargement (`attachment` + `nosniff`).
+- Dépôt d'une demande : notification à chaque administrateur actif (« Nouvelle demande de formateur : <nom> », lien vers les demandes en attente).
+- Décision : notification + **email** au candidat, dans sa langue (`mail.instructorApproved|instructorRejected.*` dans `messages*.properties`), avec le motif en cas de refus et un lien vers l'application.
+- Emails : module `notification` — `EmailSender` (SMTP via `JavaMailSenderImpl` si `MAIL_HOST` est renseigné, sinon écriture dans le journal), `EmailService` (échec d'envoi journalisé, jamais propagé), envoi **après commit** de la décision. `spring-boot-starter-mail` ajouté ; variables `MAIL_*` dans `.env.example`, `docker-compose.yml`, `docs/07-deploiement.md`.
+
+**Décisions techniques**
+- Config SMTP sous `educa.mail.*` (et non `spring.mail.*`) : l'auto-configuration Spring créerait un expéditeur même avec un hôte vide.
+- `wantsToTeach` retiré de l'inscription : une demande sans pièces ne doit plus pouvoir exister.
+
+**Écarts**
+- Fichier `.properties` : une première écriture des textes d'email avait mis de vrais retours à la ligne (clés cassées) ; réécrit avec des `\n` échappés.
+
+**Vérifié** : `./mvnw test` → **135/135** (`InstructorRequestTest` 8, `InstructorRequestEmailTest` 2 — sans transaction englobante, pour que l'envoi après commit ait lieu), `npm run build` + `test:ci` → **27/27**. Backend redémarré (`V22` appliquée) : parcours API réel **19/19** (pièce manquante `400`, motivation vide `400`, faux PDF `415`, candidature complète, notification admin, téléchargement identique octet pour octet, `403` apprenant, refus motivé + notification + email, nouvelle candidature, validation + notification + email, rôle formateur). Non vérifié au navigateur.

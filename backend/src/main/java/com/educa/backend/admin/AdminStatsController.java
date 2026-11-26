@@ -53,7 +53,7 @@ public class AdminStatsController {
         PaymentService.SubscriptionStats subscriptions = paymentService.subscriptionStats();
         return new AdminStatsDto(
                 new AdminStatsDto.Users(users.total(), users.learners(), users.instructors(), users.admins(),
-                        users.disabled(), users.recent()),
+                        users.disabled(), users.recent(), users.instructorRequests()),
                 new AdminStatsDto.Courses(courses[0], courses[1], courses[0] - courses[1]),
                 new AdminStatsDto.Enrollments(enrollments[0], enrollments[1]),
                 new AdminStatsDto.Revenue(revenue.total(), revenue.sales(), revenue.recent(), revenue.recentSales(),

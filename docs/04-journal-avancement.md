@@ -1480,4 +1480,4 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 **Écarts**
 - Correctif : `markAllRead` (mise à jour groupée) vide désormais le cache JPA (`clearAutomatically`), sinon la liste relue dans la même transaction montrait encore « non lu ».
 
-**Vérifié** : `./mvnw test` → **132/132** (`InstructorRequestTest` 7), `npm run build` + `test:ci` → **27/27**. Non vérifié sur l'API en marche ni au navigateur : le backend lancé sur :8081 est l'ancienne version (à redémarrer pour appliquer `V20`/`V21`).
+**Vérifié** : `./mvnw test` → **132/132** (`InstructorRequestTest` 7), `npm run build` + `test:ci` → **27/27**. Backend redémarré (`V20` + `V21` appliquées à la base `educa`) : parcours rejoué sur l'API réelle → **26/26** (inscription « Je veux enseigner », refus sans motif `400`, refus motivé + notification, nouvelle demande, validation + notification, rôle formateur après rafraîchissement de session, `403`/`401`). Il a trouvé un oubli, corrigé : `GET /admin/stats` ne renvoyait pas `users.instructorRequests` (lien du tableau de bord admin jamais affiché) ; assertion ajoutée à `InstructorRequestTest`. Non vérifié au navigateur.

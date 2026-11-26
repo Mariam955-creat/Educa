@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 public record AdminStatsDto(Users users, Courses courses, Enrollments enrollments, Revenue revenue,
                             Subscriptions subscriptions, long certificates, Reviews reviews) {
 
-    public record Users(long total, long learners, long instructors, long admins, long disabled, long recent) {
+    /** {@code instructorRequests} : demandes de rôle formateur en attente. */
+    public record Users(long total, long learners, long instructors, long admins, long disabled, long recent,
+            long instructorRequests) {
     }
 
     public record Courses(long total, long published, long drafts) {

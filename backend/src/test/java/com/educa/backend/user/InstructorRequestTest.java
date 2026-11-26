@@ -77,6 +77,9 @@ class InstructorRequestTest {
         mvc.perform(get(ADMIN + "/count").header("Authorization", "Bearer " + adminTok))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pending").value(pending));
+        mvc.perform(get("/api/v1/admin/stats").header("Authorization", "Bearer " + adminTok))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.users.instructorRequests").value(pending));
 
         Long requestId = pendingRequestId("candidat-ok@example.com");
         mvc.perform(post(ADMIN + "/" + requestId + "/approve").header("Authorization", "Bearer " + adminTok))

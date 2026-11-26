@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap, throwError } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { AdminApiService } from '../../core/admin/admin-api.service';
 import { AdminUser } from '../../core/admin/admin.models';
@@ -11,14 +11,13 @@ import { AuthService } from '../../core/auth/auth.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { PagerComponent } from '../../shared/pager/pager.component';
-import { ConfirmDeleteDialogComponent } from '../../shared/trash/confirm-delete-dialog.component';
 
 const PAGE_SIZE = 20;
 
 /** Utilisateurs : recherche nom/email, rôle principal, activation, date d'inscription. */
 @Component({
   selector: 'app-admin-users',
-  imports: [RouterLink, TranslatePipe, LocalDatePipe, PagerComponent, ConfirmDeleteDialogComponent],
+  imports: [RouterLink, TranslatePipe, LocalDatePipe, PagerComponent],
   template: `
     <section class="page">
       <div class="head">
@@ -86,17 +85,12 @@ const PAGE_SIZE = 20;
                     </span>
                   </td>
                   <td>
-                    <div class="actions stacked">
-                      <div class="actions">
-                        <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
-                          {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
-                        </button>
-                        <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="moveToTrash(user)">
-                          🗑 {{ 'trash.moveToTrash' | translate }}
-                        </button>
-                      </div>
-                      <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="pending.set(user)">
-                        ⚠ {{ 'trash.deleteForever' | translate }}
+                    <div class="actions">
+                      <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
+                        {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
+                      </button>
+                      <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="moveToTrash(user)">
+                        🗑 {{ 'trash.moveToTrash' | translate }}
                       </button>
                     </div>
                   </td>
@@ -108,21 +102,8 @@ const PAGE_SIZE = 20;
         <app-pager [page]="page()" [totalPages]="totalPages()" (pageChange)="load($event)" />
       }
     </section>
-
-    <app-confirm-delete-dialog
-      [open]="pending() !== null"
-      [itemName]="pending()?.fullName ?? ''"
-      [warning]="'trash.userWarning' | translate"
-      [busy]="deleting()"
-      (cancel)="pending.set(null)"
-      (confirmed)="deletePermanently()"
-    />
   `,
   styleUrl: './admin-shared.scss',
-  styles: `
-    /* « Supprimer définitivement » sur sa propre ligne, sous « Désactiver » et « Supprimer » */
-    .actions.stacked { flex-direction: column; align-items: flex-end; }
-  `,
 })
 export class AdminUsersComponent implements OnInit {
   private readonly api = inject(AdminApiService);
@@ -140,9 +121,6 @@ export class AdminUsersComponent implements OnInit {
   readonly totalPages = signal(0);
   readonly total = signal(0);
   readonly message = signal<string | null>(null);
-  /** Compte en attente de suppression définitive (boîte « tapez SUPPRIMER » ouverte). */
-  readonly pending = signal<AdminUser | null>(null);
-  readonly deleting = signal(false);
 
   private readonly search$ = new Subject<string>();
 
@@ -204,42 +182,6 @@ export class AdminUsersComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => this.fail(err),
     });
-  }
-
-  /**
-   * Suppression définitive depuis la liste : le serveur n'accepte que les comptes à la corbeille, on y passe
-   * donc d'abord. Si la suppression est refusée (ex. formateur ayant des cours), le compte est restauré.
-   */
-  deletePermanently(): void {
-    const user = this.pending();
-    if (!user) return;
-    this.deleting.set(true);
-    this.api
-      .deleteUser(user.id)
-      .pipe(
-        switchMap(() =>
-          this.api.deleteUserPermanently(user.id).pipe(
-            catchError((err) => this.api.restoreUser(user.id).pipe(
-              catchError(() => of(null)),
-              switchMap(() => throwError(() => err)),
-            )),
-          ),
-        ),
-      )
-      .subscribe({
-        next: () => {
-          this.deleting.set(false);
-          this.pending.set(null);
-          this.message.set(this.translate.instant('trash.deleted', { name: user.fullName }));
-          setTimeout(() => this.message.set(null), 4000);
-          this.load(this.page());
-        },
-        error: (err: HttpErrorResponse) => {
-          this.deleting.set(false);
-          this.pending.set(null);
-          this.fail(err);
-        },
-      });
   }
 
   private replace(updated: AdminUser): void {

@@ -79,11 +79,6 @@ h1 {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.btn.light {
-  background: #fff;
-  color: var(--accent-strong, #1e40af);
-}
-
 .trust {
   display: flex;
   flex-wrap: wrap;
@@ -232,30 +227,4 @@ h3 {
   color: var(--accent-strong, #1e40af);
   font-size: 2rem;
   font-weight: 800;
-}
-
-/* --- Appel final --- */
-.cta {
-  max-width: 1100px;
-  margin: 3.5rem auto;
-  padding: 2.5rem 1.5rem;
-  border-radius: 16px;
-  background: var(--brand-gradient, linear-gradient(135deg, #2563eb, #1e40af));
-  color: #fff;
-  text-align: center;
-}
-
-.cta h2 {
-  margin-bottom: 0.5rem;
-}
-
-.cta p {
-  margin: 0 0 1.5rem;
-  color: #dbeafe;
-}
-
-@media (max-width: 1132px) {
-  .cta {
-    margin-inline: 1rem;
-  }
 }

@@ -52,7 +52,9 @@
       "emailInvalid": "Adresse email invalide.",
       "errorExists": "Un compte existe déjà pour cet email.",
       "errorInvalid": "Vérifiez les champs du formulaire.",
-      "errorServer": "Impossible de créer le compte pour le moment."
+      "errorServer": "Impossible de créer le compte pour le moment.",
+      "wantsToTeach": "Je veux enseigner sur Omnia",
+      "wantsToTeachHint": "Votre compte est créé en apprenant. L'administration valide ensuite votre rôle de formateur."
     }
   },
   "dashboard": {
@@ -411,12 +413,20 @@
       "userBreakdown": "Répartition des utilisateurs",
       "disabledUsers": "{{count}} compte(s) désactivé(s)",
       "latestPayments": "Derniers paiements",
-      "newestUsers": "Derniers inscrits"
+      "newestUsers": "Derniers inscrits",
+      "instructorRequests": "{{count}} demande(s) de rôle formateur en attente"
     },
     "usersPage": {
       "subtitle": "{{count}} compte(s)",
       "joined": "Inscrit le",
-      "you": "Vous"
+      "you": "Vous",
+      "request": "Demande formateur",
+      "requestsOnly": "Demandes formateur uniquement",
+      "approve": "Accepter",
+      "reject": "Refuser",
+      "approved": "{{name}} est maintenant formateur.",
+      "rejected": "Demande de {{name}} refusée.",
+      "confirmReject": "Refuser la demande de formateur de {{name}} ? Le compte restera apprenant."
     },
     "coursesPage": {
       "subtitle": "{{count}} cours, publiés et brouillons",
@@ -497,7 +507,8 @@
       "progressTitle": "Votre progression",
       "controlsAverage": "Moyenne des contrôles",
       "finalExam": "Examen final",
-      "certificateObtained": "Certificat obtenu"
+      "certificateObtained": "Certificat obtenu",
+      "requestPending": "Votre demande pour devenir formateur attend la validation de l'administration."
     },
     "reviews": {
       "noText": "Note sans commentaire.",

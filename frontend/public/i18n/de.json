@@ -52,7 +52,9 @@
       "emailInvalid": "Ungültige E-Mail-Adresse.",
       "errorExists": "Für diese E-Mail existiert bereits ein Konto.",
       "errorInvalid": "Bitte überprüfen Sie die Formularfelder.",
-      "errorServer": "Das Konto kann derzeit nicht erstellt werden."
+      "errorServer": "Das Konto kann derzeit nicht erstellt werden.",
+      "wantsToTeach": "Ich möchte auf Omnia unterrichten",
+      "wantsToTeachHint": "Ihr Konto wird als Lernkonto angelegt. Die Administration bestätigt anschließend Ihre Rolle als Lehrkraft."
     }
   },
   "dashboard": {
@@ -411,12 +413,20 @@
       "userBreakdown": "Nutzer nach Rolle",
       "disabledUsers": "{{count}} deaktivierte(s) Konto/Konten",
       "latestPayments": "Letzte Zahlungen",
-      "newestUsers": "Neueste Nutzer"
+      "newestUsers": "Neueste Nutzer",
+      "instructorRequests": "{{count}} offene Anträge als Lehrkraft"
     },
     "usersPage": {
       "subtitle": "{{count}} Konto/Konten",
       "joined": "Registriert am",
-      "you": "Sie"
+      "you": "Sie",
+      "request": "Antrag Lehrkraft",
+      "requestsOnly": "Nur Anträge als Lehrkraft",
+      "approve": "Annehmen",
+      "reject": "Ablehnen",
+      "approved": "{{name}} ist jetzt Lehrkraft.",
+      "rejected": "Antrag von {{name}} abgelehnt.",
+      "confirmReject": "Antrag von {{name}} als Lehrkraft ablehnen? Das Konto bleibt ein Lernkonto."
     },
     "coursesPage": {
       "subtitle": "{{count}} Kurse, veröffentlicht und Entwürfe",
@@ -497,7 +507,8 @@
       "progressTitle": "Ihr Fortschritt",
       "controlsAverage": "Durchschnitt der Tests",
       "finalExam": "Abschlussprüfung",
-      "certificateObtained": "Zertifikat erhalten"
+      "certificateObtained": "Zertifikat erhalten",
+      "requestPending": "Ihr Antrag, Lehrkraft zu werden, wartet auf die Bestätigung der Administration."
     },
     "reviews": {
       "noText": "Bewertung ohne Kommentar.",

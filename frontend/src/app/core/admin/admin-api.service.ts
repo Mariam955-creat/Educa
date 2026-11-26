@@ -33,10 +33,19 @@ export class AdminApiService {
     return this.http.get<Page<CourseSummary>>(`${this.base}/admin/courses`, { params });
   }
 
-  users(q?: string, page = 0, size = 50): Observable<Page<AdminUser>> {
+  users(q?: string, page = 0, size = 50, instructorRequests = false): Observable<Page<AdminUser>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (q) params = params.set('q', q);
+    if (instructorRequests) params = params.set('instructorRequests', true);
     return this.http.get<Page<AdminUser>>(`${this.base}/admin/users`, { params });
+  }
+
+  approveInstructorRequest(id: number): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.base}/admin/users/${id}/instructor-request/approve`, {});
+  }
+
+  rejectInstructorRequest(id: number): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.base}/admin/users/${id}/instructor-request/reject`, {});
   }
 
   updateRoles(id: number, roles: RoleName[]): Observable<AdminUser> {

@@ -1,5 +1,6 @@
 package com.educa.backend.user.dto;
 
+import java.time.Instant;
 import java.util.Set;
 
 /** Profil de l'utilisateur connecté (lui seul le reçoit : il contient son téléphone). */
@@ -12,5 +13,7 @@ public record UserDto(
         String headline,
         String bio,
         String country,
-        String phone) {
+        String phone,
+        /** Demande de rôle formateur en attente ; {@code null} si aucune. */
+        Instant instructorRequestedAt) {
 }

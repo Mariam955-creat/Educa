@@ -52,7 +52,9 @@
       "emailInvalid": "Ongeldig e-mailadres.",
       "errorExists": "Er bestaat al een account voor dit e-mailadres.",
       "errorInvalid": "Controleer de velden van het formulier.",
-      "errorServer": "Het account kan nu niet worden aangemaakt."
+      "errorServer": "Het account kan nu niet worden aangemaakt.",
+      "wantsToTeach": "Ik wil lesgeven op Omnia",
+      "wantsToTeachHint": "Je account wordt aangemaakt als cursist. De beheerder keurt daarna je rol als docent goed."
     }
   },
   "dashboard": {
@@ -411,12 +413,20 @@
       "userBreakdown": "Gebruikers per rol",
       "disabledUsers": "{{count}} gedeactiveerd(e) account(s)",
       "latestPayments": "Laatste betalingen",
-      "newestUsers": "Nieuwste gebruikers"
+      "newestUsers": "Nieuwste gebruikers",
+      "instructorRequests": "{{count}} docentaanvraag/-aanvragen in afwachting"
     },
     "usersPage": {
       "subtitle": "{{count}} account(s)",
       "joined": "Ingeschreven op",
-      "you": "Jij"
+      "you": "Jij",
+      "request": "Aanvraag docent",
+      "requestsOnly": "Alleen docentaanvragen",
+      "approve": "Accepteren",
+      "reject": "Weigeren",
+      "approved": "{{name}} is nu docent.",
+      "rejected": "Aanvraag van {{name}} geweigerd.",
+      "confirmReject": "De docentaanvraag van {{name}} weigeren? Het account blijft cursist."
     },
     "coursesPage": {
       "subtitle": "{{count}} cursussen, gepubliceerd en concepten",
@@ -497,7 +507,8 @@
       "progressTitle": "Je voortgang",
       "controlsAverage": "Gemiddelde van de toetsen",
       "finalExam": "Eindexamen",
-      "certificateObtained": "Certificaat behaald"
+      "certificateObtained": "Certificaat behaald",
+      "requestPending": "Je aanvraag om docent te worden wacht op goedkeuring door de beheerder."
     },
     "reviews": {
       "noText": "Score zonder opmerking.",

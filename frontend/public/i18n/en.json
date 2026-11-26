@@ -52,7 +52,9 @@
       "emailInvalid": "Invalid email address.",
       "errorExists": "An account already exists for this email.",
       "errorInvalid": "Please check the form fields.",
-      "errorServer": "Unable to create the account right now."
+      "errorServer": "Unable to create the account right now.",
+      "wantsToTeach": "I want to teach on Omnia",
+      "wantsToTeachHint": "Your account is created as a learner. The administration then approves your instructor role."
     }
   },
   "dashboard": {
@@ -411,12 +413,20 @@
       "userBreakdown": "Users by role",
       "disabledUsers": "{{count}} disabled account(s)",
       "latestPayments": "Latest payments",
-      "newestUsers": "Newest users"
+      "newestUsers": "Newest users",
+      "instructorRequests": "{{count}} instructor request(s) pending"
     },
     "usersPage": {
       "subtitle": "{{count}} account(s)",
       "joined": "Joined",
-      "you": "You"
+      "you": "You",
+      "request": "Instructor request",
+      "requestsOnly": "Instructor requests only",
+      "approve": "Approve",
+      "reject": "Decline",
+      "approved": "{{name}} is now an instructor.",
+      "rejected": "{{name}}'s request declined.",
+      "confirmReject": "Decline {{name}}'s instructor request? The account will stay a learner."
     },
     "coursesPage": {
       "subtitle": "{{count}} courses, published and drafts",
@@ -497,7 +507,8 @@
       "progressTitle": "Your progress",
       "controlsAverage": "Quiz average",
       "finalExam": "Final exam",
-      "certificateObtained": "Certificate earned"
+      "certificateObtained": "Certificate earned",
+      "requestPending": "Your request to become an instructor is awaiting approval by the administration."
     },
     "reviews": {
       "noText": "Rating without comment.",

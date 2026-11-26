@@ -68,6 +68,9 @@ public class AuthService {
         user.setPreferredLanguage(request.preferredLanguage() != null ? request.preferredLanguage() : "fr");
         user.setCountry(request.country());
         user.addRole(learner);
+        if (Boolean.TRUE.equals(request.wantsToTeach())) {
+            user.setInstructorRequestedAt(java.time.Instant.now());
+        }
 
         return userMapper.toDto(userRepository.save(user));
     }

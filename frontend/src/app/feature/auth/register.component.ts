@@ -30,6 +30,7 @@ export class RegisterComponent {
       confirmPassword: ['', [Validators.required]],
       country: [''],
       preferredLanguage: [this.lang.current() as string, [Validators.required]],
+      wantsToTeach: [false],
     },
     { validators: passwordsMatch },
   );
@@ -51,9 +52,16 @@ export class RegisterComponent {
     this.loading.set(true);
     this.error.set(null);
 
-    const { fullName, email, password, country, preferredLanguage } = this.form.getRawValue();
+    const { fullName, email, password, country, preferredLanguage, wantsToTeach } = this.form.getRawValue();
     this.auth
-      .register({ fullName: fullName.trim(), email: email.trim(), password, preferredLanguage, country: country || undefined })
+      .register({
+        fullName: fullName.trim(),
+        email: email.trim(),
+        password,
+        preferredLanguage,
+        country: country || undefined,
+        wantsToTeach,
+      })
       .subscribe({
         next: () => {
           // Connexion automatique après inscription

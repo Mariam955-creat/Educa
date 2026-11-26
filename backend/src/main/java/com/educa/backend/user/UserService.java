@@ -94,16 +94,18 @@ public class UserService {
                 userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.INSTRUCTOR),
                 userRepository.countByRoles_NameAndDeletedAtIsNull(RoleName.ADMIN),
                 userRepository.countByEnabledFalseAndDeletedAtIsNull(),
-                userRepository.countByCreatedAtAfterAndDeletedAtIsNull(newSince));
+                userRepository.countByCreatedAtAfterAndDeletedAtIsNull(newSince),
+                userRepository.countByInstructorRequestedAtIsNotNullAndDeletedAtIsNull());
     }
 
-    public record UserStats(long total, long learners, long instructors, long admins, long disabled, long recent) {
+    public record UserStats(long total, long learners, long instructors, long admins, long disabled, long recent,
+            long instructorRequests) {
     }
 
     @Transactional(readOnly = true)
-    public Page<AdminUserDto> adminList(String q, Pageable pageable) {
+    public Page<AdminUserDto> adminList(String q, boolean requestsOnly, Pageable pageable) {
         String normalizedQ = StringUtils.hasText(q) ? q.trim() : null;
-        return userRepository.search(normalizedQ, pageable).map(userMapper::toAdminDto);
+        return userRepository.search(normalizedQ, requestsOnly, pageable).map(userMapper::toAdminDto);
     }
 
     @Transactional
@@ -119,6 +121,9 @@ public class UserService {
             throw new ConflictException("Vous ne pouvez pas retirer votre propre rôle administrateur");
         }
         user.setRoles(resolved);
+        if (resolved.stream().anyMatch(r -> r.getName() != RoleName.LEARNER)) {
+            user.setInstructorRequestedAt(null); // rôle formateur (ou admin) accordé : la demande est traitée
+        }
         return userMapper.toAdminDto(userRepository.save(user));
     }
 
@@ -129,6 +134,32 @@ public class UserService {
         }
         User user = loadById(id);
         user.setEnabled(enabled);
+        return userMapper.toAdminDto(userRepository.save(user));
+    }
+
+    // ---------- demandes de rôle formateur ----------
+
+    /** Accepte la demande : ajoute le rôle formateur (le rôle apprenant est conservé). */
+    @Transactional
+    public AdminUserDto approveInstructorRequest(Long id) {
+        User user = loadById(id);
+        if (user.getInstructorRequestedAt() == null) {
+            throw new ConflictException("Aucune demande de rôle formateur pour ce compte");
+        }
+        user.addRole(roleRepository.findByName(RoleName.INSTRUCTOR)
+                .orElseThrow(() -> new IllegalStateException("Rôle INSTRUCTOR absent — vérifier les migrations")));
+        user.setInstructorRequestedAt(null);
+        return userMapper.toAdminDto(userRepository.save(user));
+    }
+
+    /** Refuse la demande : le compte reste apprenant. */
+    @Transactional
+    public AdminUserDto rejectInstructorRequest(Long id) {
+        User user = loadById(id);
+        if (user.getInstructorRequestedAt() == null) {
+            throw new ConflictException("Aucune demande de rôle formateur pour ce compte");
+        }
+        user.setInstructorRequestedAt(null);
         return userMapper.toAdminDto(userRepository.save(user));
     }
 

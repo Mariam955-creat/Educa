@@ -7,6 +7,8 @@ export interface AdminUser {
   roles: RoleName[];
   enabled: boolean;
   createdAt: string;
+  /** Demande de rôle formateur en attente (date) ; `null` si aucune. */
+  instructorRequestedAt: string | null;
 }
 
 export interface CertificateRegistryEntry {
@@ -48,7 +50,15 @@ export interface ReviewRegistryEntry {
 
 /** Indicateurs du tableau de bord admin ; « recent » = 30 derniers jours. */
 export interface AdminStats {
-  users: { total: number; learners: number; instructors: number; admins: number; disabled: number; recent: number };
+  users: {
+    total: number;
+    learners: number;
+    instructors: number;
+    admins: number;
+    disabled: number;
+    recent: number;
+    instructorRequests: number;
+  };
   courses: { total: number; published: number; drafts: number };
   enrollments: { total: number; recent: number };
   revenue: { total: number; sales: number; recent: number; recentSales: number; currency: string };

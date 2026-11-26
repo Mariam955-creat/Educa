@@ -11,6 +11,8 @@ export interface User {
   /** Code pays ISO 3166-1 alpha-2. */
   country?: string;
   phone?: string;
+  /** Demande de rôle formateur en attente de validation (date) ; absente ou `null` sinon. */
+  instructorRequestedAt?: string | null;
 }
 
 /** Mise à jour partielle du profil : un champ absent reste inchangé, une chaîne vide l'efface. */
@@ -36,4 +38,6 @@ export interface RegisterRequest {
   fullName: string;
   preferredLanguage?: string;
   country?: string;
+  /** « Je veux enseigner » : demande de rôle formateur, validée ensuite par l'administration. */
+  wantsToTeach?: boolean;
 }

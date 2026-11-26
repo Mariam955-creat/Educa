@@ -196,3 +196,13 @@ h2 {
   text-align: center;
   text-decoration: none;
 }
+
+/* Demande de rôle formateur en attente */
+.request-note {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent-strong, #1e40af);
+  font-size: 0.9rem;
+}

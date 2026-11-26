@@ -63,6 +63,13 @@
             <strong>{{ row.value }}</strong>
           </div>
         }
+        @if (s.users.instructorRequests) {
+          <p class="note">
+            <a routerLink="../users" [queryParams]="{ requests: 1 }">
+              🧑‍🏫 {{ 'admin.overview.instructorRequests' | translate: { count: s.users.instructorRequests } }}
+            </a>
+          </p>
+        }
         @if (s.users.disabled) {
           <p class="note">⚠ {{ 'admin.overview.disabledUsers' | translate: { count: s.users.disabled } }}</p>
         }

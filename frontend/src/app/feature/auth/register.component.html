@@ -65,6 +65,14 @@
         </label>
       </div>
 
+      <label class="teach">
+        <input type="checkbox" formControlName="wantsToTeach" />
+        <span>
+          <strong>{{ 'auth.register.wantsToTeach' | translate }}</strong>
+          <small>{{ 'auth.register.wantsToTeachHint' | translate }}</small>
+        </span>
+      </label>
+
       @if (error()) {
         <p class="form-error">{{ error() }}</p>
       }

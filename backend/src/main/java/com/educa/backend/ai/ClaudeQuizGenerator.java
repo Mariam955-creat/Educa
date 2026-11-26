@@ -25,7 +25,7 @@ public class ClaudeQuizGenerator implements QuizGenerator {
     private static final Duration TIMEOUT = Duration.ofSeconds(120);
 
     private static final String SYSTEM = """
-            Tu aides un formateur de la plateforme e-learning Ganndal à préparer un quiz.
+            Tu aides un formateur de la plateforme e-learning Omnia à préparer un quiz.
             À partir du contenu de cours fourni, propose des questions qui vérifient la compréhension des notions
             importantes du cours, pas des détails anecdotiques.
             Règles :

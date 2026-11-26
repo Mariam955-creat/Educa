@@ -1,4 +1,6 @@
-# educa
+# Omnia
+
+> Nom de code du dépôt : `educa`.
 
 Plateforme e-learning — Projet de Fin d'Études.
 

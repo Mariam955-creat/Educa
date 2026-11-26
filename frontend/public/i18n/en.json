@@ -27,7 +27,7 @@
   "auth": {
     "login": {
       "title": "Sign in",
-      "subtitle": "Ganndal — e-learning platform",
+      "subtitle": "Omnia — e-learning platform",
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
@@ -478,7 +478,7 @@
       "subscriptionNone": "No subscription",
       "subscriptionUntil": "Access to every course until {{date}}",
       "subscriptionOffer": "Every course for {{price}} a month",
-      "subtitle": "Your activity on Ganndal at a glance.",
+      "subtitle": "Your activity on Omnia at a glance.",
       "learning": "My learning",
       "enrolled": "Courses taken",
       "completed": "Courses completed",
@@ -751,7 +751,7 @@
     "ctaText": "Create your free account and explore the catalogue."
   },
   "subscription": {
-    "eyebrow": "Ganndal subscription",
+    "eyebrow": "Omnia subscription",
     "title": "Every course, one price",
     "lead": "Access the whole catalogue for 30 days: take as many courses as you like, pass the assessments and earn your certificates.",
     "planName": "Unlimited access",

@@ -19,8 +19,8 @@ public class OpenApiConfig {
     OpenAPI educaOpenApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Ganndal API")
-                        .description("API REST de la plateforme e-learning Ganndal (formations, inscriptions, quiz, certificats, chatbot IA).")
+                        .title("Omnia API")
+                        .description("API REST de la plateforme e-learning Omnia (formations, inscriptions, quiz, certificats, chatbot IA).")
                         .version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(BEARER_SCHEME))
                 .components(new Components()

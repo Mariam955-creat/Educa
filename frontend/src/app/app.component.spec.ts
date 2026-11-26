@@ -25,10 +25,10 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('affiche la marque Ganndal', () => {
+  it('affiche la marque Omnia', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const brand = fixture.nativeElement.querySelector('.brand');
-    expect(brand?.textContent).toContain('Ganndal');
+    expect(brand?.textContent).toContain('Omnia');
   });
 });

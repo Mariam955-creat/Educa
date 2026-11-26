@@ -491,7 +491,7 @@ public class DevDataInitializer implements ApplicationRunner {
                                         trueFalse("« Could you please send me the report? » est une demande polie.", 2, true))),
                         new ChapterSpec("Au téléphone et en visio", List.of(
                                 textContent("Se présenter", 1,
-                                        "« Hello, this is Awa from Ganndal. I'm calling about… » : votre nom, votre entreprise, puis l'objet de l'appel."),
+                                        "« Hello, this is Awa from Omnia. I'm calling about… » : votre nom, votre entreprise, puis l'objet de l'appel."),
                                 textContent("Faire répéter", 2,
                                         "« Sorry, could you repeat that? » ou « Could you speak a little more slowly, please? » : demander de répéter est normal.")),
                                 List.of(singleChoice("Pour faire répéter poliment, on dit…", 1,

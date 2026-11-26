@@ -111,7 +111,7 @@ public class PaymentService {
     public CheckoutResponse startSubscriptionCheckout(Long userId, CheckoutRequest request) {
         UserDto user = userService.getById(userId);
         PaymentGateway.CheckoutResult result = gatewayFor(request.provider())
-                .startCheckout(userId, user.email(), null, "Ganndal — abonnement " + subscriptionDays + " jours",
+                .startCheckout(userId, user.email(), null, "Omnia — abonnement " + subscriptionDays + " jours",
                         subscriptionPrice, "/subscription");
 
         Payment payment = new Payment();
@@ -441,7 +441,7 @@ public class PaymentService {
                 <h1>%s</h1>
                 <p class="sub">%s</p>
                 <table class="parties"><tr>
-                  <td><div class="label">%s</div><strong>Ganndal</strong><br/>%s<br/>%s</td>
+                  <td><div class="label">%s</div><strong>Omnia</strong><br/>%s<br/>%s</td>
                   <td><div class="label">%s</div><strong>%s</strong></td>
                 </tr></table>
                 <table>

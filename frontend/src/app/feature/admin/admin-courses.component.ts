@@ -26,6 +26,9 @@ const PAGE_SIZE = 20;
           <h1>{{ 'admin.nav.courses' | translate }}</h1>
           <p class="subtitle">{{ 'admin.coursesPage.subtitle' | translate: { count: total() } }}</p>
         </div>
+        <div class="actions">
+          <a routerLink="../trash" [queryParams]="{ tab: 'courses' }">🗑 {{ 'trash.title' | translate }}</a>
+        </div>
       </div>
 
       @if (message()) {

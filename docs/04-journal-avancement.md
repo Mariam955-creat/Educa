@@ -1450,3 +1450,4 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Bouton « Supprimer définitivement » retiré de la liste des utilisateurs (demande de l'utilisatrice) : la liste garde « Désactiver » et « Supprimer » (corbeille) ; la suppression définitive se fait depuis la corbeille. Le lien « Corbeille » reste.
 - Admin → Avis : lien « Corbeille » comme sur Utilisateurs ; la corbeille s'ouvre directement sur l'onglet Avis (ou Comptes depuis Utilisateurs) via `?tab=`.
 - Back-office : tiroir de l'espace admin passé à gauche (`side="left"` sur `drawer-layout`, compte et formateur restent à droite).
+- Admin → Cours : lien « Corbeille » (onglet Cours). Pas de lien sur Certificats et Langues : ils ne passent pas par la corbeille.

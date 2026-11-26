@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
@@ -13,6 +14,10 @@ import { StarRatingComponent } from '../../shared/star-rating/star-rating.compon
 import { ConfirmDeleteDialogComponent } from '../../shared/trash/confirm-delete-dialog.component';
 
 type TrashTab = 'courses' | 'users' | 'reviews';
+
+function initialTab(value: string | null): TrashTab {
+  return value === 'users' || value === 'reviews' ? value : 'courses';
+}
 
 /** Élément en attente de suppression définitive (boîte « tapez SUPPRIMER »). */
 interface PendingDeletion {
@@ -159,7 +164,8 @@ export class AdminTrashComponent implements OnInit {
   readonly lang = inject(LanguageService);
 
   readonly tabs: TrashTab[] = ['courses', 'users', 'reviews'];
-  readonly tab = signal<TrashTab>('courses');
+  /** Onglet ouvert : `?tab=users|reviews` (liens « Corbeille » des pages Utilisateurs et Avis), cours sinon. */
+  readonly tab = signal<TrashTab>(initialTab(inject(ActivatedRoute).snapshot.queryParamMap.get('tab')));
   readonly courses = signal<TrashedCourse[]>([]);
   readonly users = signal<TrashedUser[]>([]);
   readonly reviews = signal<ReviewRegistryEntry[]>([]);

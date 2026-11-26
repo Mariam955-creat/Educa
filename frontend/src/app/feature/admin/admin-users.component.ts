@@ -26,7 +26,7 @@ const PAGE_SIZE = 20;
           <p class="subtitle">{{ 'admin.usersPage.subtitle' | translate: { count: total() } }}</p>
         </div>
         <div class="actions">
-          <a routerLink="../trash">🗑 {{ 'trash.title' | translate }}</a>
+          <a routerLink="../trash" [queryParams]="{ tab: 'users' }">🗑 {{ 'trash.title' | translate }}</a>
         </div>
       </div>
 

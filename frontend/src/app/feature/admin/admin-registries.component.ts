@@ -207,6 +207,9 @@ export class AdminCertificatesComponent implements OnInit {
           <h1>{{ 'admin.nav.reviews' | translate }}</h1>
           <p class="subtitle">{{ 'admin.registry.count' | translate: { count: total() } }}</p>
         </div>
+        <div class="actions">
+          <a routerLink="../trash" [queryParams]="{ tab: 'reviews' }">🗑 {{ 'trash.title' | translate }}</a>
+        </div>
       </div>
       @if (message()) {
         <p class="flash">{{ message() }}</p>

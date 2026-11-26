@@ -22,10 +22,11 @@ main {
 }
 
 /*
- * Disposition de l'en-tête : tout regroupé à droite — marque « educa », puis liens, compte (ou langue).
+ * Disposition de l'en-tête : marque « Ganndal » à l'extrême gauche, liens et compte (ou langue) à droite.
  * Marque de l'en-tête (le pied de page a sa propre couleur, voir .footer .brand).
  */
 .brand {
+  margin-right: auto;
   font-weight: 800;
   font-size: 1.25rem;
   letter-spacing: -0.01em;

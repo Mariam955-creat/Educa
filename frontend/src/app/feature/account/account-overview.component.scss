@@ -164,3 +164,35 @@ h2 {
 .kpi.subscribed .kpi-value {
   color: var(--success-strong, #047857);
 }
+
+/* Carte « Votre progression » : progression moyenne, notes moyennes, certificat */
+.progress-card .track {
+  display: block;
+  height: 10px;
+  margin-bottom: 0.4rem;
+}
+
+.progress-card .line {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.progress-card .line + .line {
+  border-top: 1px solid var(--border);
+}
+
+.progress-card .badge {
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: var(--warning-soft, #fef3c7);
+  color: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+}

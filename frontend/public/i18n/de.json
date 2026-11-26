@@ -1,5 +1,11 @@
 {
-  "lang": { "label": "Sprache", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
+  "lang": {
+    "label": "Sprache",
+    "fr": "Français",
+    "en": "English",
+    "de": "Deutsch",
+    "nl": "Nederlands"
+  },
   "nav": {
     "subscription": "Abonnement",
     "dashboard": "Übersicht",
@@ -487,7 +493,11 @@
       "resume": "Kurse fortsetzen",
       "nothingInProgress": "Kein laufender Kurs.",
       "latestCertificates": "Neueste Zertifikate",
-      "noCertificates": "Noch kein Zertifikat."
+      "noCertificates": "Noch kein Zertifikat.",
+      "progressTitle": "Ihr Fortschritt",
+      "controlsAverage": "Durchschnitt der Tests",
+      "finalExam": "Abschlussprüfung",
+      "certificateObtained": "Zertifikat erhalten"
     },
     "reviews": {
       "noText": "Bewertung ohne Kommentar.",
@@ -698,10 +708,6 @@
     "trustLanguages": "4 Sprachen: FR, EN, DE, NL",
     "trustCertificate": "Überprüfbares PDF-Zertifikat",
     "trustPayment": "Sichere Zahlung",
-    "cardTitle": "Ihr Fortschritt",
-    "cardQuizzes": "Durchschnitt der Tests",
-    "cardExam": "Abschlussprüfung",
-    "cardCertificate": "Zertifikat erhalten",
     "featuresTitle": "Alles zum Lernen und Bestehen",
     "features": {
       "courses": {

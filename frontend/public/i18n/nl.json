@@ -1,5 +1,11 @@
 {
-  "lang": { "label": "Taal", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
+  "lang": {
+    "label": "Taal",
+    "fr": "Français",
+    "en": "English",
+    "de": "Deutsch",
+    "nl": "Nederlands"
+  },
   "nav": {
     "subscription": "Abonnement",
     "dashboard": "Dashboard",
@@ -487,7 +493,11 @@
       "resume": "Verder leren",
       "nothingInProgress": "Geen lopende cursus.",
       "latestCertificates": "Laatste certificaten",
-      "noCertificates": "Nog geen certificaat."
+      "noCertificates": "Nog geen certificaat.",
+      "progressTitle": "Je voortgang",
+      "controlsAverage": "Gemiddelde van de toetsen",
+      "finalExam": "Eindexamen",
+      "certificateObtained": "Certificaat behaald"
     },
     "reviews": {
       "noText": "Score zonder opmerking.",
@@ -698,10 +708,6 @@
     "trustLanguages": "4 talen: FR, EN, DE, NL",
     "trustCertificate": "Verifieerbaar pdf-certificaat",
     "trustPayment": "Veilig betalen",
-    "cardTitle": "Je voortgang",
-    "cardQuizzes": "Gemiddelde van de toetsen",
-    "cardExam": "Eindexamen",
-    "cardCertificate": "Certificaat behaald",
     "featuresTitle": "Alles om te leren en te slagen",
     "features": {
       "courses": {

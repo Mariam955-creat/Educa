@@ -1,5 +1,11 @@
 {
-  "lang": { "label": "Language", "fr": "Français", "en": "English", "de": "Deutsch", "nl": "Nederlands" },
+  "lang": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English",
+    "de": "Deutsch",
+    "nl": "Nederlands"
+  },
   "nav": {
     "subscription": "Subscription",
     "dashboard": "Dashboard",
@@ -487,7 +493,11 @@
       "resume": "Continue learning",
       "nothingInProgress": "No course in progress.",
       "latestCertificates": "Latest certificates",
-      "noCertificates": "No certificate yet."
+      "noCertificates": "No certificate yet.",
+      "progressTitle": "Your progress",
+      "controlsAverage": "Quiz average",
+      "finalExam": "Final exam",
+      "certificateObtained": "Certificate earned"
     },
     "reviews": {
       "noText": "Rating without comment.",
@@ -698,10 +708,6 @@
     "trustLanguages": "4 languages: FR, EN, DE, NL",
     "trustCertificate": "Verifiable PDF certificate",
     "trustPayment": "Secure payment",
-    "cardTitle": "Your progress",
-    "cardQuizzes": "Quiz average",
-    "cardExam": "Final exam",
-    "cardCertificate": "Certificate earned",
     "featuresTitle": "Everything you need to learn and succeed",
     "features": {
       "courses": {

@@ -57,6 +57,9 @@ export class AccountOverviewComponent implements OnInit {
       .slice(0, 3),
   );
   readonly latestCertificates = computed(() => this.certificates().slice(0, 3));
+  /** Moyennes sur les cours certifiés (seuls cas où les notes de contrôles et d'examen sont connues) ; `null` sinon. */
+  readonly controlsAverage = computed(() => average(this.certificates().map((c) => c.controlsAverage)));
+  readonly finalExamAverage = computed(() => average(this.certificates().map((c) => c.finalExamScore)));
 
   // --- Indicateurs formateur ---
   readonly publishedCount = computed(() => this.taughtCourses().filter((c) => c.published).length);
@@ -96,6 +99,10 @@ export class AccountOverviewComponent implements OnInit {
       maximumFractionDigits: 1,
     }).format(value);
   }
+}
+
+function average(values: number[]): number | null {
+  return values.length ? Math.round(values.reduce((sum, v) => sum + v, 0) / values.length) : null;
 }
 
 function orEmpty<T>(source: Observable<T[]>): Observable<T[]> {

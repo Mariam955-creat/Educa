@@ -74,6 +74,25 @@
     }
 
     <div class="panels">
+      <article class="panel progress-card">
+        <h2>{{ 'account.overview.progressTitle' | translate }}</h2>
+        <p class="line">
+          <span>{{ 'account.overview.averageProgress' | translate }}</span><strong>{{ averageProgress() }} %</strong>
+        </p>
+        <span class="track"><span class="fill" [style.width.%]="averageProgress()"></span></span>
+        <p class="line">
+          <span>{{ 'account.overview.controlsAverage' | translate }}</span>
+          <strong>{{ controlsAverage() != null ? controlsAverage() + ' %' : '—' }}</strong>
+        </p>
+        <p class="line">
+          <span>{{ 'account.overview.finalExam' | translate }}</span>
+          <strong>{{ finalExamAverage() != null ? finalExamAverage() + ' %' : '—' }}</strong>
+        </p>
+        @if (certificates().length > 0) {
+          <a class="badge" routerLink="../certificates">🎓 {{ 'account.overview.certificateObtained' | translate }}</a>
+        }
+      </article>
+
       <article class="panel">
         <h2>{{ 'account.overview.resume' | translate }}</h2>
         @for (e of inProgress(); track e.courseId) {

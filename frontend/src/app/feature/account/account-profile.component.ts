@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { countryOptions } from '../../core/i18n/countries';
 import { AppLang, LanguageService } from '../../core/i18n/language.service';
 import { PASSWORD_PATTERN, PasswordFieldComponent, passwordsMatch } from '../../shared/password/password-field.component';
+import { BecomeInstructorComponent } from './become-instructor.component';
 
 const ROLE_KEYS: Record<RoleName, string> = {
   LEARNER: 'userMenu.roleLearner',
@@ -23,7 +24,7 @@ const PHONE_PATTERN = /^[+0-9 ().-]{6,30}$/;
  */
 @Component({
   selector: 'app-account-profile',
-  imports: [ReactiveFormsModule, TranslatePipe, PasswordFieldComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, PasswordFieldComponent, BecomeInstructorComponent],
   templateUrl: './account-profile.component.html',
   styleUrl: './account-profile.component.scss',
 })

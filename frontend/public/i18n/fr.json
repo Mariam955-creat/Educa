@@ -544,10 +544,16 @@
       "title": "Devenir formateur",
       "intro": "Vous souhaitez publier vos propres cours ? Joignez votre dernier diplôme, votre CV et une pièce d'identité, et présentez votre projet. L'administration vous répond par notification et par email.",
       "submit": "Envoyer ma demande",
-      "pending": "Demande envoyée le {{date}}, en attente de validation par l'administration.",
       "rejected": "Votre dernière demande a été refusée. Vous pouvez en envoyer une nouvelle.",
       "error": "Impossible d'envoyer la demande.",
-      "failedAtSignup": "Votre compte est créé, mais votre candidature n'a pas pu être envoyée. Renvoyez-la ci-dessous."
+      "failedAtSignup": "Votre compte est créé, mais votre candidature n'a pas pu être envoyée. Renvoyez-la ci-dessous.",
+      "pendingInfo": "Votre demande est en cours d'examen. Vous recevrez une notification et un email dès que l'administration aura répondu.",
+      "sent": "Ce que vous avez envoyé",
+      "approvedInfo": "Votre demande est acceptée. Déconnectez-vous puis reconnectez-vous, ou cliquez sur la notification, pour ouvrir l'espace formateur.",
+      "fixTitle": "Corriger et renvoyer ma demande",
+      "fixIntro": "Le formulaire reprend votre demande : modifiez la motivation et remplacez seulement les pièces concernées. Les autres sont conservées.",
+      "resubmit": "Renvoyer ma demande",
+      "overviewLink": "Devenir formateur : suivre ou envoyer ma demande"
     }
   },
   "instructor": {
@@ -865,6 +871,7 @@
     "tooLarge": "Fichier trop volumineux (10 Mo maximum).",
     "next": "Suivant",
     "back": "Retour",
-    "submitWithAccount": "Créer mon compte et envoyer ma demande"
+    "submitWithAccount": "Créer mon compte et envoyer ma demande",
+    "kept": "Pièce déjà envoyée, conservée si vous n'en choisissez pas d'autre"
   }
 }

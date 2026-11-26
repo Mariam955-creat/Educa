@@ -196,3 +196,20 @@ h2 {
   text-align: center;
   text-decoration: none;
 }
+
+/* Lien vers la candidature formateur (profil) */
+.teach-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent-strong, #1e40af);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.teach-link:hover {
+  border-color: var(--accent, #2563eb);
+}

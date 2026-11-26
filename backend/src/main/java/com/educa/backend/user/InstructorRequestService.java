@@ -79,6 +79,7 @@ public class InstructorRequestService {
     /**
      * Dépose une demande. Refusée (409) si le compte est déjà formateur ou a une demande en attente ; (400) si la
      * motivation ou une pièce manque ; (413) si une pièce dépasse 10 Mo ; (415) si son type réel n'est pas accepté.
+     * Après un refus, le candidat corrige et renvoie : une pièce non renvoyée reprend celle de la demande refusée.
      */
     @Transactional
     public InstructorRequestDto submit(Long userId, String motivation, MultipartFile diploma, MultipartFile cv,
@@ -97,10 +98,17 @@ public class InstructorRequestService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "La motivation dépasse 2000 caractères");
         }
         // Toutes les pièces sont vérifiées avant d'enregistrer quoi que ce soit
+        Map<Kind, InstructorRequestDocument> previous = previousDocuments(userId);
         Map<Kind, MultipartFile> files = new EnumMap<>(Kind.class);
         files.put(Kind.DIPLOMA, diploma);
         files.put(Kind.CV, cv);
         files.put(Kind.ID_DOCUMENT, idDocument);
+        files.values().removeIf(file -> file == null || file.isEmpty());
+        for (Kind kind : Kind.values()) {
+            if (!files.containsKey(kind) && !previous.containsKey(kind)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Pièce manquante : " + LABELS.get(kind));
+            }
+        }
         Map<Kind, String> detectedTypes = new EnumMap<>(Kind.class);
         files.forEach((kind, file) -> detectedTypes.put(kind, validate(kind, file)));
 
@@ -119,12 +127,36 @@ public class InstructorRequestService {
             document.setSizeBytes(file.getSize());
             documentRepository.save(document);
         });
+        // Pièces reprises de la demande refusée : même fichier stocké, nouvelle ligne pour cette demande
+        previous.forEach((kind, old) -> {
+            if (files.containsKey(kind)) {
+                return;
+            }
+            InstructorRequestDocument document = new InstructorRequestDocument();
+            document.setRequestId(request.getId());
+            document.setKind(kind);
+            document.setStorageKey(old.getStorageKey());
+            document.setOriginalName(old.getOriginalName());
+            document.setMimeType(old.getMimeType());
+            document.setSizeBytes(old.getSizeBytes());
+            documentRepository.save(document);
+        });
 
         for (User admin : userRepository.findByRoles_NameAndEnabledTrueAndDeletedAtIsNull(RoleName.ADMIN)) {
             notificationService.notify(admin.getId(), NotificationType.INSTRUCTOR_REQUEST_SUBMITTED,
                     user.getFullName(), "/admin/instructor-requests");
         }
         return toDtos(List.of(request)).get(0);
+    }
+
+    /** Pièces de la dernière demande du compte si elle a été refusée (réutilisables au renvoi), vide sinon. */
+    private Map<Kind, InstructorRequestDocument> previousDocuments(Long userId) {
+        Map<Kind, InstructorRequestDocument> previous = new EnumMap<>(Kind.class);
+        repository.findFirstByUserIdOrderByCreatedAtDescIdDesc(userId)
+                .filter(last -> last.getStatus() == Status.REJECTED)
+                .ifPresent(last -> documentRepository.findByRequestIdInOrderByIdAsc(List.of(last.getId()))
+                        .forEach(d -> previous.put(d.getKind(), d)));
+        return previous;
     }
 
     /** Dernière demande du compte (pour suivre son état), vide s'il n'en a jamais fait. */
@@ -179,9 +211,9 @@ public class InstructorRequestService {
         String motive = reason.trim();
         decide(request, Status.REJECTED, motive);
         notificationService.notify(user.getId(), NotificationType.INSTRUCTOR_REQUEST_REJECTED, motive,
-                "/account/overview");
+                "/account/profile");
         afterCommit(() -> emailService.send(user.getEmail(), user.getPreferredLanguage(), "instructorRejected",
-                user.getFullName(), motive, publicBaseUrl + "/account/overview"));
+                user.getFullName(), motive, publicBaseUrl + "/account/profile"));
         return toDtos(List.of(request)).get(0);
     }
 
@@ -193,9 +225,6 @@ public class InstructorRequestService {
     }
 
     private String validate(Kind kind, MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Pièce manquante : " + LABELS.get(kind));
-        }
         if (file.getSize() > MAX_DOCUMENT_BYTES) {
             throw new ApiException(HttpStatus.CONTENT_TOO_LARGE,
                     "Fichier trop volumineux (" + LABELS.get(kind) + ", 10 Mo maximum)");

@@ -154,7 +154,16 @@ class InstructorRequestTest {
                 .andExpect(jsonPath("$.items[0].detail").value("Diplôme illisible"));
         mvc.perform(get(MINE).header("Authorization", "Bearer " + tok))
                 .andExpect(jsonPath("$.rejectionReason").value("Diplôme illisible"));
-        submitValid(tok).andExpect(status().isCreated());
+
+        // Renvoi corrigé : seul le diplôme est remplacé, le CV et la pièce d'identité sont repris
+        submit(tok, "Motivation corrigée", pdf("diploma", "diplome-lisible.pdf"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(jsonPath("$.motivation").value("Motivation corrigée"))
+                .andExpect(jsonPath("$.documents", hasSize(3)))
+                .andExpect(jsonPath("$.documents[?(@.kind == 'DIPLOMA')].originalName").value("diplome-lisible.pdf"))
+                .andExpect(jsonPath("$.documents[?(@.kind == 'CV')].originalName").value("cv.pdf"))
+                .andExpect(jsonPath("$.documents[?(@.kind == 'ID_DOCUMENT')].originalName").value("id.png"));
     }
 
     @Test

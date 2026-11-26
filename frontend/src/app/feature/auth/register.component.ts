@@ -104,8 +104,8 @@ export class RegisterComponent {
                 return;
               }
               this.instructorRequests.submit(application).subscribe({
-                next: () => this.router.navigate(['/account/overview']),
-                error: () => this.router.navigate(['/account/overview'], { state: { instructorRequestFailed: true } }),
+                next: () => this.router.navigate(['/account/profile']),
+                error: () => this.router.navigate(['/account/profile'], { state: { instructorRequestFailed: true } }),
               });
             },
             error: () => this.router.navigate(['/login']),

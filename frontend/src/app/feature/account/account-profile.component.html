@@ -5,6 +5,10 @@
     <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
   }
 
+  @if (!isInstructor()) {
+    <app-become-instructor />
+  }
+
   @if (auth.user(); as user) {
     <div class="card identity">
       <div>

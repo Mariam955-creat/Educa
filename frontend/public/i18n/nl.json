@@ -544,10 +544,16 @@
       "title": "Docent worden",
       "intro": "Wil je je eigen cursussen publiceren? Voeg je laatste diploma, je cv en een identiteitsbewijs toe en stel je project voor. De beheerder antwoordt met een melding en een e-mail.",
       "submit": "Aanvraag versturen",
-      "pending": "Aanvraag verstuurd op {{date}}, wacht op goedkeuring door de beheerder.",
       "rejected": "Je laatste aanvraag is geweigerd. Je kunt een nieuwe sturen.",
       "error": "De aanvraag kon niet worden verstuurd.",
-      "failedAtSignup": "Je account is aangemaakt, maar je sollicitatie kon niet worden verstuurd. Stuur ze hieronder opnieuw."
+      "failedAtSignup": "Je account is aangemaakt, maar je sollicitatie kon niet worden verstuurd. Stuur ze hieronder opnieuw.",
+      "pendingInfo": "Je aanvraag wordt bekeken. Je krijgt een melding en een e-mail zodra de beheerder antwoordt.",
+      "sent": "Wat je hebt verstuurd",
+      "approvedInfo": "Je aanvraag is geaccepteerd. Meld je af en opnieuw aan, of klik op de melding, om de docentenruimte te openen.",
+      "fixTitle": "Aanvraag corrigeren en opnieuw versturen",
+      "fixIntro": "Het formulier bevat je aanvraag: pas de motivatie aan en vervang alleen de betrokken documenten. De andere blijven behouden.",
+      "resubmit": "Aanvraag opnieuw versturen",
+      "overviewLink": "Docent worden: aanvraag volgen of versturen"
     }
   },
   "instructor": {
@@ -865,6 +871,7 @@
     "tooLarge": "Bestand te groot (max. 10 MB).",
     "next": "Volgende",
     "back": "Terug",
-    "submitWithAccount": "Account aanmaken en sollicitatie versturen"
+    "submitWithAccount": "Account aanmaken en sollicitatie versturen",
+    "kept": "Al verstuurd, blijft behouden tenzij je een ander bestand kiest"
   }
 }

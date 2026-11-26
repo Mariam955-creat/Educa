@@ -1500,3 +1500,13 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Fichier `.properties` : une première écriture des textes d'email avait mis de vrais retours à la ligne (clés cassées) ; réécrit avec des `\n` échappés.
 
 **Vérifié** : `./mvnw test` → **135/135** (`InstructorRequestTest` 8, `InstructorRequestEmailTest` 2 — sans transaction englobante, pour que l'envoi après commit ait lieu), `npm run build` + `test:ci` → **29/29** (+ `register.component.spec.ts` : case cochée → étape 2 affichée, compte non créé ; non cochée → compte créé). Backend redémarré (`V22` appliquée) : parcours API réel **19/19** (pièce manquante `400`, motivation vide `400`, faux PDF `415`, candidature complète, notification admin, téléchargement identique octet pour octet, `403` apprenant, refus motivé + notification + email, nouvelle candidature, validation + notification + email, rôle formateur). Non vérifié au navigateur.
+
+## [2026-11-26] Suivi et renvoi de la candidature formateur depuis le profil
+
+**Fait**
+- L'encart « Devenir formateur » passe dans le **Profil** (`/account/profile`), le tableau de bord garde un lien. Il affiche l'état (badge En attente / Acceptée / Refusée), les dates d'envoi et de décision, la motivation et les pièces envoyées.
+- Refus : motif affiché, puis « Corriger et renvoyer ma demande » avec le formulaire prérempli (motivation reprise, pièces déjà envoyées marquées « conservées » tant qu'on n'en choisit pas d'autre).
+- Backend : `POST /me/instructor-request` accepte une candidature partielle après un refus — chaque pièce non renvoyée reprend celle de la demande refusée (même `storage_key`, nouvelle ligne pour la nouvelle demande, l'historique reste intact). Sans demande refusée, les trois pièces restent obligatoires (`400`).
+- Notification et email de refus pointent vers le profil.
+
+**Vérifié** : `InstructorRequestTest` 8 + `InstructorRequestEmailTest` 2 verts (renvoi après refus avec seul le diplôme remplacé → 3 pièces, CV et pièce d'identité repris) ; `npm run build` + `test:ci` → **29/29**. Non vérifié au navigateur.

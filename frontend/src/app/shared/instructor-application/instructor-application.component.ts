@@ -1,4 +1,6 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, OnInit, computed, input, signal } from '@angular/core';
+
+import { InstructorRequest } from '../../core/admin/admin.models';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /** Pièces jointes demandées, dans l'ordre d'affichage, avec les types acceptés par le serveur. */
@@ -10,6 +12,9 @@ export const APPLICATION_DOCUMENTS = [
 
 export type ApplicationDocumentKind = (typeof APPLICATION_DOCUMENTS)[number]['kind'];
 
+/** Correspondance entre les noms de champ du formulaire et les types de pièce renvoyés par l'API. */
+const API_KIND: Record<ApplicationDocumentKind, string> = { diploma: 'DIPLOMA', cv: 'CV', idDocument: 'ID_DOCUMENT' };
+
 /** Taille maximale d'une pièce (même limite que le serveur). */
 export const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
 export const MAX_MOTIVATION = 2000;
@@ -18,6 +23,8 @@ export const MAX_MOTIVATION = 2000;
  * Formulaire de candidature formateur : motivation et trois pièces obligatoires (dernier diplôme, CV, pièce
  * d'identité). Utilisé à l'inscription (seconde étape) et dans l'espace compte (« Devenir formateur »).
  * Le parent lit `valid()` et `formData()` ; `showErrors` affiche les erreurs après une tentative d'envoi.
+ * Avec `previous` (demande refusée), le formulaire est prérempli : motivation reprise, pièces déjà envoyées
+ * gardées sauf si le candidat en choisit une nouvelle (le serveur reprend celles qui ne sont pas renvoyées).
  */
 @Component({
   selector: 'app-instructor-application',
@@ -38,15 +45,18 @@ export const MAX_MOTIVATION = 2000;
       @for (doc of documents; track doc.kind) {
         <div class="file-field">
           <span class="file-label">{{ 'application.documents.' + doc.kind | translate }} *</span>
-          <label class="file-picker" [class.filled]="files()[doc.kind]">
+          <label class="file-picker" [class.filled]="files()[doc.kind] || previousName(doc.kind)">
             <input type="file" [accept]="doc.accept" (change)="pick(doc.kind, $any($event.target))" />
-            <span class="file-button">{{ (files()[doc.kind] ? 'application.replace' : 'application.choose') | translate }}</span>
-            <span class="file-name">{{ files()[doc.kind]?.name ?? ('application.noFile' | translate) }}</span>
+            <span class="file-button">{{ (files()[doc.kind] || previousName(doc.kind) ? 'application.replace' : 'application.choose') | translate }}</span>
+            <span class="file-name">{{ files()[doc.kind]?.name ?? previousName(doc.kind) ?? ('application.noFile' | translate) }}</span>
           </label>
+          @if (!files()[doc.kind] && previousName(doc.kind)) {
+            <small class="kept">✓ {{ 'application.kept' | translate }}</small>
+          }
           <small class="hint">{{ 'application.hints.' + doc.kind | translate }}</small>
           @if (tooLarge()[doc.kind]) {
             <small class="field-error">{{ 'application.tooLarge' | translate }}</small>
-          } @else if (showErrors() && !files()[doc.kind]) {
+          } @else if (showErrors() && !files()[doc.kind] && !previousName(doc.kind)) {
             <small class="field-error">{{ 'application.fileRequired' | translate }}</small>
           }
         </div>
@@ -60,6 +70,8 @@ export const MAX_MOTIVATION = 2000;
     .file-field { display: flex; flex-direction: column; gap: 0.3rem; }
     .file-label { font-size: 0.85rem; font-weight: 600; }
     .file-picker { flex-direction: row; align-items: center; gap: 0.75rem; padding: 0.5rem; border: 1px dashed var(--border, #dbe3ef); border-radius: 8px; font-weight: 400; cursor: pointer; }
+    .kept { color: var(--success-strong, #047857); font-size: 0.75rem; font-weight: 600; }
+    .file-picker.kept-file { border-style: solid; }
     .file-picker.filled { border-style: solid; border-color: var(--success, #10b981); background: var(--success-soft, #d1fae5); }
     .file-picker input { position: absolute; width: 1px; height: 1px; opacity: 0; }
     .file-button { flex-shrink: 0; padding: 0.35rem 0.75rem; border-radius: 6px; background: var(--accent, #2563eb); color: #fff; font-size: 0.8rem; font-weight: 600; }
@@ -68,8 +80,10 @@ export const MAX_MOTIVATION = 2000;
     .field-error { color: var(--danger, #b91c1c); font-size: 0.78rem; font-weight: 600; }
   `,
 })
-export class InstructorApplicationComponent {
+export class InstructorApplicationComponent implements OnInit {
   readonly showErrors = input(false);
+  /** Demande refusée à corriger : préremplit la motivation et garde ses pièces. */
+  readonly previous = input<InstructorRequest | null>(null);
 
   readonly documents = APPLICATION_DOCUMENTS;
   readonly maxMotivation = MAX_MOTIVATION;
@@ -80,8 +94,20 @@ export class InstructorApplicationComponent {
   readonly valid = computed(
     () =>
       this.motivation().trim().length > 0 &&
-      APPLICATION_DOCUMENTS.every((d) => !!this.files()[d.kind] && !this.tooLarge()[d.kind]),
+      APPLICATION_DOCUMENTS.every(
+        (d) => (!!this.files()[d.kind] || !!this.previousName(d.kind)) && !this.tooLarge()[d.kind],
+      ),
   );
+
+  ngOnInit(): void {
+    const motivation = this.previous()?.motivation;
+    if (motivation) this.motivation.set(motivation);
+  }
+
+  /** Nom de la pièce déjà envoyée (demande refusée) pour ce champ, si elle existe. */
+  previousName(kind: ApplicationDocumentKind): string | null {
+    return this.previous()?.documents.find((d) => d.kind === API_KIND[kind])?.originalName ?? null;
+  }
 
   pick(kind: ApplicationDocumentKind, input: HTMLInputElement): void {
     const file = input.files?.[0];

@@ -544,10 +544,16 @@
       "title": "Lehrkraft werden",
       "intro": "Möchten Sie eigene Kurse veröffentlichen? Fügen Sie Ihren letzten Abschluss, Ihren Lebenslauf und ein Ausweisdokument bei und stellen Sie Ihr Vorhaben vor. Die Administration antwortet per Benachrichtigung und E-Mail.",
       "submit": "Antrag senden",
-      "pending": "Antrag vom {{date}}, wartet auf Bestätigung durch die Administration.",
       "rejected": "Ihr letzter Antrag wurde abgelehnt. Sie können einen neuen senden.",
       "error": "Der Antrag konnte nicht gesendet werden.",
-      "failedAtSignup": "Ihr Konto wurde erstellt, aber Ihre Bewerbung konnte nicht gesendet werden. Bitte senden Sie sie unten erneut."
+      "failedAtSignup": "Ihr Konto wurde erstellt, aber Ihre Bewerbung konnte nicht gesendet werden. Bitte senden Sie sie unten erneut.",
+      "pendingInfo": "Ihr Antrag wird geprüft. Sie erhalten eine Benachrichtigung und eine E-Mail, sobald die Administration antwortet.",
+      "sent": "Was Sie gesendet haben",
+      "approvedInfo": "Ihr Antrag wurde angenommen. Melden Sie sich ab und wieder an oder klicken Sie auf die Benachrichtigung, um den Lehrbereich zu öffnen.",
+      "fixTitle": "Antrag korrigieren und erneut senden",
+      "fixIntro": "Das Formular enthält Ihren Antrag: Ändern Sie die Motivation und ersetzen Sie nur die betroffenen Unterlagen. Die anderen bleiben erhalten.",
+      "resubmit": "Antrag erneut senden",
+      "overviewLink": "Lehrkraft werden: Antrag verfolgen oder senden"
     }
   },
   "instructor": {
@@ -865,6 +871,7 @@
     "tooLarge": "Datei zu groß (max. 10 MB).",
     "next": "Weiter",
     "back": "Zurück",
-    "submitWithAccount": "Konto erstellen und Bewerbung senden"
+    "submitWithAccount": "Konto erstellen und Bewerbung senden",
+    "kept": "Bereits gesendet, bleibt erhalten, wenn Sie keine andere Datei wählen"
   }
 }

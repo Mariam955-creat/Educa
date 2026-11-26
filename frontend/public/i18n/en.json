@@ -544,10 +544,16 @@
       "title": "Become an instructor",
       "intro": "Want to publish your own courses? Attach your latest diploma, your CV and an ID document, and present your project. The administration answers by notification and email.",
       "submit": "Send my request",
-      "pending": "Request sent on {{date}}, awaiting approval by the administration.",
       "rejected": "Your last request was declined. You can send a new one.",
       "error": "Could not send the request.",
-      "failedAtSignup": "Your account is created, but your application could not be sent. Please send it again below."
+      "failedAtSignup": "Your account is created, but your application could not be sent. Please send it again below.",
+      "pendingInfo": "Your request is being reviewed. You will get a notification and an email as soon as the administration answers.",
+      "sent": "What you sent",
+      "approvedInfo": "Your request is approved. Log out and back in, or click the notification, to open the instructor space.",
+      "fixTitle": "Fix and resend my request",
+      "fixIntro": "The form contains your request: edit the motivation and replace only the documents concerned. The others are kept.",
+      "resubmit": "Resend my request",
+      "overviewLink": "Become an instructor: track or send my request"
     }
   },
   "instructor": {
@@ -865,6 +871,7 @@
     "tooLarge": "File too large (10 MB max).",
     "next": "Next",
     "back": "Back",
-    "submitWithAccount": "Create my account and send my application"
+    "submitWithAccount": "Create my account and send my application",
+    "kept": "Already sent, kept unless you choose another file"
   }
 }

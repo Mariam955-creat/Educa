@@ -1430,3 +1430,18 @@ Tâche 4.11 (Should have). Le formateur demande à l'IA des **suggestions** de q
 **Frontend.** Éditeur de quiz : panneau « ✨ Suggestions de l'IA » (nombre de questions 3/5/10, bouton « Proposer des questions »), chaque suggestion affichée avec ses bonnes réponses en vert et deux boutons « Ajouter au quiz » / « Ignorer », plus « Ajouter les N questions ». L'ajout passe par l'API existante `POST /quizzes/{id}/questions`. Au passage, la position d'une nouvelle question (saisie manuelle comprise) suit désormais la plus grande position existante, et non le nombre de questions : après la suppression d'une question, l'ajout suivant ne tombe plus sur une position déjà prise (`409`). Traductions FR/EN/DE/NL.
 
 Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (suggestions valides numérotées à la suite et non enregistrées ; contenu du seul chapitre pour un contrôle, de tout le cours pour l'examen ; `403` pour un autre formateur ou un apprenant, `400` au-delà de 10 ; `503` si l'IA échoue — modèle remplacé par un double `@MockitoBean`), `ClaudeQuizGeneratorTest` 1 (la requête réelle se construit : le SDK dérive et valide localement le schéma JSON des records, sans appel réseau), `DisabledQuizGeneratorTest` 1 ; `npm run build` OK, `npm run test:ci` → 27/27. **Non vérifié avec le vrai modèle** : pas de clé Anthropic dans `.env` ; sans clé, le bouton affiche le message « génération indisponible ». Vérification à l'écran à faire par l'utilisatrice.
+
+---
+
+## [2026-11-26] Accueil, tableau de bord et nouveau nom « Omnia »
+
+**Fait**
+- Accueil public (`/`) : la carte « Votre progression » (82 % / 90 % en dur) ne s'affiche plus aux visiteurs ; le bandeau passe sur une colonne. Ordre des sections : aperçu des cours, « Tout pour apprendre et réussir », « Comment ça marche », abonnement. Lien « Créer un compte → » sous l'aperçu des cours et bandeau final « Prêt à commencer ? » supprimés.
+- Tableau de bord `/account` : carte « Votre progression » alimentée par les vraies données (progression moyenne des inscriptions ; moyenne des contrôles et de l'examen final calculées sur les certificats — seules données où ces notes existent, « — » sinon ; badge « Certificat obtenu » vers les certificats). Clés i18n déplacées de `home.card*` vers `account.overview.*` (FR/EN/DE/NL).
+- En-tête : logo à l'extrême gauche (`margin-right: auto`), liens et compte à droite.
+- Nom affiché **Ganndal → Omnia** partout où Ganndal apparaissait (interface, PDF, chatbot, Swagger, libellé Stripe) + titre du README.
+
+**Écarts**
+- Le dépôt GitHub (`Mariam955-creat/Educa`) n'est pas renommé depuis le poste (`gh` absent) : à faire dans *Settings → Repository name*, puis `git remote set-url origin`.
+
+**Vérifié** : `npm run build` OK.

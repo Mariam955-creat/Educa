@@ -10,6 +10,7 @@ import { CourseLanguage, LanguageApiService } from '../../core/language/language
 import { QuizApiService } from '../../core/quiz/quiz-api.service';
 import { CourseQuizzes, QuizRef } from '../../core/quiz/quiz.models';
 import { CourseFormSubmit, CourseInfoFormComponent } from './course-info-form.component';
+import { CourseReviewBannerComponent } from './course-review-banner.component';
 
 interface ChapterTranslationDraft {
   chapterId: number;
@@ -25,7 +26,7 @@ interface TranslationDraft {
 
 @Component({
   selector: 'app-course-editor',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe, CourseInfoFormComponent],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe, CourseInfoFormComponent, CourseReviewBannerComponent],
   templateUrl: './course-editor.component.html',
   styleUrl: './course-editor.component.scss',
 })
@@ -315,6 +316,12 @@ export class CourseEditorComponent implements OnInit, OnDestroy {
     this.contentForm.patchValue({ title: '', textBody: '' });
     this.pickedFile.set(null);
     this.loadCourse(slug);
+  }
+
+  /** Recharge le cours (après une soumission ou une publication depuis le bandeau de validation). */
+  reload(): void {
+    const slug = this.course()?.slug;
+    if (slug) this.loadCourse(slug);
   }
 
   private loadCourse(slug: string): void {

@@ -395,7 +395,8 @@
       "certificates": "Certificaten",
       "reviews": "Beoordelingen",
       "languages": "Talen",
-      "instructorRequests": "Docentaanvragen"
+      "instructorRequests": "Docentaanvragen",
+      "courseReviews": "Te keuren cursussen"
     },
     "overview": {
       "subscribers": "Actieve abonnees",
@@ -465,6 +466,20 @@
       },
       "noDocuments": "Geen bijlagen (eerdere aanvraag).",
       "downloadError": "Downloaden mislukt."
+    },
+    "courseReviews": {
+      "pendingCount": "{{count}} cursus(sen) wachten op goedkeuring",
+      "empty": "Geen cursus wacht op goedkeuring.",
+      "instructor": "Docent",
+      "price": "Prijs",
+      "content": "Inhoud",
+      "submitted": "Ingediend op",
+      "preview": "Cursusvoorbeeld openen",
+      "reasonLabel": "Reden van weigering (wordt naar de docent gestuurd)",
+      "reasonPlaceholder": "Bijv.: voeg een eindexamen en een nauwkeurigere beschrijving toe",
+      "approve": "Goedkeuren en publiceren",
+      "approved": "\"{{name}}\" is goedgekeurd en gepubliceerd; de docent is op de hoogte gebracht.",
+      "rejected": "\"{{name}}\" is geweigerd; de reden is naar de docent gestuurd."
     }
   },
   "footer": {
@@ -845,7 +860,10 @@
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Je aanvraag is geaccepteerd: je bent nu docent. Klik om de docentenruimte te openen.",
       "INSTRUCTOR_REQUEST_REJECTED": "Je aanvraag om docent te worden is geweigerd.",
-      "INSTRUCTOR_REQUEST_SUBMITTED": "Nieuwe docentaanvraag: {{detail}}. Klik om ze te behandelen."
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Nieuwe docentaanvraag: {{detail}}. Klik om ze te behandelen.",
+      "COURSE_SUBMITTED": "Te keuren cursus: \"{{subject}}\" ({{detail}}).",
+      "COURSE_APPROVED": "Je cursus \"{{subject}}\" is goedgekeurd en gepubliceerd.",
+      "COURSE_REJECTED": "Je cursus \"{{subject}}\" is niet goedgekeurd. Klik om hem aan te passen."
     }
   },
   "application": {
@@ -873,5 +891,27 @@
     "back": "Terug",
     "submitWithAccount": "Account aanmaken en sollicitatie versturen",
     "kept": "Al verstuurd, blijft behouden tenzij je een ander bestand kiest"
+  },
+  "courseReview": {
+    "status": {
+      "DRAFT": "Concept",
+      "PENDING": "Wacht op goedkeuring",
+      "APPROVED": "Goedgekeurd, niet gepubliceerd",
+      "REJECTED": "Geweigerd",
+      "PUBLISHED": "Gepubliceerd"
+    },
+    "explain": {
+      "DRAFT": "Alleen jij ziet deze cursus. Dien hem in wanneer hij klaar is: de beheerder keurt hem goed vóór publicatie.",
+      "PENDING": "De beheerder bekijkt je cursus. Je krijgt een melding en een e-mail.",
+      "APPROVED": "Je cursus is goedgekeurd. Je kunt hem publiceren in de catalogus.",
+      "REJECTED": "Je cursus is niet goedgekeurd. Pas hem aan en dien hem opnieuw in.",
+      "PUBLISHED": "Je cursus staat online in de catalogus."
+    },
+    "submit": "Indienen voor goedkeuring",
+    "resubmit": "Opnieuw indienen voor goedkeuring",
+    "submitted": "\"{{name}}\" is ingediend: de beheerder bekijkt hem.",
+    "submitError": "Deze actie is nu niet mogelijk.",
+    "pendingInfo": "Wordt bekeken door de beheerder.",
+    "submittedOn": "Ingediend op {{date}}"
   }
 }

@@ -6,6 +6,10 @@
     <p class="flash" [class.error]="messageIsError()">{{ message() }}</p>
   }
 
+  @if (course(); as current) {
+    <app-course-review-banner [course]="current" (changed)="reload()" />
+  }
+
   <app-course-info-form
     [course]="course()"
     [languages]="selectableLanguages()"

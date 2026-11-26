@@ -34,5 +34,10 @@ public record CourseSummaryDto(
         BigDecimal promoPrice,
         Instant promoEndsAt,
         boolean promoActive,
-        String previewVideoUrl) {
+        String previewVideoUrl,
+        /** Validation par l'administration (DRAFT, PENDING, APPROVED, REJECTED). */
+        com.educa.backend.course.CourseReviewStatus reviewStatus,
+        /** Motif du dernier refus : renvoyé au propriétaire et aux admins seulement, {@code null} sinon. */
+        String reviewReason,
+        Instant submittedAt) {
 }

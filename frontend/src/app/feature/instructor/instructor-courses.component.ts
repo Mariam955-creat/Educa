@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, forkJoin, of } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { CourseApiService } from '../../core/courses/course-api.service';
 import { CourseSummary } from '../../core/courses/course.models';
 import { intlLocale } from '../../core/i18n/intl-locale';
@@ -32,6 +33,9 @@ export class InstructorCoursesComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly notice = signal<string | null>(null);
+  /** Un admin publie directement ; un formateur passe par la validation. */
+  private readonly auth = inject(AuthService);
+  readonly isAdmin = computed(() => this.auth.hasRole('ADMIN'));
   readonly filter = signal<StatusFilter>('all');
   readonly query = signal('');
 
@@ -76,9 +80,28 @@ export class InstructorCoursesComponent implements OnInit {
     }).format(value);
   }
 
+  /** État affiché : publié, ou étape de validation (brouillon, en attente, validé, refusé). */
+  stateOf(course: CourseSummary): string {
+    return course.published ? 'PUBLISHED' : course.reviewStatus;
+  }
+
+  submitForReview(course: CourseSummary): void {
+    this.error.set(null);
+    this.api.submitForReview(course.id).subscribe({
+      next: (updated) => {
+        this.courses.update((list) => list.map((c) => (c.id === updated.id ? updated : c)));
+        this.notice.set(this.translate.instant('courseReview.submitted', { name: course.title }));
+        setTimeout(() => this.notice.set(null), 5000);
+      },
+      error: (err: HttpErrorResponse) => this.error.set(err.error?.message ?? this.translate.instant('courseReview.submitError')),
+    });
+  }
+
   togglePublish(course: CourseSummary): void {
-    this.api.setPublished(course.id, !course.published).subscribe((updated) => {
-      this.courses.update((list) => list.map((c) => (c.id === updated.id ? updated : c)));
+    this.error.set(null);
+    this.api.setPublished(course.id, !course.published).subscribe({
+      next: (updated) => this.courses.update((list) => list.map((c) => (c.id === updated.id ? updated : c))),
+      error: (err: HttpErrorResponse) => this.error.set(err.error?.message ?? this.translate.instant('courseReview.submitError')),
     });
   }
 

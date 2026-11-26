@@ -151,6 +151,11 @@ export const routes: Routes = [
         loadComponent: () => import('./feature/admin/admin-users.component').then((m) => m.AdminUsersComponent),
       },
       {
+        path: 'course-reviews',
+        loadComponent: () =>
+          import('./feature/admin/admin-course-reviews.component').then((m) => m.AdminCourseReviewsComponent),
+      },
+      {
         path: 'instructor-requests',
         loadComponent: () =>
           import('./feature/admin/admin-instructor-requests.component').then((m) => m.AdminInstructorRequestsComponent),

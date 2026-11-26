@@ -395,7 +395,8 @@
       "certificates": "Certificats",
       "reviews": "Avis",
       "languages": "Langues",
-      "instructorRequests": "Demandes formateur"
+      "instructorRequests": "Demandes formateur",
+      "courseReviews": "Cours à valider"
     },
     "overview": {
       "subscribers": "Abonnés actifs",
@@ -465,6 +466,20 @@
       },
       "noDocuments": "Aucune pièce jointe (demande antérieure).",
       "downloadError": "Téléchargement impossible."
+    },
+    "courseReviews": {
+      "pendingCount": "{{count}} cours en attente de validation",
+      "empty": "Aucun cours en attente de validation.",
+      "instructor": "Formateur",
+      "price": "Prix",
+      "content": "Contenu",
+      "submitted": "Soumis le",
+      "preview": "Ouvrir l'aperçu du cours",
+      "reasonLabel": "Motif du refus (envoyé au formateur)",
+      "reasonPlaceholder": "Ex. : ajoutez un examen final et une description plus précise",
+      "approve": "Valider et publier",
+      "approved": "« {{name}} » est validé et publié ; le formateur en est informé.",
+      "rejected": "« {{name}} » est refusé ; le motif a été envoyé au formateur."
     }
   },
   "footer": {
@@ -845,7 +860,10 @@
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Votre demande est acceptée : vous êtes formateur. Cliquez pour ouvrir l'espace formateur.",
       "INSTRUCTOR_REQUEST_REJECTED": "Votre demande pour devenir formateur a été refusée.",
-      "INSTRUCTOR_REQUEST_SUBMITTED": "Nouvelle demande de formateur : {{detail}}. Cliquez pour la traiter."
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Nouvelle demande de formateur : {{detail}}. Cliquez pour la traiter.",
+      "COURSE_SUBMITTED": "Cours à valider : « {{subject}} » ({{detail}}).",
+      "COURSE_APPROVED": "Votre cours « {{subject}} » est validé et publié.",
+      "COURSE_REJECTED": "Votre cours « {{subject}} » n'a pas été validé. Cliquez pour le corriger."
     }
   },
   "application": {
@@ -873,5 +891,27 @@
     "back": "Retour",
     "submitWithAccount": "Créer mon compte et envoyer ma demande",
     "kept": "Pièce déjà envoyée, conservée si vous n'en choisissez pas d'autre"
+  },
+  "courseReview": {
+    "status": {
+      "DRAFT": "Brouillon",
+      "PENDING": "En attente de validation",
+      "APPROVED": "Validé, non publié",
+      "REJECTED": "Refusé",
+      "PUBLISHED": "Publié"
+    },
+    "explain": {
+      "DRAFT": "Ce cours n'est visible que par vous. Soumettez-le quand il est prêt : l'administration le validera avant sa publication.",
+      "PENDING": "L'administration examine votre cours. Vous serez prévenu par notification et par email.",
+      "APPROVED": "Votre cours est validé. Vous pouvez le publier dans le catalogue.",
+      "REJECTED": "Votre cours n'a pas été validé. Corrigez-le, puis soumettez-le de nouveau.",
+      "PUBLISHED": "Votre cours est en ligne dans le catalogue."
+    },
+    "submit": "Soumettre pour validation",
+    "resubmit": "Resoumettre pour validation",
+    "submitted": "« {{name}} » est soumis : l'administration va l'examiner.",
+    "submitError": "Action impossible pour le moment.",
+    "pendingInfo": "En cours d'examen par l'administration.",
+    "submittedOn": "Soumis le {{date}}"
   }
 }

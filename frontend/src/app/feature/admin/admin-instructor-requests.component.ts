@@ -7,7 +7,7 @@ import { InstructorRequest, InstructorRequestDocument, InstructorRequestStatus }
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { PagerComponent } from '../../shared/pager/pager.component';
-import { InstructorRequestCountService } from './instructor-request-count.service';
+import { ModerationCountService } from './moderation-count.service';
 
 const PAGE_SIZE = 20;
 
@@ -23,7 +23,7 @@ const PAGE_SIZE = 20;
       <div class="head">
         <div>
           <h1>{{ 'admin.nav.instructorRequests' | translate }}</h1>
-          <p class="subtitle">{{ 'admin.requests.pendingCount' | translate: { count: count.pending() } }}</p>
+          <p class="subtitle">{{ 'admin.requests.pendingCount' | translate: { count: count.instructorRequests() } }}</p>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const PAGE_SIZE = 20;
             <button type="button" [class.active]="status() === s" (click)="show(s)">
               {{ 'admin.requests.status.' + s | translate }}
               @if (s === 'PENDING') {
-                <span class="count">{{ count.pending() }}</span>
+                <span class="count">{{ count.instructorRequests() }}</span>
               }
             </button>
           }
@@ -175,7 +175,7 @@ const PAGE_SIZE = 20;
 export class AdminInstructorRequestsComponent implements OnInit {
   private readonly api = inject(AdminApiService);
   private readonly translate = inject(TranslateService);
-  readonly count = inject(InstructorRequestCountService);
+  readonly count = inject(ModerationCountService);
   readonly lang = inject(LanguageService);
 
   readonly statuses: InstructorRequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];

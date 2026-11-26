@@ -2,7 +2,7 @@ import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { DrawerLayoutComponent, DrawerLink } from '../../shared/drawer-layout/drawer-layout.component';
-import { InstructorRequestCountService } from './instructor-request-count.service';
+import { ModerationCountService } from './moderation-count.service';
 
 /** Espace administration : tiroir (tableau de bord + une section par domaine) et section courante. */
 @Component({
@@ -15,7 +15,7 @@ import { InstructorRequestCountService } from './instructor-request-count.servic
   `,
 })
 export class AdminLayoutComponent implements OnInit {
-  private readonly requestCount = inject(InstructorRequestCountService);
+  private readonly moderation = inject(ModerationCountService);
 
   /** Menu ; « Demandes formateur » porte le nombre de demandes en attente. */
   readonly links = computed<DrawerLink[]>(() => [
@@ -25,8 +25,9 @@ export class AdminLayoutComponent implements OnInit {
       path: 'instructor-requests',
       icon: '🧑‍🏫',
       labelKey: 'admin.nav.instructorRequests',
-      badge: this.requestCount.pending(),
+      badge: this.moderation.instructorRequests(),
     },
+    { path: 'course-reviews', icon: '📝', labelKey: 'admin.nav.courseReviews', badge: this.moderation.courseReviews() },
     { path: 'courses', icon: '📚', labelKey: 'admin.nav.courses' },
     { path: 'payments', icon: '💶', labelKey: 'admin.nav.payments' },
     { path: 'certificates', icon: '🎓', labelKey: 'admin.nav.certificates' },
@@ -41,6 +42,6 @@ export class AdminLayoutComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.requestCount.refresh();
+    this.moderation.refresh();
   }
 }

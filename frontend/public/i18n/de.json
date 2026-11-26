@@ -395,7 +395,8 @@
       "certificates": "Zertifikate",
       "reviews": "Bewertungen",
       "languages": "Sprachen",
-      "instructorRequests": "Anträge Lehrkraft"
+      "instructorRequests": "Anträge Lehrkraft",
+      "courseReviews": "Zu prüfende Kurse"
     },
     "overview": {
       "subscribers": "Aktive Abonnenten",
@@ -465,6 +466,20 @@
       },
       "noDocuments": "Keine Anhänge (früherer Antrag).",
       "downloadError": "Download fehlgeschlagen."
+    },
+    "courseReviews": {
+      "pendingCount": "{{count}} Kurs(e) warten auf Freigabe",
+      "empty": "Kein Kurs wartet auf Freigabe.",
+      "instructor": "Lehrkraft",
+      "price": "Preis",
+      "content": "Inhalt",
+      "submitted": "Eingereicht am",
+      "preview": "Kursvorschau öffnen",
+      "reasonLabel": "Ablehnungsgrund (wird der Lehrkraft mitgeteilt)",
+      "reasonPlaceholder": "Z. B.: Fügen Sie eine Abschlussprüfung und eine genauere Beschreibung hinzu",
+      "approve": "Freigeben und veröffentlichen",
+      "approved": "„{{name}}\" ist freigegeben und veröffentlicht; die Lehrkraft wurde benachrichtigt.",
+      "rejected": "„{{name}}\" wurde abgelehnt; der Grund wurde der Lehrkraft mitgeteilt."
     }
   },
   "footer": {
@@ -845,7 +860,10 @@
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Ihr Antrag wurde angenommen: Sie sind jetzt Lehrkraft. Klicken Sie, um den Lehrbereich zu öffnen.",
       "INSTRUCTOR_REQUEST_REJECTED": "Ihr Antrag, Lehrkraft zu werden, wurde abgelehnt.",
-      "INSTRUCTOR_REQUEST_SUBMITTED": "Neuer Antrag als Lehrkraft: {{detail}}. Zum Bearbeiten klicken."
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Neuer Antrag als Lehrkraft: {{detail}}. Zum Bearbeiten klicken.",
+      "COURSE_SUBMITTED": "Zu prüfender Kurs: „{{subject}}\" ({{detail}}).",
+      "COURSE_APPROVED": "Ihr Kurs „{{subject}}\" ist freigegeben und veröffentlicht.",
+      "COURSE_REJECTED": "Ihr Kurs „{{subject}}\" wurde nicht freigegeben. Zum Überarbeiten klicken."
     }
   },
   "application": {
@@ -873,5 +891,27 @@
     "back": "Zurück",
     "submitWithAccount": "Konto erstellen und Bewerbung senden",
     "kept": "Bereits gesendet, bleibt erhalten, wenn Sie keine andere Datei wählen"
+  },
+  "courseReview": {
+    "status": {
+      "DRAFT": "Entwurf",
+      "PENDING": "Wartet auf Freigabe",
+      "APPROVED": "Freigegeben, nicht veröffentlicht",
+      "REJECTED": "Abgelehnt",
+      "PUBLISHED": "Veröffentlicht"
+    },
+    "explain": {
+      "DRAFT": "Nur Sie sehen diesen Kurs. Reichen Sie ihn ein, wenn er fertig ist: Die Administration gibt ihn vor der Veröffentlichung frei.",
+      "PENDING": "Die Administration prüft Ihren Kurs. Sie werden per Benachrichtigung und E-Mail informiert.",
+      "APPROVED": "Ihr Kurs ist freigegeben. Sie können ihn im Katalog veröffentlichen.",
+      "REJECTED": "Ihr Kurs wurde nicht freigegeben. Überarbeiten Sie ihn und reichen Sie ihn erneut ein.",
+      "PUBLISHED": "Ihr Kurs ist im Katalog online."
+    },
+    "submit": "Zur Freigabe einreichen",
+    "resubmit": "Erneut zur Freigabe einreichen",
+    "submitted": "„{{name}}\" wurde eingereicht: Die Administration prüft ihn.",
+    "submitError": "Diese Aktion ist gerade nicht möglich.",
+    "pendingInfo": "Wird von der Administration geprüft.",
+    "submittedOn": "Eingereicht am {{date}}"
   }
 }

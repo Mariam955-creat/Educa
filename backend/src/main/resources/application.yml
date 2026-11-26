@@ -49,6 +49,10 @@ educa:
     secret: ${JWT_SECRET:dev-only-insecure-change-me-0123456789-abcdefghijklmnop}
     access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:900}
     refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:1209600}
+  courses:
+    # Validation des cours par l'administration avant publication par un formateur (désactivée dans les tests
+    # qui ne portent pas sur la modération, réactivée par CourseReviewTest).
+    review-required: ${COURSE_REVIEW_REQUIRED:true}
   # Emails transactionnels. Sans MAIL_HOST, les emails sont écrits dans le journal au lieu d'être envoyés.
   mail:
     host: ${MAIL_HOST:}

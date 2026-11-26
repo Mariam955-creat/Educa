@@ -47,8 +47,8 @@
           <div class="info">
             <div class="title-row">
               <a class="title" [routerLink]="[course.slug, 'edit']">{{ course.title }}</a>
-              <span class="badge" [class.on]="course.published">
-                {{ (course.published ? 'instructorDashboard.published' : 'instructorDashboard.draft') | translate }}
+              <span class="badge" [class]="'badge ' + stateOf(course).toLowerCase()">
+                {{ 'courseReview.status.' + stateOf(course) | translate }}
               </span>
             </div>
             <p class="meta">
@@ -56,6 +56,11 @@
               · {{ (course.chapterCount === 1 ? 'catalog.chapterOne' : 'catalog.chapters') | translate: { count: course.chapterCount } }}
               · {{ course.language.toUpperCase() }}
             </p>
+            @if (!course.published && course.reviewStatus === 'REJECTED' && course.reviewReason) {
+              <p class="review-reason"><strong>{{ 'admin.requests.reason' | translate }} :</strong> {{ course.reviewReason }}</p>
+            } @else if (!course.published && course.reviewStatus === 'PENDING') {
+              <p class="review-info">⏳ {{ 'courseReview.pendingInfo' | translate }}</p>
+            }
 
             <dl class="stats">
               <div>
@@ -78,9 +83,17 @@
               @if (course.published) {
                 <a class="action" [routerLink]="['/courses', course.slug]">👁 {{ 'instructor.courses.view' | translate }}</a>
               }
-              <button type="button" class="action" (click)="togglePublish(course)">
-                {{ (course.published ? 'instructorDashboard.unpublish' : 'instructorDashboard.publish') | translate }}
-              </button>
+              @if (course.published) {
+                <button type="button" class="action" (click)="togglePublish(course)">{{ 'instructorDashboard.unpublish' | translate }}</button>
+              } @else if (course.reviewStatus === 'APPROVED' || isAdmin()) {
+                <button type="button" class="action" (click)="togglePublish(course)">{{ 'instructorDashboard.publish' | translate }}</button>
+              } @else if (course.reviewStatus === 'PENDING') {
+                <button type="button" class="action" disabled>⏳ {{ 'courseReview.status.PENDING' | translate }}</button>
+              } @else {
+                <button type="button" class="action submit" (click)="submitForReview(course)">
+                  📤 {{ (course.reviewStatus === 'REJECTED' ? 'courseReview.resubmit' : 'courseReview.submit') | translate }}
+                </button>
+              }
               <button type="button" class="action danger" (click)="remove(course)">🗑 {{ 'trash.moveToTrash' | translate }}</button>
             </div>
           </div>

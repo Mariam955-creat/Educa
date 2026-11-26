@@ -42,6 +42,25 @@ export class AdminApiService {
     return this.http.get<Page<InstructorRequest>>(`${this.base}/admin/instructor-requests`, { params });
   }
 
+  // --- Validation des cours ---
+
+  courseReviews(page = 0, size = 20): Observable<Page<CourseSummary>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<CourseSummary>>(`${this.base}/admin/course-reviews`, { params });
+  }
+
+  courseReviewCount(): Observable<{ pending: number }> {
+    return this.http.get<{ pending: number }>(`${this.base}/admin/course-reviews/count`);
+  }
+
+  approveCourse(id: number): Observable<CourseSummary> {
+    return this.http.post<CourseSummary>(`${this.base}/admin/course-reviews/${id}/approve`, {});
+  }
+
+  rejectCourse(id: number, reason: string): Observable<CourseSummary> {
+    return this.http.post<CourseSummary>(`${this.base}/admin/course-reviews/${id}/reject`, { reason });
+  }
+
   instructorRequestCount(): Observable<{ pending: number }> {
     return this.http.get<{ pending: number }>(`${this.base}/admin/instructor-requests/count`);
   }

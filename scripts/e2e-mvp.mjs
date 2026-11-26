@@ -169,8 +169,14 @@ async function req(method, path, { token, body, raw } = {}) {
   let listed = (r.json?.content || r.json || []).some(c => c.slug === slug);
   check('CAT-01 cours non publié absent du catalogue', !listed, `présent=${listed}`);
 
+  // Publication soumise à la validation de l'administration (2026-11-26)
   r = await req('POST', `/courses/${courseId}/publish`, { token: instrTok });
-  check('CAT-02 publication (200)', r.status === 200 && r.json?.published === true, `HTTP ${r.status}`);
+  check('CAT-02a formateur ne publie pas sans validation (409)', r.status === 409, `HTTP ${r.status}`);
+  r = await req('POST', `/courses/${courseId}/submit-review`, { token: instrTok });
+  check('CAT-02b soumission pour validation (PENDING)', r.status === 200 && r.json?.reviewStatus === 'PENDING', `HTTP ${r.status}`);
+  const reviewAdminTok = (await req('POST', '/auth/login', { body: { email: 'admin@educa.dev', password: 'password123' } })).json?.accessToken;
+  r = await req('POST', `/admin/course-reviews/${courseId}/approve`, { token: reviewAdminTok });
+  check('CAT-02 validation par l’admin = publication (200)',r.status === 200 && r.json?.published === true, `HTTP ${r.status}`);
 
   r = await req('GET', `/courses?size=100`);
   listed = (r.json?.content || r.json || []).some(c => c.slug === slug);

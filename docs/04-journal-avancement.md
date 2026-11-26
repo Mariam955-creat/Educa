@@ -1510,3 +1510,17 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Notification et email de refus pointent vers le profil.
 
 **Vérifié** : `InstructorRequestTest` 8 + `InstructorRequestEmailTest` 2 verts (renvoi après refus avec seul le diplôme remplacé → 3 pièces, CV et pièce d'identité repris) ; `npm run build` + `test:ci` → **29/29**. Non vérifié au navigateur.
+
+## [2026-11-26] Validation des cours par l'administration avant publication
+
+**Fait**
+- Un formateur ne publie plus directement : il **soumet** son cours (au moins un chapitre). Les admins reçoivent une notification « Cours à valider ». Page admin « Cours à valider » (pastille du nombre en attente dans le menu, cartes avec formateur, prix, contenu, date, description, lien d'aperçu) : **Valider et publier** ou **Refuser** avec un motif obligatoire.
+- Le formateur reçoit une notification et un email (`mail.courseApproved|courseRejected.*`, 4 langues). « Mes cours » : badge d'état (Brouillon, En attente de validation, Validé non publié, Refusé, Publié), motif du refus, bouton Soumettre / Resoumettre / Publier / Retirer selon l'état. Éditeur : bandeau d'état avec explication, motif et action.
+- Backend : `CourseReviewStatus` + `courses.review_status/review_reason/submitted_at/reviewed_at` (`V23`, les cours déjà publiés passent APPROVED, `DevDataInitializer` aussi) ; `CourseReviewService` + `CourseReviewController` ; `setPublished` refuse (`409`) la publication par un formateur d'un cours non validé ; le motif n'est renvoyé qu'au propriétaire et aux admins. Notifications : colonne `subject` (titre affiché dans le texte).
+- Nettoyage de la base `educa` : 12 comptes `e2e-…@educa.test` et 4 cours « E2E — Parcours vérif » laissés par `scripts/e2e-mvp.mjs` (lancements des 29/09, 01/10 et 26/11), plus leurs notifications.
+
+**Décisions techniques**
+- Un cours validé peut être retiré puis republié sans nouvelle validation ; corriger un cours publié ne repasse pas par la validation (limite connue). Un admin publie directement (vaut validation).
+- Réglage `educa.courses.review-required` (`true` par défaut) : désactivé uniquement dans `application-test.yml`, pour les ~70 tests qui publient un cours afin de tester autre chose (paiement, quiz, avis…) ; `CourseReviewTest` le réactive.
+
+**Vérifié** : `./mvnw test` → **138/138** (`CourseReviewTest` 3 : publication refusée sans validation, soumission sans chapitre `400`, notification admin, refus sans motif `400`, refus motivé + notification + email, resoumission, validation = publication + email, retrait/republication libres, droits `403`, admin publie directement) ; `npm run build` + `test:ci` → **29/29** ; backend redémarré (`V23` appliquée) ; `scripts/e2e-mvp.mjs` adapté (CAT-02a/b) → **51/51**. Non vérifié au navigateur.

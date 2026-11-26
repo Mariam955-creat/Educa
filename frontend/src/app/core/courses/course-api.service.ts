@@ -110,6 +110,11 @@ export class CourseApiService {
     return this.http.delete<void>(`${this.base}/courses/${id}/permanent`);
   }
 
+  /** Soumet le cours à la validation de l'administration (ou le resoumet après un refus). */
+  submitForReview(id: number): Observable<CourseSummary> {
+    return this.http.post<CourseSummary>(`${this.base}/courses/${id}/submit-review`, {});
+  }
+
   setPublished(id: number, published: boolean): Observable<CourseSummary> {
     return this.http.post<CourseSummary>(
       `${this.base}/courses/${id}/${published ? 'publish' : 'unpublish'}`,

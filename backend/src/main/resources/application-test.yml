@@ -7,6 +7,9 @@ spring:
     clean-disabled: false
 
 educa:
+  courses:
+    # Les tests existants publient leurs cours en formateur ; la modération est testée par CourseReviewTest.
+    review-required: false
   jwt:
     secret: test-only-secret-0123456789-abcdefghijklmnopqrstuvwxyz
     access-ttl-seconds: 900

@@ -8,6 +8,8 @@ export interface AppNotification {
   id: number;
   /** Type traduit par l'interface : `notifications.types.<type>`. */
   type: string;
+  /** Objet inséré dans le texte (ex. titre du cours concerné). */
+  subject: string | null;
   /** Information libre affichée avec le texte (ex. motif d'un refus). */
   detail: string | null;
   /** Route ouverte au clic. */

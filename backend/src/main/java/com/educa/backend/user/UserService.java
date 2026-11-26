@@ -42,6 +42,14 @@ public class UserService {
         this.deletionGuards = deletionGuards;
     }
 
+    /** Identifiants des administrateurs actifs (destinataires des notifications de modération). */
+    @Transactional(readOnly = true)
+    public List<Long> activeAdminIds() {
+        return userRepository.findByRoles_NameAndEnabledTrueAndDeletedAtIsNull(RoleName.ADMIN).stream()
+                .map(User::getId)
+                .toList();
+    }
+
     @Transactional(readOnly = true)
     public UserDto getById(Long id) {
         return userMapper.toDto(loadById(id));

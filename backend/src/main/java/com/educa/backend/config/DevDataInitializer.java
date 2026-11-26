@@ -195,6 +195,7 @@ public class DevDataInitializer implements ApplicationRunner {
         course.setDescription("Un premier pas dans la programmation avec Python : installation, variables, types de base.");
         course.setLanguage("fr");
         course.setPublished(true);
+        course.setReviewStatus(com.educa.backend.course.CourseReviewStatus.APPROVED);
         course.setPrice(BigDecimal.valueOf(29.99));
 
         Chapter c1 = new Chapter();
@@ -271,6 +272,7 @@ public class DevDataInitializer implements ApplicationRunner {
         course.setDescription("Comprendre le suivi de versions et les commandes essentielles de Git au quotidien.");
         course.setLanguage("fr");
         course.setPublished(true);
+        course.setReviewStatus(com.educa.backend.course.CourseReviewStatus.APPROVED);
         course.setPrice(BigDecimal.valueOf(19.99));
 
         Chapter c1 = new Chapter();
@@ -357,6 +359,7 @@ public class DevDataInitializer implements ApplicationRunner {
             course.setDescription(spec.description());
             course.setLanguage("fr");
             course.setPublished(true);
+            course.setReviewStatus(com.educa.backend.course.CourseReviewStatus.APPROVED);
             course.setPrice(new BigDecimal(spec.price()));
             int position = 1;
             for (ChapterSpec chapterSpec : spec.chapters()) {

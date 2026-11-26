@@ -23,9 +23,16 @@ public class NotificationService {
     /** Envoie une notification à un utilisateur (enregistrée, affichée à sa prochaine visite). */
     @Transactional
     public void notify(Long userId, NotificationType type, String detail, String link) {
+        notify(userId, type, null, detail, link);
+    }
+
+    /** Variante avec un objet inséré dans le texte (ex. titre du cours concerné). */
+    @Transactional
+    public void notify(Long userId, NotificationType type, String subject, String detail, String link) {
         Notification notification = new Notification();
         notification.setUserId(userId);
         notification.setType(type);
+        notification.setSubject(subject);
         notification.setDetail(detail);
         notification.setLink(link);
         repository.save(notification);

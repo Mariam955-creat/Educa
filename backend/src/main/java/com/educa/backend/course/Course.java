@@ -53,6 +53,21 @@ public class Course {
     @Column(nullable = false)
     private boolean published = false;
 
+    /** Validation par l'administration avant la première publication. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "review_status", nullable = false, length = 10)
+    private CourseReviewStatus reviewStatus = CourseReviewStatus.DRAFT;
+
+    /** Motif du dernier refus (affiché au formateur), {@code null} sinon. */
+    @Column(name = "review_reason", columnDefinition = "text")
+    private String reviewReason;
+
+    @Column(name = "submitted_at")
+    private java.time.Instant submittedAt;
+
+    @Column(name = "reviewed_at")
+    private java.time.Instant reviewedAt;
+
     @Column(name = "control_weight", nullable = false)
     private int controlWeight = 40;
 

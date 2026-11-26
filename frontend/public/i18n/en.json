@@ -395,7 +395,8 @@
       "certificates": "Certificates",
       "reviews": "Reviews",
       "languages": "Languages",
-      "instructorRequests": "Instructor requests"
+      "instructorRequests": "Instructor requests",
+      "courseReviews": "Courses to review"
     },
     "overview": {
       "subscribers": "Active subscribers",
@@ -465,6 +466,20 @@
       },
       "noDocuments": "No attachments (earlier request).",
       "downloadError": "Download failed."
+    },
+    "courseReviews": {
+      "pendingCount": "{{count}} course(s) awaiting approval",
+      "empty": "No course awaiting approval.",
+      "instructor": "Instructor",
+      "price": "Price",
+      "content": "Content",
+      "submitted": "Submitted on",
+      "preview": "Open the course preview",
+      "reasonLabel": "Reason for declining (sent to the instructor)",
+      "reasonPlaceholder": "E.g. add a final exam and a more precise description",
+      "approve": "Approve and publish",
+      "approved": "\"{{name}}\" is approved and published; the instructor has been notified.",
+      "rejected": "\"{{name}}\" is declined; the reason was sent to the instructor."
     }
   },
   "footer": {
@@ -845,7 +860,10 @@
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Your request is approved: you are now an instructor. Click to open the instructor space.",
       "INSTRUCTOR_REQUEST_REJECTED": "Your request to become an instructor was declined.",
-      "INSTRUCTOR_REQUEST_SUBMITTED": "New instructor request: {{detail}}. Click to review it."
+      "INSTRUCTOR_REQUEST_SUBMITTED": "New instructor request: {{detail}}. Click to review it.",
+      "COURSE_SUBMITTED": "Course to review: \"{{subject}}\" ({{detail}}).",
+      "COURSE_APPROVED": "Your course \"{{subject}}\" is approved and published.",
+      "COURSE_REJECTED": "Your course \"{{subject}}\" was not approved. Click to fix it."
     }
   },
   "application": {
@@ -873,5 +891,27 @@
     "back": "Back",
     "submitWithAccount": "Create my account and send my application",
     "kept": "Already sent, kept unless you choose another file"
+  },
+  "courseReview": {
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING": "Awaiting approval",
+      "APPROVED": "Approved, not published",
+      "REJECTED": "Declined",
+      "PUBLISHED": "Published"
+    },
+    "explain": {
+      "DRAFT": "Only you can see this course. Submit it when it is ready: the administration approves it before publication.",
+      "PENDING": "The administration is reviewing your course. You will be notified by notification and email.",
+      "APPROVED": "Your course is approved. You can publish it in the catalogue.",
+      "REJECTED": "Your course was not approved. Fix it, then submit it again.",
+      "PUBLISHED": "Your course is live in the catalogue."
+    },
+    "submit": "Submit for approval",
+    "resubmit": "Resubmit for approval",
+    "submitted": "\"{{name}}\" is submitted: the administration will review it.",
+    "submitError": "This action is not possible right now.",
+    "pendingInfo": "Being reviewed by the administration.",
+    "submittedOn": "Submitted on {{date}}"
   }
 }

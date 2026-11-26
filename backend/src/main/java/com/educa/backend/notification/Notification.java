@@ -35,6 +35,10 @@ public class Notification {
     @Column(nullable = false, length = 40)
     private NotificationType type;
 
+    /** Objet inséré dans le texte traduit (ex. titre d'un cours) ; facultatif. */
+    @Column(length = 255)
+    private String subject;
+
     /** Information libre affichée avec le texte (ex. motif d'un refus) ; facultative. */
     @Column(columnDefinition = "text")
     private String detail;

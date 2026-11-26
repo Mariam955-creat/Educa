@@ -42,13 +42,16 @@ public class CourseService {
     private final List<CourseDeletionGuard> deletionGuards;
     private final CourseAudienceProvider audienceProvider;
     private final CourseRatingProvider ratingProvider;
+    /** Validation obligatoire avant publication par un formateur (désactivable pour les tests hors modération). */
+    private final boolean reviewRequired;
 
     public CourseService(CourseRepository courseRepository, ContentRepository contentRepository,
                          CourseTranslationRepository courseTranslationRepository,
                          ChapterTranslationRepository chapterTranslationRepository,
                          CourseMapper mapper, UserService userService, LanguageService languageService,
                          List<CourseDeletionGuard> deletionGuards, CourseAudienceProvider audienceProvider,
-                         CourseRatingProvider ratingProvider) {
+                         CourseRatingProvider ratingProvider,
+                         @org.springframework.beans.factory.annotation.Value("${educa.courses.review-required:true}") boolean reviewRequired) {
         this.courseRepository = courseRepository;
         this.contentRepository = contentRepository;
         this.courseTranslationRepository = courseTranslationRepository;
@@ -59,6 +62,7 @@ public class CourseService {
         this.deletionGuards = deletionGuards;
         this.audienceProvider = audienceProvider;
         this.ratingProvider = ratingProvider;
+        this.reviewRequired = reviewRequired;
     }
 
     // ---------- écriture (formateur propriétaire / admin) ----------
@@ -125,10 +129,24 @@ public class CourseService {
                 .toList();
     }
 
+    /**
+     * Publie ou retire un cours. Un formateur ne peut publier qu'un cours validé par l'administration (sinon
+     * {@code 409} : il doit le soumettre) ; un admin publie directement, ce qui vaut validation. Le retrait est libre.
+     */
     @Transactional
     public CourseSummaryDto setPublished(Long courseId, boolean published) {
         Course course = requireOwned(courseId);
+        if (published && reviewRequired && !CurrentUser.isAdmin()
+                && course.getReviewStatus() != CourseReviewStatus.APPROVED) {
+            throw new ConflictException(
+                    "Ce cours doit d'abord être validé par l'administration : soumettez-le pour validation");
+        }
         course.setPublished(published);
+        if (published && course.getReviewStatus() != CourseReviewStatus.APPROVED) {
+            course.setReviewStatus(CourseReviewStatus.APPROVED);
+            course.setReviewReason(null);
+            course.setReviewedAt(Instant.now());
+        }
         return toSummary(course);
     }
 
@@ -278,7 +296,8 @@ public class CourseService {
                 course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
                 splitLines(course.getObjectives()), splitLines(course.getPrerequisites()), course.getTargetAudience(),
                 instructor.headline(), instructor.bio(),
-                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course));
+                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course),
+                course.getReviewStatus(), isOwnerOrAdmin(course) ? course.getReviewReason() : null, course.getSubmittedAt());
     }
 
     // ---------- helpers inter-modules ----------
@@ -412,7 +431,8 @@ public class CourseService {
                 course.getPrice(), coverImageUrl(course), stats.learners(course.getId()),
                 rating != null ? rating.average() : null, rating != null ? rating.count() : 0,
                 course.getSubtitle(), course.getCategory(), course.getLevel(), course.getDurationHours(),
-                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course));
+                course.getPromoPrice(), course.getPromoEndsAt(), course.isPromoActive(Instant.now()), previewVideoUrl(course),
+                course.getReviewStatus(), isOwnerOrAdmin(course) ? course.getReviewReason() : null, course.getSubmittedAt());
     }
 
     /**

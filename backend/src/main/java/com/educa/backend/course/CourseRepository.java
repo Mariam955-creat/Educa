@@ -13,6 +13,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Optional<Course> findBySlug(String slug);
 
+    /** File de validation : cours soumis et non supprimés. */
+    Page<Course> findByReviewStatusAndDeletedAtIsNull(CourseReviewStatus status, Pageable pageable);
+
+    long countByReviewStatusAndDeletedAtIsNull(CourseReviewStatus status);
+
     boolean existsBySlug(String slug);
 
     List<Course> findByInstructorIdOrderByCreatedAtDesc(Long instructorId);

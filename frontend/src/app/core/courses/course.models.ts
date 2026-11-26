@@ -66,7 +66,17 @@ export interface CoursePresentation {
   durationHours?: number;
 }
 
-export interface CourseSummary extends CoursePresentation, CourseOffer {
+/** Validation d'un cours par l'administration avant publication. */
+export type CourseReviewStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface CourseReview {
+  reviewStatus: CourseReviewStatus;
+  /** Motif du dernier refus (renvoyé au propriétaire et aux admins seulement). */
+  reviewReason: string | null;
+  submittedAt: string | null;
+}
+
+export interface CourseSummary extends CoursePresentation, CourseOffer, CourseReview {
   id: number;
   slug: string;
   title: string;
@@ -102,7 +112,7 @@ export interface ChapterItem {
   contents: ContentItem[];
 }
 
-export interface CourseDetail extends CoursePresentation, CourseOffer {
+export interface CourseDetail extends CoursePresentation, CourseOffer, CourseReview {
   id: number;
   slug: string;
   title: string;

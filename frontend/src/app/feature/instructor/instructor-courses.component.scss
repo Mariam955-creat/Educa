@@ -153,9 +153,40 @@ h1 {
   font-weight: 700;
 }
 
-.badge.on {
+.badge.published,
+.badge.approved {
   background: var(--success-soft, #d1fae5);
   color: var(--success-strong, #047857);
+}
+
+.badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge.rejected {
+  background: #fee2e2;
+  color: var(--danger, #b91c1c);
+}
+
+/* Validation du cours : motif d'un refus, ou information « en attente » */
+.review-reason,
+.review-info {
+  margin: 0.35rem 0 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.review-reason {
+  background: #fef2f2;
+  color: var(--danger, #b91c1c);
+}
+
+.review-info {
+  background: var(--accent-soft, #eff6ff);
+  color: var(--accent-strong, #1e40af);
 }
 
 .meta {

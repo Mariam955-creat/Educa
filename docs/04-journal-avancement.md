@@ -1445,3 +1445,5 @@ Vérifié : `./mvnw test` → **125/125** — `QuestionSuggestionTest` 4 (sugges
 - Le dépôt GitHub (`Mariam955-creat/Educa`) n'est pas renommé depuis le poste (`gh` absent) : à faire dans *Settings → Repository name*, puis `git remote set-url origin`.
 
 **Vérifié** : `npm run build` OK.
+
+- Admin → Utilisateurs : suppression douce (« Supprimer » → corbeille) et suppression définitive (« Supprimer définitivement », confirmation en tapant SUPPRIMER) directement depuis la liste, + lien « Corbeille ». Vérifié sur l'API réelle : compte neuf → corbeille `204` → définitif `204`, absent de la corbeille ; formatrice ayant des cours → définitif `409` puis restauration `200` (ce que fait le front en cas de refus).

@@ -21,6 +21,7 @@ export interface DrawerLink {
   imports: [RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './drawer-layout.component.html',
   styleUrl: './drawer-layout.component.scss',
+  host: { '[class.left]': "side() === 'left'" },
 })
 export class DrawerLayoutComponent {
   readonly auth = inject(AuthService);
@@ -31,6 +32,8 @@ export class DrawerLayoutComponent {
   readonly footerLinks = input<DrawerLink[]>([]);
   /** Bouton d'action principal en tête du tiroir (ex. « Nouveau cours »). */
   readonly cta = input<DrawerLink | null>(null);
+  /** Côté du tiroir : à droite par défaut (compte, formateur), à gauche pour l'administration. */
+  readonly side = input<'left' | 'right'>('right');
 
   readonly open = signal(false);
 

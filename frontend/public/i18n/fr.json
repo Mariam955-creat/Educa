@@ -54,7 +54,7 @@
       "errorInvalid": "Vérifiez les champs du formulaire.",
       "errorServer": "Impossible de créer le compte pour le moment.",
       "wantsToTeach": "Je veux enseigner sur Omnia",
-      "wantsToTeachHint": "Votre compte est créé en apprenant. L'administration valide ensuite votre rôle de formateur."
+      "wantsToTeachHint": "Étape suivante : votre dernier diplôme, votre CV, une pièce d'identité et votre motivation. L'administration valide ensuite votre rôle de formateur."
     }
   },
   "dashboard": {
@@ -457,7 +457,14 @@
       "reject": "Refuser",
       "confirmReject": "Confirmer le refus",
       "approved": "{{name}} est maintenant formateur et en a été informé.",
-      "rejected": "Demande de {{name}} refusée ; le motif lui a été envoyé."
+      "rejected": "Demande de {{name}} refusée ; le motif lui a été envoyé.",
+      "documents": {
+        "DIPLOMA": "Dernier diplôme",
+        "CV": "CV",
+        "ID_DOCUMENT": "Pièce d'identité"
+      },
+      "noDocuments": "Aucune pièce jointe (demande antérieure).",
+      "downloadError": "Téléchargement impossible."
     }
   },
   "footer": {
@@ -535,13 +542,12 @@
     },
     "instructorRequest": {
       "title": "Devenir formateur",
-      "intro": "Vous souhaitez publier vos propres cours ? Envoyez une demande : l'administration l'examine et vous répond par une notification.",
-      "motivation": "Présentez-vous (facultatif)",
-      "motivationPlaceholder": "Votre expertise, le cours que vous prévoyez…",
+      "intro": "Vous souhaitez publier vos propres cours ? Joignez votre dernier diplôme, votre CV et une pièce d'identité, et présentez votre projet. L'administration vous répond par notification et par email.",
       "submit": "Envoyer ma demande",
       "pending": "Demande envoyée le {{date}}, en attente de validation par l'administration.",
       "rejected": "Votre dernière demande a été refusée. Vous pouvez en envoyer une nouvelle.",
-      "error": "Impossible d'envoyer la demande."
+      "error": "Impossible d'envoyer la demande.",
+      "failedAtSignup": "Votre compte est créé, mais votre candidature n'a pas pu être envoyée. Renvoyez-la ci-dessous."
     }
   },
   "instructor": {
@@ -832,7 +838,33 @@
     "detail": "Motif",
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Votre demande est acceptée : vous êtes formateur. Cliquez pour ouvrir l'espace formateur.",
-      "INSTRUCTOR_REQUEST_REJECTED": "Votre demande pour devenir formateur a été refusée."
+      "INSTRUCTOR_REQUEST_REJECTED": "Votre demande pour devenir formateur a été refusée.",
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Nouvelle demande de formateur : {{detail}}. Cliquez pour la traiter."
     }
+  },
+  "application": {
+    "title": "Votre candidature de formateur",
+    "step2": "Étape 2 sur 2 : joignez vos documents et présentez votre projet. L'administration vous répondra par notification et par email.",
+    "motivation": "Votre motivation",
+    "motivationPlaceholder": "Votre expertise, votre expérience d'enseignement, le cours que vous prévoyez…",
+    "motivationRequired": "La motivation est obligatoire.",
+    "documents": {
+      "diploma": "Dernier diplôme",
+      "cv": "CV",
+      "idDocument": "Pièce d'identité"
+    },
+    "hints": {
+      "diploma": "PDF ou image (JPG, PNG, WEBP), 10 Mo maximum.",
+      "cv": "PDF ou Word, 10 Mo maximum.",
+      "idDocument": "Carte d'identité ou passeport : PDF ou image, 10 Mo maximum."
+    },
+    "choose": "Choisir un fichier",
+    "replace": "Remplacer",
+    "noFile": "Aucun fichier choisi",
+    "fileRequired": "Ce document est obligatoire.",
+    "tooLarge": "Fichier trop volumineux (10 Mo maximum).",
+    "next": "Suivant",
+    "back": "Retour",
+    "submitWithAccount": "Créer mon compte et envoyer ma demande"
   }
 }

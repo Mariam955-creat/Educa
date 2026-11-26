@@ -34,8 +34,8 @@ import { AppNotification, NotificationApiService } from '../notifications/notifi
         </div>
         @for (n of items(); track n.id) {
           <button type="button" class="item" [class.unread]="!n.read" role="menuitem" (click)="openItem(n)">
-            <span class="text">{{ 'notifications.types.' + n.type | translate }}</span>
-            @if (n.detail) {
+            <span class="text">{{ 'notifications.types.' + n.type | translate: { detail: n.detail } }}</span>
+            @if (n.detail && n.type === 'INSTRUCTOR_REQUEST_REJECTED') {
               <span class="detail">{{ 'notifications.detail' | translate }} : {{ n.detail }}</span>
             }
             <span class="date">{{ n.createdAt | localDate: 'long' : lang.current() }}</span>

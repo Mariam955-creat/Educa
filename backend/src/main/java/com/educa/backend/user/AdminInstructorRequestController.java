@@ -3,9 +3,14 @@ package com.educa.backend.user;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +58,27 @@ public class AdminInstructorRequestController {
     @GetMapping("/count")
     public Map<String, Long> count() {
         return Map.of("pending", service.countPending());
+    }
+
+    /**
+     * Télécharge une pièce jointe d'une demande. Toujours en pièce jointe (jamais affichée par l'API) et avec
+     * {@code nosniff} : le navigateur ne réinterprète pas un fichier envoyé par un candidat.
+     */
+    @GetMapping("/{id}/documents/{documentId}")
+    public ResponseEntity<Resource> document(@PathVariable Long id, @PathVariable Long documentId) {
+        InstructorRequestService.DocumentFile file = service.document(id, documentId);
+        MediaType mediaType;
+        try {
+            mediaType = MediaType.parseMediaType(file.mimeType());
+        } catch (InvalidMediaTypeException e) {
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
+        String safeName = file.fileName().replaceAll("[\\r\\n\"\\\\]", "_");
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + safeName + "\"")
+                .header("X-Content-Type-Options", "nosniff")
+                .body(file.resource());
     }
 
     @PostMapping("/{id}/approve")

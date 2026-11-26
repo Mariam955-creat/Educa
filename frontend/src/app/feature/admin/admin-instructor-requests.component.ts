@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AdminApiService } from '../../core/admin/admin-api.service';
-import { InstructorRequest, InstructorRequestStatus } from '../../core/admin/admin.models';
+import { InstructorRequest, InstructorRequestDocument, InstructorRequestStatus } from '../../core/admin/admin.models';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalDatePipe } from '../../core/i18n/local-date.pipe';
 import { PagerComponent } from '../../shared/pager/pager.component';
@@ -68,6 +68,21 @@ const PAGE_SIZE = 20;
                 {{ r.motivation || ('admin.requests.noMotivation' | translate) }}
               </p>
 
+              @if (r.documents.length) {
+                <ul class="docs">
+                  @for (d of r.documents; track d.id) {
+                    <li>
+                      <span class="doc-kind">{{ 'admin.requests.documents.' + d.kind | translate }}</span>
+                      <button type="button" class="doc-link" (click)="download(r, d)" [title]="d.originalName">
+                        ⬇ {{ d.originalName }} <small>({{ size(d.sizeBytes) }})</small>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="date">{{ 'admin.requests.noDocuments' | translate }}</p>
+              }
+
               @if (r.status === 'REJECTED' && r.rejectionReason) {
                 <p class="reason"><strong>{{ 'admin.requests.reason' | translate }} :</strong> {{ r.rejectionReason }}</p>
               }
@@ -121,6 +136,11 @@ const PAGE_SIZE = 20;
     .reason { margin: 0; padding: 0.6rem 0.75rem; border-radius: 8px; background: #fef2f2; color: var(--danger, #b91c1c); font-size: 0.85rem; white-space: pre-line; }
     .reject-box { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 600; }
     .reject-box textarea { padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-weight: 400; resize: vertical; }
+    .docs { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+    .docs li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
+    .doc-kind { min-width: 7.5rem; color: var(--muted); font-weight: 600; }
+    .doc-link { max-width: 100%; overflow: hidden; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--accent, #2563eb); font: inherit; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .doc-link:hover { border-color: var(--accent, #2563eb); }
     .actions { margin-top: auto; }
     .actions .approve { border-color: var(--success, #10b981); background: var(--success, #10b981); color: #fff; font-weight: 600; }
   `,
@@ -165,6 +185,25 @@ export class AdminInstructorRequestsComponent implements OnInit {
       error: () => this.loading.set(false),
     });
     this.count.refresh();
+  }
+
+  /** Télécharge une pièce jointe (requête authentifiée, puis lien temporaire vers le fichier reçu). */
+  download(request: InstructorRequest, document: InstructorRequestDocument): void {
+    this.api.downloadInstructorDocument(request.id, document.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = window.document.createElement('a');
+        a.href = url;
+        a.download = document.originalName;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      },
+      error: () => this.flash(this.translate.instant('admin.requests.downloadError'), true),
+    });
+  }
+
+  size(bytes: number): string {
+    return bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} Mo` : `${Math.max(1, Math.round(bytes / 1024))} Ko`;
   }
 
   approve(request: InstructorRequest): void {

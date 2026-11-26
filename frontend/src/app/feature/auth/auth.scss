@@ -212,3 +212,20 @@ label[for] {
   color: var(--muted, #6b7280);
   font-weight: 400;
 }
+
+/* Inscription en deux étapes : bouton « Retour » discret sous le bouton principal */
+button.back {
+  background: transparent;
+  color: var(--accent, #2563eb);
+  border: 1px solid var(--border, #dbe3ef);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+}
+
+.step[hidden] {
+  display: none;
+}

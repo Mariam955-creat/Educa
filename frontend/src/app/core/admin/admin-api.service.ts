@@ -46,6 +46,12 @@ export class AdminApiService {
     return this.http.get<{ pending: number }>(`${this.base}/admin/instructor-requests/count`);
   }
 
+  downloadInstructorDocument(requestId: number, documentId: number): Observable<Blob> {
+    return this.http.get(`${this.base}/admin/instructor-requests/${requestId}/documents/${documentId}`, {
+      responseType: 'blob',
+    });
+  }
+
   approveInstructorRequest(id: number): Observable<InstructorRequest> {
     return this.http.post<InstructorRequest>(`${this.base}/admin/instructor-requests/${id}/approve`, {});
   }

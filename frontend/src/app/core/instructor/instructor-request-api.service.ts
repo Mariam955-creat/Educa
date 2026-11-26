@@ -5,7 +5,7 @@ import { Observable, map } from 'rxjs';
 import { InstructorRequest } from '../admin/admin.models';
 import { API_BASE_URL } from '../api';
 
-/** Demande de rôle formateur de l'utilisateur connecté (« Devenir formateur »). */
+/** Demande de rôle formateur de l'utilisateur connecté (inscription ou « Devenir formateur »). */
 @Injectable({ providedIn: 'root' })
 export class InstructorRequestApiService {
   private readonly http = inject(HttpClient);
@@ -16,7 +16,8 @@ export class InstructorRequestApiService {
     return this.http.get<InstructorRequest>(this.url, { observe: 'response' }).pipe(map((res) => res.body ?? null));
   }
 
-  submit(motivation: string): Observable<InstructorRequest> {
-    return this.http.post<InstructorRequest>(this.url, { motivation: motivation.trim() || null });
+  /** Envoie la candidature : motivation + diplôme, CV, pièce d'identité (multipart). */
+  submit(application: FormData): Observable<InstructorRequest> {
+    return this.http.post<InstructorRequest>(this.url, application);
   }
 }

@@ -54,7 +54,7 @@
       "errorInvalid": "Bitte überprüfen Sie die Formularfelder.",
       "errorServer": "Das Konto kann derzeit nicht erstellt werden.",
       "wantsToTeach": "Ich möchte auf Omnia unterrichten",
-      "wantsToTeachHint": "Ihr Konto wird als Lernkonto angelegt. Die Administration bestätigt anschließend Ihre Rolle als Lehrkraft."
+      "wantsToTeachHint": "Nächster Schritt: Ihr letzter Abschluss, Ihr Lebenslauf, ein Ausweisdokument und Ihre Motivation. Die Administration bestätigt anschließend Ihre Rolle als Lehrkraft."
     }
   },
   "dashboard": {
@@ -457,7 +457,14 @@
       "reject": "Ablehnen",
       "confirmReject": "Ablehnung bestätigen",
       "approved": "{{name}} ist jetzt Lehrkraft und wurde benachrichtigt.",
-      "rejected": "Antrag von {{name}} abgelehnt; der Grund wurde mitgeteilt."
+      "rejected": "Antrag von {{name}} abgelehnt; der Grund wurde mitgeteilt.",
+      "documents": {
+        "DIPLOMA": "Letzter Abschluss",
+        "CV": "Lebenslauf",
+        "ID_DOCUMENT": "Ausweisdokument"
+      },
+      "noDocuments": "Keine Anhänge (früherer Antrag).",
+      "downloadError": "Download fehlgeschlagen."
     }
   },
   "footer": {
@@ -535,13 +542,12 @@
     },
     "instructorRequest": {
       "title": "Lehrkraft werden",
-      "intro": "Möchten Sie eigene Kurse veröffentlichen? Senden Sie einen Antrag: Die Administration prüft ihn und antwortet per Benachrichtigung.",
-      "motivation": "Stellen Sie sich vor (optional)",
-      "motivationPlaceholder": "Ihre Expertise, der geplante Kurs…",
+      "intro": "Möchten Sie eigene Kurse veröffentlichen? Fügen Sie Ihren letzten Abschluss, Ihren Lebenslauf und ein Ausweisdokument bei und stellen Sie Ihr Vorhaben vor. Die Administration antwortet per Benachrichtigung und E-Mail.",
       "submit": "Antrag senden",
       "pending": "Antrag vom {{date}}, wartet auf Bestätigung durch die Administration.",
       "rejected": "Ihr letzter Antrag wurde abgelehnt. Sie können einen neuen senden.",
-      "error": "Der Antrag konnte nicht gesendet werden."
+      "error": "Der Antrag konnte nicht gesendet werden.",
+      "failedAtSignup": "Ihr Konto wurde erstellt, aber Ihre Bewerbung konnte nicht gesendet werden. Bitte senden Sie sie unten erneut."
     }
   },
   "instructor": {
@@ -832,7 +838,33 @@
     "detail": "Grund",
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Ihr Antrag wurde angenommen: Sie sind jetzt Lehrkraft. Klicken Sie, um den Lehrbereich zu öffnen.",
-      "INSTRUCTOR_REQUEST_REJECTED": "Ihr Antrag, Lehrkraft zu werden, wurde abgelehnt."
+      "INSTRUCTOR_REQUEST_REJECTED": "Ihr Antrag, Lehrkraft zu werden, wurde abgelehnt.",
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Neuer Antrag als Lehrkraft: {{detail}}. Zum Bearbeiten klicken."
     }
+  },
+  "application": {
+    "title": "Ihre Bewerbung als Lehrkraft",
+    "step2": "Schritt 2 von 2: Fügen Sie Ihre Unterlagen bei und stellen Sie Ihr Vorhaben vor. Die Administration antwortet per Benachrichtigung und E-Mail.",
+    "motivation": "Ihre Motivation",
+    "motivationPlaceholder": "Ihre Expertise, Ihre Lehrerfahrung, der geplante Kurs…",
+    "motivationRequired": "Die Motivation ist erforderlich.",
+    "documents": {
+      "diploma": "Letzter Abschluss",
+      "cv": "Lebenslauf",
+      "idDocument": "Ausweisdokument"
+    },
+    "hints": {
+      "diploma": "PDF oder Bild (JPG, PNG, WEBP), max. 10 MB.",
+      "cv": "PDF oder Word, max. 10 MB.",
+      "idDocument": "Personalausweis oder Reisepass: PDF oder Bild, max. 10 MB."
+    },
+    "choose": "Datei auswählen",
+    "replace": "Ersetzen",
+    "noFile": "Keine Datei ausgewählt",
+    "fileRequired": "Dieses Dokument ist erforderlich.",
+    "tooLarge": "Datei zu groß (max. 10 MB).",
+    "next": "Weiter",
+    "back": "Zurück",
+    "submitWithAccount": "Konto erstellen und Bewerbung senden"
   }
 }

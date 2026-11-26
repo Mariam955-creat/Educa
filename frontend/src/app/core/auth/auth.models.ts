@@ -36,6 +36,4 @@ export interface RegisterRequest {
   fullName: string;
   preferredLanguage?: string;
   country?: string;
-  /** « Je veux enseigner » : demande de rôle formateur, validée ensuite par l'administration. */
-  wantsToTeach?: boolean;
 }

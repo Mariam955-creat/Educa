@@ -11,10 +11,17 @@
   </aside>
 
   <div class="auth-card wide">
-    <h1>{{ 'auth.register.title' | translate }}</h1>
-    <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
+    @if (step() === 'account') {
+      <h1>{{ 'auth.register.title' | translate }}</h1>
+      <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
+    } @else {
+      <h1>{{ 'application.title' | translate }}</h1>
+      <p class="subtitle">{{ 'application.step2' | translate }}</p>
+    }
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <!-- Étape 1 : le compte (masquée et non détruite à l'étape 2, pour garder les saisies) -->
+      <div class="step" [hidden]="step() !== 'account'">
       <label>
         {{ 'auth.register.fullName' | translate }}
         <input type="text" formControlName="fullName" autocomplete="name" maxlength="150" />
@@ -72,14 +79,25 @@
           <small>{{ 'auth.register.wantsToTeachHint' | translate }}</small>
         </span>
       </label>
+      </div>
+
+      <!-- Étape 2 : la candidature formateur (si « Je veux enseigner » est coché) -->
+      <div class="step" [hidden]="step() !== 'application'">
+        <app-instructor-application [showErrors]="applicationTried()" />
+      </div>
 
       @if (error()) {
         <p class="form-error">{{ error() }}</p>
       }
 
       <button type="submit" [disabled]="loading()">
-        {{ (loading() ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
+        {{ submitLabel() | translate }}
       </button>
+      @if (step() === 'application') {
+        <button type="button" class="back" [disabled]="loading()" (click)="step.set('account')">
+          ← {{ 'application.back' | translate }}
+        </button>
+      }
     </form>
 
     <p class="switch">

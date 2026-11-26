@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     long countByRoles_NameAndDeletedAtIsNull(RoleName name);
 
+    /** Comptes actifs d'un rôle (ex. les administrateurs à notifier). */
+    List<User> findByRoles_NameAndEnabledTrueAndDeletedAtIsNull(RoleName name);
+
     long countByEnabledFalseAndDeletedAtIsNull();
 
     long countByCreatedAtAfterAndDeletedAtIsNull(java.time.Instant since);

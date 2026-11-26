@@ -54,7 +54,7 @@
       "errorInvalid": "Controleer de velden van het formulier.",
       "errorServer": "Het account kan nu niet worden aangemaakt.",
       "wantsToTeach": "Ik wil lesgeven op Omnia",
-      "wantsToTeachHint": "Je account wordt aangemaakt als cursist. De beheerder keurt daarna je rol als docent goed."
+      "wantsToTeachHint": "Volgende stap: je laatste diploma, je cv, een identiteitsbewijs en je motivatie. De beheerder keurt daarna je rol als docent goed."
     }
   },
   "dashboard": {
@@ -457,7 +457,14 @@
       "reject": "Weigeren",
       "confirmReject": "Weigering bevestigen",
       "approved": "{{name}} is nu docent en is op de hoogte gebracht.",
-      "rejected": "Aanvraag van {{name}} geweigerd; de reden is verstuurd."
+      "rejected": "Aanvraag van {{name}} geweigerd; de reden is verstuurd.",
+      "documents": {
+        "DIPLOMA": "Laatste diploma",
+        "CV": "Cv",
+        "ID_DOCUMENT": "Identiteitsbewijs"
+      },
+      "noDocuments": "Geen bijlagen (eerdere aanvraag).",
+      "downloadError": "Downloaden mislukt."
     }
   },
   "footer": {
@@ -535,13 +542,12 @@
     },
     "instructorRequest": {
       "title": "Docent worden",
-      "intro": "Wil je je eigen cursussen publiceren? Stuur een aanvraag: de beheerder bekijkt die en antwoordt met een melding.",
-      "motivation": "Stel jezelf voor (optioneel)",
-      "motivationPlaceholder": "Je expertise, de cursus die je plant…",
+      "intro": "Wil je je eigen cursussen publiceren? Voeg je laatste diploma, je cv en een identiteitsbewijs toe en stel je project voor. De beheerder antwoordt met een melding en een e-mail.",
       "submit": "Aanvraag versturen",
       "pending": "Aanvraag verstuurd op {{date}}, wacht op goedkeuring door de beheerder.",
       "rejected": "Je laatste aanvraag is geweigerd. Je kunt een nieuwe sturen.",
-      "error": "De aanvraag kon niet worden verstuurd."
+      "error": "De aanvraag kon niet worden verstuurd.",
+      "failedAtSignup": "Je account is aangemaakt, maar je sollicitatie kon niet worden verstuurd. Stuur ze hieronder opnieuw."
     }
   },
   "instructor": {
@@ -832,7 +838,33 @@
     "detail": "Reden",
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Je aanvraag is geaccepteerd: je bent nu docent. Klik om de docentenruimte te openen.",
-      "INSTRUCTOR_REQUEST_REJECTED": "Je aanvraag om docent te worden is geweigerd."
+      "INSTRUCTOR_REQUEST_REJECTED": "Je aanvraag om docent te worden is geweigerd.",
+      "INSTRUCTOR_REQUEST_SUBMITTED": "Nieuwe docentaanvraag: {{detail}}. Klik om ze te behandelen."
     }
+  },
+  "application": {
+    "title": "Je sollicitatie als docent",
+    "step2": "Stap 2 van 2: voeg je documenten toe en stel je project voor. De beheerder antwoordt met een melding en een e-mail.",
+    "motivation": "Je motivatie",
+    "motivationPlaceholder": "Je expertise, je onderwijservaring, de cursus die je plant…",
+    "motivationRequired": "De motivatie is verplicht.",
+    "documents": {
+      "diploma": "Laatste diploma",
+      "cv": "Cv",
+      "idDocument": "Identiteitsbewijs"
+    },
+    "hints": {
+      "diploma": "Pdf of afbeelding (JPG, PNG, WEBP), max. 10 MB.",
+      "cv": "Pdf of Word, max. 10 MB.",
+      "idDocument": "Identiteitskaart of paspoort: pdf of afbeelding, max. 10 MB."
+    },
+    "choose": "Bestand kiezen",
+    "replace": "Vervangen",
+    "noFile": "Geen bestand gekozen",
+    "fileRequired": "Dit document is verplicht.",
+    "tooLarge": "Bestand te groot (max. 10 MB).",
+    "next": "Volgende",
+    "back": "Terug",
+    "submitWithAccount": "Account aanmaken en sollicitatie versturen"
   }
 }

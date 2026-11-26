@@ -54,7 +54,7 @@
       "errorInvalid": "Please check the form fields.",
       "errorServer": "Unable to create the account right now.",
       "wantsToTeach": "I want to teach on Omnia",
-      "wantsToTeachHint": "Your account is created as a learner. The administration then approves your instructor role."
+      "wantsToTeachHint": "Next step: your latest diploma, your CV, an ID document and your motivation. The administration then approves your instructor role."
     }
   },
   "dashboard": {
@@ -457,7 +457,14 @@
       "reject": "Decline",
       "confirmReject": "Confirm decline",
       "approved": "{{name}} is now an instructor and has been notified.",
-      "rejected": "{{name}}'s request declined; the reason was sent."
+      "rejected": "{{name}}'s request declined; the reason was sent.",
+      "documents": {
+        "DIPLOMA": "Latest diploma",
+        "CV": "CV",
+        "ID_DOCUMENT": "ID document"
+      },
+      "noDocuments": "No attachments (earlier request).",
+      "downloadError": "Download failed."
     }
   },
   "footer": {
@@ -535,13 +542,12 @@
     },
     "instructorRequest": {
       "title": "Become an instructor",
-      "intro": "Want to publish your own courses? Send a request: the administration reviews it and answers with a notification.",
-      "motivation": "Introduce yourself (optional)",
-      "motivationPlaceholder": "Your expertise, the course you plan…",
+      "intro": "Want to publish your own courses? Attach your latest diploma, your CV and an ID document, and present your project. The administration answers by notification and email.",
       "submit": "Send my request",
       "pending": "Request sent on {{date}}, awaiting approval by the administration.",
       "rejected": "Your last request was declined. You can send a new one.",
-      "error": "Could not send the request."
+      "error": "Could not send the request.",
+      "failedAtSignup": "Your account is created, but your application could not be sent. Please send it again below."
     }
   },
   "instructor": {
@@ -832,7 +838,33 @@
     "detail": "Reason",
     "types": {
       "INSTRUCTOR_REQUEST_APPROVED": "Your request is approved: you are now an instructor. Click to open the instructor space.",
-      "INSTRUCTOR_REQUEST_REJECTED": "Your request to become an instructor was declined."
+      "INSTRUCTOR_REQUEST_REJECTED": "Your request to become an instructor was declined.",
+      "INSTRUCTOR_REQUEST_SUBMITTED": "New instructor request: {{detail}}. Click to review it."
     }
+  },
+  "application": {
+    "title": "Your instructor application",
+    "step2": "Step 2 of 2: attach your documents and present your project. The administration will answer by notification and email.",
+    "motivation": "Your motivation",
+    "motivationPlaceholder": "Your expertise, your teaching experience, the course you plan…",
+    "motivationRequired": "Motivation is required.",
+    "documents": {
+      "diploma": "Latest diploma",
+      "cv": "CV",
+      "idDocument": "ID document"
+    },
+    "hints": {
+      "diploma": "PDF or image (JPG, PNG, WEBP), 10 MB max.",
+      "cv": "PDF or Word, 10 MB max.",
+      "idDocument": "ID card or passport: PDF or image, 10 MB max."
+    },
+    "choose": "Choose a file",
+    "replace": "Replace",
+    "noFile": "No file chosen",
+    "fileRequired": "This document is required.",
+    "tooLarge": "File too large (10 MB max).",
+    "next": "Next",
+    "back": "Back",
+    "submitWithAccount": "Create my account and send my application"
   }
 }

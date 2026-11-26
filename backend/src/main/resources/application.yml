@@ -49,6 +49,14 @@ educa:
     secret: ${JWT_SECRET:dev-only-insecure-change-me-0123456789-abcdefghijklmnop}
     access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:900}
     refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:1209600}
+  # Emails transactionnels. Sans MAIL_HOST, les emails sont écrits dans le journal au lieu d'être envoyés.
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_FROM:Omnia <no-reply@omnia.local>}
+    starttls: ${MAIL_STARTTLS:true}
   storage:
     local-path: ${STORAGE_LOCAL_PATH:./var/storage}
     max-file-size-mb: ${STORAGE_MAX_FILE_SIZE_MB:200}

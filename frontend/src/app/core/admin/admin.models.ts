@@ -23,6 +23,16 @@ export interface InstructorRequest {
   rejectionReason: string | null;
   createdAt: string;
   decidedAt: string | null;
+  documents: InstructorRequestDocument[];
+}
+
+/** Pièce jointe d'une demande : dernier diplôme, CV ou pièce d'identité. */
+export interface InstructorRequestDocument {
+  id: number;
+  kind: 'DIPLOMA' | 'CV' | 'ID_DOCUMENT';
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
 }
 
 export interface CertificateRegistryEntry {

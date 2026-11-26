@@ -11,7 +11,5 @@ public record RegisterRequest(
         @Pattern(regexp = PasswordRules.REGEX, message = PasswordRules.MESSAGE) String password,
         @NotBlank @Size(max = 150) String fullName,
         @Pattern(regexp = "fr|en|de|nl", message = "langue non supportée") String preferredLanguage,
-        @Pattern(regexp = "[A-Z]{2}", message = "code pays invalide") String country,
-        /** « Je veux enseigner » : le compte est créé apprenant, avec une demande de rôle formateur. */
-        Boolean wantsToTeach) {
+        @Pattern(regexp = "[A-Z]{2}", message = "code pays invalide") String country) {
 }

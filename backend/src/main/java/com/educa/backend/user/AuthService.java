@@ -38,14 +38,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final long refreshTtlSeconds;
-    private final InstructorRequestService instructorRequestService;
 
     public AuthService(UserRepository userRepository, RoleRepository roleRepository,
                        RefreshTokenRepository refreshTokenRepository, PasswordEncoder passwordEncoder,
                        JwtService jwtService, AuthenticationManager authenticationManager,
-                       UserMapper userMapper, EducaProperties properties,
-                       InstructorRequestService instructorRequestService) {
-        this.instructorRequestService = instructorRequestService;
+                       UserMapper userMapper, EducaProperties properties) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -71,11 +68,7 @@ public class AuthService {
         user.setPreferredLanguage(request.preferredLanguage() != null ? request.preferredLanguage() : "fr");
         user.setCountry(request.country());
         user.addRole(learner);
-        User saved = userRepository.save(user);
-        if (Boolean.TRUE.equals(request.wantsToTeach())) {
-            instructorRequestService.submit(saved.getId(), null);
-        }
-        return userMapper.toDto(saved);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Transactional

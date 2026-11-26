@@ -86,13 +86,15 @@ const PAGE_SIZE = 20;
                     </span>
                   </td>
                   <td>
-                    <div class="actions">
-                      <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
-                        {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
-                      </button>
-                      <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="moveToTrash(user)">
-                        🗑 {{ 'trash.moveToTrash' | translate }}
-                      </button>
+                    <div class="actions stacked">
+                      <div class="actions">
+                        <button type="button" [class.danger]="user.enabled" [disabled]="user.id === currentUserId()" (click)="toggleEnabled(user)">
+                          {{ (user.enabled ? 'admin.users.disable' : 'admin.users.enable') | translate }}
+                        </button>
+                        <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="moveToTrash(user)">
+                          🗑 {{ 'trash.moveToTrash' | translate }}
+                        </button>
+                      </div>
                       <button type="button" class="danger" [disabled]="user.id === currentUserId()" (click)="pending.set(user)">
                         ⚠ {{ 'trash.deleteForever' | translate }}
                       </button>
@@ -117,6 +119,10 @@ const PAGE_SIZE = 20;
     />
   `,
   styleUrl: './admin-shared.scss',
+  styles: `
+    /* « Supprimer définitivement » sur sa propre ligne, sous « Désactiver » et « Supprimer » */
+    .actions.stacked { flex-direction: column; align-items: flex-end; }
+  `,
 })
 export class AdminUsersComponent implements OnInit {
   private readonly api = inject(AdminApiService);

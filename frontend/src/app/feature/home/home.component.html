@@ -17,6 +17,18 @@
   </div>
 </section>
 
+@if (courses().length > 0) {
+  <section class="block">
+    <h2>{{ 'home.coursesTitle' | translate }}</h2>
+    <div class="courses">
+      @for (course of courses(); track course.id) {
+        <app-course-card [course]="course" />
+      }
+    </div>
+    <p class="see-all"><a routerLink="/register">{{ 'home.ctaRegister' | translate }} →</a></p>
+  </section>
+}
+
 <section class="block">
   <h2>{{ 'home.featuresTitle' | translate }}</h2>
   <div class="features">
@@ -42,18 +54,6 @@
     }
   </ol>
 </section>
-
-@if (courses().length > 0) {
-  <section class="block">
-    <h2>{{ 'home.coursesTitle' | translate }}</h2>
-    <div class="courses">
-      @for (course of courses(); track course.id) {
-        <app-course-card [course]="course" />
-      }
-    </div>
-    <p class="see-all"><a routerLink="/register">{{ 'home.ctaRegister' | translate }} →</a></p>
-  </section>
-}
 
 @if (offer(); as o) {
   <section class="block">

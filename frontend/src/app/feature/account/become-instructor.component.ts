@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { InstructorRequest } from '../../core/admin/admin.models';
@@ -101,6 +103,11 @@ import { InstructorApplicationComponent } from '../../shared/instructor-applicat
 })
 export class BecomeInstructorComponent implements OnInit {
   private readonly api = inject(InstructorRequestApiService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly destroyRef = inject(DestroyRef);
+  /** Arrivée par la notification ou l'email (`#instructor-request`) : amener le formulaire à l'écran. */
+  private focusRequested = false;
   private readonly translate = inject(TranslateService);
   readonly lang = inject(LanguageService);
 
@@ -116,6 +123,11 @@ export class BecomeInstructorComponent implements OnInit {
   readonly failedAtSignup = !!(history.state as { instructorRequestFailed?: boolean } | null)?.instructorRequestFailed;
 
   ngOnInit(): void {
+    // Aussi quand on est déjà sur le profil : un nouveau clic sur la notification ne change que le fragment
+    this.route.fragment.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((fragment) => {
+      this.focusRequested = fragment === 'instructor-request';
+      if (!this.loading()) this.bringIntoView();
+    });
     this.api.latest().subscribe({
       next: (request) => this.show(request),
       error: () => this.loading.set(false),
@@ -145,5 +157,17 @@ export class BecomeInstructorComponent implements OnInit {
     this.request.set(request);
     this.rejected.set(request?.status === 'REJECTED' ? request : null);
     this.loading.set(false);
+    this.bringIntoView();
+  }
+
+  /** Fait défiler jusqu'à l'encart et place le curseur dans la motivation (après le rendu du formulaire). */
+  private bringIntoView(): void {
+    if (!this.focusRequested) return;
+    this.focusRequested = false;
+    setTimeout(() => {
+      const root: HTMLElement = this.host.nativeElement;
+      root.querySelector('#instructor-request')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      root.querySelector<HTMLTextAreaElement>('app-instructor-application textarea')?.focus({ preventScroll: true });
+    });
   }
 }

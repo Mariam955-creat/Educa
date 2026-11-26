@@ -211,9 +211,9 @@ public class InstructorRequestService {
         String motive = reason.trim();
         decide(request, Status.REJECTED, motive);
         notificationService.notify(user.getId(), NotificationType.INSTRUCTOR_REQUEST_REJECTED, motive,
-                "/account/profile");
+                "/account/profile#instructor-request");
         afterCommit(() -> emailService.send(user.getEmail(), user.getPreferredLanguage(), "instructorRejected",
-                user.getFullName(), motive, publicBaseUrl + "/account/profile"));
+                user.getFullName(), motive, publicBaseUrl + "/account/profile#instructor-request"));
         return toDtos(List.of(request)).get(0);
     }
 
